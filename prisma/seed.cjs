@@ -7,8 +7,8 @@ function yen(amount) {
 }
 
 async function main() {
-  const slug = 'takahiro-anno';
-  const name = 'Takahiro Anno';
+  const slug = 'hoge';
+  const name = 'Hoge';
 
   const politician = await prisma.politician.upsert({
     where: { slug },

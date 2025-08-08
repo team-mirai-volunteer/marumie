@@ -1,7 +1,7 @@
 -- Seed SQL to mirror prisma/seed.cjs data for Supabase local
 insert into public."Politician" (id, slug, name)
 values
-  (1, 'takahiro-anno', 'Takahiro Anno')
+  (1, 'hoge', 'Hoge')
 on conflict (id) do nothing;
 
 -- IN transactions
