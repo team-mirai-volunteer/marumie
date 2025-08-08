@@ -41,9 +41,6 @@ export default function SankeyChart({ slug }: { slug: string }) {
         nodeBorderWidth={1}
         nodeBorderColor={{ from: 'color', modifiers: [['darker', 0.8]] }}
         linkOpacity={0.5}
-        labelPlacement="outside"
-        labelPadding={12}
-        labelOrientation="horizontal"
         enableLinkGradient
       />
     </div>
