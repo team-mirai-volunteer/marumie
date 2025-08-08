@@ -11,7 +11,6 @@
   - Studio: `http://localhost:54323`
 
 ## prisma switch
-- sqlite (default): `prisma/schema.prisma`, `DATABASE_URL="file:./dev.db"`
 - postgres (supabase): use `prisma/schema.postgres.prisma` and set `DATABASE_URL` from Supabase local output
 
 ## commands
