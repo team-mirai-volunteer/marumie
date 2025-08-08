@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum TransactionDirection {
+  IN
+  OUT
+}
+
+model Politician {
+  id           Int           @id @default(autoincrement())
+  slug         String        @unique
+  name         String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  transactions Transaction[]
+}
+
+model Transaction {
+  id              Int                   @id @default(autoincrement())
+  politicianId    Int
+  politician      Politician            @relation(fields: [politicianId], references: [id], onDelete: Cascade)
+  date            DateTime
+  value           Int
+  direction       TransactionDirection
+  // Outgoing-specific fields
+  method          String?               // e.g., card, cash
+  category        String?
+  category1       String?
+  category2       String?
+  // Incoming-specific fields
+  counterparty    String?               // e.g., who
+  inflowType      String?               // e.g., personal, corporate
+  source          String?               // e.g., stripe, bank
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  @@index([politicianId, direction])
+  @@index([date])
+}
