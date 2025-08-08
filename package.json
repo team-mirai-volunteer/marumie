@@ -9,7 +9,12 @@
     "lint": "next lint",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:seed": "node prisma/seed.cjs"
+    "prisma:seed": "node prisma/seed.cjs",
+    "supabase:init": "supabase init",
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "supabase:types": "supabase gen types typescript --local > supabase/types.gen.ts",
+    "supabase:reset": "supabase db reset"
   },
   "dependencies": {
     "@nivo/sankey": "^0.99.0",
@@ -29,6 +34,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
     "prisma": "^6.13.0",
+    "supabase": "^2.33.9",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

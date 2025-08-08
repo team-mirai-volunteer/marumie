@@ -32,6 +32,7 @@ we're not sure how the data will come in, but we can image something like
 - react
 - nextjs
 - vercel
+- postgres
 - supabase
 - prisma
 
@@ -46,3 +47,6 @@ we're not sure how the data will come in, but we can image something like
 - api
 - migrations
 - etc.
+
+## supabase local
+- we can see local usage in https://github.com/team-mirai-volunteer/action-board

@@ -12,9 +12,9 @@ function addNode(nodes: Map<string, SankeyNode>, id: string) {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
-  const { slug } = params;
+  const { slug } = await params;
 
   const politician = await prisma.politician.findUnique({ where: { slug } });
   if (!politician) {

@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TransactionDirection {
+  IN
+  OUT
+}
+
+model Politician {
+  id           Int           @id @default(autoincrement())
+  slug         String        @unique
+  name         String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  transactions Transaction[]
+}
+
+model Transaction {
+  id              Int                   @id @default(autoincrement())
+  politicianId    Int
+  politician      Politician            @relation(fields: [politicianId], references: [id], onDelete: Cascade)
+  date            DateTime
+  value           Int
+  direction       TransactionDirection
+  method          String?
+  category        String?
+  category1       String?
+  category2       String?
+  counterparty    String?
+  inflowType      String?
+  source          String?
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  @@index([politicianId, direction])
+  @@index([date])
+}
+
+
