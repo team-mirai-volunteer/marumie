@@ -43,3 +43,42 @@ model Transaction {
 }
 
 
+
+model MfTransaction {
+  id                 Int                     @id @default(autoincrement())
+  transactionNo      Int                     @unique
+  date               DateTime
+
+  debitAccount       String?
+  debitSubaccount    String?
+  debitDepartment    String?
+  debitCounterparty  String?
+  debitTaxCategory   String?
+  debitInvoice       String?
+  debitAmountYen     Int?
+
+  creditAccount      String?
+  creditSubaccount   String?
+  creditDepartment   String?
+  creditCounterparty String?
+  creditTaxCategory  String?
+  creditInvoice      String?
+  creditAmountYen    Int?
+
+  summary            String?
+  tags               String?
+  memo               String?
+  note1              String?
+  note2              String?
+  note3              String?
+  summaryDetail      String?
+
+  direction          TransactionDirection
+
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+
+  @@index([date])
+  @@index([direction])
+  @@map("mf_transactions")
+}
