@@ -4,6 +4,11 @@
   "version": "0.0.0",
   "dependencies": {
     "@poli-money-alpha/db": "workspace:*"
+  },
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start"
   }
 }
 
