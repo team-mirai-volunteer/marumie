@@ -1,0 +1,10 @@
+{
+  "name": "user-facing-app",
+  "private": true,
+  "version": "0.0.0",
+  "dependencies": {
+    "@poli-money/db": "workspace:*"
+  }
+}
+
+

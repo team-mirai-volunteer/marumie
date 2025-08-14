@@ -1,0 +1,16 @@
+{
+  "name": "@poli-money/db",
+  "version": "0.0.0",
+  "private": true,
+  "main": "src/client.ts",
+  "types": "src/client.ts",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@prisma/client": "^6.13.0"
+  },
+  "devDependencies": {
+    "prisma": "^6.13.0"
+  }
+}
+
+

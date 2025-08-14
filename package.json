@@ -1,13 +1,17 @@
 {
-  "name": "web",
+  "name": "poli-money-alpha",
   "version": "0.1.0",
   "private": true,
+  "workspaces": ["apps/*", "packages/*"],
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "prisma generate && prisma migrate deploy && next build",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
+    "db:generate": "pnpm --filter @poli-money/db generate",
+    "db:migrate:dev": "pnpm --filter @poli-money/db migrate:dev",
+    "db:migrate:deploy": "pnpm --filter @poli-money/db migrate:deploy",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "node prisma/seed.cjs",
@@ -19,6 +23,7 @@
     "supabase:reset": "supabase db reset"
   },
   "dependencies": {
+    "@poli-money/db": "workspace:*",
     "@nivo/sankey": "^0.99.0",
     "@prisma/client": "^6.13.0",
     "date-fns": "^4.1.0",
