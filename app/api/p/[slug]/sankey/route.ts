@@ -21,9 +21,8 @@ export async function GET(
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
-  const transactions = await prisma.transaction.findMany({
-    where: { politicianId: politician.id },
-  });
+  // Use MfTransaction as the source of truth for Sankey
+  const transactions = await prisma.mfTransaction.findMany();
 
   const nodes = new Map<string, SankeyNode>();
   const linksAccumulator = new Map<string, number>();
@@ -36,23 +35,30 @@ export async function GET(
     linksAccumulator.set(key, (linksAccumulator.get(key) || 0) + amount);
   }
 
-  for (const t of transactions) {
+  // TEMP: limit to first 10 rows for debugging
+  const limited = transactions.slice(0, 10);
+
+  for (const t of limited) {
     if (t.direction === 'IN') {
-      const sourceName = t.counterparty || t.source || t.inflowType || 'Income';
-      addNode(nodes, sourceName);
-      incLink(sourceName, ACCOUNT, t.value);
+      // IN: creditAccount -> Account
+      const amount = Math.abs((t.creditAmountYen ?? t.debitAmountYen) ?? 0);
+      if (!amount) continue;
+      const credit = (t.creditAccount || 'Income').trim();
+      addNode(nodes, credit);
+      incLink(credit, ACCOUNT, amount);
     } else {
-      // OUT path: Account -> category -> category1 -> category2 (last present)
-      const path = [ACCOUNT];
-      const steps = [t.category, t.category1, t.category2].filter(Boolean) as string[];
-      if (steps.length === 0) {
-        steps.push('Expenses');
-      }
-      for (const step of steps) path.push(step);
-      for (let i = 0; i < path.length - 1; i++) {
-        addNode(nodes, path[i]);
-        addNode(nodes, path[i + 1]);
-        incLink(path[i], path[i + 1], t.value);
+      // OUT (two layers): Account -> debitAccount, then debitAccount -> debitDetail
+      const amount = Math.abs((t.debitAmountYen ?? t.creditAmountYen) ?? 0);
+      if (!amount) continue;
+      const debit = (t.debitAccount || 'Expenses').trim();
+      addNode(nodes, debit);
+      incLink(ACCOUNT, debit, amount);
+
+      const detailRaw = (t.summaryDetail || '').trim();
+      if (detailRaw) {
+        const detailNode = `${debit} - ${detailRaw}`;
+        addNode(nodes, detailNode);
+        incLink(debit, detailNode, amount);
       }
     }
   }
