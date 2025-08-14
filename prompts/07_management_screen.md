@@ -1,4 +1,4 @@
-# 管理画面
+# 管理画面 (./apps/managing-app)
 - a simple management screen for uploading csv files
 - have login, user-info, upload-csv
     - after login probably redirects to upload-csv

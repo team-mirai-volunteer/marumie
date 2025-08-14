@@ -40,3 +40,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 - User-facing app moved to `apps/user-facing-app`
   - dev: `cd apps/user-facing-app && npm run dev`
   - build: `npm run build`
+- Managing app scaffold at `apps/managing-app`
+  - dev: `cd apps/managing-app && npm run dev`
+  - routes:
+    - `/login` (dummy)
+    - `/upload-csv` (simple file upload, counts lines)
