@@ -9,3 +9,6 @@
 - basically
     - IN/OUT for in out
     - 貸方勘定科目 for in, 借方勘定科目 + 摘要_詳細 for out
+
+## security
+- can you add rls with no auth, no anon to the mf_transaction table? (so basically no api access) 
