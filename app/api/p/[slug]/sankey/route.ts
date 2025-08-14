@@ -35,8 +35,16 @@ export async function GET(
     linksAccumulator.set(key, (linksAccumulator.get(key) || 0) + amount);
   }
 
-  // TEMP: limit to first 10 rows for debugging
-  const limited = transactions.slice(0, 10);
+  // Keep rows >= minimal amount, then take the first 30 (preserve order)
+  const SANKEY_MINIMAL_LIMIT = 1000;
+  const filtered = transactions.filter((t) => {
+    const amount =
+      t.direction === 'IN'
+        ? Math.abs((t.creditAmountYen ?? 0))
+        : Math.abs((t.debitAmountYen ?? 0));
+    return amount >= SANKEY_MINIMAL_LIMIT;
+  });
+  const limited = filtered.slice(0, 30);
 
   for (const t of limited) {
     if (t.direction === 'IN') {
@@ -56,9 +64,9 @@ export async function GET(
 
       const detailRaw = (t.summaryDetail || '').trim();
       if (detailRaw) {
-        const detailNode = `${debit} - ${detailRaw}`;
-        addNode(nodes, detailNode);
-        incLink(debit, detailNode, amount);
+        // Use only the detail label for the second layer (no category prefix)
+        addNode(nodes, detailRaw);
+        incLink(debit, detailRaw, amount);
       }
     }
   }
