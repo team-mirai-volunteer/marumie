@@ -44,7 +44,9 @@ export async function GET(
         : Math.abs((t.debitAmountYen ?? 0));
     return amount >= SANKEY_MINIMAL_LIMIT;
   });
-  const limited = filtered.slice(0, 200);
+
+  // no limit
+  const limited = filtered.slice(0, filtered.length);
 
   for (const t of limited) {
     if (t.direction === 'IN') {
