@@ -2,11 +2,14 @@
   "name": "poli-money-alpha",
   "version": "0.1.0",
   "private": true,
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "prisma generate && prisma migrate deploy && next build",
-    "start": "next start",
+    "dev": "npm --prefix apps/user-facing-app run dev",
+    "build": "prisma generate && prisma migrate deploy && npm --prefix apps/user-facing-app run build",
+    "start": "npm --prefix apps/user-facing-app run start",
     "lint": "next lint",
     "postinstall": "prisma generate",
     "db:generate": "pnpm --filter @poli-money/db generate",
