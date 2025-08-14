@@ -36,7 +36,7 @@ export async function GET(
   }
 
   // Keep rows >= minimal amount, then take the first 30 (preserve order)
-  const SANKEY_MINIMAL_LIMIT = 1000;
+  const SANKEY_MINIMAL_LIMIT = 10_000;
   const filtered = transactions.filter((t) => {
     const amount =
       t.direction === 'IN'
@@ -44,7 +44,7 @@ export async function GET(
         : Math.abs((t.debitAmountYen ?? 0));
     return amount >= SANKEY_MINIMAL_LIMIT;
   });
-  const limited = filtered.slice(0, 30);
+  const limited = filtered.slice(0, 100);
 
   for (const t of limited) {
     if (t.direction === 'IN') {
