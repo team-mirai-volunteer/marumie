@@ -37,6 +37,7 @@ export default function SankeyChart({ slug }: { slug: string }) {
         margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
         align="justify"
         colors={{ scheme: 'category10' }}
+        valueFormat={(v) => Math.round(v as number).toLocaleString('ja-JP')}
         nodeOpacity={1}
         nodeBorderWidth={1}
         nodeBorderColor={{ from: 'color', modifiers: [['darker', 0.8]] }}

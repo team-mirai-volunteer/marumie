@@ -44,15 +44,18 @@ export async function GET(
         : Math.abs((t.debitAmountYen ?? 0));
     return amount >= SANKEY_MINIMAL_LIMIT;
   });
-  const limited = filtered.slice(0, 100);
+  const limited = filtered.slice(0, 200);
 
   for (const t of limited) {
     if (t.direction === 'IN') {
-      // IN: creditAccount -> Account
+      // IN two layers: summaryDetail (or row #) -> creditAccount -> Account
       const amount = Math.abs((t.creditAmountYen ?? t.debitAmountYen) ?? 0);
       if (!amount) continue;
       const credit = (t.creditAccount || 'Income').trim();
+      const detail = (t.summaryDetail || `#${t.transactionNo}`).trim();
+      addNode(nodes, detail);
       addNode(nodes, credit);
+      incLink(detail, credit, amount);
       incLink(credit, ACCOUNT, amount);
     } else {
       // OUT (two layers): Account -> debitAccount, then debitAccount -> debitDetail
