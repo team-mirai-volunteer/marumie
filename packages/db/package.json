@@ -1,5 +1,5 @@
 {
-  "name": "@poli-money/db",
+  "name": "@poli-money-alpha/db",
   "version": "0.0.0",
   "private": true,
   "main": "src/client.ts",

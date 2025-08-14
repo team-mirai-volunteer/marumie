@@ -18,7 +18,7 @@
 ```
 
 - `packages/db` owns schema, migrations, and exports a Prisma singleton.
-- Both apps depend on `@poli-money/db`.
+- Both apps depend on `@poli-money-alpha/db`.
 - Generate/migrate from the root using scripts:
 ```
 - db:generate
