@@ -2,6 +2,7 @@
 data
 */.next/*
 .next
+prompts
 
 # dependencies
 /node_modules
