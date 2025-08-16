@@ -44,4 +44,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# supabase generated files
+supabase/types.gen.ts
+
 /app/generated/prisma
+.claude

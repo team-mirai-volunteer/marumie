@@ -1,5 +1,20 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Quick Setup (新規参加者向け)
+
+```bash
+# 1. 依存関係インストール
+npm install
+
+# 2. Supabaseローカル環境セットアップ
+npm run supabase:setup:local
+
+# 3. 開発サーバー起動
+npm run dev
+```
+
+詳細なセットアップ手順は [docs/新規参加者向けSupabaseセットアップガイド.md](docs/20250816_1210_新規参加者向けSupabaseセットアップガイド.md) を参照してください。
+
 ## Getting Started
 
 First, run the development server:

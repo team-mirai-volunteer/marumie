@@ -23,7 +23,9 @@
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "supabase:types": "supabase gen types typescript --local > supabase/types.gen.ts",
-    "supabase:reset": "supabase db reset"
+    "supabase:reset": "supabase db reset",
+    "supabase:setup:local": "node supabase/setup-local.js",
+    "supabase:check": "docker exec supabase_db_poli-money-something psql -U postgres -d postgres -c \"\\dt\""
   },
   "dependencies": {
     "@poli-money-alpha/db": "workspace:*",
