@@ -22,9 +22,10 @@
     "supabase:init": "supabase init",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
-    "supabase:types": "supabase gen types typescript --local > supabase/types.gen.ts",
+    "supabase:types": "npx supabase gen types typescript --local > supabase/types.gen.ts",
     "supabase:reset": "supabase db reset",
-    "supabase:setup:local": "node supabase/setup-local.js",
+    "supabase:setup:local": "npx supabase start && npx supabase db reset && cat supabase/migrations/*.sql | docker exec -i supabase_db_poli-money-something psql -U postgres -d postgres && npm run supabase:types",
+    "supabase:setup:local:verbose": "node supabase/setup-local.js",
     "supabase:check": "docker exec supabase_db_poli-money-something psql -U postgres -d postgres -c \"\\dt\""
   },
   "dependencies": {
