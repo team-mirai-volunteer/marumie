@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { CreatePoliticalOrganizationUsecase, createPoliticalOrganizationUsecase } from '../../../server/usecases/create-political-organization-usecase';
+import { CreatePoliticalOrganizationUsecase } from '@/server/usecases/create-political-organization-usecase';
 import { PrismaClient } from '@prisma/client';
 
 export const runtime = 'nodejs';
