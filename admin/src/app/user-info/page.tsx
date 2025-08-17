@@ -9,6 +9,7 @@ export default async function UserInfoPage() {
           <a href="/">Dashboard</a>
           <a href="/user-info" className="active">User Info</a>
           <a href="/upload-csv">Upload CSV</a>
+          <a href="/political-organizations">政治団体</a>
         </nav>
       </aside>
       <main className="content">
@@ -22,5 +23,3 @@ export default async function UserInfoPage() {
     </div>
   );
 }
-
-

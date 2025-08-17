@@ -8,7 +8,8 @@ export default function Home() {
         <nav className="nav">
           <Link href="/">Dashboard</Link>
           <Link href="/user-info">User Info</Link>
-          <Link href="/upload-csv" className="active">Upload CSV</Link>
+          <Link href="/upload-csv">Upload CSV</Link>
+          <Link href="/political-organizations">政治団体</Link>
         </nav>
       </aside>
       <main className="content">
@@ -20,5 +21,3 @@ export default function Home() {
     </div>
   );
 }
-
-

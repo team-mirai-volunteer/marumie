@@ -1,8 +1,35 @@
 import { NextResponse } from 'next/server';
 import { createPoliticalOrganizationUsecase } from '../../../server/usecases/create-political-organization-usecase';
 import { CreatePoliticalOrganizationRequest } from '@/shared/model/political-organization';
+import { PrismaClient } from '@prisma/client';
 
 export const runtime = 'nodejs';
+
+const prisma = new PrismaClient();
+
+export async function GET() {
+  try {
+    const organizations = await prisma.politicalOrganization.findMany({
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    // Convert BigInt to string for JSON serialization
+    const serializedOrganizations = organizations.map(org => ({
+      ...org,
+      id: org.id.toString()
+    }));
+
+    return NextResponse.json(serializedOrganizations);
+  } catch (error) {
+    console.error('Error fetching political organizations:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(request: Request) {
   try {
@@ -39,7 +66,13 @@ export async function POST(request: Request) {
       description
     });
 
-    return NextResponse.json(organization, { status: 201 });
+    // Convert BigInt to string for JSON serialization
+    const serializedOrganization = {
+      ...organization,
+      id: organization.id.toString()
+    };
+
+    return NextResponse.json(serializedOrganization, { status: 201 });
   } catch (error) {
     console.error('Error creating political organization:', error);
 

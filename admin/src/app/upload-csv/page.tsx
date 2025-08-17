@@ -34,6 +34,7 @@ export default function UploadCsvPage() {
           <a href="/">Dashboard</a>
           <a href="/user-info">User Info</a>
           <a href="/upload-csv" className="active">Upload CSV</a>
+          <a href="/political-organizations">政治団体</a>
         </nav>
       </aside>
       <main className="content">
@@ -56,5 +57,3 @@ export default function UploadCsvPage() {
     </div>
   );
 }
-
-

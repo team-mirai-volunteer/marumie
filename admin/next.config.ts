@@ -1,9 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // srcディレクトリは自動的に認識されます
 };
 
 export default nextConfig;
-
-
