@@ -1,40 +1,42 @@
 import prisma from '@poli-money-alpha/db';
-import { PoliticalOrganizationRepository } from '../repositories/political-organization-repository';
 import {
-  PoliticalOrganization,
-  CreatePoliticalOrganizationRequest
+  PoliticalOrganization
 } from '@/shared/model/political-organization';
 
 /**
  * Create Political Organization Usecase
  *
  * This usecase provides the business logic for creating political organizations.
- * It encapsulates validation and coordinates with the repository layer.
+ * It encapsulates validation and uses Prisma directly.
  */
 export class CreatePoliticalOrganizationUsecase {
-  private repository: PoliticalOrganizationRepository;
-
-  constructor() {
-    this.repository = new PoliticalOrganizationRepository(prisma);
-  }
-
   /**
    * Execute the creation of a new political organization
    */
-  async execute(data: CreatePoliticalOrganizationRequest): Promise<PoliticalOrganization> {
+  async execute(name: string, description?: string): Promise<PoliticalOrganization> {
     try {
       // Validate required fields
-      if (!data.name || data.name.trim().length === 0) {
+      if (!name || name.trim().length === 0) {
         throw new Error('Organization name is required');
       }
 
       // Trim whitespace
-      const cleanData = {
-        name: data.name.trim(),
-        description: data.description?.trim() || undefined
-      };
+      const cleanName = name.trim();
+      const cleanDescription = description?.trim() || undefined;
 
-      return await this.repository.create(cleanData);
+      // Create organization using Prisma directly
+      const organization = await prisma.politicalOrganization.create({
+        data: {
+          name: cleanName,
+          description: cleanDescription
+        }
+      });
+
+      // Convert BigInt to string for JSON serialization
+      return {
+        ...organization,
+        id: organization.id.toString()
+      };
     } catch (error) {
       throw new Error(`Failed to create organization: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
