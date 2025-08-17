@@ -6,83 +6,54 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_URL")
-  directUrl = env("POSTGRES_URL_NON_POOLING")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
-enum TransactionDirection {
-  IN
-  OUT
+enum TransactionType {
+  income
+  expense
+  other
 }
 
-model Politician {
+model PoliticalOrganization {
   id           Int           @id @default(autoincrement())
-  slug         String        @unique
   name         String
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  description  String?
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
   transactions Transaction[]
+
+  @@map("political_organizations")
 }
 
 model Transaction {
-  id              Int                   @id @default(autoincrement())
-  politicianId    Int
-  politician      Politician            @relation(fields: [politicianId], references: [id], onDelete: Cascade)
-  date            DateTime
-  value           Int
-  direction       TransactionDirection
-  // Outgoing-specific fields
-  method          String?               // e.g., card, cash
-  category        String?
-  category1       String?
-  category2       String?
-  // Incoming-specific fields
-  counterparty    String?               // e.g., who
-  inflowType      String?               // e.g., personal, corporate
-  source          String?               // e.g., stripe, bank
-  createdAt       DateTime              @default(now())
-  updatedAt       DateTime              @updatedAt
+  id                      Int                  @id @default(autoincrement())
+  politicalOrganizationId Int                  @map("political_organization_id")
+  politicalOrganization   PoliticalOrganization @relation(fields: [politicalOrganizationId], references: [id], onDelete: Cascade)
+  transactionNo           String?              @unique @map("transaction_no")
+  transactionDate         DateTime             @map("transaction_date")
+  financialYear           Int                  @map("financial_year")
+  transactionType         TransactionType      @map("transaction_type")
+  debitAccount            String               @map("debit_account")
+  debitSubAccount         String?              @map("debit_sub_account")
+  debitDepartment         String?              @map("debit_department")
+  debitPartner            String?              @map("debit_partner")
+  debitTaxCategory        String?              @map("debit_tax_category")
+  debitAmount             Decimal              @map("debit_amount")
+  creditAccount           String               @map("credit_account")
+  creditSubAccount        String?              @map("credit_sub_account")
+  creditDepartment        String?              @map("credit_department")
+  creditPartner           String?              @map("credit_partner")
+  creditTaxCategory       String?              @map("credit_tax_category")
+  creditAmount            Decimal              @map("credit_amount")
+  description             String?
+  description1            String?              @map("description_1")
+  description2            String?              @map("description_2")
+  description3            String?              @map("description_3")
+  descriptionDetail       String?              @map("description_detail")
+  createdAt               DateTime             @default(now()) @map("created_at")
+  updatedAt               DateTime             @updatedAt @map("updated_at")
 
-  @@index([politicianId, direction])
-  @@index([date])
-}
-
-model MfTransaction {
-  id                 Int                     @id @default(autoincrement())
-  transactionNo      Int                     @unique
-  date               DateTime
-
-  debitAccount       String?
-  debitSubaccount    String?
-  debitDepartment    String?
-  debitCounterparty  String?
-  debitTaxCategory   String?
-  debitInvoice       String?
-  debitAmountYen     Int?
-
-  creditAccount      String?
-  creditSubaccount   String?
-  creditDepartment   String?
-  creditCounterparty String?
-  creditTaxCategory  String?
-  creditInvoice      String?
-  creditAmountYen    Int?
-
-  summary            String?
-  tags               String?
-  memo               String?
-  note1              String?
-  note2              String?
-  note3              String?
-  summaryDetail      String?
-
-  direction          TransactionDirection
-
-  createdAt          DateTime                @default(now())
-  updatedAt          DateTime                @updatedAt
-
-  @@index([date])
-  @@index([direction])
-  @@map("mf_transactions")
+  @@map("transactions")
 }

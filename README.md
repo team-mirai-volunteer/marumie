@@ -1,39 +1,110 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## ローカル開発環境のセットアップ
 
-## Getting Started
+このプロジェクトはSupabaseエミュレーターを使用してローカル開発を行います。
 
-First, run the development server:
+### 前提条件
+
+- Node.js (v18以上)
+- Docker Desktop
+- Supabase CLI
+
+### 初期設定
+
+1. **依存関係のインストール**
+   ```bash
+   npm install
+   ```
+
+2. **Supabaseエミュレーターの起動とデータベースセットアップ**
+   ```bash
+   npm run dev:setup
+   ```
+
+   このコマンドは以下を実行します：
+   - 依存関係のインストール
+   - Supabaseエミュレーターの起動
+   - Prismaマイグレーションの実行
+   - シードデータの投入
+
+### 日常的な開発作業
+
+#### 開発サーバーの起動
 
 ```bash
+# Supabaseエミュレーターと開発サーバーを同時に起動（推奨）
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# または個別に起動
+npm run supabase:start    # Supabaseエミュレーター起動
+npm run dev:webapp-only   # Next.js開発サーバーのみ起動
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+#### データベース管理
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Prismaマイグレーション実行
+npm run prisma:migrate
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# シードデータ投入
+npm run prisma:seed
 
-## Learn More
+# データベースリセット（注意：全データが削除されます）
+npm run supabase:reset
+```
 
-To learn more about Next.js, take a look at the following resources:
+### ブラウザからの確認方法
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+#### 1. アプリケーション
+- **メインアプリ**: [http://localhost:3000](http://localhost:3000)
+- **管理画面**: [http://localhost:3001](http://localhost:3001)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+#### 2. Supabase Dashboard（データベーステーブル確認）
+```bash
+npm run dev:db:studio
+```
+または直接アクセス: **[http://127.0.0.1:54323](http://127.0.0.1:54323)**
 
-## Deploy on Vercel
+Supabase Dashboardでは以下が確認できます：
+- **Table Editor** - データベーステーブルの内容を表形式で確認・編集
+- **SQL Editor** - SQLクエリの実行
+- **API Logs** - APIアクセスログの確認
+- **Authentication** - 認証設定
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**テーブル確認手順：**
+1. [http://127.0.0.1:54323](http://127.0.0.1:54323) にアクセス
+2. 左サイドバーの「Table Editor」をクリック
+3. `political_organizations` または `transactions` テーブルを選択
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+#### 3. データベーステーブル確認
+
+作成されたテーブル：
+- `political_organizations` - 政治団体情報
+- `transactions` - 取引データ（マネーフォワードクラウドからのインポートデータ）
+
+### 開発時のTips
+
+- Supabaseエミュレーターは Docker を使用するため、Docker Desktop が起動している必要があります
+- 初回起動時は Docker イメージのダウンロードに時間がかかる場合があります
+- データベースの変更後は `npm run supabase:types` でTypeScript型定義を更新してください
+
+### トラブルシューティング
+
+#### Supabaseエミュレーターが起動しない場合
+```bash
+# Docker の状態確認
+docker ps
+
+# Supabase エミュレーター停止・再起動
+npm run supabase:stop
+npm run supabase:start
+```
+
+#### データベースの状態をリセットしたい場合
+```bash
+npm run supabase:reset
+npm run prisma:migrate
+npm run prisma:seed
+```
 
 ## Apps
 
