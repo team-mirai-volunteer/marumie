@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url = env("POSTGRES_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 enum TransactionType {
@@ -17,9 +18,9 @@ enum TransactionType {
 }
 
 model PoliticalOrganization {
-  id           Int           @id @default(autoincrement())
-  name         String
-  description  String?
+  id           BigInt        @id @default(autoincrement())
+  name         String        @db.VarChar(255)
+  description  String?       @db.Text
   createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @updatedAt @map("updated_at")
   transactions Transaction[]
@@ -28,30 +29,30 @@ model PoliticalOrganization {
 }
 
 model Transaction {
-  id                      Int                  @id @default(autoincrement())
-  politicalOrganizationId Int                  @map("political_organization_id")
+  id                      BigInt               @id @default(autoincrement())
+  politicalOrganizationId BigInt               @map("political_organization_id")
   politicalOrganization   PoliticalOrganization @relation(fields: [politicalOrganizationId], references: [id], onDelete: Cascade)
-  transactionNo           String?              @unique @map("transaction_no")
-  transactionDate         DateTime             @map("transaction_date")
+  transactionNo           String?              @unique @map("transaction_no") @db.VarChar(255)
+  transactionDate         DateTime             @map("transaction_date") @db.Date
   financialYear           Int                  @map("financial_year")
   transactionType         TransactionType      @map("transaction_type")
-  debitAccount            String               @map("debit_account")
-  debitSubAccount         String?              @map("debit_sub_account")
-  debitDepartment         String?              @map("debit_department")
-  debitPartner            String?              @map("debit_partner")
-  debitTaxCategory        String?              @map("debit_tax_category")
-  debitAmount             Decimal              @map("debit_amount")
-  creditAccount           String               @map("credit_account")
-  creditSubAccount        String?              @map("credit_sub_account")
-  creditDepartment        String?              @map("credit_department")
-  creditPartner           String?              @map("credit_partner")
-  creditTaxCategory       String?              @map("credit_tax_category")
-  creditAmount            Decimal              @map("credit_amount")
-  description             String?
-  description1            String?              @map("description_1")
-  description2            String?              @map("description_2")
-  description3            String?              @map("description_3")
-  descriptionDetail       String?              @map("description_detail")
+  debitAccount            String               @map("debit_account") @db.VarChar(255)
+  debitSubAccount         String?              @map("debit_sub_account") @db.VarChar(255)
+  debitDepartment         String?              @map("debit_department") @db.VarChar(255)
+  debitPartner            String?              @map("debit_partner") @db.VarChar(255)
+  debitTaxCategory        String?              @map("debit_tax_category") @db.VarChar(255)
+  debitAmount             Decimal              @map("debit_amount") @db.Decimal(15, 2)
+  creditAccount           String               @map("credit_account") @db.VarChar(255)
+  creditSubAccount        String?              @map("credit_sub_account") @db.VarChar(255)
+  creditDepartment        String?              @map("credit_department") @db.VarChar(255)
+  creditPartner           String?              @map("credit_partner") @db.VarChar(255)
+  creditTaxCategory       String?              @map("credit_tax_category") @db.VarChar(255)
+  creditAmount            Decimal              @map("credit_amount") @db.Decimal(15, 2)
+  description             String?              @db.Text
+  description1            String?              @map("description_1") @db.Text
+  description2            String?              @map("description_2") @db.Text
+  description3            String?              @map("description_3") @db.Text
+  descriptionDetail       String?              @map("description_detail") @db.Text
   createdAt               DateTime             @default(now()) @map("created_at")
   updatedAt               DateTime             @updatedAt @map("updated_at")
 
