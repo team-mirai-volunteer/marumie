@@ -7,7 +7,9 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "npm --prefix apps/user-facing-app run dev",
+    "dev": "npm run supabase:start && npm --prefix apps/user-facing-app run dev",
+    "dev:setup": "npm install && npm run supabase:start && npm run prisma:migrate",
+    "dev:webapp-only": "npm --prefix apps/user-facing-app run dev",
     "build": "prisma generate && prisma migrate deploy && npm --prefix apps/user-facing-app run build && npm --prefix apps/managing-app run build",
     "start": "npm --prefix apps/user-facing-app run start",
     "lint": "next lint",
@@ -26,16 +28,16 @@
     "supabase:reset": "supabase db reset"
   },
   "dependencies": {
-    "@poli-money-alpha/db": "workspace:*",
     "@nivo/sankey": "^0.99.0",
-    "@prisma/client": "^6.13.0",
+    "@poli-money-alpha/db": "workspace:*",
+    "@prisma/client": "^6.14.0",
+    "csv-parse": "^5.5.6",
     "date-fns": "^4.1.0",
+    "dotenv": "^16.4.5",
     "next": "15.4.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "zod": "^4.0.15",
-    "csv-parse": "^5.5.6",
-    "dotenv": "^16.4.5"
+    "zod": "^4.0.15"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -46,7 +48,7 @@
     "dotenv-cli": "^10.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
-    "prisma": "^6.13.0",
+    "prisma": "^6.14.0",
     "supabase": "^2.33.9",
     "tailwindcss": "^4",
     "typescript": "^5"

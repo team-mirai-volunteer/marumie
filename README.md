@@ -1,47 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## ローカル開発手順
 
-## Getting Started
+このプロジェクトはSupabaseエミュレーターを使用してローカル開発を行います。
 
-First, run the development server:
+### 開発環境セットアップ
 
+1. **依存関係のインストール**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Supabaseエミュレーターの起動とデータベースセットアップ**
+```bash
+npm run dev:setup
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+このコマンドは以下を実行します：
+- 依存関係のインストール
+- Supabaseエミュレーターの起動
+- Prismaマイグレーションの実行
+- シードデータの投入
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 開発サーバーの起動
 
-## Learn More
+#### 開発サーバーの起動
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# Supabaseエミュレーターと開発サーバーを同時に起動（推奨）
+npm run dev
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# または個別に起動
+npm run supabase:start    # Supabaseエミュレーター起動
+npm run dev:webapp-only   # Next.js開発サーバーのみ起動
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+#### データベース管理
 
-## Deploy on Vercel
+```bash
+# Prismaマイグレーション実行
+npm run prisma:migrate
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# シードデータ投入
+npm run prisma:seed
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# データベースリセット（注意：全データが削除されます）
+npm run supabase:reset
+```
 
-## Apps
+### ブラウザからの確認方法
 
-- User-facing app moved to `apps/user-facing-app`
-  - dev: `cd apps/user-facing-app && npm run dev`
-  - build: `npm run build`
-- Managing app scaffold at `apps/managing-app`
-  - dev: `cd apps/managing-app && npm run dev`
-  - routes:
-    - `/login` (dummy)
-    - `/upload-csv` (simple file upload, counts lines)
+- **メインアプリ**: [http://localhost:3000](http://localhost:3000)
+- **管理画面**: [http://localhost:3001](http://localhost:3001)
+- **supabase emulator dashboard**: [http://127.0.0.1:54323](http://127.0.0.1:54323)
