@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { PrismaPoliticalOrganizationRepository } from '@/server/repositories/prisma-political-organization.repository';
 import { PrismaClient } from '@prisma/client';
 
 export const runtime = 'nodejs';
@@ -12,7 +11,7 @@ export async function GET(
 ) {
   try {
     const id = parseInt(params.id);
-    
+
     if (isNaN(id)) {
       return NextResponse.json(
         { error: 'Invalid organization ID' },
@@ -50,7 +49,7 @@ export async function PUT(
 ) {
   try {
     const id = parseInt(params.id);
-    
+
     if (isNaN(id)) {
       return NextResponse.json(
         { error: 'Invalid organization ID' },
