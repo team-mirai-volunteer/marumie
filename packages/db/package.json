@@ -1,16 +1,16 @@
 {
   "name": "@poli-money-alpha/db",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
-  "main": "src/client.ts",
-  "types": "src/client.ts",
-  "license": "UNLICENSED",
-  "dependencies": {
-    "@prisma/client": "^6.13.0"
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "generate": "prisma generate",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy"
   },
-  "devDependencies": {
-    "prisma": "^6.13.0"
+  "dependencies": {
+    "@prisma/client": "*",
+    "prisma": "*"
   }
 }
-
-

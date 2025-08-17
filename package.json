@@ -3,30 +3,33 @@
   "version": "0.1.0",
   "private": true,
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "packages/*",
+    "admin",
+    "webapp"
   ],
   "scripts": {
-    "dev": "npm run supabase:start && npm --prefix apps/user-facing-app run dev",
-    "dev:setup": "npm install && npm run supabase:start && npm run prisma:migrate && npm run prisma:seed",
-    "dev:webapp-only": "npm --prefix apps/user-facing-app run dev",
+    "dev": "npm run supabase:start && npm --prefix webapp run dev",
+    "dev:setup": "pnpm install && npm run supabase:start && npm run prisma:migrate && npm run prisma:seed",
+    "dev:webapp-only": "npm --prefix webapp run dev",
     "dev:admin": "npm --prefix admin run dev",
-    "build": "prisma generate && prisma migrate deploy && npm --prefix apps/user-facing-app run build && npm --prefix apps/managing-app run build",
-    "start": "npm --prefix apps/user-facing-app run start",
+    "build": "prisma generate && prisma migrate deploy && npm --prefix webapp run build",
+    "start": "npm --prefix webapp run start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "db:generate": "pnpm --filter @poli-money/db generate",
-    "db:migrate:dev": "pnpm --filter @poli-money/db migrate:dev",
-    "db:migrate:deploy": "pnpm --filter @poli-money/db migrate:deploy",
+    "db:generate": "pnpm --filter @poli-money-alpha/db generate",
+    "db:migrate:dev": "pnpm --filter @poli-money-alpha/db migrate:dev",
+    "db:migrate:deploy": "pnpm --filter @poli-money-alpha/db migrate:deploy",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "node prisma/seed.cjs",
     "data:import:mf": "node scripts/import-mf.cjs",
-    "supabase:init": "supabase init",
-    "supabase:start": "supabase start",
-    "supabase:stop": "supabase stop",
-    "supabase:types": "supabase gen types typescript --local > supabase/types.gen.ts",
-    "supabase:reset": "supabase db reset"
+    "supabase:init": "pnpm dlx supabase init",
+    "supabase:start": "pnpm dlx supabase start",
+    "supabase:stop": "pnpm dlx supabase stop",
+    "supabase:types": "pnpm dlx supabase gen types typescript --local > supabase/types.gen.ts",
+    "supabase:reset": "pnpm dlx supabase db reset",
+    "test": "npm --prefix admin run test",
+    "test:watch": "npm --prefix admin run test:watch"
   },
   "dependencies": {
     "@nivo/sankey": "^0.99.0",
@@ -50,7 +53,6 @@
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
     "prisma": "^6.14.0",
-    "supabase": "^2.33.9",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
