@@ -1,7 +1,9 @@
-import prisma from '@poli-money-alpha/db';
+import { PrismaClient } from '@prisma/client';
 import { PoliticalOrganization } from '@/shared/model/political-organization';
 
 export class CreatePoliticalOrganizationUsecase {
+  constructor(private prisma: PrismaClient) {}
+
   async execute(name: string, description?: string): Promise<PoliticalOrganization> {
     try {
       if (!name || name.trim().length === 0) {
@@ -11,7 +13,7 @@ export class CreatePoliticalOrganizationUsecase {
       const cleanName = name.trim();
       const cleanDescription = description?.trim() || undefined;
 
-      const organization = await prisma.politicalOrganization.create({
+      const organization = await this.prisma.politicalOrganization.create({
         data: { name: cleanName, description: cleanDescription }
       });
 

@@ -58,7 +58,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const usecase = new CreatePoliticalOrganizationUsecase();
+    const usecase = new CreatePoliticalOrganizationUsecase(prisma);
     const organization = await usecase.execute(name, description);
 
     return NextResponse.json(organization, { status: 201 });
