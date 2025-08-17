@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createPoliticalOrganizationUsecase } from '../../../server/usecases/create-political-organization-usecase';
+import { CreatePoliticalOrganizationUsecase, createPoliticalOrganizationUsecase } from '../../../server/usecases/create-political-organization-usecase';
 import { PrismaClient } from '@prisma/client';
 
 export const runtime = 'nodejs';
@@ -34,7 +34,6 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    // Validate request body
     if (!body || typeof body !== 'object') {
       return NextResponse.json(
         { error: 'Invalid request body' },
@@ -59,17 +58,15 @@ export async function POST(request: Request) {
       );
     }
 
-    // Execute the usecase
-    const organization = await createPoliticalOrganizationUsecase.execute(name, description);
+    const usecase = new CreatePoliticalOrganizationUsecase();
+    const organization = await usecase.execute(name, description);
 
-    // Organization ID is already converted to string in repository
     return NextResponse.json(organization, { status: 201 });
   } catch (error) {
     console.error('Error creating political organization:', error);
 
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
-    // Handle validation errors
     if (errorMessage.includes('required') || errorMessage.includes('cannot be empty')) {
       return NextResponse.json(
         { error: errorMessage },
@@ -77,7 +74,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Handle other errors
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
