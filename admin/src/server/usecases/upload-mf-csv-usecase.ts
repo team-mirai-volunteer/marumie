@@ -4,7 +4,7 @@ import { ITransactionRepository } from '../repositories/interfaces/transaction-r
 import { CreateTransactionInput } from '@/shared/model/transaction';
 
 export interface UploadMfCsvInput {
-  csvContent: string;
+  csvContent: string | Buffer;
   politicalOrganizationId: string;
 }
 
@@ -29,7 +29,9 @@ export class UploadMfCsvUsecase {
     };
 
     try {
-      const csvRecords = await this.csvLoader.load(input.csvContent);
+      const csvRecords = input.csvContent instanceof Buffer 
+        ? await this.csvLoader.loadFromBuffer(input.csvContent)
+        : await this.csvLoader.load(input.csvContent);
       result.processedCount = csvRecords.length;
 
       if (csvRecords.length === 0) {

@@ -23,10 +23,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing political organization ID' }, { status: 400 })
     }
 
-    const csvContent = await file.text()
+    const csvBuffer = Buffer.from(await file.arrayBuffer())
     
     const result = await uploadUsecase.execute({
-      csvContent,
+      csvContent: csvBuffer,
       politicalOrganizationId,
     })
 

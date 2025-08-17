@@ -10,10 +10,11 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@poli-money-alpha/db": "workspace:*",
+    "iconv-lite": "^0.6.3",
     "next": "*",
     "react": "*",
-    "react-dom": "*",
-    "@poli-money-alpha/db": "workspace:*"
+    "react-dom": "*"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
