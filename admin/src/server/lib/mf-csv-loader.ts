@@ -69,78 +69,80 @@ export class MfCsvLoader {
     }
 
     const dataLines = lines.slice(1);
-    const results: MfCsvRecord[] = [];
 
-    for (const line of dataLines) {
-      if (!line.trim()) continue;
-      
-      try {
-        const values = this.parseCSVLine(line);
-        const record = this.createRecord(headers, values);
-        results.push(record);
-      } catch (error) {
-        throw new Error(`Failed to parse CSV line: ${line}`);
-      }
-    }
-
-    return results;
+    return dataLines
+      .filter(line => line.trim())
+      .map(line => {
+        try {
+          const values = this.parseCSVLine(line);
+          return this.createRecord(headers, values);
+        } catch (error) {
+          throw new Error(`Failed to parse CSV line: ${line}`);
+        }
+      });
   }
 
   private parseCSVLine(line: string): string[] {
-    const result: string[] = [];
-    let current = '';
-    let inQuotes = false;
+    const chars = Array.from(line);
     
-    for (let i = 0; i < line.length; i++) {
-      const char = line[i];
-      
-      if (char === '"') {
-        inQuotes = !inQuotes;
-      } else if (char === ',' && !inQuotes) {
-        result.push(current);
-        current = '';
-      } else {
-        current += char;
-      }
-    }
+    const { result, current } = chars.reduce(
+      (acc, char) => {
+        if (char === '"') {
+          return { ...acc, inQuotes: !acc.inQuotes };
+        } else if (char === ',' && !acc.inQuotes) {
+          return {
+            result: [...acc.result, acc.current],
+            current: '',
+            inQuotes: acc.inQuotes,
+          };
+        } else {
+          return { ...acc, current: acc.current + char };
+        }
+      },
+      { result: [] as string[], current: '', inQuotes: false }
+    );
     
-    result.push(current);
-    return result;
+    return [...result, current];
   }
 
   private createRecord(headers: string[], values: string[]): MfCsvRecord {
-    const record: Partial<MfCsvRecord> = {};
-    
-    for (let i = 0; i < headers.length; i++) {
-      const header = headers[i];
-      const value = values[i] || '';
-      const mappedKey = this.columnMapping[header];
-      
-      if (mappedKey) {
-        record[mappedKey] = value;
-      }
-    }
+    const record = headers
+      .map((header, index) => ({
+        header,
+        value: values[index] || '',
+        mappedKey: this.columnMapping[header],
+      }))
+      .filter(({ mappedKey }) => mappedKey)
+      .reduce(
+        (acc, { mappedKey, value }) => ({
+          ...acc,
+          [mappedKey]: value,
+        }),
+        {} as Partial<MfCsvRecord>
+      );
 
-    return {
-      transaction_no: record.transaction_no || '',
-      transaction_date: record.transaction_date || '',
-      debit_account: record.debit_account || '',
-      debit_sub_account: record.debit_sub_account || '',
-      debit_department: record.debit_department || '',
-      debit_partner: record.debit_partner || '',
-      debit_tax_category: record.debit_tax_category || '',
-      debit_invoice: record.debit_invoice || '',
-      debit_amount: record.debit_amount || '',
-      credit_account: record.credit_account || '',
-      credit_sub_account: record.credit_sub_account || '',
-      credit_department: record.credit_department || '',
-      credit_partner: record.credit_partner || '',
-      credit_tax_category: record.credit_tax_category || '',
-      credit_invoice: record.credit_invoice || '',
-      credit_amount: record.credit_amount || '',
-      description: record.description || '',
-      tags: record.tags || '',
-      memo: record.memo || '',
+    const defaultRecord: MfCsvRecord = {
+      transaction_no: '',
+      transaction_date: '',
+      debit_account: '',
+      debit_sub_account: '',
+      debit_department: '',
+      debit_partner: '',
+      debit_tax_category: '',
+      debit_invoice: '',
+      debit_amount: '',
+      credit_account: '',
+      credit_sub_account: '',
+      credit_department: '',
+      credit_partner: '',
+      credit_tax_category: '',
+      credit_invoice: '',
+      credit_amount: '',
+      description: '',
+      tags: '',
+      memo: '',
     };
+
+    return { ...defaultRecord, ...record };
   }
 }
