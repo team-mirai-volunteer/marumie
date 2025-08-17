@@ -26,7 +26,9 @@
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "supabase:types": "supabase gen types typescript --local > supabase/types.gen.ts",
-    "supabase:reset": "supabase db reset"
+    "supabase:reset": "supabase db reset",
+    "test": "npm --prefix admin run test",
+    "test:watch": "npm --prefix admin run test:watch"
   },
   "dependencies": {
     "@nivo/sankey": "^0.99.0",
