@@ -1,5 +1,3 @@
-import * as iconv from 'iconv-lite';
-
 export interface MfCsvRecord {
   transaction_no: string;
   transaction_date: string;
@@ -51,31 +49,6 @@ export class MfCsvLoader {
   };
 
   constructor() {}
-
-  async loadFromBuffer(buffer: Buffer): Promise<MfCsvRecord[]> {
-    // Try to detect encoding and convert to UTF-8
-    let csvContent: string;
-    
-    try {
-      // First try Shift-JIS (common for Japanese CSV files)
-      csvContent = iconv.decode(buffer, 'shift_jis');
-      
-      // Check if the decoded content looks reasonable (contains expected Japanese characters)
-      if (csvContent.includes('取引') || csvContent.includes('借方') || csvContent.includes('貸方')) {
-        return this.load(csvContent);
-      }
-    } catch (error) {
-      // Shift-JIS decoding failed, continue to try other encodings
-    }
-    
-    try {
-      // Try UTF-8
-      csvContent = buffer.toString('utf8');
-      return this.load(csvContent);
-    } catch (error) {
-      throw new Error('Unable to decode CSV file. Unsupported encoding.');
-    }
-  }
 
   async load(csvContent: string): Promise<MfCsvRecord[]> {
     if (!csvContent.trim()) {

@@ -1,4 +1,5 @@
 import { MfCsvLoader } from '../../../src/server/lib/mf-csv-loader';
+import { EncodingConverter } from '../../../src/server/lib/encoding-converter';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -9,7 +10,7 @@ describe('MfCsvLoader Encoding Tests', () => {
     loader = new MfCsvLoader();
   });
 
-  describe('loadFromBuffer', () => {
+  describe('EncodingConverter + MfCsvLoader', () => {
     it('should handle Shift-JIS encoded CSV file', async () => {
       // Check if the actual CSV file exists
       const csvPath = path.join(__dirname, '../../../../data/【生データ取り扱い注意】仕訳帳_20250813_1148.csv');
@@ -20,8 +21,9 @@ describe('MfCsvLoader Encoding Tests', () => {
       }
 
       const buffer = fs.readFileSync(csvPath);
+      const csvString = EncodingConverter.bufferToString(buffer);
       
-      const result = await loader.loadFromBuffer(buffer);
+      const result = await loader.load(csvString);
       
       expect(result).toBeDefined();
       expect(Array.isArray(result)).toBe(true);
