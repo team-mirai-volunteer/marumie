@@ -29,17 +29,22 @@ export class MfCsvLoader {
     '借方部門': 'debit_department',
     '借方取引先': 'debit_partner',
     '借方税区分': 'debit_tax_category',
+    '借方税区': 'debit_tax_category', // 実際のMFフォーマット
     '借方インボイス': 'debit_invoice',
     '借方金額': 'debit_amount',
+    '借方金額(円)': 'debit_amount', // 実際のMFフォーマット
     '貸方勘定科目': 'credit_account',
     '貸方補助科目': 'credit_sub_account',
     '貸方部門': 'credit_department',
     '貸方取引先': 'credit_partner',
     '貸方税区分': 'credit_tax_category',
+    '貸方税区': 'credit_tax_category', // 実際のMFフォーマット
     '貸方インボイス': 'credit_invoice',
     '貸方金額': 'credit_amount',
+    '貸方金額(円)': 'credit_amount', // 実際のMFフォーマット
     '摘要': 'description',
     'タグ': 'tags',
+    '起訖タグ': 'tags', // 実際のMFフォーマット
     'メモ': 'memo',
   };
 

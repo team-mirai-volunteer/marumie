@@ -9,10 +9,20 @@
     "test": "jest",
     "test:watch": "jest --watch"
   },
+  "dependencies": {
+    "next": "*",
+    "react": "*",
+    "react-dom": "*",
+    "@poli-money-alpha/db": "workspace:*"
+  },
   "devDependencies": {
     "@types/jest": "^29.5.12",
+    "@types/node": "*",
+    "@types/react": "*",
+    "@types/react-dom": "*",
     "jest": "^29.7.0",
-    "ts-jest": "^29.1.2"
+    "ts-jest": "^29.1.2",
+    "typescript": "*"
   },
   "main": "jest.config.js",
   "directories": {
