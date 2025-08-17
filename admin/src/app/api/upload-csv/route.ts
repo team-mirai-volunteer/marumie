@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { UploadMfCsvUsecase } from '@/server/usecases/upload-mf-csv-usecase'
 import { PrismaTransactionRepository } from '@/server/repositories/prisma-transaction.repository'
+import { EncodingConverter } from '@/server/lib/encoding-converter'
 import { PrismaClient } from '@prisma/client'
 
 export const runtime = 'nodejs'
@@ -23,10 +24,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing political organization ID' }, { status: 400 })
     }
 
+    // Convert file to buffer and then to properly encoded string
     const csvBuffer = Buffer.from(await file.arrayBuffer())
+    const csvContent = EncodingConverter.bufferToString(csvBuffer)
     
     const result = await uploadUsecase.execute({
-      csvContent: csvBuffer,
+      csvContent,
       politicalOrganizationId,
     })
 

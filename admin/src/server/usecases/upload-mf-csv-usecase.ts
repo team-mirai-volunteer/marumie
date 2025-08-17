@@ -1,11 +1,10 @@
 import { MfCsvLoader } from '../lib/mf-csv-loader';
 import { MfRecordConverter } from '../lib/mf-record-converter';
-import { EncodingConverter } from '../lib/encoding-converter';
 import { ITransactionRepository } from '../repositories/interfaces/transaction-repository.interface';
 import { CreateTransactionInput } from '@/shared/model/transaction';
 
 export interface UploadMfCsvInput {
-  csvContent: string | Buffer;
+  csvContent: string;
   politicalOrganizationId: string;
 }
 
@@ -30,12 +29,7 @@ export class UploadMfCsvUsecase {
     };
 
     try {
-      // Convert buffer to string if needed
-      const csvString = input.csvContent instanceof Buffer
-        ? EncodingConverter.bufferToString(input.csvContent)
-        : input.csvContent;
-
-      const csvRecords = await this.csvLoader.load(csvString as string);
+      const csvRecords = await this.csvLoader.load(input.csvContent);
       result.processedCount = csvRecords.length;
 
       if (csvRecords.length === 0) {
