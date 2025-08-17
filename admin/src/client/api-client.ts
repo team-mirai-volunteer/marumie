@@ -1,5 +1,14 @@
 import { PoliticalOrganization } from '@/shared/model/political-organization';
-import { CreatePoliticalOrganizationRequest, UpdatePoliticalOrganizationRequest } from '@/shared/types/political-organization.types';
+
+export interface CreatePoliticalOrganizationRequest {
+  name: string;
+  description?: string;
+}
+
+export interface UpdatePoliticalOrganizationRequest {
+  name?: string;
+  description?: string;
+}
 
 export class ApiClient {
   private baseUrl: string;

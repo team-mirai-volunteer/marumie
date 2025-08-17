@@ -19,8 +19,8 @@ export default function Sidebar() {
       <nav className="nav">
         <Link href="/" className={isActive("/") ? "active" : ""}>Dashboard</Link>
         <Link href="/user-info" className={isActive("/user-info") ? "active" : ""}>User Info</Link>
-        <Link href="/upload-csv" className={isActive("/upload-csv") ? "active" : ""}>Upload CSV</Link>
         <Link href="/political-organizations" className={isActive("/political-organizations") ? "active" : ""}>政治団体</Link>
+        <Link href="/upload-csv" className={isActive("/upload-csv") ? "active" : ""}>CSVアップロード</Link>
       </nav>
     </aside>
   );

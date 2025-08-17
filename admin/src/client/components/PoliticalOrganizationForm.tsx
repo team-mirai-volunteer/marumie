@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { PoliticalOrganization } from '@/shared/model/political-organization';
 
 interface PoliticalOrganizationFormData {
   name: string;

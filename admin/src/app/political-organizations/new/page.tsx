@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PoliticalOrganizationForm } from '@/client/components/PoliticalOrganizationForm';
-import { CreatePoliticalOrganizationRequest } from '@/shared/types/political-organization.types';
-import { apiClient } from '@/client/api-client';
+import { apiClient, CreatePoliticalOrganizationRequest } from '@/client/api-client';
 
 export default function NewPoliticalOrganizationPage() {
   const router = useRouter();

@@ -3,9 +3,8 @@
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { PoliticalOrganizationForm } from '@/client/components/PoliticalOrganizationForm';
-import { UpdatePoliticalOrganizationRequest } from '@/shared/types/political-organization.types';
 import { PoliticalOrganization } from '@/shared/model/political-organization';
-import { apiClient } from '@/client/api-client';
+import { apiClient, UpdatePoliticalOrganizationRequest } from '@/client/api-client';
 
 interface EditPoliticalOrganizationPageProps {
   params: Promise<{ orgId: string }>;
