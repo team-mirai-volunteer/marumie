@@ -5,8 +5,3 @@ export interface PoliticalOrganization {
   createdAt: Date;
   updatedAt: Date;
 }
-
-
-export interface PoliticalOrganizationWithTransactionCount extends PoliticalOrganization {
-  transactionCount: number;
-}
