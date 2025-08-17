@@ -1,8 +1,8 @@
-import { PrismaClient } from '@prisma/client';
 import { PoliticalOrganization } from '@/shared/model/political-organization';
+import { IPoliticalOrganizationRepository } from '../repositories/interfaces/political-organization-repository.interface';
 
 export class CreatePoliticalOrganizationUsecase {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private repository: IPoliticalOrganizationRepository) {}
 
   async execute(name: string, description?: string): Promise<PoliticalOrganization> {
     try {
@@ -10,17 +10,7 @@ export class CreatePoliticalOrganizationUsecase {
         throw new Error('Organization name is required');
       }
 
-      const cleanName = name.trim();
-      const cleanDescription = description?.trim() || undefined;
-
-      const organization = await this.prisma.politicalOrganization.create({
-        data: { name: cleanName, description: cleanDescription }
-      });
-
-      return {
-        ...organization,
-        id: organization.id.toString()
-      };
+      return await this.repository.create(name, description);
     } catch (error) {
       throw new Error(`Failed to create organization: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }

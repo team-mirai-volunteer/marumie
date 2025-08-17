@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { CreatePoliticalOrganizationUsecase } from '@/server/usecases/create-political-organization-usecase';
+import { PrismaPoliticalOrganizationRepository } from '@/server/repositories/prisma-political-organization.repository';
 import { PrismaClient } from '@prisma/client';
 
 export const runtime = 'nodejs';
@@ -58,7 +59,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const usecase = new CreatePoliticalOrganizationUsecase(prisma);
+    const repository = new PrismaPoliticalOrganizationRepository(prisma);
+    const usecase = new CreatePoliticalOrganizationUsecase(repository);
     const organization = await usecase.execute(name, description);
 
     return NextResponse.json(organization, { status: 201 });
