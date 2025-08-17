@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "dev": "npm run supabase:start && npm --prefix apps/user-facing-app run dev",
+    "dev:setup": "npm install && npm run supabase:start && npm run prisma:migrate && npm run prisma:seed",
     "dev:webapp-only": "npm --prefix apps/user-facing-app run dev",
     "build": "prisma generate && prisma migrate deploy && npm --prefix apps/user-facing-app run build && npm --prefix apps/managing-app run build",
     "start": "npm --prefix apps/user-facing-app run start",
@@ -24,9 +25,7 @@
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "supabase:types": "supabase gen types typescript --local > supabase/types.gen.ts",
-    "supabase:reset": "supabase db reset",
-    "dev:setup": "npm install && npm run supabase:start && npm run prisma:migrate && npm run prisma:seed",
-    "dev:db:studio": "supabase dashboard"
+    "supabase:reset": "supabase db reset"
   },
   "dependencies": {
     "@nivo/sankey": "^0.99.0",
