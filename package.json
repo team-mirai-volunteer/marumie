@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "dev": "npm run supabase:start && npm --prefix apps/user-facing-app run dev",
-    "dev:setup": "npm install && npm run supabase:start && npm run prisma:migrate",
+    "dev:setup": "npm install && npm run supabase:start && npm run prisma:migrate && npm run prisma:seed",
     "dev:webapp-only": "npm --prefix apps/user-facing-app run dev",
     "dev:admin": "npm --prefix admin run dev",
     "build": "prisma generate && prisma migrate deploy && npm --prefix apps/user-facing-app run build && npm --prefix apps/managing-app run build",
