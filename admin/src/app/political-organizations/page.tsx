@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { PoliticalOrganization } from '@/shared/model/political-organization';
+import { apiClient } from '@/client/api-client';
 
 export default function PoliticalOrganizationsPage() {
   const [organizations, setOrganizations] = useState<PoliticalOrganization[]>([]);
@@ -16,11 +17,7 @@ export default function PoliticalOrganizationsPage() {
   const fetchOrganizations = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/political-organizations');
-      if (!response.ok) {
-        throw new Error('Failed to fetch organizations');
-      }
-      const data = await response.json();
+      const data = await apiClient.listPoliticalOrganizations();
       setOrganizations(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
@@ -60,14 +57,30 @@ export default function PoliticalOrganizationsPage() {
               <div style={{ display: 'grid', gap: '12px' }}>
                 {organizations.map((org) => (
                   <div key={org.id} className="card" style={{ background: '#0f1527' }}>
-                    <h3 style={{ margin: '0 0 8px 0' }}>{org.name}</h3>
-                    {org.description && (
-                      <p className="muted" style={{ margin: '0 0 12px 0' }}>
-                        {org.description}
-                      </p>
-                    )}
-                    <div className="muted" style={{ fontSize: '14px' }}>
-                      作成日: {new Date(org.createdAt).toLocaleDateString('ja-JP')}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
+                      <div style={{ flex: 1 }}>
+                        <h3 style={{ margin: '0 0 8px 0' }}>{org.name}</h3>
+                        {org.description && (
+                          <p className="muted" style={{ margin: '0 0 12px 0' }}>
+                            {org.description}
+                          </p>
+                        )}
+                        <div className="muted" style={{ fontSize: '14px' }}>
+                          作成日: {new Date(org.createdAt).toLocaleDateString('ja-JP')}
+                        </div>
+                      </div>
+                      <Link
+                        href={`/political-organizations/${org.id}`}
+                        className="button"
+                        style={{
+                          background: '#374151',
+                          textDecoration: 'none',
+                          fontSize: '14px',
+                          padding: '8px 16px'
+                        }}
+                      >
+                        編集
+                      </Link>
                     </div>
                   </div>
                 ))}
