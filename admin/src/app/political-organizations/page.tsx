@@ -30,18 +30,7 @@ export default function PoliticalOrganizationsPage() {
   };
 
   return (
-    <div className="container">
-      <aside className="sidebar">
-        <h2>管理画面</h2>
-        <nav className="nav">
-          <Link href="/">Dashboard</Link>
-          <Link href="/user-info">User Info</Link>
-          <Link href="/upload-csv">Upload CSV</Link>
-          <Link href="/political-organizations" className="active">政治団体</Link>
-        </nav>
-      </aside>
-      <main className="content">
-        <div className="card">
+    <div className="card">
           <div className="row">
             <h1>政治団体一覧</h1>
             <Link href="/political-organizations/new" className="button">
@@ -86,7 +75,5 @@ export default function PoliticalOrganizationsPage() {
             </div>
           )}
         </div>
-      </main>
-    </div>
   );
 }

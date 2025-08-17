@@ -27,33 +27,20 @@ export default function UploadCsvPage() {
   }
 
   return (
-    <div className="container">
-      <aside className="sidebar">
-        <h2>管理画面</h2>
-        <nav className="nav">
-          <a href="/">Dashboard</a>
-          <a href="/user-info">User Info</a>
-          <a href="/upload-csv" className="active">Upload CSV</a>
-          <a href="/political-organizations">政治団体</a>
-        </nav>
-      </aside>
-      <main className="content">
-        <div className="card">
-          <h1>Upload CSV</h1>
-          <form onSubmit={onSubmit} className="row">
-            <input
-              className="input"
-              type="file"
-              accept=".csv,text/csv"
-              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-            />
-            <button className="button" disabled={!file || uploading}>
-              {uploading ? 'Uploading…' : 'Upload'}
-            </button>
-          </form>
-          {message && <p className="muted" style={{ marginTop: 12 }}>{message}</p>}
-        </div>
-      </main>
+    <div className="card">
+      <h1>Upload CSV</h1>
+      <form onSubmit={onSubmit} className="row">
+        <input
+          className="input"
+          type="file"
+          accept=".csv,text/csv"
+          onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+        />
+        <button className="button" disabled={!file || uploading}>
+          {uploading ? 'Uploading…' : 'Upload'}
+        </button>
+      </form>
+      {message && <p className="muted" style={{ marginTop: 12 }}>{message}</p>}
     </div>
   );
 }
