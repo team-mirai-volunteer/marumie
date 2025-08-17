@@ -89,6 +89,7 @@ describe('MfRecordConverter', () => {
       const result = converter.convertRow(record);
 
       expect(result.transaction_type).toBe('収入');
+      expect(result.mapped_transaction_type).toBe('income');
     });
 
     it('should set transaction_type to 支出 when credit_account is 普通預金', () => {
@@ -100,6 +101,7 @@ describe('MfRecordConverter', () => {
       const result = converter.convertRow(record);
 
       expect(result.transaction_type).toBe('支出');
+      expect(result.mapped_transaction_type).toBe('expense');
     });
 
     it('should set transaction_type to それ以外 when neither account is 普通預金', () => {
@@ -111,6 +113,30 @@ describe('MfRecordConverter', () => {
       const result = converter.convertRow(record);
 
       expect(result.transaction_type).toBe('それ以外');
+      expect(result.mapped_transaction_type).toBe('other');
+    });
+
+    it('should calculate financial year correctly', () => {
+      // Test March (before April) - should be previous year
+      const marchRecord = createMockRecord({
+        transaction_date: '2025/3/15',
+      });
+      const marchResult = converter.convertRow(marchRecord);
+      expect(marchResult.financial_year).toBe(2024);
+
+      // Test April (start of fiscal year) - should be current year
+      const aprilRecord = createMockRecord({
+        transaction_date: '2025/4/1',
+      });
+      const aprilResult = converter.convertRow(aprilRecord);
+      expect(aprilResult.financial_year).toBe(2025);
+
+      // Test December (after April) - should be current year
+      const decemberRecord = createMockRecord({
+        transaction_date: '2025/12/31',
+      });
+      const decemberResult = converter.convertRow(decemberRecord);
+      expect(decemberResult.financial_year).toBe(2025);
     });
 
     it('should preserve all other fields from the original record', () => {
@@ -142,6 +168,27 @@ describe('MfRecordConverter', () => {
       const result = converter.convertRow(record);
 
       expect(result.transaction_type).toBe('収入');
+      expect(result.mapped_transaction_type).toBe('income');
+    });
+  });
+
+  describe('extractFinancialYear', () => {
+    it('should return correct financial year for dates before April', () => {
+      expect(converter.extractFinancialYear('2025/1/15')).toBe(2024);
+      expect(converter.extractFinancialYear('2025/3/31')).toBe(2024);
+    });
+
+    it('should return correct financial year for dates from April onwards', () => {
+      expect(converter.extractFinancialYear('2025/4/1')).toBe(2025);
+      expect(converter.extractFinancialYear('2025/12/31')).toBe(2025);
+    });
+  });
+
+  describe('mapTransactionType', () => {
+    it('should map Japanese transaction types to English correctly', () => {
+      expect(converter.mapTransactionType('収入')).toBe('income');
+      expect(converter.mapTransactionType('支出')).toBe('expense');
+      expect(converter.mapTransactionType('それ以外')).toBe('other');
     });
   });
 });

@@ -1,9 +1,12 @@
 import { MfCsvRecord } from './mf-csv-loader';
+import { TransactionType } from '@/shared/model/transaction';
 
 export interface ConvertedMfRecord {
   transaction_no: string;
   transaction_date: string;
+  financial_year: number;
   transaction_type: '収入' | '支出' | 'それ以外';
+  mapped_transaction_type: TransactionType;
   debit_account: string;
   debit_sub_account: string;
   debit_department: string;
@@ -33,11 +36,15 @@ export class MfRecordConverter {
       record.debit_account,
       record.credit_account
     );
+    const financialYear = this.extractFinancialYear(record.transaction_date);
+    const mappedTransactionType = this.mapTransactionType(transactionType);
 
     return {
       transaction_no: record.transaction_no,
       transaction_date: record.transaction_date,
+      financial_year: financialYear,
       transaction_type: transactionType,
+      mapped_transaction_type: mappedTransactionType,
       debit_account: record.debit_account,
       debit_sub_account: record.debit_sub_account,
       debit_department: record.debit_department,
@@ -79,6 +86,27 @@ export class MfRecordConverter {
       return '支出';
     } else {
       return 'それ以外';
+    }
+  }
+
+  public extractFinancialYear(dateString: string): number {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    
+    return month >= 4 ? year : year - 1;
+  }
+
+  public mapTransactionType(type: '収入' | '支出' | 'それ以外'): TransactionType {
+    switch (type) {
+      case '収入':
+        return 'income';
+      case '支出':
+        return 'expense';
+      case 'それ以外':
+        return 'other';
+      default:
+        return 'other';
     }
   }
 }
