@@ -15,6 +15,17 @@ enum TransactionDirection {
   OUT
 }
 
+model PoliticalOrganization {
+  id           Int           @id @default(autoincrement())
+  name         String
+  description  String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  transactions MfTransaction[]
+
+  @@map("political_organizations")
+}
+
 model Politician {
   id           Int           @id @default(autoincrement())
   slug         String        @unique
@@ -48,9 +59,11 @@ model Transaction {
 }
 
 model MfTransaction {
-  id                 Int                     @id @default(autoincrement())
-  transactionNo      Int                     @unique
-  date               DateTime
+  id                      Int                     @id @default(autoincrement())
+  politicalOrganizationId Int
+  politicalOrganization   PoliticalOrganization   @relation(fields: [politicalOrganizationId], references: [id], onDelete: Cascade)
+  transactionNo           Int                     @unique
+  date                    DateTime
 
   debitAccount       String?
   debitSubaccount    String?
@@ -83,7 +96,6 @@ model MfTransaction {
 
   @@index([date])
   @@index([direction])
+  @@index([politicalOrganizationId])
   @@map("mf_transactions")
 }
-
-

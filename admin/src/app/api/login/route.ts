@@ -5,5 +5,3 @@ export async function POST(request: Request) {
   const _ = await request.json().catch(() => ({}))
   return NextResponse.json({ ok: true })
 }
-
-

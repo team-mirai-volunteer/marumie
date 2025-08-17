@@ -51,3 +51,4 @@ next-env.d.ts
 *.db
 *.db-journal
 prisma/dev.db*
+.claude
