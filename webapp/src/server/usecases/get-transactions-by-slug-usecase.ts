@@ -1,13 +1,13 @@
+import type { PoliticalOrganization } from "@/shared/models/political-organization";
 import type {
   Transaction,
   TransactionFilters,
 } from "@/shared/models/transaction";
-import type { PoliticalOrganization } from "@/shared/models/political-organization";
+import type { IPoliticalOrganizationRepository } from "../repositories/interfaces/political-organization-repository.interface";
 import type {
   ITransactionRepository,
   PaginationOptions,
 } from "../repositories/interfaces/transaction-repository.interface";
-import type { IPoliticalOrganizationRepository } from "../repositories/interfaces/political-organization-repository.interface";
 
 export interface GetTransactionsBySlugParams {
   slug: string;

@@ -1,9 +1,9 @@
 import "server-only";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import TransactionTable from "@/client/components/TransactionTable";
 import { getTransactionsBySlugAction } from "@/server/actions/get-transactions-by-slug";
-import type { Metadata } from "next";
 
 interface TransactionsPageProps {
   params: Promise<{ slug: string }>;
