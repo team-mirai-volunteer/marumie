@@ -42,8 +42,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const { name, description } = body as {
+    const { name, slug, description } = body as {
       name: string;
+      slug: string;
       description?: string;
     };
 
@@ -51,6 +52,13 @@ export async function POST(request: Request) {
     if (!name || typeof name !== "string") {
       return NextResponse.json(
         { error: "Name is required and must be a string" },
+        { status: 400 },
+      );
+    }
+
+    if (!slug || typeof slug !== "string") {
+      return NextResponse.json(
+        { error: "Slug is required and must be a string" },
         { status: 400 },
       );
     }
@@ -64,7 +72,7 @@ export async function POST(request: Request) {
 
     const repository = new PrismaPoliticalOrganizationRepository(prisma);
     const usecase = new CreatePoliticalOrganizationUsecase(repository);
-    const organization = await usecase.execute(name, description);
+    const organization = await usecase.execute(name, slug, description);
 
     return NextResponse.json(organization, { status: 201 });
   } catch (error) {

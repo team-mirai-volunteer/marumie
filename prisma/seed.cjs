@@ -8,7 +8,7 @@ async function main() {
     // チームみらいの政治組織データを作成
     // 既存のデータがあるかチェック
     const existingTeamMirai = await prisma.politicalOrganization.findFirst({
-        where: { name: 'チームみらい' }
+        where: { slug: 'team-mirai' }
     });
 
     let teamMirai;
@@ -16,6 +16,7 @@ async function main() {
         teamMirai = await prisma.politicalOrganization.create({
             data: {
                 name: 'チームみらい',
+                slug: 'team-mirai',
                 description: 'チームみらい（Team Mirai）は、日本の政党。2024年東京都知事選挙でAIエンジニアの安野貴博のもとに集まった「チーム安野」を前身として、2025年5月8日に設立された。安野が党首を務めている。第27回参議院議員通常選挙において政党要件を満たし、国政政党となった。公職選挙法における略称は「みらい」。',
             },
         });
