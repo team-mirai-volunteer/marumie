@@ -147,11 +147,18 @@ export function PoliticalOrganizationForm({
           <button
             type="submit"
             className="button"
-            disabled={isLoading || !formData.name.trim() || !formData.slug.trim()}
+            disabled={
+              isLoading || !formData.name.trim() || !formData.slug.trim()
+            }
             style={{
-              opacity: isLoading || !formData.name.trim() || !formData.slug.trim() ? 0.6 : 1,
+              opacity:
+                isLoading || !formData.name.trim() || !formData.slug.trim()
+                  ? 0.6
+                  : 1,
               cursor:
-                isLoading || !formData.name.trim() || !formData.slug.trim() ? "not-allowed" : "pointer",
+                isLoading || !formData.name.trim() || !formData.slug.trim()
+                  ? "not-allowed"
+                  : "pointer",
             }}
           >
             {isLoading ? "処理中..." : submitButtonText}
