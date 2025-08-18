@@ -1,0 +1,39 @@
+import type { PrismaClient } from "@prisma/client";
+import type { PoliticalOrganization } from "@/shared/models/political-organization";
+import type { IPoliticalOrganizationRepository } from "./interfaces/political-organization-repository.interface";
+
+export class PrismaPoliticalOrganizationRepository
+  implements IPoliticalOrganizationRepository
+{
+  constructor(private prisma: PrismaClient) {}
+
+  async findBySlug(slug: string): Promise<PoliticalOrganization | null> {
+    const organization = await this.prisma.politicalOrganization.findUnique({
+      where: { slug },
+    });
+
+    return organization ? this.mapToPoliticalOrganization(organization) : null;
+  }
+
+  async findById(id: string): Promise<PoliticalOrganization | null> {
+    const organization = await this.prisma.politicalOrganization.findUnique({
+      where: { id: BigInt(id) },
+    });
+
+    return organization ? this.mapToPoliticalOrganization(organization) : null;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private mapToPoliticalOrganization(
+    prismaOrganization: any,
+  ): PoliticalOrganization {
+    return {
+      id: prismaOrganization.id.toString(),
+      name: prismaOrganization.name,
+      slug: prismaOrganization.slug,
+      description: prismaOrganization.description,
+      createdAt: prismaOrganization.createdAt,
+      updatedAt: prismaOrganization.updatedAt,
+    };
+  }
+}
