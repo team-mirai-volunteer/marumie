@@ -14,6 +14,8 @@ export class MfRecordConverter {
     );
     const financialYear = this.extractFinancialYear(record.transaction_date);
 
+    const descriptionParts = this.splitDescription(record.description);
+
     return {
       political_organization_id: politicalOrganizationId,
       transaction_no: record.transaction_no,
@@ -33,8 +35,11 @@ export class MfRecordConverter {
       credit_tax_category: record.credit_tax_category,
       credit_amount: creditAmount,
       description: record.description,
-      description_1: record.tags,
-      description_2: record.memo,
+      description_1: descriptionParts.description_1,
+      description_2: descriptionParts.description_2,
+      description_3: descriptionParts.description_3,
+      tags: record.tags,
+      memo: record.memo,
     };
   }
 
@@ -59,6 +64,43 @@ export class MfRecordConverter {
       return 'expense';
     } else {
       return 'other';
+    }
+  }
+
+  private splitDescription(description: string): {
+    description_1?: string;
+    description_2?: string;
+    description_3?: string;
+  } {
+    if (!description || description.trim() === '') {
+      return {};
+    }
+
+    const parts = description.trim().split(/\s+/);
+
+    switch (parts.length) {
+      case 1:
+        return {
+          description_1: parts[0]
+        };
+      case 2:
+        return {
+          description_1: parts[0],
+          description_3: parts[1]
+        };
+      case 3:
+        return {
+          description_1: parts[0],
+          description_2: parts[1],
+          description_3: parts[2]
+        };
+      default:
+        // 4つ以上の場合、3つめ以降を結合
+        return {
+          description_1: parts[0],
+          description_2: parts[1],
+          description_3: parts.slice(2).join(' ')
+        };
     }
   }
 

@@ -1,6 +1,6 @@
-import { MfRecordConverter } from '../../../src/server/lib/mf-record-converter';
-import { MfCsvRecord } from '../../../src/server/lib/mf-csv-loader';
-import { CreateTransactionInput } from '../../../src/shared/model/transaction';
+import { MfRecordConverter } from '@/server/lib/mf-record-converter';
+import { MfCsvRecord } from '@/server/lib/mf-csv-loader';
+import { CreateTransactionInput } from '@/shared/model/transaction';
 
 describe('MfRecordConverter', () => {
   let converter: MfRecordConverter;
@@ -154,8 +154,8 @@ describe('MfRecordConverter', () => {
       expect(result.transaction_date).toEqual(new Date('2025/12/31'));
       expect(result.debit_account).toBe('普通預金');
       expect(result.debit_sub_account).toBe('テスト銀行');
-      expect(result.description_1).toBe('テストタグ');
-      expect(result.description_2).toBe('テストメモ');
+      expect(result.tags).toBe('テストタグ');
+      expect(result.memo).toBe('テストメモ');
     });
 
     it('should prioritize debit_account when both accounts are 普通預金', () => {
@@ -167,6 +167,98 @@ describe('MfRecordConverter', () => {
       const result = converter.convertRow(record, 'test-org-id');
 
       expect(result.transaction_type).toBe('income');
+    });
+
+    describe('description splitting logic', () => {
+      it('should split description with 1 word into description_1 only', () => {
+        const record = createMockRecord({
+          description: '振込1',
+        });
+
+        const result = converter.convertRow(record, 'test-org-id');
+
+        expect(result.description).toBe('振込1');
+        expect(result.description_1).toBe('振込1');
+        expect(result.description_2).toBeUndefined();
+        expect(result.description_3).toBeUndefined();
+      });
+
+      it('should split description with 2 words into description_1 and description_3', () => {
+        const record = createMockRecord({
+          description: '振込1 TEAM',
+        });
+
+        const result = converter.convertRow(record, 'test-org-id');
+
+        expect(result.description).toBe('振込1 TEAM');
+        expect(result.description_1).toBe('振込1');
+        expect(result.description_2).toBeUndefined();
+        expect(result.description_3).toBe('TEAM');
+      });
+
+      it('should split description with 3 words into description_1, description_2, and description_3', () => {
+        const record = createMockRecord({
+          description: '振込1 ウルシバラ シゲル',
+        });
+
+        const result = converter.convertRow(record, 'test-org-id');
+
+        expect(result.description).toBe('振込1 ウルシバラ シゲル');
+        expect(result.description_1).toBe('振込1');
+        expect(result.description_2).toBe('ウルシバラ');
+        expect(result.description_3).toBe('シゲル');
+      });
+
+      it('should split description with 4+ words and combine 3rd+ words into description_3', () => {
+        const record = createMockRecord({
+          description: '振込1 A B C D E',
+        });
+
+        const result = converter.convertRow(record, 'test-org-id');
+
+        expect(result.description).toBe('振込1 A B C D E');
+        expect(result.description_1).toBe('振込1');
+        expect(result.description_2).toBe('A');
+        expect(result.description_3).toBe('B C D E');
+      });
+
+      it('should handle empty description', () => {
+        const record = createMockRecord({
+          description: '',
+        });
+
+        const result = converter.convertRow(record, 'test-org-id');
+
+        expect(result.description).toBe('');
+        expect(result.description_1).toBeUndefined();
+        expect(result.description_2).toBeUndefined();
+        expect(result.description_3).toBeUndefined();
+      });
+
+      it('should handle description with multiple spaces', () => {
+        const record = createMockRecord({
+          description: '振込1   TEAM   NAME',
+        });
+
+        const result = converter.convertRow(record, 'test-org-id');
+
+        expect(result.description).toBe('振込1   TEAM   NAME');
+        expect(result.description_1).toBe('振込1');
+        expect(result.description_2).toBe('TEAM');
+        expect(result.description_3).toBe('NAME');
+      });
+    });
+
+    it('should preserve tags and memo fields as-is', () => {
+      const record = createMockRecord({
+        tags: 'テストタグ値',
+        memo: 'テストメモ値',
+      });
+
+      const result = converter.convertRow(record, 'test-org-id');
+
+      expect(result.tags).toBe('テストタグ値');
+      expect(result.memo).toBe('テストメモ値');
     });
   });
 
