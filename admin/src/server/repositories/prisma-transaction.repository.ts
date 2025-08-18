@@ -1,15 +1,15 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient, Prisma } from "@prisma/client";
 import {
   Transaction,
   CreateTransactionInput,
   UpdateTransactionInput,
   TransactionFilters,
-} from '@/shared/model/transaction';
-import { 
-  ITransactionRepository, 
-  PaginatedResult, 
-  PaginationOptions 
-} from './interfaces/transaction-repository.interface';
+} from "@/shared/model/transaction";
+import {
+  ITransactionRepository,
+  PaginatedResult,
+  PaginationOptions,
+} from "./interfaces/transaction-repository.interface";
 
 export class PrismaTransactionRepository implements ITransactionRepository {
   constructor(private prisma: PrismaClient) {}
@@ -60,7 +60,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
 
     const transactions = await this.prisma.transaction.findMany({
       where,
-      orderBy: { transactionDate: 'desc' },
+      orderBy: { transactionDate: "desc" },
     });
 
     return transactions.map(this.mapToTransaction);
@@ -68,10 +68,10 @@ export class PrismaTransactionRepository implements ITransactionRepository {
 
   async findWithPagination(
     filters?: TransactionFilters,
-    pagination?: PaginationOptions
+    pagination?: PaginationOptions,
   ): Promise<PaginatedResult<Transaction>> {
     const where = this.buildWhereClause(filters);
-    
+
     const page = pagination?.page || 1;
     const perPage = pagination?.perPage || 50;
     const skip = (page - 1) * perPage;
@@ -79,7 +79,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     const [transactions, total] = await Promise.all([
       this.prisma.transaction.findMany({
         where,
-        orderBy: { transactionDate: 'desc' },
+        orderBy: { transactionDate: "desc" },
         skip,
         take: perPage,
       }),
@@ -97,7 +97,9 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     };
   }
 
-  private buildWhereClause(filters?: TransactionFilters): Prisma.TransactionWhereInput {
+  private buildWhereClause(
+    filters?: TransactionFilters,
+  ): Prisma.TransactionWhereInput {
     const where: Prisma.TransactionWhereInput = {};
 
     if (filters?.transaction_type) {
@@ -107,14 +109,14 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     if (filters?.debit_account) {
       where.debitAccount = {
         contains: filters.debit_account,
-        mode: 'insensitive',
+        mode: "insensitive",
       };
     }
 
     if (filters?.credit_account) {
       where.creditAccount = {
         contains: filters.credit_account,
-        mode: 'insensitive',
+        mode: "insensitive",
       };
     }
 
@@ -139,12 +141,15 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     return where;
   }
 
-  async update(_id: string, _input: UpdateTransactionInput): Promise<Transaction> {
-    throw new Error('Transaction update is not implemented');
+  async update(
+    _id: string,
+    _input: UpdateTransactionInput,
+  ): Promise<Transaction> {
+    throw new Error("Transaction update is not implemented");
   }
 
   async delete(_id: string): Promise<void> {
-    throw new Error('Transaction delete is not implemented');
+    throw new Error("Transaction delete is not implemented");
   }
 
   async deleteAll(filters?: TransactionFilters): Promise<number> {
@@ -158,7 +163,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   }
 
   async createMany(inputs: CreateTransactionInput[]): Promise<Transaction[]> {
-    const data = inputs.map(input => ({
+    const data = inputs.map((input) => ({
       politicalOrganizationId: BigInt(input.political_organization_id),
       transactionNo: input.transaction_no,
       transactionDate: input.transaction_date,
@@ -192,10 +197,12 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     const createdTransactions = await this.prisma.transaction.findMany({
       where: {
         transactionNo: {
-          in: inputs.map(input => input.transaction_no).filter((no): no is string => Boolean(no)),
+          in: inputs
+            .map((input) => input.transaction_no)
+            .filter((no): no is string => Boolean(no)),
         },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       take: inputs.length,
     });
 
@@ -208,7 +215,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   }> {
     // 既存のtransaction_noを取得
     const transactionNos = inputs
-      .map(input => input.transaction_no)
+      .map((input) => input.transaction_no)
       .filter(Boolean) as string[];
 
     const existingTransactions = await this.prisma.transaction.findMany({
@@ -223,12 +230,14 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     });
 
     const existingTransactionNos = new Set(
-      existingTransactions.map(t => t.transactionNo).filter(Boolean)
+      existingTransactions.map((t) => t.transactionNo).filter(Boolean),
     );
 
     // 重複していないものだけをフィルタリング
     const newInputs = inputs.filter(
-      input => !input.transaction_no || !existingTransactionNos.has(input.transaction_no)
+      (input) =>
+        !input.transaction_no ||
+        !existingTransactionNos.has(input.transaction_no),
     );
 
     const skippedCount = inputs.length - newInputs.length;
@@ -253,7 +262,8 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   public mapToTransaction(prismaTransaction: any): Transaction {
     return {
       id: prismaTransaction.id.toString(),
-      political_organization_id: prismaTransaction.politicalOrganizationId.toString(),
+      political_organization_id:
+        prismaTransaction.politicalOrganizationId.toString(),
       transaction_no: prismaTransaction.transactionNo,
       transaction_date: prismaTransaction.transactionDate,
       financial_year: prismaTransaction.financialYear,

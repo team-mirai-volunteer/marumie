@@ -1,8 +1,8 @@
 // Types
-export * from '@/shared/model/political-organization';
+export * from "@/shared/model/political-organization";
 
 // Repository
-export * from './repositories/prisma-political-organization.repository';
+export * from "./repositories/prisma-political-organization.repository";
 
 // Usecase
-export * from './usecases/create-political-organization-usecase';
+export * from "./usecases/create-political-organization-usecase";

@@ -1,15 +1,18 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { apiClient } from '@/client/api-client';
-import { PoliticalOrganization } from '@/shared/model/political-organization';
+import { useState, useEffect } from "react";
+import { apiClient } from "@/client/api-client";
+import { PoliticalOrganization } from "@/shared/model/political-organization";
 
 export default function UploadCsvPage() {
   const [file, setFile] = useState<File | null>(null);
-  const [politicalOrganizationId, setPoliticalOrganizationId] = useState<string>('');
-  const [message, setMessage] = useState<string>('');
+  const [politicalOrganizationId, setPoliticalOrganizationId] =
+    useState<string>("");
+  const [message, setMessage] = useState<string>("");
   const [uploading, setUploading] = useState(false);
-  const [organizations, setOrganizations] = useState<PoliticalOrganization[]>([]);
+  const [organizations, setOrganizations] = useState<PoliticalOrganization[]>(
+    [],
+  );
   const [loadingOrganizations, setLoadingOrganizations] = useState(true);
 
   useEffect(() => {
@@ -22,8 +25,8 @@ export default function UploadCsvPage() {
           setPoliticalOrganizationId(data[0].id);
         }
       } catch (error) {
-        console.error('Error fetching organizations:', error);
-        setMessage('Error loading political organizations');
+        console.error("Error fetching organizations:", error);
+        setMessage("Error loading political organizations");
       } finally {
         setLoadingOrganizations(false);
       }
@@ -36,7 +39,7 @@ export default function UploadCsvPage() {
     e.preventDefault();
     if (!file || !politicalOrganizationId) return;
     setUploading(true);
-    setMessage('');
+    setMessage("");
 
     try {
       const result = await apiClient.uploadCsv({
@@ -44,7 +47,10 @@ export default function UploadCsvPage() {
         politicalOrganizationId,
       });
 
-      setMessage(result.message || `Successfully processed ${result.processedCount} records and saved ${result.savedCount} transactions`);
+      setMessage(
+        result.message ||
+          `Successfully processed ${result.processedCount} records and saved ${result.savedCount} transactions`,
+      );
     } catch (err) {
       setMessage(`Error: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
@@ -61,7 +67,7 @@ export default function UploadCsvPage() {
             Political Organization:
           </label>
           {loadingOrganizations ? (
-            <div className="input" style={{ color: '#666' }}>
+            <div className="input" style={{ color: "#666" }}>
               Loading organizations...
             </div>
           ) : (
@@ -98,10 +104,15 @@ export default function UploadCsvPage() {
         </div>
         <button
           className="button"
-          disabled={!file || !politicalOrganizationId || uploading || loadingOrganizations}
+          disabled={
+            !file ||
+            !politicalOrganizationId ||
+            uploading ||
+            loadingOrganizations
+          }
           type="submit"
         >
-          {uploading ? 'Processing…' : 'Upload and Process'}
+          {uploading ? "Processing…" : "Upload and Process"}
         </button>
       </form>
       {message && (
@@ -110,8 +121,10 @@ export default function UploadCsvPage() {
           style={{
             marginTop: 12,
             padding: 12,
-            backgroundColor: message.startsWith('Error:') ? '#ffebee' : '#e8f5e8',
-            borderRadius: 4
+            backgroundColor: message.startsWith("Error:")
+              ? "#ffebee"
+              : "#e8f5e8",
+            borderRadius: 4,
           }}
         >
           {message}

@@ -1,5 +1,5 @@
-import { PoliticalOrganization } from '@/shared/model/political-organization';
-import { Transaction } from '@/shared/model/transaction';
+import { PoliticalOrganization } from "@/shared/model/political-organization";
+import { Transaction } from "@/shared/model/transaction";
 
 export interface CreatePoliticalOrganizationRequest {
   name: string;
@@ -39,13 +39,13 @@ export class ApiClient {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = process.env.NODE_ENV === 'development' ? '' : '';
+    this.baseUrl = process.env.NODE_ENV === "development" ? "" : "";
   }
 
   private async request<T>(url: string, options: RequestInit = {}): Promise<T> {
     const response = await fetch(`${this.baseUrl}${url}`, {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         ...options.headers,
       },
       ...options,
@@ -53,62 +53,81 @@ export class ApiClient {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      throw new Error(
+        errorData.error || `HTTP error! status: ${response.status}`,
+      );
     }
 
     return response.json();
   }
 
-  private async requestFormData<T>(url: string, formData: FormData): Promise<T> {
+  private async requestFormData<T>(
+    url: string,
+    formData: FormData,
+  ): Promise<T> {
     const response = await fetch(`${this.baseUrl}${url}`, {
-      method: 'POST',
+      method: "POST",
       body: formData,
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      const errorMsg = errorData.error || 'Upload failed';
-      const details = errorData.details ? ` Details: ${Array.isArray(errorData.details) ? errorData.details.join(', ') : errorData.details}` : '';
+      const errorMsg = errorData.error || "Upload failed";
+      const details = errorData.details
+        ? ` Details: ${Array.isArray(errorData.details) ? errorData.details.join(", ") : errorData.details}`
+        : "";
       throw new Error(errorMsg + details);
     }
 
     return response.json();
   }
 
-  async createPoliticalOrganization(data: CreatePoliticalOrganizationRequest): Promise<PoliticalOrganization> {
-    return this.request<PoliticalOrganization>('/api/political-organizations', {
-      method: 'POST',
+  async createPoliticalOrganization(
+    data: CreatePoliticalOrganizationRequest,
+  ): Promise<PoliticalOrganization> {
+    return this.request<PoliticalOrganization>("/api/political-organizations", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
 
   async getPoliticalOrganization(id: string): Promise<PoliticalOrganization> {
-    return this.request<PoliticalOrganization>(`/api/political-organizations/${id}`);
+    return this.request<PoliticalOrganization>(
+      `/api/political-organizations/${id}`,
+    );
   }
 
-  async updatePoliticalOrganization(id: string, data: UpdatePoliticalOrganizationRequest): Promise<PoliticalOrganization> {
-    return this.request<PoliticalOrganization>(`/api/political-organizations/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
+  async updatePoliticalOrganization(
+    id: string,
+    data: UpdatePoliticalOrganizationRequest,
+  ): Promise<PoliticalOrganization> {
+    return this.request<PoliticalOrganization>(
+      `/api/political-organizations/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(data),
+      },
+    );
   }
 
   async deletePoliticalOrganization(id: string): Promise<void> {
     await this.request<void>(`/api/political-organizations/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
   async listPoliticalOrganizations(): Promise<PoliticalOrganization[]> {
-    return this.request<PoliticalOrganization[]>('/api/political-organizations');
+    return this.request<PoliticalOrganization[]>(
+      "/api/political-organizations",
+    );
   }
 
   async uploadCsv(data: UploadCsvRequest): Promise<UploadCsvResponse> {
     const formData = new FormData();
-    formData.append('file', data.file);
-    formData.append('politicalOrganizationId', data.politicalOrganizationId);
-    
-    return this.requestFormData<UploadCsvResponse>('/api/upload-csv', formData);
+    formData.append("file", data.file);
+    formData.append("politicalOrganizationId", data.politicalOrganizationId);
+
+    return this.requestFormData<UploadCsvResponse>("/api/upload-csv", formData);
   }
 
   async getTransactions(params?: {
@@ -121,14 +140,21 @@ export class ApiClient {
     financialYear?: number;
   }): Promise<TransactionListResponse> {
     const searchParams = new URLSearchParams();
-    
-    if (params?.page) searchParams.append('page', params.page.toString());
-    if (params?.perPage) searchParams.append('perPage', params.perPage.toString());
-    if (params?.politicalOrganizationId) searchParams.append('politicalOrganizationId', params.politicalOrganizationId);
-    if (params?.transactionType) searchParams.append('transactionType', params.transactionType);
-    if (params?.dateFrom) searchParams.append('dateFrom', params.dateFrom);
-    if (params?.dateTo) searchParams.append('dateTo', params.dateTo);
-    if (params?.financialYear) searchParams.append('financialYear', params.financialYear.toString());
+
+    if (params?.page) searchParams.append("page", params.page.toString());
+    if (params?.perPage)
+      searchParams.append("perPage", params.perPage.toString());
+    if (params?.politicalOrganizationId)
+      searchParams.append(
+        "politicalOrganizationId",
+        params.politicalOrganizationId,
+      );
+    if (params?.transactionType)
+      searchParams.append("transactionType", params.transactionType);
+    if (params?.dateFrom) searchParams.append("dateFrom", params.dateFrom);
+    if (params?.dateTo) searchParams.append("dateTo", params.dateTo);
+    if (params?.financialYear)
+      searchParams.append("financialYear", params.financialYear.toString());
 
     const url = `/api/transactions?${searchParams.toString()}`;
     return this.request<TransactionListResponse>(url);
@@ -142,16 +168,22 @@ export class ApiClient {
     financialYear?: number;
   }): Promise<DeleteAllTransactionsResponse> {
     const searchParams = new URLSearchParams();
-    
-    if (params?.politicalOrganizationId) searchParams.append('politicalOrganizationId', params.politicalOrganizationId);
-    if (params?.transactionType) searchParams.append('transactionType', params.transactionType);
-    if (params?.dateFrom) searchParams.append('dateFrom', params.dateFrom);
-    if (params?.dateTo) searchParams.append('dateTo', params.dateTo);
-    if (params?.financialYear) searchParams.append('financialYear', params.financialYear.toString());
+
+    if (params?.politicalOrganizationId)
+      searchParams.append(
+        "politicalOrganizationId",
+        params.politicalOrganizationId,
+      );
+    if (params?.transactionType)
+      searchParams.append("transactionType", params.transactionType);
+    if (params?.dateFrom) searchParams.append("dateFrom", params.dateFrom);
+    if (params?.dateTo) searchParams.append("dateTo", params.dateTo);
+    if (params?.financialYear)
+      searchParams.append("financialYear", params.financialYear.toString());
 
     const url = `/api/transactions?${searchParams.toString()}`;
     return this.request<DeleteAllTransactionsResponse>(url, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 }

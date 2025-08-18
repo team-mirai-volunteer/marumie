@@ -4,8 +4,12 @@ export default async function UserInfoPage() {
   return (
     <div className="card">
       <h1>User Info</h1>
-      <p><b>ID:</b> {user.id}</p>
-      <p><b>Email:</b> {user.email}</p>
+      <p>
+        <b>ID:</b> {user.id}
+      </p>
+      <p>
+        <b>Email:</b> {user.email}
+      </p>
       <p className="muted">Auth wiring to be added later.</p>
     </div>
   );

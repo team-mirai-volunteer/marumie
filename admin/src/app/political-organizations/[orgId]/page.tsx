@@ -1,21 +1,27 @@
-'use client';
+"use client";
 
-import { useState, useEffect, use } from 'react';
-import { useRouter } from 'next/navigation';
-import { PoliticalOrganizationForm } from '@/client/components/PoliticalOrganizationForm';
-import { PoliticalOrganization } from '@/shared/model/political-organization';
-import { apiClient, UpdatePoliticalOrganizationRequest } from '@/client/api-client';
+import { useState, useEffect, use } from "react";
+import { useRouter } from "next/navigation";
+import { PoliticalOrganizationForm } from "@/client/components/PoliticalOrganizationForm";
+import { PoliticalOrganization } from "@/shared/model/political-organization";
+import {
+  apiClient,
+  UpdatePoliticalOrganizationRequest,
+} from "@/client/api-client";
 
 interface EditPoliticalOrganizationPageProps {
   params: Promise<{ orgId: string }>;
 }
 
-export default function EditPoliticalOrganizationPage({ params }: EditPoliticalOrganizationPageProps) {
+export default function EditPoliticalOrganizationPage({
+  params,
+}: EditPoliticalOrganizationPageProps) {
   const { orgId } = use(params);
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [organization, setOrganization] = useState<PoliticalOrganization | null>(null);
+  const [organization, setOrganization] =
+    useState<PoliticalOrganization | null>(null);
   const [fetchLoading, setFetchLoading] = useState(true);
 
   useEffect(() => {
@@ -24,10 +30,10 @@ export default function EditPoliticalOrganizationPage({ params }: EditPoliticalO
         const data = await apiClient.getPoliticalOrganization(orgId);
         setOrganization(data);
       } catch (err) {
-        if (err instanceof Error && err.message.includes('404')) {
-          setError('政治団体が見つかりません');
+        if (err instanceof Error && err.message.includes("404")) {
+          setError("政治団体が見つかりません");
         } else {
-          setError('政治団体の取得に失敗しました');
+          setError("政治団体の取得に失敗しました");
         }
       } finally {
         setFetchLoading(false);
@@ -37,9 +43,12 @@ export default function EditPoliticalOrganizationPage({ params }: EditPoliticalO
     fetchOrganization();
   }, [orgId]);
 
-  const handleSubmit = async (formData: { name: string; description: string }) => {
+  const handleSubmit = async (formData: {
+    name: string;
+    description: string;
+  }) => {
     if (!formData.name.trim()) {
-      setError('政治団体名は必須です');
+      setError("政治団体名は必須です");
       return;
     }
 
@@ -49,14 +58,16 @@ export default function EditPoliticalOrganizationPage({ params }: EditPoliticalO
 
       const requestData: UpdatePoliticalOrganizationRequest = {
         name: formData.name.trim(),
-        ...(formData.description?.trim() && { description: formData.description.trim() })
+        ...(formData.description?.trim() && {
+          description: formData.description.trim(),
+        }),
       };
 
       await apiClient.updatePoliticalOrganization(orgId, requestData);
 
-      router.push('/political-organizations');
+      router.push("/political-organizations");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setLoading(false);
     }
@@ -65,7 +76,7 @@ export default function EditPoliticalOrganizationPage({ params }: EditPoliticalO
   if (fetchLoading) {
     return (
       <div className="card">
-        <div style={{ textAlign: 'center', padding: '40px' }}>
+        <div style={{ textAlign: "center", padding: "40px" }}>
           読み込み中...
         </div>
       </div>
@@ -75,7 +86,7 @@ export default function EditPoliticalOrganizationPage({ params }: EditPoliticalO
   if (error && !organization) {
     return (
       <div className="card">
-        <div style={{ color: '#ff6b6b', textAlign: 'center', padding: '40px' }}>
+        <div style={{ color: "#ff6b6b", textAlign: "center", padding: "40px" }}>
           {error}
         </div>
       </div>
@@ -85,7 +96,7 @@ export default function EditPoliticalOrganizationPage({ params }: EditPoliticalO
   if (!organization) {
     return (
       <div className="card">
-        <div style={{ textAlign: 'center', padding: '40px' }}>
+        <div style={{ textAlign: "center", padding: "40px" }}>
           政治団体が見つかりません
         </div>
       </div>
@@ -96,7 +107,7 @@ export default function EditPoliticalOrganizationPage({ params }: EditPoliticalO
     <PoliticalOrganizationForm
       initialData={{
         name: organization.name,
-        description: organization.description || ''
+        description: organization.description || "",
       }}
       onSubmit={handleSubmit}
       submitButtonText="更新"

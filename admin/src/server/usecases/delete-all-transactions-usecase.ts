@@ -1,9 +1,9 @@
-import { TransactionFilters } from '@/shared/model/transaction';
-import { ITransactionRepository } from '../repositories/interfaces/transaction-repository.interface';
+import { TransactionFilters } from "@/shared/model/transaction";
+import { ITransactionRepository } from "../repositories/interfaces/transaction-repository.interface";
 
 export interface DeleteAllTransactionsParams {
   politicalOrganizationId?: string;
-  transactionType?: 'income' | 'expense' | 'other';
+  transactionType?: "income" | "expense" | "other";
   dateFrom?: Date;
   dateTo?: Date;
   financialYear?: number;
@@ -16,10 +16,12 @@ export interface DeleteAllTransactionsResult {
 export class DeleteAllTransactionsUsecase {
   constructor(private repository: ITransactionRepository) {}
 
-  async execute(params: DeleteAllTransactionsParams = {}): Promise<DeleteAllTransactionsResult> {
+  async execute(
+    params: DeleteAllTransactionsParams = {},
+  ): Promise<DeleteAllTransactionsResult> {
     try {
       const filters: TransactionFilters = {};
-      
+
       if (params.politicalOrganizationId) {
         filters.political_organization_id = params.politicalOrganizationId;
       }
@@ -42,7 +44,9 @@ export class DeleteAllTransactionsUsecase {
         deletedCount,
       };
     } catch (error) {
-      throw new Error(`Failed to delete transactions: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to delete transactions: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 }
