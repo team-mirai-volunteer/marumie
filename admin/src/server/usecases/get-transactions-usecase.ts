@@ -1,5 +1,8 @@
 import { Transaction, TransactionFilters } from '@/shared/model/transaction';
-import { ITransactionRepository } from '../repositories/interfaces/transaction-repository.interface';
+import { 
+  ITransactionRepository,
+  PaginationOptions 
+} from '../repositories/interfaces/transaction-repository.interface';
 
 export interface GetTransactionsParams {
   page?: number;
@@ -44,19 +47,19 @@ export class GetTransactionsUsecase {
         filters.financial_year = params.financialYear;
       }
 
-      const transactions = await this.repository.findAll(filters);
-      const total = transactions.length;
-
-      const skip = (page - 1) * perPage;
-      const paginatedTransactions = transactions.slice(skip, skip + perPage);
-      const totalPages = Math.ceil(total / perPage);
-
-      return {
-        transactions: paginatedTransactions,
-        total,
+      const pagination: PaginationOptions = {
         page,
         perPage,
-        totalPages,
+      };
+
+      const result = await this.repository.findWithPagination(filters, pagination);
+
+      return {
+        transactions: result.items,
+        total: result.total,
+        page: result.page,
+        perPage: result.perPage,
+        totalPages: result.totalPages,
       };
     } catch (error) {
       throw new Error(`Failed to get transactions: ${error instanceof Error ? error.message : 'Unknown error'}`);

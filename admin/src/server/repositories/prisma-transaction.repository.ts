@@ -5,7 +5,11 @@ import {
   UpdateTransactionInput,
   TransactionFilters,
 } from '@/shared/model/transaction';
-import { ITransactionRepository } from './interfaces/transaction-repository.interface';
+import { 
+  ITransactionRepository, 
+  PaginatedResult, 
+  PaginationOptions 
+} from './interfaces/transaction-repository.interface';
 
 export class PrismaTransactionRepository implements ITransactionRepository {
   constructor(private prisma: PrismaClient) {}
@@ -52,6 +56,48 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   }
 
   async findAll(filters?: TransactionFilters): Promise<Transaction[]> {
+    const where = this.buildWhereClause(filters);
+
+    const transactions = await this.prisma.transaction.findMany({
+      where,
+      orderBy: { transactionDate: 'desc' },
+    });
+
+    return transactions.map(this.mapToTransaction);
+  }
+
+  async findWithPagination(
+    filters?: TransactionFilters,
+    pagination?: PaginationOptions
+  ): Promise<PaginatedResult<Transaction>> {
+    const where = this.buildWhereClause(filters);
+    
+    const page = pagination?.page || 1;
+    const perPage = pagination?.perPage || 50;
+    const skip = (page - 1) * perPage;
+
+    const [transactions, total] = await Promise.all([
+      this.prisma.transaction.findMany({
+        where,
+        orderBy: { transactionDate: 'desc' },
+        skip,
+        take: perPage,
+      }),
+      this.prisma.transaction.count({ where }),
+    ]);
+
+    const totalPages = Math.ceil(total / perPage);
+
+    return {
+      items: transactions.map(this.mapToTransaction),
+      total,
+      page,
+      perPage,
+      totalPages,
+    };
+  }
+
+  private buildWhereClause(filters?: TransactionFilters): Prisma.TransactionWhereInput {
     const where: Prisma.TransactionWhereInput = {};
 
     if (filters?.transaction_type) {
@@ -90,12 +136,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       }
     }
 
-    const transactions = await this.prisma.transaction.findMany({
-      where,
-      orderBy: { transactionDate: 'desc' },
-    });
-
-    return transactions.map(this.mapToTransaction);
+    return where;
   }
 
   async update(_id: string, _input: UpdateTransactionInput): Promise<Transaction> {
@@ -107,43 +148,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   }
 
   async deleteAll(filters?: TransactionFilters): Promise<number> {
-    const where: Prisma.TransactionWhereInput = {};
-
-    if (filters?.transaction_type) {
-      where.transactionType = filters.transaction_type;
-    }
-
-    if (filters?.debit_account) {
-      where.debitAccount = {
-        contains: filters.debit_account,
-        mode: 'insensitive',
-      };
-    }
-
-    if (filters?.credit_account) {
-      where.creditAccount = {
-        contains: filters.credit_account,
-        mode: 'insensitive',
-      };
-    }
-
-    if (filters?.political_organization_id) {
-      where.politicalOrganizationId = BigInt(filters.political_organization_id);
-    }
-
-    if (filters?.financial_year) {
-      where.financialYear = filters.financial_year;
-    }
-
-    if (filters?.date_from || filters?.date_to) {
-      where.transactionDate = {};
-      if (filters.date_from) {
-        where.transactionDate.gte = filters.date_from;
-      }
-      if (filters.date_to) {
-        where.transactionDate.lte = filters.date_to;
-      }
-    }
+    const where = this.buildWhereClause(filters);
 
     const result = await this.prisma.transaction.deleteMany({
       where,
