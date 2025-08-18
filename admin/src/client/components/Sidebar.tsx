@@ -26,6 +26,7 @@ export default function Sidebar() {
       <nav className="nav">
         <Link href="/user-info" className={isActive("/user-info") ? "active" : ""}>User Info</Link>
         <Link href="/political-organizations" className={isActive("/political-organizations") ? "active" : ""}>政治団体</Link>
+        <Link href="/transactions" className={isActive("/transactions") ? "active" : ""}>トランザクション</Link>
         <Link href="/upload-csv" className={isActive("/upload-csv") ? "active" : ""}>CSVアップロード</Link>
       </nav>
     </aside>

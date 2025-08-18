@@ -37,13 +37,13 @@ export default function UploadCsvPage() {
     if (!file || !politicalOrganizationId) return;
     setUploading(true);
     setMessage('');
-    
+
     try {
       const result = await apiClient.uploadCsv({
         file,
         politicalOrganizationId,
       });
-      
+
       setMessage(result.message || `Successfully processed ${result.processedCount} records and saved ${result.savedCount} transactions`);
     } catch (err) {
       setMessage(`Error: ${err instanceof Error ? err.message : String(err)}`);
@@ -54,7 +54,7 @@ export default function UploadCsvPage() {
 
   return (
     <div className="card">
-      <h1>Upload Money Forward CSV</h1>
+      <h1>CSVアップロード</h1>
       <form onSubmit={onSubmit} className="column" style={{ gap: 12 }}>
         <div>
           <label htmlFor="politicalOrganizationId" className="label">
@@ -96,8 +96,8 @@ export default function UploadCsvPage() {
             required
           />
         </div>
-        <button 
-          className="button" 
+        <button
+          className="button"
           disabled={!file || !politicalOrganizationId || uploading || loadingOrganizations}
           type="submit"
         >
@@ -105,13 +105,13 @@ export default function UploadCsvPage() {
         </button>
       </form>
       {message && (
-        <div 
-          className="muted" 
-          style={{ 
-            marginTop: 12, 
-            padding: 12, 
+        <div
+          className="muted"
+          style={{
+            marginTop: 12,
+            padding: 12,
             backgroundColor: message.startsWith('Error:') ? '#ffebee' : '#e8f5e8',
-            borderRadius: 4 
+            borderRadius: 4
           }}
         >
           {message}
