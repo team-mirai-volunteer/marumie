@@ -1,6 +1,6 @@
 import { MfRecordConverter } from "@/server/lib/mf-record-converter";
 import { MfCsvRecord } from "@/server/lib/mf-csv-loader";
-import { CreateTransactionInput } from "@/shared/model/transaction";
+import { CreateTransactionInput } from "@/shared/models/transaction";
 
 describe("MfRecordConverter", () => {
   let converter: MfRecordConverter;

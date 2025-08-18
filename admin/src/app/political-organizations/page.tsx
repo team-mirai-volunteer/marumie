@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { apiClient } from "@/client/clients/api-client";
-import type { PoliticalOrganization } from "@/shared/model/political-organization";
+import type { PoliticalOrganization } from "@/shared/models/political-organization";
 
 export default function PoliticalOrganizationsPage() {
   const [organizations, setOrganizations] = useState<PoliticalOrganization[]>(

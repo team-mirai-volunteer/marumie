@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useState } from "react";
 import { apiClient } from "@/client/clients/api-client";
-import type { PoliticalOrganization } from "@/shared/model/political-organization";
+import type { PoliticalOrganization } from "@/shared/models/political-organization";
 
 export default function UploadCsvPage() {
   const politicalOrgSelectId = useId();

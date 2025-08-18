@@ -1,4 +1,4 @@
-import type { CreateTransactionInput } from "@/shared/model/transaction";
+import type { CreateTransactionInput } from "@/shared/models/transaction";
 import { MfCsvLoader } from "../lib/mf-csv-loader";
 import { MfRecordConverter } from "../lib/mf-record-converter";
 import type { ITransactionRepository } from "../repositories/interfaces/transaction-repository.interface";

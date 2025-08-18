@@ -5,7 +5,7 @@ import {
   type UploadMfCsvInput,
 } from "@/server/usecases/upload-mf-csv-usecase";
 import type { ITransactionRepository } from "@/server/repositories/interfaces/transaction-repository.interface";
-import type { CreateTransactionInput } from "@/shared/model/transaction";
+import type { CreateTransactionInput } from "@/shared/models/transaction";
 
 describe("UploadMfCsvUsecase", () => {
   let usecase: UploadMfCsvUsecase;
