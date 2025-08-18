@@ -33,10 +33,14 @@ export default async function Page() {
 }
 
 // クライアントコンポーネントの場合
-import 'client-only';
 'use client';
+import 'client-only';
 
 export default function ClientComponent() {
   // ...
 }
 ```
+
+### 重要事項
+- **クライアントコンポーネント**: `'use client';`ディレクティブは必ず最初の行に配置すること
+- `import 'client-only';`は`'use client';`の後に記述する

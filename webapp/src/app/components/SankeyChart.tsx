@@ -1,5 +1,5 @@
-import 'client-only';
 "use client";
+import 'client-only';
 
 import { ResponsiveSankey } from '@nivo/sankey';
 import { useEffect, useState } from 'react';

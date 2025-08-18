@@ -1,5 +1,5 @@
-import 'client-only';
 "use client";
+import 'client-only';
 
 import { useRouter, useSearchParams } from "next/navigation";
 import type { Transaction } from "@/shared/models/transaction";
