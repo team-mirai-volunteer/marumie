@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { apiClient } from "@/client/api-client";
+import { apiClient } from "@/client/clients/api-client";
 import { PoliticalOrganization } from "@/shared/model/political-organization";
 
 export default function UploadCsvPage() {
