@@ -8,13 +8,13 @@
     "webapp"
   ],
   "scripts": {
-    "dev": "pnpm supabase:start && pnpm --filter user-facing-app dev",
+    "dev": "pnpm supabase:start && pnpm --filter webapp dev",
     "dev:setup": "pnpm install && pnpm supabase:start && pnpm prisma:migrate && pnpm prisma:seed",
-    "dev:webapp-only": "pnpm --filter user-facing-app dev",
-    "dev:admin": "pnpm --filter managing-app dev",
-    "build": "prisma generate && prisma migrate deploy && pnpm --filter user-facing-app build",
-    "start": "pnpm --filter user-facing-app start",
-    "lint": "pnpm --filter managing-app lint",
+    "dev:webapp-only": "pnpm --filter webapp dev",
+    "dev:admin": "pnpm --filter admin dev",
+    "build": "prisma generate && prisma migrate deploy && pnpm --filter webapp build",
+    "start": "pnpm --filter webapp start",
+    "lint": "pnpm --filter admin lint",
     "format": "biome format --write .",
     "postinstall": "prisma generate",
     "db:generate": "pnpm --filter @poli-money-alpha/db generate",
@@ -29,8 +29,8 @@
     "supabase:stop": "pnpm dlx supabase stop",
     "supabase:types": "pnpm dlx supabase gen types typescript --local > supabase/types.gen.ts",
     "supabase:reset": "pnpm dlx supabase db reset",
-    "test": "pnpm --filter managing-app test",
-    "test:watch": "pnpm --filter managing-app test:watch"
+    "test": "pnpm --filter admin test",
+    "test:watch": "pnpm --filter admin test:watch"
   },
   "dependencies": {
     "@nivo/sankey": "^0.99.0",
