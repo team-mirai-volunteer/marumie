@@ -13,7 +13,7 @@ const prisma = new PrismaClient();
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: Promise<{ slug: string }> },
 ) {
   try {
     const resolvedParams = await params;
@@ -33,7 +33,8 @@ export async function GET(
     }
 
     const transactionRepository = new PrismaTransactionRepository(prisma);
-    const politicalOrganizationRepository = new PrismaPoliticalOrganizationRepository(prisma);
+    const politicalOrganizationRepository =
+      new PrismaPoliticalOrganizationRepository(prisma);
     const usecase = new GetTransactionsBySlugUsecase(
       transactionRepository,
       politicalOrganizationRepository,
@@ -69,12 +70,9 @@ export async function GET(
     return NextResponse.json(result);
   } catch (error) {
     console.error("Error fetching transactions by slug:", error);
-    
+
     if (error instanceof Error && error.message.includes("not found")) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 404 },
-      );
+      return NextResponse.json({ error: error.message }, { status: 404 });
     }
 
     return NextResponse.json(

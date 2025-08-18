@@ -1,7 +1,11 @@
-import 'server-only';
+import "server-only";
 import SankeyChart from "@/app/components/SankeyChart";
 
-export default async function PoliticianPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function PoliticianPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
   return (
     <main className="p-6 space-y-6">
@@ -10,5 +14,3 @@ export default async function PoliticianPage({ params }: { params: Promise<{ slu
     </main>
   );
 }
-
-

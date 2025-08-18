@@ -6,7 +6,9 @@ import type { PoliticalOrganization } from "@/shared/models/political-organizati
 
 const prisma = new PrismaClient();
 
-export async function getAllPoliticalOrganizations(): Promise<PoliticalOrganization[]> {
+export async function getAllPoliticalOrganizations(): Promise<
+  PoliticalOrganization[]
+> {
   const repository = new PrismaPoliticalOrganizationRepository(prisma);
   return await repository.findAll();
 }

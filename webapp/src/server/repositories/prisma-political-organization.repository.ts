@@ -1,4 +1,7 @@
-import type { PrismaClient, PoliticalOrganization as PrismaPoliticalOrganization } from "@prisma/client";
+import type {
+  PrismaClient,
+  PoliticalOrganization as PrismaPoliticalOrganization,
+} from "@prisma/client";
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
 import type { IPoliticalOrganizationRepository } from "./interfaces/political-organization-repository.interface";
 
@@ -25,7 +28,7 @@ export class PrismaPoliticalOrganizationRepository
 
   async findAll(): Promise<PoliticalOrganization[]> {
     const organizations = await this.prisma.politicalOrganization.findMany({
-      orderBy: { name: 'asc' },
+      orderBy: { name: "asc" },
     });
 
     return organizations.map(this.mapToPoliticalOrganization);

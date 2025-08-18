@@ -1,4 +1,4 @@
-import 'server-only';
+import "server-only";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import TransactionTable from "@/client/components/TransactionTable";
@@ -14,7 +14,7 @@ export async function generateMetadata({
   params,
 }: TransactionsPageProps): Promise<Metadata> {
   const { slug } = await params;
-  
+
   try {
     const result = await getTransactionsBySlugAction({
       slug,
@@ -40,30 +40,30 @@ export default async function TransactionsPage({
 }: TransactionsPageProps) {
   const { slug } = await params;
   const searchParamsResolved = await searchParams;
-  
+
   const page = parseInt(
-    Array.isArray(searchParamsResolved.page) 
-      ? searchParamsResolved.page[0] || "1" 
+    Array.isArray(searchParamsResolved.page)
+      ? searchParamsResolved.page[0] || "1"
       : searchParamsResolved.page || "1",
-    10
+    10,
   );
   const perPage = parseInt(
-    Array.isArray(searchParamsResolved.perPage) 
-      ? searchParamsResolved.perPage[0] || "50" 
+    Array.isArray(searchParamsResolved.perPage)
+      ? searchParamsResolved.perPage[0] || "50"
       : searchParamsResolved.perPage || "50",
-    10
+    10,
   );
-  
+
   const transactionType = Array.isArray(searchParamsResolved.transactionType)
     ? searchParamsResolved.transactionType[0]
     : searchParamsResolved.transactionType;
-  
+
   const financialYear = searchParamsResolved.financialYear
     ? parseInt(
         Array.isArray(searchParamsResolved.financialYear)
           ? searchParamsResolved.financialYear[0]
           : searchParamsResolved.financialYear,
-        10
+        10,
       )
     : undefined;
 
@@ -72,7 +72,11 @@ export default async function TransactionsPage({
       slug,
       page,
       perPage,
-      transactionType: transactionType as "income" | "expense" | "other" | undefined,
+      transactionType: transactionType as
+        | "income"
+        | "expense"
+        | "other"
+        | undefined,
       financialYear,
     });
 
@@ -83,7 +87,7 @@ export default async function TransactionsPage({
             ← {data.politicalOrganization.name}
           </Link>
         </div>
-        
+
         <h1 className="text-2xl font-semibold">
           取引一覧 - {data.politicalOrganization.name}
         </h1>
@@ -102,7 +106,7 @@ export default async function TransactionsPage({
     if (error instanceof Error && error.message.includes("not found")) {
       notFound();
     }
-    
+
     throw error;
   }
 }

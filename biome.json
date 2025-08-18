@@ -6,7 +6,12 @@
       "admin/*.ts",
       "admin/*.js",
       "admin/*.tsx",
-      "admin/*.jsx"
+      "admin/*.jsx",
+      "webapp/src/**/*",
+      "webapp/*.ts",
+      "webapp/*.js",
+      "webapp/*.tsx",
+      "webapp/*.jsx"
     ],
     "ignoreUnknown": false
   },
