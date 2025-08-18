@@ -1,3 +1,41 @@
+## プロジェクト構成
+
+このプロジェクトは以下のディレクトリ構成で構築されています：
+
+### ディレクトリ構造
+
+```
+poli-money-alpha/
+├── webapp/           # フロントエンド（一般ユーザー向け）
+│   ├── src/
+│   │   ├── app/      # Next.js App Router
+│   │   └── components/
+│   └── package.json
+├── admin/            # 管理画面
+│   ├── src/
+│   │   ├── app/      # Next.js App Router
+│   │   ├── client/   # クライアントサイドコンポーネント
+│   │   └── server/   # サーバーサイドロジック
+│   └── package.json
+├── shared/           # 共通モデル・型定義
+│   └── model/
+├── supabase/         # Supabaseローカル開発環境設定
+│   └── config.toml
+├── prisma/           # データベーススキーマ・マイグレーション
+│   ├── schema.prisma
+│   └── migrations/
+└── docs/             # 設計ドキュメント
+```
+
+### 各ディレクトリの役割
+
+- **webapp/**: 一般ユーザー向けのフロントエンドアプリケーション（政治資金データの可視化）
+- **admin/**: 管理者向けの管理画面（データ登録・管理機能）
+- **shared/**: webapp と admin で共通して使用するモデルや型定義
+- **supabase/**: Supabaseローカル開発環境の設定ファイル
+- **prisma/**: データベーススキーマ定義とマイグレーションファイル
+- **docs/**: プロジェクトの設計ドキュメント
+
 ## ローカル開発手順
 
 このプロジェクトはSupabaseローカル開発環境を使用してローカル開発を行います。
