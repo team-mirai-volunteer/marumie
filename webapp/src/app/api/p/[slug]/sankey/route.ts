@@ -28,20 +28,11 @@ export async function GET(
 
   console.log(`Found ${transactions.length} transactions for organization ${politicalOrganization.name}`);
 
-  // If no transactions, return test data to verify sankey works
+  // If no transactions, return empty data
   if (transactions.length === 0) {
-    return NextResponse.json({
-      nodes: [
-        { id: 'Source1' },
-        { id: 'Account' },
-        { id: 'Expense1' },
-        { id: 'Expense2' }
-      ],
-      links: [
-        { source: 'Source1', target: 'Account', value: 100000 },
-        { source: 'Account', target: 'Expense1', value: 60000 },
-        { source: 'Account', target: 'Expense2', value: 40000 }
-      ]
+    return NextResponse.json({ 
+      nodes: [], 
+      links: [] 
     });
   }
 
