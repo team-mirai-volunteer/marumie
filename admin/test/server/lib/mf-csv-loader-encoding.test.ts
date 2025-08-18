@@ -1,5 +1,5 @@
-import { MfCsvLoader } from "../../../src/server/lib/mf-csv-loader";
-import { EncodingConverter } from "../../../src/server/lib/encoding-converter";
+import { MfCsvLoader } from "@/server/lib/mf-csv-loader";
+import { EncodingConverter } from "@/server/lib/encoding-converter";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -12,16 +12,8 @@ describe("MfCsvLoader Encoding Tests", () => {
 
   describe("EncodingConverter + MfCsvLoader", () => {
     it("should handle Shift-JIS encoded CSV file", async () => {
-      // Check if the actual CSV file exists
-      const csvPath = path.join(
-        __dirname,
-        "../../../../data/【生データ取り扱い注意】仕訳帳_20250813_1148.csv",
-      );
-
-      if (!fs.existsSync(csvPath)) {
-        console.log("Skipping test: actual CSV file not found");
-        return;
-      }
+      // テスト用のサンプルファイルを使用
+      const csvPath = path.join(__dirname, "../../data/sample-shift-jis.csv");
 
       const buffer = fs.readFileSync(csvPath);
       const csvString = EncodingConverter.bufferToString(buffer);
@@ -41,9 +33,6 @@ describe("MfCsvLoader Encoding Tests", () => {
       // Check that Japanese characters are properly decoded
       expect(firstRecord.debit_account).not.toContain("�"); // No replacement characters
       expect(firstRecord.credit_account).not.toContain("�");
-
-      console.log(`Successfully loaded ${result.length} records`);
-      console.log(`First record: ${JSON.stringify(firstRecord, null, 2)}`);
     });
   });
 });
