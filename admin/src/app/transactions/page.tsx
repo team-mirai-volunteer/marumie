@@ -1,7 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { apiClient, TransactionListResponse } from "@/client/api-client";
+import { useEffect, useState } from "react";
+import {
+  apiClient,
+  type TransactionListResponse,
+} from "@/client/clients/api-client";
 
 export default function TransactionsPage() {
   const [data, setData] = useState<TransactionListResponse | null>(null);
@@ -12,6 +15,21 @@ export default function TransactionsPage() {
   const perPage = 50;
 
   useEffect(() => {
+    const fetchTransactions = async (page: number) => {
+      try {
+        setLoading(true);
+        const result = await apiClient.getTransactions({
+          page,
+          perPage,
+        });
+        setData(result);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchTransactions(currentPage);
   }, [currentPage]);
 
@@ -90,6 +108,7 @@ export default function TransactionsPage() {
       <div className="row">
         <h1>取引一覧</h1>
         <button
+          type="button"
           onClick={handleDeleteAll}
           disabled={deleting || loading || !data || data.total === 0}
           className="button"
@@ -289,6 +308,7 @@ export default function TransactionsPage() {
                   }}
                 >
                   <button
+                    type="button"
                     onClick={() => handlePageChange(data.page - 1)}
                     disabled={data.page <= 1}
                     className="button"
@@ -306,7 +326,7 @@ export default function TransactionsPage() {
                     {Array.from(
                       { length: Math.min(5, data.totalPages) },
                       (_, i) => {
-                        let pageNum;
+                        let pageNum: number;
                         if (data.totalPages <= 5) {
                           pageNum = i + 1;
                         } else if (data.page <= 3) {
@@ -319,6 +339,7 @@ export default function TransactionsPage() {
 
                         return (
                           <button
+                            type="button"
                             key={pageNum}
                             onClick={() => handlePageChange(pageNum)}
                             className="button"
@@ -338,6 +359,7 @@ export default function TransactionsPage() {
                   </div>
 
                   <button
+                    type="button"
                     onClick={() => handlePageChange(data.page + 1)}
                     disabled={data.page >= data.totalPages}
                     className="button"

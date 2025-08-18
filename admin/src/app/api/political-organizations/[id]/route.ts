@@ -1,19 +1,19 @@
-import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
 const prisma = new PrismaClient();
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id: idParam } = await params;
-    const id = parseInt(idParam);
+    const id = parseInt(idParam, 10);
 
-    if (isNaN(id)) {
+    if (Number.isNaN(id)) {
       return NextResponse.json(
         { error: "Invalid organization ID" },
         { status: 400 },
@@ -50,9 +50,9 @@ export async function PUT(
 ) {
   try {
     const { id: idParam } = await params;
-    const id = parseInt(idParam);
+    const id = parseInt(idParam, 10);
 
-    if (isNaN(id)) {
+    if (Number.isNaN(id)) {
       return NextResponse.json(
         { error: "Invalid organization ID" },
         { status: 400 },

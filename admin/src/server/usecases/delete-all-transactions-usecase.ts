@@ -1,5 +1,5 @@
-import { TransactionFilters } from "@/shared/model/transaction";
-import { ITransactionRepository } from "../repositories/interfaces/transaction-repository.interface";
+import type { TransactionFilters } from "@/shared/model/transaction";
+import type { ITransactionRepository } from "../repositories/interfaces/transaction-repository.interface";
 
 export interface DeleteAllTransactionsParams {
   politicalOrganizationId?: string;

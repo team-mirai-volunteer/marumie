@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
-import { PoliticalOrganizationForm } from "@/client/components/PoliticalOrganizationForm";
-import { PoliticalOrganization } from "@/shared/model/political-organization";
+import { use, useEffect, useState } from "react";
 import {
   apiClient,
-  UpdatePoliticalOrganizationRequest,
-} from "@/client/api-client";
+  type UpdatePoliticalOrganizationRequest,
+} from "@/client/clients/api-client";
+import { PoliticalOrganizationForm } from "@/client/components/PoliticalOrganizationForm";
+import type { PoliticalOrganization } from "@/shared/model/political-organization";
 
 interface EditPoliticalOrganizationPageProps {
   params: Promise<{ orgId: string }>;

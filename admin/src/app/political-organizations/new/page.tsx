@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { PoliticalOrganizationForm } from "@/client/components/PoliticalOrganizationForm";
+import { useState } from "react";
 import {
   apiClient,
-  CreatePoliticalOrganizationRequest,
-} from "@/client/api-client";
+  type CreatePoliticalOrganizationRequest,
+} from "@/client/clients/api-client";
+import { PoliticalOrganizationForm } from "@/client/components/PoliticalOrganizationForm";
 
 export default function NewPoliticalOrganizationPage() {
   const router = useRouter();

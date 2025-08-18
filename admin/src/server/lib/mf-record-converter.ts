@@ -1,8 +1,8 @@
-import { MfCsvRecord } from "./mf-csv-loader";
-import {
-  TransactionType,
+import type {
   CreateTransactionInput,
+  TransactionType,
 } from "@/shared/model/transaction";
+import type { MfCsvRecord } from "./mf-csv-loader";
 
 export class MfRecordConverter {
   constructor() {}

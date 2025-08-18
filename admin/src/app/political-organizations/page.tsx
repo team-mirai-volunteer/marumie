@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import { PoliticalOrganization } from "@/shared/model/political-organization";
-import { apiClient } from "@/client/api-client";
+import { useEffect, useState } from "react";
+import { apiClient } from "@/client/clients/api-client";
+import type { PoliticalOrganization } from "@/shared/model/political-organization";
 
 export default function PoliticalOrganizationsPage() {
   const [organizations, setOrganizations] = useState<PoliticalOrganization[]>(
@@ -13,20 +13,20 @@ export default function PoliticalOrganizationsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const fetchOrganizations = async () => {
+      try {
+        setLoading(true);
+        const data = await apiClient.listPoliticalOrganizations();
+        setOrganizations(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchOrganizations();
   }, []);
-
-  const fetchOrganizations = async () => {
-    try {
-      setLoading(true);
-      const data = await apiClient.listPoliticalOrganizations();
-      setOrganizations(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="card">

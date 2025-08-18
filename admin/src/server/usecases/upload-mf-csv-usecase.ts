@@ -1,7 +1,7 @@
+import type { CreateTransactionInput } from "@/shared/model/transaction";
 import { MfCsvLoader } from "../lib/mf-csv-loader";
 import { MfRecordConverter } from "../lib/mf-record-converter";
-import { ITransactionRepository } from "../repositories/interfaces/transaction-repository.interface";
-import { CreateTransactionInput } from "@/shared/model/transaction";
+import type { ITransactionRepository } from "../repositories/interfaces/transaction-repository.interface";
 
 export interface UploadMfCsvInput {
   csvContent: string;

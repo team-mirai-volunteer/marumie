@@ -1,8 +1,8 @@
-import {
-  Transaction,
+import type {
   CreateTransactionInput,
-  UpdateTransactionInput,
+  Transaction,
   TransactionFilters,
+  UpdateTransactionInput,
 } from "@/shared/model/transaction";
 
 export interface PaginatedResult<T> {
