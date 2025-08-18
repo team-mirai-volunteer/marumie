@@ -1,7 +1,7 @@
-import { MfCsvLoader } from '../lib/mf-csv-loader';
-import { MfRecordConverter } from '../lib/mf-record-converter';
-import { ITransactionRepository } from '../repositories/interfaces/transaction-repository.interface';
-import { CreateTransactionInput } from '@/shared/model/transaction';
+import { MfCsvLoader } from "../lib/mf-csv-loader";
+import { MfRecordConverter } from "../lib/mf-record-converter";
+import { ITransactionRepository } from "../repositories/interfaces/transaction-repository.interface";
+import { CreateTransactionInput } from "@/shared/model/transaction";
 
 export interface UploadMfCsvInput {
   csvContent: string;
@@ -19,7 +19,7 @@ export class UploadMfCsvUsecase {
   constructor(
     private transactionRepository: ITransactionRepository,
     private csvLoader: MfCsvLoader = new MfCsvLoader(),
-    private recordConverter: MfRecordConverter = new MfRecordConverter()
+    private recordConverter: MfRecordConverter = new MfRecordConverter(),
   ) {}
 
   async execute(input: UploadMfCsvInput): Promise<UploadMfCsvResult> {
@@ -38,16 +38,23 @@ export class UploadMfCsvUsecase {
         return result;
       }
 
-      const transactionInputs: CreateTransactionInput[] = csvRecords.map(record =>
-        this.recordConverter.convertRow(record, input.politicalOrganizationId)
+      const transactionInputs: CreateTransactionInput[] = csvRecords.map(
+        (record) =>
+          this.recordConverter.convertRow(
+            record,
+            input.politicalOrganizationId,
+          ),
       );
 
-      const createResult = await this.transactionRepository.createManySkipDuplicates(transactionInputs);
+      const createResult =
+        await this.transactionRepository.createManySkipDuplicates(
+          transactionInputs,
+        );
       result.savedCount = createResult.created.length;
       result.skippedCount = createResult.skipped;
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       result.errors.push(errorMessage);
     }
 

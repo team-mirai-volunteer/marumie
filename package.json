@@ -15,6 +15,7 @@
     "build": "prisma generate && prisma migrate deploy && npm --prefix webapp run build",
     "start": "npm --prefix webapp run start",
     "lint": "next lint",
+    "format": "biome format --write .",
     "postinstall": "prisma generate",
     "db:generate": "pnpm --filter @poli-money-alpha/db generate",
     "db:migrate:dev": "pnpm --filter @poli-money-alpha/db migrate:dev",
@@ -44,6 +45,7 @@
     "zod": "^4.0.15"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.2.0",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",

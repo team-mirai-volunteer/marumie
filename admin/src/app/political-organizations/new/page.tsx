@@ -1,18 +1,24 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { PoliticalOrganizationForm } from '@/client/components/PoliticalOrganizationForm';
-import { apiClient, CreatePoliticalOrganizationRequest } from '@/client/api-client';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { PoliticalOrganizationForm } from "@/client/components/PoliticalOrganizationForm";
+import {
+  apiClient,
+  CreatePoliticalOrganizationRequest,
+} from "@/client/api-client";
 
 export default function NewPoliticalOrganizationPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (formData: { name: string; description: string }) => {
+  const handleSubmit = async (formData: {
+    name: string;
+    description: string;
+  }) => {
     if (!formData.name.trim()) {
-      setError('政治団体名は必須です');
+      setError("政治団体名は必須です");
       return;
     }
 
@@ -22,14 +28,16 @@ export default function NewPoliticalOrganizationPage() {
 
       const requestData: CreatePoliticalOrganizationRequest = {
         name: formData.name.trim(),
-        ...(formData.description?.trim() && { description: formData.description.trim() })
+        ...(formData.description?.trim() && {
+          description: formData.description.trim(),
+        }),
       };
 
       await apiClient.createPoliticalOrganization(requestData);
 
-      router.push('/political-organizations');
+      router.push("/political-organizations");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setLoading(false);
     }

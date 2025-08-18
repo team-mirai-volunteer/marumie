@@ -3,7 +3,7 @@ import {
   CreateTransactionInput,
   UpdateTransactionInput,
   TransactionFilters,
-} from '@/shared/model/transaction';
+} from "@/shared/model/transaction";
 
 export interface PaginatedResult<T> {
   items: T[];
@@ -24,7 +24,7 @@ export interface ITransactionRepository {
   findAll(filters?: TransactionFilters): Promise<Transaction[]>;
   findWithPagination(
     filters?: TransactionFilters,
-    pagination?: PaginationOptions
+    pagination?: PaginationOptions,
   ): Promise<PaginatedResult<Transaction>>;
   update(id: string, input: UpdateTransactionInput): Promise<Transaction>;
   delete(id: string): Promise<void>;

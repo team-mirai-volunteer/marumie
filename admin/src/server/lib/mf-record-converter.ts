@@ -1,16 +1,21 @@
-import { MfCsvRecord } from './mf-csv-loader';
-import { TransactionType, CreateTransactionInput } from '@/shared/model/transaction';
-
+import { MfCsvRecord } from "./mf-csv-loader";
+import {
+  TransactionType,
+  CreateTransactionInput,
+} from "@/shared/model/transaction";
 
 export class MfRecordConverter {
   constructor() {}
 
-  public convertRow(record: MfCsvRecord, politicalOrganizationId: string): CreateTransactionInput {
+  public convertRow(
+    record: MfCsvRecord,
+    politicalOrganizationId: string,
+  ): CreateTransactionInput {
     const debitAmount = this.parseAmount(record.debit_amount);
     const creditAmount = this.parseAmount(record.credit_amount);
     const transactionType = this.determineTransactionType(
       record.debit_account,
-      record.credit_account
+      record.credit_account,
     );
     const financialYear = this.extractFinancialYear(record.transaction_date);
 
@@ -45,11 +50,11 @@ export class MfRecordConverter {
   }
 
   private parseAmount(amountStr: string): number {
-    if (!amountStr || amountStr.trim() === '') {
+    if (!amountStr || amountStr.trim() === "") {
       return 0;
     }
 
-    const cleaned = amountStr.replace(/[,\s]/g, '');
+    const cleaned = amountStr.replace(/[,\s]/g, "");
     const parsed = parseInt(cleaned, 10);
 
     return isNaN(parsed) ? 0 : parsed;
@@ -57,14 +62,14 @@ export class MfRecordConverter {
 
   private determineTransactionType(
     debitAccount: string,
-    creditAccount: string
+    creditAccount: string,
   ): TransactionType {
-    if (debitAccount === '普通預金') {
-      return 'income';
-    } else if (creditAccount === '普通預金') {
-      return 'expense';
+    if (debitAccount === "普通預金") {
+      return "income";
+    } else if (creditAccount === "普通預金") {
+      return "expense";
     } else {
-      return 'other';
+      return "other";
     }
   }
 
@@ -73,7 +78,7 @@ export class MfRecordConverter {
     description_2?: string;
     description_3?: string;
   } {
-    if (!description || description.trim() === '') {
+    if (!description || description.trim() === "") {
       return {};
     }
 
@@ -82,25 +87,25 @@ export class MfRecordConverter {
     switch (parts.length) {
       case 1:
         return {
-          description_1: parts[0]
+          description_1: parts[0],
         };
       case 2:
         return {
           description_1: parts[0],
-          description_3: parts[1]
+          description_3: parts[1],
         };
       case 3:
         return {
           description_1: parts[0],
           description_2: parts[1],
-          description_3: parts[2]
+          description_3: parts[2],
         };
       default:
         // 4つ以上の場合、3つめ以降を結合
         return {
           description_1: parts[0],
           description_2: parts[1],
-          description_3: parts.slice(2).join(' ')
+          description_3: parts.slice(2).join(" "),
         };
     }
   }
@@ -108,12 +113,10 @@ export class MfRecordConverter {
   public extractFinancialYear(dateString: string): number {
     const startOfFinancialYear = 4;
 
-
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
 
     return month >= startOfFinancialYear ? year : year - 1;
   }
-
 }

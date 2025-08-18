@@ -17,13 +17,11 @@ const eslintConfig = [
         "error",
         {
           argsIgnorePattern: "^_",
-          varsIgnorePattern: "^_"
-        }
-      ]
-    }
-  }
+          varsIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
 ];
 
 export default eslintConfig;
-
-
