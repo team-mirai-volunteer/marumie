@@ -1,7 +1,14 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
   "files": {
-    "includes": ["admin/**/*"]
+    "includes": [
+      "admin/src/**/*",
+      "admin/*.ts",
+      "admin/*.js",
+      "admin/*.tsx",
+      "admin/*.jsx"
+    ],
+    "ignoreUnknown": false
   },
   "formatter": {
     "enabled": true,
