@@ -53,6 +53,8 @@ model Transaction {
   description2            String?              @map("description_2") @db.Text
   description3            String?              @map("description_3") @db.Text
   descriptionDetail       String?              @map("description_detail") @db.Text
+  tags                    String?              @db.Text
+  memo                    String?              @db.Text
   createdAt               DateTime             @default(now()) @map("created_at")
   updatedAt               DateTime             @updatedAt @map("updated_at")
 

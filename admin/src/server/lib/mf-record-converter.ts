@@ -38,6 +38,7 @@ export class MfRecordConverter {
       description_1: descriptionParts.description_1,
       description_2: descriptionParts.description_2,
       description_3: descriptionParts.description_3,
+      description_detail: undefined,
       tags: record.tags,
       memo: record.memo,
     };
