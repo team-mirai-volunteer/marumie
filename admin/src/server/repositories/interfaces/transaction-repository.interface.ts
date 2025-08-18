@@ -5,10 +5,27 @@ import {
   TransactionFilters,
 } from '@/shared/model/transaction';
 
+export interface PaginatedResult<T> {
+  items: T[];
+  total: number;
+  page: number;
+  perPage: number;
+  totalPages: number;
+}
+
+export interface PaginationOptions {
+  page: number;
+  perPage: number;
+}
+
 export interface ITransactionRepository {
   create(input: CreateTransactionInput): Promise<Transaction>;
   findById(id: string): Promise<Transaction | null>;
   findAll(filters?: TransactionFilters): Promise<Transaction[]>;
+  findWithPagination(
+    filters?: TransactionFilters,
+    pagination?: PaginationOptions
+  ): Promise<PaginatedResult<Transaction>>;
   update(id: string, input: UpdateTransactionInput): Promise<Transaction>;
   delete(id: string): Promise<void>;
   deleteAll(filters?: TransactionFilters): Promise<number>;
