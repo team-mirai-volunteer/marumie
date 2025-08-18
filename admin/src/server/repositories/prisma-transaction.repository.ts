@@ -199,7 +199,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private mapToTransaction(prismaTransaction: any): Transaction {
+  public mapToTransaction(prismaTransaction: any): Transaction {
     return {
       id: prismaTransaction.id.toString(),
       political_organization_id: prismaTransaction.politicalOrganizationId.toString(),
