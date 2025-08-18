@@ -31,6 +31,10 @@ export interface TransactionListResponse {
   totalPages: number;
 }
 
+export interface DeleteAllTransactionsResponse {
+  deletedCount: number;
+}
+
 export class ApiClient {
   private baseUrl: string;
 
@@ -128,6 +132,27 @@ export class ApiClient {
 
     const url = `/api/transactions?${searchParams.toString()}`;
     return this.request<TransactionListResponse>(url);
+  }
+
+  async deleteAllTransactions(params?: {
+    politicalOrganizationId?: string;
+    transactionType?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    financialYear?: number;
+  }): Promise<DeleteAllTransactionsResponse> {
+    const searchParams = new URLSearchParams();
+    
+    if (params?.politicalOrganizationId) searchParams.append('politicalOrganizationId', params.politicalOrganizationId);
+    if (params?.transactionType) searchParams.append('transactionType', params.transactionType);
+    if (params?.dateFrom) searchParams.append('dateFrom', params.dateFrom);
+    if (params?.dateTo) searchParams.append('dateTo', params.dateTo);
+    if (params?.financialYear) searchParams.append('financialYear', params.financialYear.toString());
+
+    const url = `/api/transactions?${searchParams.toString()}`;
+    return this.request<DeleteAllTransactionsResponse>(url, {
+      method: 'DELETE',
+    });
   }
 }
 

@@ -106,6 +106,52 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     throw new Error('Transaction delete is not implemented');
   }
 
+  async deleteAll(filters?: TransactionFilters): Promise<number> {
+    const where: Prisma.TransactionWhereInput = {};
+
+    if (filters?.transaction_type) {
+      where.transactionType = filters.transaction_type;
+    }
+
+    if (filters?.debit_account) {
+      where.debitAccount = {
+        contains: filters.debit_account,
+        mode: 'insensitive',
+      };
+    }
+
+    if (filters?.credit_account) {
+      where.creditAccount = {
+        contains: filters.credit_account,
+        mode: 'insensitive',
+      };
+    }
+
+    if (filters?.political_organization_id) {
+      where.politicalOrganizationId = BigInt(filters.political_organization_id);
+    }
+
+    if (filters?.financial_year) {
+      where.financialYear = filters.financial_year;
+    }
+
+    if (filters?.date_from || filters?.date_to) {
+      where.transactionDate = {};
+      if (filters.date_from) {
+        where.transactionDate.gte = filters.date_from;
+      }
+      if (filters.date_to) {
+        where.transactionDate.lte = filters.date_to;
+      }
+    }
+
+    const result = await this.prisma.transaction.deleteMany({
+      where,
+    });
+
+    return result.count;
+  }
+
   async createMany(inputs: CreateTransactionInput[]): Promise<Transaction[]> {
     const data = inputs.map(input => ({
       politicalOrganizationId: BigInt(input.political_organization_id),

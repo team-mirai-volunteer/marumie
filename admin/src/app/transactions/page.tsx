@@ -8,6 +8,7 @@ export default function TransactionsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [deleting, setDeleting] = useState(false);
   const perPage = 50;
 
   useEffect(() => {
@@ -55,10 +56,44 @@ export default function TransactionsPage() {
     }
   };
 
+  const handleDeleteAll = async () => {
+    if (!window.confirm('すべてのトランザクションを削除してもよろしいですか？この操作は取り消せません。')) {
+      return;
+    }
+
+    try {
+      setDeleting(true);
+      setError(null);
+      const result = await apiClient.deleteAllTransactions();
+      
+      alert(`${result.deletedCount}件のトランザクションを削除しました。`);
+      
+      await fetchTransactions(1);
+      setCurrentPage(1);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   return (
     <div className="card">
       <div className="row">
         <h1>取引一覧</h1>
+        <button
+          onClick={handleDeleteAll}
+          disabled={deleting || loading || !data || data.total === 0}
+          className="button"
+          style={{
+            background: '#ef4444',
+            color: 'white',
+            opacity: (deleting || loading || !data || data.total === 0) ? 0.5 : 1,
+            cursor: (deleting || loading || !data || data.total === 0) ? 'not-allowed' : 'pointer'
+          }}
+        >
+          {deleting ? '削除中...' : '全件削除'}
+        </button>
       </div>
 
       {loading && <p className="muted">読み込み中...</p>}

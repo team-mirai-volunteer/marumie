@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { PrismaTransactionRepository } from '@/server/repositories/prisma-transaction.repository';
 import { GetTransactionsUsecase, GetTransactionsParams } from '@/server/usecases/get-transactions-usecase';
+import { DeleteAllTransactionsUsecase, DeleteAllTransactionsParams } from '@/server/usecases/delete-all-transactions-usecase';
 
 export const runtime = 'nodejs';
 
@@ -50,6 +51,47 @@ export async function GET(request: Request) {
     return NextResponse.json(result);
   } catch (error) {
     console.error('Error fetching transactions:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const politicalOrganizationId = searchParams.get('politicalOrganizationId');
+    const transactionType = searchParams.get('transactionType');
+    const dateFrom = searchParams.get('dateFrom');
+    const dateTo = searchParams.get('dateTo');
+    const financialYear = searchParams.get('financialYear');
+
+    const repository = new PrismaTransactionRepository(prisma);
+    const usecase = new DeleteAllTransactionsUsecase(repository);
+
+    const params: DeleteAllTransactionsParams = {};
+    if (politicalOrganizationId) {
+      params.politicalOrganizationId = politicalOrganizationId;
+    }
+    if (transactionType && ['income', 'expense', 'other'].includes(transactionType)) {
+      params.transactionType = transactionType as 'income' | 'expense' | 'other';
+    }
+    if (dateFrom) {
+      params.dateFrom = new Date(dateFrom);
+    }
+    if (dateTo) {
+      params.dateTo = new Date(dateTo);
+    }
+    if (financialYear) {
+      params.financialYear = parseInt(financialYear, 10);
+    }
+
+    const result = await usecase.execute(params);
+
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error('Error deleting transactions:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
