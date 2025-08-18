@@ -28,7 +28,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Mirai Open Data - チームみらいの政治資金をオープンに",
-  description: "チームみらいの政治資金の流れを透明性を持って公開するプラットフォーム",
+  description:
+    "チームみらいの政治資金の流れを透明性を持って公開するプラットフォーム",
 };
 
 export default function RootLayout({

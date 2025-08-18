@@ -10,7 +10,10 @@ export default function Header() {
     <header className="px-4 md:px-10 py-4">
       <div className="flex justify-between items-center">
         {/* Logo and Title Section */}
-        <Link href="/" className="flex items-center gap-4 hover:opacity-80 transition-opacity">
+        <Link
+          href="/"
+          className="flex items-center gap-4 hover:opacity-80 transition-opacity"
+        >
           {/* Logo */}
           <div className="flex items-center">
             <div className="w-20 h-16 md:w-24 md:h-20 relative">
@@ -26,13 +29,26 @@ export default function Header() {
 
           {/* Title and Subtitle */}
           <div className="flex items-end gap-4">
-            <h1 className="text-xl md:text-2xl font-normal text-black" style={{ fontFamily: 'var(--font-inter)' }}>みらいオープンデータ</h1>
-            <p className="text-xs md:text-sm text-black hidden sm:block" style={{ fontFamily: 'var(--font-noto-sans)' }}>チームみらいの政治資金をオープンに</p>
+            <h1
+              className="text-xl md:text-2xl font-normal text-black"
+              style={{ fontFamily: "var(--font-inter)" }}
+            >
+              みらいオープンデータ
+            </h1>
+            <p
+              className="text-xs md:text-sm text-black hidden sm:block"
+              style={{ fontFamily: "var(--font-noto-sans)" }}
+            >
+              チームみらいの政治資金をオープンに
+            </p>
           </div>
         </Link>
 
         {/* Desktop Navigation Menu */}
-        <nav className="hidden lg:flex items-center gap-6" style={{ fontFamily: 'var(--font-noto-sans)' }}>
+        <nav
+          className="hidden lg:flex items-center gap-6"
+          style={{ fontFamily: "var(--font-noto-sans)" }}
+        >
           <Link
             href="/cash-flow"
             className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap"
@@ -73,9 +89,15 @@ export default function Header() {
           aria-label="メニューを開く"
         >
           <div className="w-6 h-6 flex flex-col justify-center items-center">
-            <span className={`block w-5 h-0.5 bg-black transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1' : ''}`}></span>
-            <span className={`block w-5 h-0.5 bg-black mt-1 transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`}></span>
-            <span className={`block w-5 h-0.5 bg-black mt-1 transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-1' : ''}`}></span>
+            <span
+              className={`block w-5 h-0.5 bg-black transition-all duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-1" : ""}`}
+            ></span>
+            <span
+              className={`block w-5 h-0.5 bg-black mt-1 transition-all duration-300 ${isMobileMenuOpen ? "opacity-0" : ""}`}
+            ></span>
+            <span
+              className={`block w-5 h-0.5 bg-black mt-1 transition-all duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-1" : ""}`}
+            ></span>
           </div>
         </button>
       </div>
@@ -83,7 +105,10 @@ export default function Header() {
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
         <nav className="lg:hidden mt-4 pb-4 border-t border-gray-200 pt-4">
-          <div className="flex flex-col space-y-3" style={{ fontFamily: 'var(--font-noto-sans)' }}>
+          <div
+            className="flex flex-col space-y-3"
+            style={{ fontFamily: "var(--font-noto-sans)" }}
+          >
             <Link
               href="/cash-flow"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors py-2"
