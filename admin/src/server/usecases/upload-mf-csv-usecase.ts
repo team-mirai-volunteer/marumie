@@ -45,7 +45,7 @@ export class UploadMfCsvUsecase {
         transaction_no: record.transaction_no,
         transaction_date: new Date(record.transaction_date),
         financial_year: record.financial_year,
-        transaction_type: record.mapped_transaction_type,
+        transaction_type: record.transaction_type,
         debit_account: record.debit_account,
         debit_sub_account: record.debit_sub_account,
         debit_department: record.debit_department,

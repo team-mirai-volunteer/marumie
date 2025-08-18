@@ -80,7 +80,7 @@ describe('MfRecordConverter', () => {
       expect(result.credit_amount).toBe(0);
     });
 
-    it('should set transaction_type to 収入 when debit_account is 普通預金', () => {
+    it('should set transaction_type to income when debit_account is 普通預金', () => {
       const record = createMockRecord({
         debit_account: '普通預金',
         credit_account: '寄附金',
@@ -88,11 +88,10 @@ describe('MfRecordConverter', () => {
 
       const result = converter.convertRow(record);
 
-      expect(result.transaction_type).toBe('収入');
-      expect(result.mapped_transaction_type).toBe('income');
+      expect(result.transaction_type).toBe('income');
     });
 
-    it('should set transaction_type to 支出 when credit_account is 普通預金', () => {
+    it('should set transaction_type to expense when credit_account is 普通預金', () => {
       const record = createMockRecord({
         debit_account: '事務費',
         credit_account: '普通預金',
@@ -100,11 +99,10 @@ describe('MfRecordConverter', () => {
 
       const result = converter.convertRow(record);
 
-      expect(result.transaction_type).toBe('支出');
-      expect(result.mapped_transaction_type).toBe('expense');
+      expect(result.transaction_type).toBe('expense');
     });
 
-    it('should set transaction_type to それ以外 when neither account is 普通預金', () => {
+    it('should set transaction_type to other when neither account is 普通預金', () => {
       const record = createMockRecord({
         debit_account: '事務費',
         credit_account: '寄附金',
@@ -112,8 +110,7 @@ describe('MfRecordConverter', () => {
 
       const result = converter.convertRow(record);
 
-      expect(result.transaction_type).toBe('それ以外');
-      expect(result.mapped_transaction_type).toBe('other');
+      expect(result.transaction_type).toBe('other');
     });
 
     it('should calculate financial year correctly', () => {
@@ -167,8 +164,7 @@ describe('MfRecordConverter', () => {
 
       const result = converter.convertRow(record);
 
-      expect(result.transaction_type).toBe('収入');
-      expect(result.mapped_transaction_type).toBe('income');
+      expect(result.transaction_type).toBe('income');
     });
   });
 
@@ -184,11 +180,4 @@ describe('MfRecordConverter', () => {
     });
   });
 
-  describe('mapTransactionType', () => {
-    it('should map Japanese transaction types to English correctly', () => {
-      expect(converter.mapTransactionType('収入')).toBe('income');
-      expect(converter.mapTransactionType('支出')).toBe('expense');
-      expect(converter.mapTransactionType('それ以外')).toBe('other');
-    });
-  });
 });

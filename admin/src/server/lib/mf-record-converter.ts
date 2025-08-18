@@ -5,8 +5,7 @@ export interface ConvertedMfRecord {
   transaction_no: string;
   transaction_date: string;
   financial_year: number;
-  transaction_type: '収入' | '支出' | 'それ以外';
-  mapped_transaction_type: TransactionType;
+  transaction_type: TransactionType;
   debit_account: string;
   debit_sub_account: string;
   debit_department: string;
@@ -37,14 +36,12 @@ export class MfRecordConverter {
       record.credit_account
     );
     const financialYear = this.extractFinancialYear(record.transaction_date);
-    const mappedTransactionType = this.mapTransactionType(transactionType);
 
     return {
       transaction_no: record.transaction_no,
       transaction_date: record.transaction_date,
       financial_year: financialYear,
       transaction_type: transactionType,
-      mapped_transaction_type: mappedTransactionType,
       debit_account: record.debit_account,
       debit_sub_account: record.debit_sub_account,
       debit_department: record.debit_department,
@@ -69,44 +66,35 @@ export class MfRecordConverter {
     if (!amountStr || amountStr.trim() === '') {
       return 0;
     }
-    
+
     const cleaned = amountStr.replace(/[,\s]/g, '');
     const parsed = parseInt(cleaned, 10);
-    
+
     return isNaN(parsed) ? 0 : parsed;
   }
 
   private determineTransactionType(
     debitAccount: string,
     creditAccount: string
-  ): '収入' | '支出' | 'それ以外' {
+  ): TransactionType {
     if (debitAccount === '普通預金') {
-      return '収入';
+      return 'income';
     } else if (creditAccount === '普通預金') {
-      return '支出';
+      return 'expense';
     } else {
-      return 'それ以外';
+      return 'other';
     }
   }
 
   public extractFinancialYear(dateString: string): number {
+    const startOfFinancialYear = 4;
+
+
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
-    
-    return month >= 4 ? year : year - 1;
+
+    return month >= startOfFinancialYear ? year : year - 1;
   }
 
-  public mapTransactionType(type: '収入' | '支出' | 'それ以外'): TransactionType {
-    switch (type) {
-      case '収入':
-        return 'income';
-      case '支出':
-        return 'expense';
-      case 'それ以外':
-        return 'other';
-      default:
-        return 'other';
-    }
-  }
 }
