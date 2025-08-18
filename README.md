@@ -6,12 +6,12 @@
 
 1. **依存関係のインストール**
 ```bash
-npm install
+pnpm install
 ```
 
 2. **Supabaseローカル開発環境の起動とデータベースセットアップ**
 ```bash
-npm run dev:setup
+pnpm run dev:setup
 ```
 
 このコマンドは以下を実行します：
@@ -26,24 +26,24 @@ npm run dev:setup
 
 ```bash
 # Supabaseローカル開発環境と開発サーバーを同時に起動（推奨）
-npm run dev
+pnpm run dev
 
 # または個別に起動
-npm run supabase:start    # Supabaseローカル開発環境起動
-npm run dev:webapp-only   # Next.js開発サーバーのみ起動
+pnpm run supabase:start    # Supabaseローカル開発環境起動
+pnpm run dev:webapp-only   # Next.js開発サーバーのみ起動
 ```
 
 #### データベース管理
 
 ```bash
 # Prismaマイグレーション実行
-npm run prisma:migrate
+pnpm run prisma:migrate
 
 # シードデータ投入
-npm run prisma:seed
+pnpm run prisma:seed
 
 # データベースリセット（注意：全データが削除されます）
-npm run supabase:reset
+pnpm run supabase:reset
 ```
 
 ### ブラウザからの確認方法
