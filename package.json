@@ -14,7 +14,7 @@
     "dev:admin": "npm --prefix admin run dev",
     "build": "prisma generate && prisma migrate deploy && npm --prefix webapp run build",
     "start": "npm --prefix webapp run start",
-    "lint": "next lint",
+    "lint": "npm --prefix admin run lint",
     "format": "biome format --write .",
     "postinstall": "prisma generate",
     "db:generate": "pnpm --filter @poli-money-alpha/db generate",

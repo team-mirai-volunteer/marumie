@@ -83,7 +83,7 @@ export class MfCsvLoader {
         try {
           const values = this.parseCSVLine(line);
           return this.createRecord(headers, values);
-        } catch (error) {
+        } catch (_error) {
           throw new Error(`Failed to parse CSV line: ${line}`);
         }
       });

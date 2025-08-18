@@ -23,8 +23,8 @@ export default function LoginPage() {
         throw new Error(j.error || "Login failed");
       }
       router.replace("/upload-csv");
-    } catch (err: any) {
-      setError(err.message || String(err));
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
     }
   }
 
