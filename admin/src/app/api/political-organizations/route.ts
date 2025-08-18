@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
-import { CreatePoliticalOrganizationUsecase } from "@/server/usecases/create-political-organization-usecase";
-import { PrismaPoliticalOrganizationRepository } from "@/server/repositories/prisma-political-organization.repository";
 import { PrismaClient } from "@prisma/client";
+import { NextResponse } from "next/server";
+import { PrismaPoliticalOrganizationRepository } from "@/server/repositories/prisma-political-organization.repository";
+import { CreatePoliticalOrganizationUsecase } from "@/server/usecases/create-political-organization-usecase";
 
 export const runtime = "nodejs";
 

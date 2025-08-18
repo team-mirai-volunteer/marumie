@@ -1,7 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { apiClient, TransactionListResponse } from "@/client/clients/api-client";
+import { useEffect, useState } from "react";
+import {
+  apiClient,
+  type TransactionListResponse,
+} from "@/client/clients/api-client";
 
 export default function TransactionsPage() {
   const [data, setData] = useState<TransactionListResponse | null>(null);

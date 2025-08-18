@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import { PoliticalOrganization } from "@/shared/model/political-organization";
+import { useEffect, useState } from "react";
 import { apiClient } from "@/client/clients/api-client";
+import type { PoliticalOrganization } from "@/shared/model/political-organization";
 
 export default function PoliticalOrganizationsPage() {
   const [organizations, setOrganizations] = useState<PoliticalOrganization[]>(

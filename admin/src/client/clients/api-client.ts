@@ -1,5 +1,5 @@
-import { PoliticalOrganization } from "@/shared/model/political-organization";
-import { Transaction } from "@/shared/model/transaction";
+import type { PoliticalOrganization } from "@/shared/model/political-organization";
+import type { Transaction } from "@/shared/model/transaction";
 
 export interface CreatePoliticalOrganizationRequest {
   name: string;

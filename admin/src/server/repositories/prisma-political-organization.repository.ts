@@ -1,6 +1,6 @@
-import { PrismaClient } from "@prisma/client";
-import { PoliticalOrganization } from "@/shared/model/political-organization";
-import { IPoliticalOrganizationRepository } from "./interfaces/political-organization-repository.interface";
+import type { PrismaClient } from "@prisma/client";
+import type { PoliticalOrganization } from "@/shared/model/political-organization";
+import type { IPoliticalOrganizationRepository } from "./interfaces/political-organization-repository.interface";
 
 export class PrismaPoliticalOrganizationRepository
   implements IPoliticalOrganizationRepository

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { apiClient } from "@/client/clients/api-client";
-import { PoliticalOrganization } from "@/shared/model/political-organization";
+import type { PoliticalOrganization } from "@/shared/model/political-organization";
 
 export default function UploadCsvPage() {
   const [file, setFile] = useState<File | null>(null);

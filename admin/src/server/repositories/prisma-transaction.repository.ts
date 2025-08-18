@@ -1,11 +1,11 @@
-import { PrismaClient, Prisma } from "@prisma/client";
-import {
-  Transaction,
+import type { Prisma, PrismaClient } from "@prisma/client";
+import type {
   CreateTransactionInput,
-  UpdateTransactionInput,
+  Transaction,
   TransactionFilters,
+  UpdateTransactionInput,
 } from "@/shared/model/transaction";
-import {
+import type {
   ITransactionRepository,
   PaginatedResult,
   PaginationOptions,
