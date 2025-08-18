@@ -37,18 +37,14 @@ export default function UploadCsvPage() {
     if (!file || !politicalOrganizationId) return;
     setUploading(true);
     setMessage('');
+    
     try {
-      const form = new FormData();
-      form.append('file', file);
-      form.append('politicalOrganizationId', politicalOrganizationId);
-      const res = await fetch('/api/upload-csv', { method: 'POST', body: form });
-      const json = await res.json();
-      if (!res.ok) {
-        const errorMsg = json.error || 'Upload failed';
-        const details = json.details ? ` Details: ${Array.isArray(json.details) ? json.details.join(', ') : json.details}` : '';
-        throw new Error(errorMsg + details);
-      }
-      setMessage(json.message || `Successfully processed ${json.processedCount} records and saved ${json.savedCount} transactions`);
+      const result = await apiClient.uploadCsv({
+        file,
+        politicalOrganizationId,
+      });
+      
+      setMessage(result.message || `Successfully processed ${result.processedCount} records and saved ${result.savedCount} transactions`);
     } catch (err) {
       setMessage(`Error: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
