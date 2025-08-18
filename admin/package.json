@@ -11,7 +11,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@poli-money-alpha/db": "workspace:*",
+    "@prisma/client": "*",
     "iconv-lite": "^0.6.3",
     "next": "*",
     "react": "*",

@@ -11,9 +11,6 @@ importers:
       '@nivo/sankey':
         specifier: ^0.99.0
         version: 0.99.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@poli-money-alpha/db':
-        specifier: workspace:*
-        version: link:packages/db
       '@prisma/client':
         specifier: ^6.14.0
         version: 6.14.0(prisma@6.14.0(typescript@5.9.2))(typescript@5.9.2)
@@ -84,9 +81,9 @@ importers:
 
   admin:
     dependencies:
-      '@poli-money-alpha/db':
-        specifier: workspace:*
-        version: link:../packages/db
+      '@prisma/client':
+        specifier: '*'
+        version: 6.14.0(prisma@6.14.0(typescript@5.9.2))(typescript@5.9.2)
       iconv-lite:
         specifier: ^0.6.3
         version: 0.6.3
@@ -122,20 +119,11 @@ importers:
         specifier: '*'
         version: 5.9.2
 
-  packages/db:
+  webapp:
     dependencies:
       '@prisma/client':
         specifier: '*'
         version: 6.14.0(prisma@6.14.0(typescript@5.9.2))(typescript@5.9.2)
-      prisma:
-        specifier: '*'
-        version: 6.14.0(typescript@5.9.2)
-
-  webapp:
-    dependencies:
-      '@poli-money-alpha/db':
-        specifier: workspace:*
-        version: link:../packages/db
 
 packages:
 
