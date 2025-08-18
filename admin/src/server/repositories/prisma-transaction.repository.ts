@@ -35,6 +35,8 @@ export class PrismaTransactionRepository implements ITransactionRepository {
         description2: input.description_2,
         description3: input.description_3,
         descriptionDetail: input.description_detail,
+        tags: input.tags,
+        memo: input.memo,
       },
     });
 
@@ -122,6 +124,8 @@ export class PrismaTransactionRepository implements ITransactionRepository {
         ...(input.description_2 !== undefined && { description2: input.description_2 }),
         ...(input.description_3 !== undefined && { description3: input.description_3 }),
         ...(input.description_detail !== undefined && { descriptionDetail: input.description_detail }),
+        ...(input.tags !== undefined && { tags: input.tags }),
+        ...(input.memo !== undefined && { memo: input.memo }),
       },
     });
 
@@ -158,6 +162,8 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       description2: input.description_2,
       description3: input.description_3,
       descriptionDetail: input.description_detail,
+      tags: input.tags,
+      memo: input.memo,
     }));
 
     await this.prisma.transaction.createMany({
@@ -177,6 +183,54 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     return createdTransactions.map(this.mapToTransaction);
   }
 
+  async createManySkipDuplicates(inputs: CreateTransactionInput[]): Promise<{
+    created: Transaction[];
+    skipped: number;
+  }> {
+    // 既存のtransaction_noを取得
+    const transactionNos = inputs
+      .map(input => input.transaction_no)
+      .filter(Boolean) as string[];
+
+    const existingTransactions = await this.prisma.transaction.findMany({
+      where: {
+        transactionNo: {
+          in: transactionNos,
+        },
+      },
+      select: {
+        transactionNo: true,
+      },
+    });
+
+    const existingTransactionNos = new Set(
+      existingTransactions.map(t => t.transactionNo).filter(Boolean)
+    );
+
+    // 重複していないものだけをフィルタリング
+    const newInputs = inputs.filter(
+      input => !input.transaction_no || !existingTransactionNos.has(input.transaction_no)
+    );
+
+    const skippedCount = inputs.length - newInputs.length;
+
+    if (newInputs.length === 0) {
+      return {
+        created: [],
+        skipped: skippedCount,
+      };
+    }
+
+    // 新しいレコードを作成
+    const createdTransactions = await this.createMany(newInputs);
+
+    return {
+      created: createdTransactions,
+      skipped: skippedCount,
+    };
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private mapToTransaction(prismaTransaction: any): Transaction {
     return {
       id: prismaTransaction.id.toString(),
@@ -202,6 +256,8 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       description_2: prismaTransaction.description2,
       description_3: prismaTransaction.description3,
       description_detail: prismaTransaction.descriptionDetail,
+      tags: prismaTransaction.tags,
+      memo: prismaTransaction.memo,
       created_at: prismaTransaction.createdAt,
       updated_at: prismaTransaction.updatedAt,
     };

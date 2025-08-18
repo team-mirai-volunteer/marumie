@@ -11,6 +11,7 @@ export interface UploadMfCsvInput {
 export interface UploadMfCsvResult {
   processedCount: number;
   savedCount: number;
+  skippedCount: number;
   errors: string[];
 }
 
@@ -25,6 +26,7 @@ export class UploadMfCsvUsecase {
     const result: UploadMfCsvResult = {
       processedCount: 0,
       savedCount: 0,
+      skippedCount: 0,
       errors: [],
     };
 
@@ -40,8 +42,9 @@ export class UploadMfCsvUsecase {
         this.recordConverter.convertRow(record, input.politicalOrganizationId)
       );
 
-      const savedTransactions = await this.transactionRepository.createMany(transactionInputs);
-      result.savedCount = savedTransactions.length;
+      const createResult = await this.transactionRepository.createManySkipDuplicates(transactionInputs);
+      result.savedCount = createResult.created.length;
+      result.skippedCount = createResult.skipped;
 
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
