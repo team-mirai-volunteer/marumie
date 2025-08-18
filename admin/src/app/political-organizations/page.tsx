@@ -13,20 +13,20 @@ export default function PoliticalOrganizationsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const fetchOrganizations = async () => {
+      try {
+        setLoading(true);
+        const data = await apiClient.listPoliticalOrganizations();
+        setOrganizations(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchOrganizations();
   }, []);
-
-  const fetchOrganizations = async () => {
-    try {
-      setLoading(true);
-      const data = await apiClient.listPoliticalOrganizations();
-      setOrganizations(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="card">
