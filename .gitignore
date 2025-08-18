@@ -54,4 +54,5 @@ prisma/dev.db*
 .claude
 
 admin/node_modules
+webapp/node_modules
 packages/db/node_modules
