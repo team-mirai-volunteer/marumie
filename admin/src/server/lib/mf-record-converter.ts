@@ -1,7 +1,7 @@
 import type {
   CreateTransactionInput,
   TransactionType,
-} from "@/shared/model/transaction";
+} from "@/shared/models/transaction";
 import type { MfCsvRecord } from "./mf-csv-loader";
 
 export class MfRecordConverter {

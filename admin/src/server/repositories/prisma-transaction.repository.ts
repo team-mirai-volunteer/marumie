@@ -4,7 +4,7 @@ import type {
   Transaction,
   TransactionFilters,
   UpdateTransactionInput,
-} from "@/shared/model/transaction";
+} from "@/shared/models/transaction";
 import type {
   ITransactionRepository,
   PaginatedResult,

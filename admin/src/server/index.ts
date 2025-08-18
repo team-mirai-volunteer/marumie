@@ -1,5 +1,5 @@
 // Types
-export * from "@/shared/model/political-organization";
+export * from "@/shared/models/political-organization";
 
 // Repository
 export * from "./repositories/prisma-political-organization.repository";

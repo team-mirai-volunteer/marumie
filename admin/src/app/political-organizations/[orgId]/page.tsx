@@ -7,7 +7,7 @@ import {
   type UpdatePoliticalOrganizationRequest,
 } from "@/client/clients/api-client";
 import { PoliticalOrganizationForm } from "@/client/components/PoliticalOrganizationForm";
-import type { PoliticalOrganization } from "@/shared/model/political-organization";
+import type { PoliticalOrganization } from "@/shared/models/political-organization";
 
 interface EditPoliticalOrganizationPageProps {
   params: Promise<{ orgId: string }>;

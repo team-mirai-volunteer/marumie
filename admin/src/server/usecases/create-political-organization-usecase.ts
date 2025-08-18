@@ -1,4 +1,4 @@
-import type { PoliticalOrganization } from "@/shared/model/political-organization";
+import type { PoliticalOrganization } from "@/shared/models/political-organization";
 import type { IPoliticalOrganizationRepository } from "../repositories/interfaces/political-organization-repository.interface";
 
 export class CreatePoliticalOrganizationUsecase {

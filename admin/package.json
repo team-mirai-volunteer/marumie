@@ -30,7 +30,7 @@
   },
   "main": "jest.config.js",
   "directories": {
-    "test": "test"
+    "test": "tests"
   },
   "keywords": [],
   "author": "",
