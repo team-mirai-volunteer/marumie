@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "dependencies": {
-    "@poli-money-alpha/db": "workspace:*"
+    "@prisma/client": "*"
   },
   "scripts": {
     "dev": "next dev --turbopack",
@@ -11,5 +11,3 @@
     "start": "next start"
   }
 }
-
-
