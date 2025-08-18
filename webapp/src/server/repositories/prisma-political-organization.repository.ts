@@ -1,4 +1,4 @@
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient, PoliticalOrganization as PrismaPoliticalOrganization } from "@prisma/client";
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
 import type { IPoliticalOrganizationRepository } from "./interfaces/political-organization-repository.interface";
 
@@ -23,9 +23,8 @@ export class PrismaPoliticalOrganizationRepository
     return organization ? this.mapToPoliticalOrganization(organization) : null;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private mapToPoliticalOrganization(
-    prismaOrganization: any,
+    prismaOrganization: PrismaPoliticalOrganization,
   ): PoliticalOrganization {
     return {
       id: prismaOrganization.id.toString(),

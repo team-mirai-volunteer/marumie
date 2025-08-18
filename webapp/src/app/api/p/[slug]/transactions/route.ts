@@ -13,9 +13,10 @@ const prisma = new PrismaClient();
 
 export async function GET(
   request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1", 10);
     const perPage = parseInt(searchParams.get("perPage") || "50", 10);
@@ -39,7 +40,7 @@ export async function GET(
     );
 
     const usecaseParams: GetTransactionsBySlugParams = {
-      slug: params.slug,
+      slug: resolvedParams.slug,
       page,
       perPage,
     };

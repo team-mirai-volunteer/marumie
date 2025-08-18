@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
 import type { Transaction } from "@/shared/models/transaction";
 
 interface TransactionTableProps {
