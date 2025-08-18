@@ -1,3 +1,4 @@
+import 'server-only';
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import TransactionTable from "@/client/components/TransactionTable";

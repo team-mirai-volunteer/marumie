@@ -23,6 +23,14 @@ export class PrismaPoliticalOrganizationRepository
     return organization ? this.mapToPoliticalOrganization(organization) : null;
   }
 
+  async findAll(): Promise<PoliticalOrganization[]> {
+    const organizations = await this.prisma.politicalOrganization.findMany({
+      orderBy: { name: 'asc' },
+    });
+
+    return organizations.map(this.mapToPoliticalOrganization);
+  }
+
   private mapToPoliticalOrganization(
     prismaOrganization: PrismaPoliticalOrganization,
   ): PoliticalOrganization {
