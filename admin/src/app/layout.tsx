@@ -3,7 +3,7 @@ import Sidebar from "@/client/components/Sidebar";
 import "./styles.css";
 
 export const metadata: Metadata = {
-  title: "Managing App",
+  title: "政治資金ダッシュボード管理画面",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
