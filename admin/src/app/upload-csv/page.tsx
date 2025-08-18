@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { apiClient } from "@/client/clients/api-client";
 import type { PoliticalOrganization } from "@/shared/model/political-organization";
 
 export default function UploadCsvPage() {
+  const politicalOrgSelectId = useId();
+  const csvFileInputId = useId();
   const [file, setFile] = useState<File | null>(null);
   const [politicalOrganizationId, setPoliticalOrganizationId] =
     useState<string>("");
@@ -63,7 +65,7 @@ export default function UploadCsvPage() {
       <h1>CSVアップロード</h1>
       <form onSubmit={onSubmit} className="column" style={{ gap: 12 }}>
         <div>
-          <label htmlFor="politicalOrganizationId" className="label">
+          <label htmlFor={politicalOrgSelectId} className="label">
             Political Organization:
           </label>
           {loadingOrganizations ? (
@@ -72,7 +74,7 @@ export default function UploadCsvPage() {
             </div>
           ) : (
             <select
-              id="politicalOrganizationId"
+              id={politicalOrgSelectId}
               className="input"
               value={politicalOrganizationId}
               onChange={(e) => setPoliticalOrganizationId(e.target.value)}
@@ -90,11 +92,11 @@ export default function UploadCsvPage() {
           )}
         </div>
         <div>
-          <label htmlFor="csvFile" className="label">
+          <label htmlFor={csvFileInputId} className="label">
             CSV File:
           </label>
           <input
-            id="csvFile"
+            id={csvFileInputId}
             className="input"
             type="file"
             accept=".csv,text/csv"
