@@ -3,7 +3,7 @@ import type {
   Transaction,
   TransactionFilters,
   UpdateTransactionInput,
-} from "@/shared/model/transaction";
+} from "@/shared/models/transaction";
 
 export interface PaginatedResult<T> {
   items: T[];

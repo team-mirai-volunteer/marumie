@@ -1,4 +1,4 @@
-import type { TransactionFilters } from "@/shared/model/transaction";
+import type { TransactionFilters } from "@/shared/models/transaction";
 import type { ITransactionRepository } from "../repositories/interfaces/transaction-repository.interface";
 
 export interface DeleteAllTransactionsParams {
