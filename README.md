@@ -96,3 +96,7 @@ pnpm run fresh         # クリーンインストール + セットアップ
 - **メインアプリ**: [http://localhost:3000](http://localhost:3000)
 - **管理画面**: [http://localhost:3001](http://localhost:3001)
 - **Supabase Studio**: [http://127.0.0.1:54323](http://127.0.0.1:54323)
+
+## サンプルデータ
+
+`data/sampledata.csv` に政治資金の取引データのサンプルが含まれています。管理画面からCSVファイルをアップロードして確認できます。
