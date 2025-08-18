@@ -3,6 +3,7 @@ import "client-only";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import type { Transaction } from "@/shared/models/transaction";
+import TransactionTableRow from "./TransactionTableRow";
 
 interface TransactionTableProps {
   transactions: Transaction[];
@@ -23,17 +24,6 @@ export default function TransactionTable({
 }: TransactionTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("ja-JP", {
-      style: "currency",
-      currency: "JPY",
-    }).format(amount);
-  };
-
-  const formatDate = (date: string | Date) => {
-    return new Date(date).toLocaleDateString("ja-JP");
-  };
 
   const buildPageUrl = (newPage: number) => {
     const params = new URLSearchParams(searchParams);
@@ -64,70 +54,22 @@ export default function TransactionTable({
                   取引日
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  種別
+                  収入項目
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  借方勘定
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  貸方勘定
+                  会計科目
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   金額
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  摘要
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {transactions.map((transaction) => (
-                <tr key={transaction.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {formatDate(transaction.transaction_date)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        transaction.transaction_type === "income"
-                          ? "bg-green-100 text-green-800"
-                          : transaction.transaction_type === "expense"
-                            ? "bg-red-100 text-red-800"
-                            : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {transaction.transaction_type === "income"
-                        ? "収入"
-                        : transaction.transaction_type === "expense"
-                          ? "支出"
-                          : "その他"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    <div>{transaction.debit_account}</div>
-                    {transaction.debit_sub_account && (
-                      <div className="text-xs text-gray-500">
-                        {transaction.debit_sub_account}
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    <div>{transaction.credit_account}</div>
-                    {transaction.credit_sub_account && (
-                      <div className="text-xs text-gray-500">
-                        {transaction.credit_sub_account}
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
-                    {formatCurrency(transaction.debit_amount)}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {transaction.description ||
-                      transaction.description_1 ||
-                      "-"}
-                  </td>
-                </tr>
+                <TransactionTableRow
+                  key={transaction.id}
+                  transaction={transaction}
+                />
               ))}
             </tbody>
           </table>
