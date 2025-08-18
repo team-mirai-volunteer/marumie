@@ -1,5 +1,8 @@
+import 'server-only';
 import Link from "next/link";
 import { getAllPoliticalOrganizations } from "@/server/actions/get-all-political-organizations";
+
+export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   const politicalOrganizations = await getAllPoliticalOrganizations();

@@ -9,3 +9,34 @@
 - フォーマット: Markdown
 
 例: `docs/20250815_1430_ユーザー認証システム設計.md`
+
+## webappコーディングルール
+
+webapp内のページおよびコンポーネントファイルには、必ず以下のいずれかのimportを先頭に追加すること：
+
+- **サーバーコンポーネント（ページファイル、サーバーサイドで実行されるコンポーネント）**: `import 'server-only';`
+- **クライアントコンポーネント（'use client'を使用するコンポーネント）**: `import 'client-only';`
+
+### 適用対象
+- `webapp/src/app/**/page.tsx` - サーバーコンポーネントページ
+- `webapp/src/client/components/**/*.tsx` - クライアントコンポーネント
+- `webapp/src/server/components/**/*.tsx` - サーバーコンポーネント（もしある場合）
+
+### 例
+```typescript
+// サーバーコンポーネントの場合
+import 'server-only';
+import Link from "next/link";
+
+export default async function Page() {
+  // ...
+}
+
+// クライアントコンポーネントの場合
+import 'client-only';
+'use client';
+
+export default function ClientComponent() {
+  // ...
+}
+```

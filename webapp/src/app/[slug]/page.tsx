@@ -1,3 +1,4 @@
+import 'server-only';
 import SankeyChart from "@/app/components/SankeyChart";
 
 export default async function PoliticianPage({ params }: { params: Promise<{ slug: string }> }) {
