@@ -1,5 +1,5 @@
 "use client";
-import 'client-only';
+import "client-only";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import type { Transaction } from "@/shared/models/transaction";
@@ -92,15 +92,15 @@ export default function TransactionTable({
                         transaction.transaction_type === "income"
                           ? "bg-green-100 text-green-800"
                           : transaction.transaction_type === "expense"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-gray-100 text-gray-800"
+                            ? "bg-red-100 text-red-800"
+                            : "bg-gray-100 text-gray-800"
                       }`}
                     >
                       {transaction.transaction_type === "income"
                         ? "収入"
                         : transaction.transaction_type === "expense"
-                        ? "支出"
-                        : "その他"}
+                          ? "支出"
+                          : "その他"}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">
@@ -123,7 +123,9 @@ export default function TransactionTable({
                     {formatCurrency(transaction.debit_amount)}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">
-                    {transaction.description || transaction.description_1 || "-"}
+                    {transaction.description ||
+                      transaction.description_1 ||
+                      "-"}
                   </td>
                 </tr>
               ))}

@@ -42,7 +42,9 @@ export class GetTransactionsBySlugUsecase {
         await this.politicalOrganizationRepository.findBySlug(params.slug);
 
       if (!politicalOrganization) {
-        throw new Error(`Political organization with slug "${params.slug}" not found`);
+        throw new Error(
+          `Political organization with slug "${params.slug}" not found`,
+        );
       }
 
       const page = Math.max(params.page || 1, 1);

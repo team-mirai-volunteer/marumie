@@ -10,9 +10,12 @@ import {
 
 const prisma = new PrismaClient();
 
-export async function getTransactionsBySlugAction(params: GetTransactionsBySlugParams) {
+export async function getTransactionsBySlugAction(
+  params: GetTransactionsBySlugParams,
+) {
   const transactionRepository = new PrismaTransactionRepository(prisma);
-  const politicalOrganizationRepository = new PrismaPoliticalOrganizationRepository(prisma);
+  const politicalOrganizationRepository =
+    new PrismaPoliticalOrganizationRepository(prisma);
   const usecase = new GetTransactionsBySlugUsecase(
     transactionRepository,
     politicalOrganizationRepository,

@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -12,34 +12,38 @@ function addNode(nodes: Map<string, SankeyNode>, id: string) {
 
 export async function GET(
   _request: Request,
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: Promise<{ slug: string }> },
 ) {
   const { slug } = await params;
 
-  const politicalOrganization = await prisma.politicalOrganization.findFirst({ where: { name: slug } });
+  const politicalOrganization = await prisma.politicalOrganization.findFirst({
+    where: { name: slug },
+  });
   if (!politicalOrganization) {
-    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
   // Use Transaction as the source of truth for Sankey
   const transactions = await prisma.transaction.findMany({
-    where: { politicalOrganizationId: politicalOrganization.id }
+    where: { politicalOrganizationId: politicalOrganization.id },
   });
 
-  console.log(`Found ${transactions.length} transactions for organization ${politicalOrganization.name}`);
+  console.log(
+    `Found ${transactions.length} transactions for organization ${politicalOrganization.name}`,
+  );
 
   // If no transactions, return empty data
   if (transactions.length === 0) {
-    return NextResponse.json({ 
-      nodes: [], 
-      links: [] 
+    return NextResponse.json({
+      nodes: [],
+      links: [],
     });
   }
 
   const nodes = new Map<string, SankeyNode>();
   const linksAccumulator = new Map<string, number>();
 
-  const ACCOUNT = 'Account';
+  const ACCOUNT = "Account";
   addNode(nodes, ACCOUNT);
 
   function incLink(source: string, target: string, amount: number) {
@@ -50,9 +54,10 @@ export async function GET(
   // Keep rows >= minimal amount, then take the first 30 (preserve order)
   const SANKEY_MINIMAL_LIMIT = 10_000;
   const filtered = transactions.filter((t) => {
-    const amount = t.transactionType === 'income'
-      ? Number(t.creditAmount)
-      : Number(t.debitAmount);
+    const amount =
+      t.transactionType === "income"
+        ? Number(t.creditAmount)
+        : Number(t.debitAmount);
     return amount >= SANKEY_MINIMAL_LIMIT;
   });
 
@@ -60,18 +65,18 @@ export async function GET(
   const limited = filtered.slice(0, filtered.length);
 
   for (const t of limited) {
-    if (t.transactionType === 'income') {
+    if (t.transactionType === "income") {
       // IN: source -> Account
       const amount = Number(t.creditAmount);
       if (!amount) continue;
-      const source = (t.description || t.creditAccount || 'Income').trim();
+      const source = (t.description || t.creditAccount || "Income").trim();
       addNode(nodes, source);
       incLink(source, ACCOUNT, amount);
-    } else if (t.transactionType === 'expense') {
+    } else if (t.transactionType === "expense") {
       // OUT: Account -> target
       const amount = Number(t.debitAmount);
       if (!amount) continue;
-      const target = (t.description || t.debitAccount || 'Expenses').trim();
+      const target = (t.description || t.debitAccount || "Expenses").trim();
       addNode(nodes, target);
       incLink(ACCOUNT, target, amount);
     }
@@ -80,7 +85,7 @@ export async function GET(
   const nodesArr: SankeyNode[] = Array.from(nodes.values());
   const linksArr: SankeyLink[] = Array.from(linksAccumulator.entries())
     .map(([key, value]) => {
-      const [source, target] = key.split('__');
+      const [source, target] = key.split("__");
       return { source, target, value };
     })
     .filter((link) => {
@@ -91,17 +96,22 @@ export async function GET(
     });
 
   // Debug logging
-  console.log('Nodes:', nodesArr);
-  console.log('Links:', linksArr);
-  
+  console.log("Nodes:", nodesArr);
+  console.log("Links:", linksArr);
+
   // Check for potential circular references
   const linkCheck = new Set<string>();
-  const validLinks = linksArr.filter(link => {
+  const validLinks = linksArr.filter((link) => {
     const forward = `${link.source}->${link.target}`;
     const backward = `${link.target}->${link.source}`;
-    
+
     if (linkCheck.has(backward)) {
-      console.log('Potential circular link detected:', forward, 'conflicts with', backward);
+      console.log(
+        "Potential circular link detected:",
+        forward,
+        "conflicts with",
+        backward,
+      );
       return false;
     }
     linkCheck.add(forward);

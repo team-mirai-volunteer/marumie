@@ -1,8 +1,8 @@
 "use client";
-import 'client-only';
+import "client-only";
 
-import { ResponsiveSankey } from '@nivo/sankey';
-import { useEffect, useState } from 'react';
+import { ResponsiveSankey } from "@nivo/sankey";
+import { useEffect, useState } from "react";
 
 type SankeyData = {
   nodes: { id: string }[];
@@ -15,10 +15,12 @@ export default function SankeyChart() {
 
   useEffect(() => {
     let isMounted = true;
-    fetch(`/api/p/${encodeURIComponent('チームみらい')}/sankey`)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error('Failed to fetch'))))
+    fetch(`/api/p/${encodeURIComponent("チームみらい")}/sankey`)
+      .then((r) =>
+        r.ok ? r.json() : Promise.reject(new Error("Failed to fetch")),
+      )
       .then((json) => {
-        console.log('Sankey data:', json);
+        console.log("Sankey data:", json);
         if (isMounted) setData(json);
       })
       .catch((e) => {
@@ -38,16 +40,14 @@ export default function SankeyChart() {
         data={data}
         margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
         align="justify"
-        colors={{ scheme: 'category10' }}
-        valueFormat={(v) => Math.round(v as number).toLocaleString('ja-JP')}
+        colors={{ scheme: "category10" }}
+        valueFormat={(v) => Math.round(v as number).toLocaleString("ja-JP")}
         nodeOpacity={1}
         nodeBorderWidth={1}
-        nodeBorderColor={{ from: 'color', modifiers: [['darker', 0.8]] }}
+        nodeBorderColor={{ from: "color", modifiers: [["darker", 0.8]] }}
         linkOpacity={0.5}
         enableLinkGradient
       />
     </div>
   );
 }
-
-
