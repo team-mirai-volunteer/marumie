@@ -2,7 +2,7 @@
 import "client-only";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { Transaction } from "@/shared/models/transaction";
 import TransactionTableRow from "./TransactionTableRow";
 
@@ -50,8 +50,8 @@ export default function TransactionTable({
     }
   };
 
-  const getMainAccount = (transaction: Transaction) => {
-    let account;
+  const getMainAccount = useCallback((transaction: Transaction) => {
+    let account: string;
     if (transaction.transaction_type === "expense") {
       account = transaction.debit_account;
     } else if (transaction.transaction_type === "income") {
@@ -61,7 +61,7 @@ export default function TransactionTable({
     }
     const accountParts = account.split("_");
     return accountParts[accountParts.length - 1];
-  };
+  }, []);
 
   const sortedTransactions = useMemo(() => {
     if (!sortField) return transactions;
@@ -157,6 +157,7 @@ export default function TransactionTable({
           <div className="flex space-x-2">
             {page > 1 && (
               <button
+                type="button"
                 onClick={() => handlePageChange(page - 1)}
                 className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm hover:bg-gray-50"
               >
@@ -165,6 +166,7 @@ export default function TransactionTable({
             )}
             {page < totalPages && (
               <button
+                type="button"
                 onClick={() => handlePageChange(page + 1)}
                 className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm hover:bg-gray-50"
               >
