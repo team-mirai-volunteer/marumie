@@ -5,6 +5,7 @@ import { useState } from "react";
 
 interface PoliticalOrganizationFormData {
   name: string;
+  slug: string;
   description: string;
 }
 
@@ -18,7 +19,7 @@ interface PoliticalOrganizationFormProps {
 }
 
 export function PoliticalOrganizationForm({
-  initialData = { name: "", description: "" },
+  initialData = { name: "", slug: "", description: "" },
   onSubmit,
   submitButtonText,
   title,
@@ -27,12 +28,13 @@ export function PoliticalOrganizationForm({
 }: PoliticalOrganizationFormProps) {
   const [formData, setFormData] = useState<PoliticalOrganizationFormData>({
     name: initialData.name || "",
+    slug: initialData.slug || "",
     description: initialData.description || "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name.trim()) return;
+    if (!formData.name.trim() || !formData.slug.trim()) return;
     await onSubmit(formData);
   };
 
@@ -96,6 +98,27 @@ export function PoliticalOrganizationForm({
           />
         </div>
 
+        <div style={{ marginBottom: "20px" }}>
+          <label
+            htmlFor="slug"
+            style={{ display: "block", marginBottom: "8px", fontWeight: "500" }}
+          >
+            スラッグ <span style={{ color: "#ff6b6b" }}>*</span>
+          </label>
+          <input
+            type="text"
+            id="slug"
+            name="slug"
+            value={formData.slug}
+            onChange={handleInputChange}
+            className="input"
+            style={{ width: "100%", maxWidth: "500px" }}
+            placeholder="team-mirai"
+            disabled={isLoading}
+            required
+          />
+        </div>
+
         <div style={{ marginBottom: "30px" }}>
           <label
             htmlFor="description"
@@ -124,11 +147,18 @@ export function PoliticalOrganizationForm({
           <button
             type="submit"
             className="button"
-            disabled={isLoading || !formData.name.trim()}
+            disabled={
+              isLoading || !formData.name.trim() || !formData.slug.trim()
+            }
             style={{
-              opacity: isLoading || !formData.name.trim() ? 0.6 : 1,
+              opacity:
+                isLoading || !formData.name.trim() || !formData.slug.trim()
+                  ? 0.6
+                  : 1,
               cursor:
-                isLoading || !formData.name.trim() ? "not-allowed" : "pointer",
+                isLoading || !formData.name.trim() || !formData.slug.trim()
+                  ? "not-allowed"
+                  : "pointer",
             }}
           >
             {isLoading ? "処理中..." : submitButtonText}

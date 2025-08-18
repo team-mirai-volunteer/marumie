@@ -9,13 +9,15 @@ export class PrismaPoliticalOrganizationRepository
 
   async create(
     name: string,
+    slug: string,
     description?: string,
   ): Promise<PoliticalOrganization> {
     const cleanName = name.trim();
+    const cleanSlug = slug.trim();
     const cleanDescription = description?.trim() || undefined;
 
     const organization = await this.prisma.politicalOrganization.create({
-      data: { name: cleanName, description: cleanDescription },
+      data: { name: cleanName, slug: cleanSlug, description: cleanDescription },
     });
 
     return {

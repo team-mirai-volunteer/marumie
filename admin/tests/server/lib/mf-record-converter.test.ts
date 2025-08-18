@@ -203,15 +203,15 @@ describe("MfRecordConverter", () => {
 
       it("should split description with 3 words into description_1, description_2, and description_3", () => {
         const record = createMockRecord({
-          description: "振込1 ウルシバラ シゲル",
+          description: "振込1 テスト タロウ",
         });
 
         const result = converter.convertRow(record, "test-org-id");
 
-        expect(result.description).toBe("振込1 ウルシバラ シゲル");
+        expect(result.description).toBe("振込1 テスト タロウ");
         expect(result.description_1).toBe("振込1");
-        expect(result.description_2).toBe("ウルシバラ");
-        expect(result.description_3).toBe("シゲル");
+        expect(result.description_2).toBe("テスト");
+        expect(result.description_3).toBe("タロウ");
       });
 
       it("should split description with 4+ words and combine 3rd+ words into description_3", () => {

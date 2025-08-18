@@ -6,6 +6,7 @@ export class CreatePoliticalOrganizationUsecase {
 
   async execute(
     name: string,
+    slug: string,
     description?: string,
   ): Promise<PoliticalOrganization> {
     try {
@@ -13,7 +14,11 @@ export class CreatePoliticalOrganizationUsecase {
         throw new Error("Organization name is required");
       }
 
-      return await this.repository.create(name, description);
+      if (!slug || slug.trim().length === 0) {
+        throw new Error("Organization slug is required");
+      }
+
+      return await this.repository.create(name, slug, description);
     } catch (error) {
       throw new Error(
         `Failed to create organization: ${error instanceof Error ? error.message : "Unknown error"}`,
