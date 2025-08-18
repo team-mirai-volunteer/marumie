@@ -54,8 +54,19 @@
     "dotenv-cli": "^10.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
+    "lint-staged": "^15.5.2",
     "prisma": "^6.14.0",
+    "simple-git-hooks": "^2.13.1",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,md}": [
+      "biome format --write",
+      "git add"
+    ]
   }
 }
