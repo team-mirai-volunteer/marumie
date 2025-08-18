@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import {
   Transaction,
   CreateTransactionInput,
@@ -19,24 +19,24 @@ export class PrismaTransactionRepository implements ITransactionRepository {
         financialYear: input.financial_year,
         transactionType: input.transaction_type,
         debitAccount: input.debit_account,
-        debitSubAccount: input.debit_sub_account,
-        debitDepartment: input.debit_department,
-        debitPartner: input.debit_partner,
-        debitTaxCategory: input.debit_tax_category,
+        debitSubAccount: input.debit_sub_account || null,
+        debitDepartment: input.debit_department || null,
+        debitPartner: input.debit_partner || null,
+        debitTaxCategory: input.debit_tax_category || null,
         debitAmount: input.debit_amount,
         creditAccount: input.credit_account,
-        creditSubAccount: input.credit_sub_account,
-        creditDepartment: input.credit_department,
-        creditPartner: input.credit_partner,
-        creditTaxCategory: input.credit_tax_category,
+        creditSubAccount: input.credit_sub_account || null,
+        creditDepartment: input.credit_department || null,
+        creditPartner: input.credit_partner || null,
+        creditTaxCategory: input.credit_tax_category || null,
         creditAmount: input.credit_amount,
-        description: input.description,
-        description1: input.description_1,
-        description2: input.description_2,
-        description3: input.description_3,
-        descriptionDetail: input.description_detail,
-        tags: input.tags,
-        memo: input.memo,
+        description: input.description || null,
+        description1: input.description_1 || null,
+        description2: input.description_2 || null,
+        description3: input.description_3 || null,
+        descriptionDetail: input.description_detail || null,
+        tags: input.tags || null,
+        memo: input.memo || null,
       },
     });
 
@@ -52,7 +52,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   }
 
   async findAll(filters?: TransactionFilters): Promise<Transaction[]> {
-    const where: any = {};
+    const where: Prisma.TransactionWhereInput = {};
 
     if (filters?.transaction_type) {
       where.transactionType = filters.transaction_type;
@@ -98,44 +98,12 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     return transactions.map(this.mapToTransaction);
   }
 
-  async update(id: string, input: UpdateTransactionInput): Promise<Transaction> {
-    const transaction = await this.prisma.transaction.update({
-      where: { id: BigInt(id) },
-      data: {
-        ...(input.political_organization_id && { politicalOrganizationId: BigInt(input.political_organization_id) }),
-        ...(input.transaction_no !== undefined && { transactionNo: input.transaction_no }),
-        ...(input.transaction_date && { transactionDate: input.transaction_date }),
-        ...(input.financial_year !== undefined && { financialYear: input.financial_year }),
-        ...(input.transaction_type && { transactionType: input.transaction_type }),
-        ...(input.debit_account && { debitAccount: input.debit_account }),
-        ...(input.debit_sub_account !== undefined && { debitSubAccount: input.debit_sub_account }),
-        ...(input.debit_department !== undefined && { debitDepartment: input.debit_department }),
-        ...(input.debit_partner !== undefined && { debitPartner: input.debit_partner }),
-        ...(input.debit_tax_category !== undefined && { debitTaxCategory: input.debit_tax_category }),
-        ...(input.debit_amount !== undefined && { debitAmount: input.debit_amount }),
-        ...(input.credit_account && { creditAccount: input.credit_account }),
-        ...(input.credit_sub_account !== undefined && { creditSubAccount: input.credit_sub_account }),
-        ...(input.credit_department !== undefined && { creditDepartment: input.credit_department }),
-        ...(input.credit_partner !== undefined && { creditPartner: input.credit_partner }),
-        ...(input.credit_tax_category !== undefined && { creditTaxCategory: input.credit_tax_category }),
-        ...(input.credit_amount !== undefined && { creditAmount: input.credit_amount }),
-        ...(input.description !== undefined && { description: input.description }),
-        ...(input.description_1 !== undefined && { description1: input.description_1 }),
-        ...(input.description_2 !== undefined && { description2: input.description_2 }),
-        ...(input.description_3 !== undefined && { description3: input.description_3 }),
-        ...(input.description_detail !== undefined && { descriptionDetail: input.description_detail }),
-        ...(input.tags !== undefined && { tags: input.tags }),
-        ...(input.memo !== undefined && { memo: input.memo }),
-      },
-    });
-
-    return this.mapToTransaction(transaction);
+  async update(_id: string, _input: UpdateTransactionInput): Promise<Transaction> {
+    throw new Error('Transaction update is not implemented');
   }
 
-  async delete(id: string): Promise<void> {
-    await this.prisma.transaction.delete({
-      where: { id: BigInt(id) },
-    });
+  async delete(_id: string): Promise<void> {
+    throw new Error('Transaction delete is not implemented');
   }
 
   async createMany(inputs: CreateTransactionInput[]): Promise<Transaction[]> {
@@ -146,24 +114,24 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       financialYear: input.financial_year,
       transactionType: input.transaction_type,
       debitAccount: input.debit_account,
-      debitSubAccount: input.debit_sub_account,
-      debitDepartment: input.debit_department,
-      debitPartner: input.debit_partner,
-      debitTaxCategory: input.debit_tax_category,
+      debitSubAccount: input.debit_sub_account || null,
+      debitDepartment: input.debit_department || null,
+      debitPartner: input.debit_partner || null,
+      debitTaxCategory: input.debit_tax_category || null,
       debitAmount: input.debit_amount,
       creditAccount: input.credit_account,
-      creditSubAccount: input.credit_sub_account,
-      creditDepartment: input.credit_department,
-      creditPartner: input.credit_partner,
-      creditTaxCategory: input.credit_tax_category,
+      creditSubAccount: input.credit_sub_account || null,
+      creditDepartment: input.credit_department || null,
+      creditPartner: input.credit_partner || null,
+      creditTaxCategory: input.credit_tax_category || null,
       creditAmount: input.credit_amount,
-      description: input.description,
-      description1: input.description_1,
-      description2: input.description_2,
-      description3: input.description_3,
-      descriptionDetail: input.description_detail,
-      tags: input.tags,
-      memo: input.memo,
+      description: input.description || null,
+      description1: input.description_1 || null,
+      description2: input.description_2 || null,
+      description3: input.description_3 || null,
+      descriptionDetail: input.description_detail || null,
+      tags: input.tags || null,
+      memo: input.memo || null,
     }));
 
     await this.prisma.transaction.createMany({
@@ -173,7 +141,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     const createdTransactions = await this.prisma.transaction.findMany({
       where: {
         transactionNo: {
-          in: inputs.map(input => input.transaction_no).filter(Boolean),
+          in: inputs.map(input => input.transaction_no).filter((no): no is string => Boolean(no)),
         },
       },
       orderBy: { createdAt: 'desc' },
