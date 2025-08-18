@@ -36,32 +36,9 @@ export class UploadMfCsvUsecase {
         return result;
       }
 
-      const convertedRecords = csvRecords.map(record =>
-        this.recordConverter.convertRow(record)
+      const transactionInputs: CreateTransactionInput[] = csvRecords.map(record =>
+        this.recordConverter.convertRow(record, input.politicalOrganizationId)
       );
-
-      const transactionInputs: CreateTransactionInput[] = convertedRecords.map(record => ({
-        political_organization_id: input.politicalOrganizationId,
-        transaction_no: record.transaction_no,
-        transaction_date: new Date(record.transaction_date),
-        financial_year: record.financial_year,
-        transaction_type: record.transaction_type,
-        debit_account: record.debit_account,
-        debit_sub_account: record.debit_sub_account,
-        debit_department: record.debit_department,
-        debit_partner: record.debit_partner,
-        debit_tax_category: record.debit_tax_category,
-        debit_amount: record.debit_amount,
-        credit_account: record.credit_account,
-        credit_sub_account: record.credit_sub_account,
-        credit_department: record.credit_department,
-        credit_partner: record.credit_partner,
-        credit_tax_category: record.credit_tax_category,
-        credit_amount: record.credit_amount,
-        description: record.description,
-        description_1: record.tags,
-        description_2: record.memo,
-      }));
 
       const savedTransactions = await this.transactionRepository.createMany(transactionInputs);
       result.savedCount = savedTransactions.length;

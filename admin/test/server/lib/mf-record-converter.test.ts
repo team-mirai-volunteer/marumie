@@ -1,5 +1,6 @@
-import { MfRecordConverter, ConvertedMfRecord } from '../../../src/server/lib/mf-record-converter';
+import { MfRecordConverter } from '../../../src/server/lib/mf-record-converter';
 import { MfCsvRecord } from '../../../src/server/lib/mf-csv-loader';
+import { CreateTransactionInput } from '../../../src/shared/model/transaction';
 
 describe('MfRecordConverter', () => {
   let converter: MfRecordConverter;
@@ -38,7 +39,7 @@ describe('MfRecordConverter', () => {
         credit_amount: '500000',
       });
 
-      const result = converter.convertRow(record);
+      const result = converter.convertRow(record, 'test-org-id');
 
       expect(result.debit_amount).toBe(1500000);
       expect(result.credit_amount).toBe(500000);
@@ -50,7 +51,7 @@ describe('MfRecordConverter', () => {
         credit_amount: '500,000',
       });
 
-      const result = converter.convertRow(record);
+      const result = converter.convertRow(record, 'test-org-id');
 
       expect(result.debit_amount).toBe(1500000);
       expect(result.credit_amount).toBe(500000);
@@ -62,7 +63,7 @@ describe('MfRecordConverter', () => {
         credit_amount: '',
       });
 
-      const result = converter.convertRow(record);
+      const result = converter.convertRow(record, 'test-org-id');
 
       expect(result.debit_amount).toBe(0);
       expect(result.credit_amount).toBe(0);
@@ -74,7 +75,7 @@ describe('MfRecordConverter', () => {
         credit_amount: 'abc123',
       });
 
-      const result = converter.convertRow(record);
+      const result = converter.convertRow(record, 'test-org-id');
 
       expect(result.debit_amount).toBe(0);
       expect(result.credit_amount).toBe(0);
@@ -86,7 +87,7 @@ describe('MfRecordConverter', () => {
         credit_account: '寄附金',
       });
 
-      const result = converter.convertRow(record);
+      const result = converter.convertRow(record, 'test-org-id');
 
       expect(result.transaction_type).toBe('income');
     });
@@ -97,7 +98,7 @@ describe('MfRecordConverter', () => {
         credit_account: '普通預金',
       });
 
-      const result = converter.convertRow(record);
+      const result = converter.convertRow(record, 'test-org-id');
 
       expect(result.transaction_type).toBe('expense');
     });
@@ -108,7 +109,7 @@ describe('MfRecordConverter', () => {
         credit_account: '寄附金',
       });
 
-      const result = converter.convertRow(record);
+      const result = converter.convertRow(record, 'test-org-id');
 
       expect(result.transaction_type).toBe('other');
     });
@@ -118,21 +119,21 @@ describe('MfRecordConverter', () => {
       const marchRecord = createMockRecord({
         transaction_date: '2025/3/15',
       });
-      const marchResult = converter.convertRow(marchRecord);
+      const marchResult = converter.convertRow(marchRecord, 'test-org-id');
       expect(marchResult.financial_year).toBe(2024);
 
       // Test April (start of fiscal year) - should be current year
       const aprilRecord = createMockRecord({
         transaction_date: '2025/4/1',
       });
-      const aprilResult = converter.convertRow(aprilRecord);
+      const aprilResult = converter.convertRow(aprilRecord, 'test-org-id');
       expect(aprilResult.financial_year).toBe(2025);
 
       // Test December (after April) - should be current year
       const decemberRecord = createMockRecord({
         transaction_date: '2025/12/31',
       });
-      const decemberResult = converter.convertRow(decemberRecord);
+      const decemberResult = converter.convertRow(decemberRecord, 'test-org-id');
       expect(decemberResult.financial_year).toBe(2025);
     });
 
@@ -146,14 +147,15 @@ describe('MfRecordConverter', () => {
         memo: 'テストメモ',
       });
 
-      const result = converter.convertRow(record);
+      const result = converter.convertRow(record, 'test-org-id');
 
+      expect(result.political_organization_id).toBe('test-org-id');
       expect(result.transaction_no).toBe('123');
-      expect(result.transaction_date).toBe('2025/12/31');
+      expect(result.transaction_date).toEqual(new Date('2025/12/31'));
       expect(result.debit_account).toBe('普通預金');
       expect(result.debit_sub_account).toBe('テスト銀行');
-      expect(result.tags).toBe('テストタグ');
-      expect(result.memo).toBe('テストメモ');
+      expect(result.description_1).toBe('テストタグ');
+      expect(result.description_2).toBe('テストメモ');
     });
 
     it('should prioritize debit_account when both accounts are 普通預金', () => {
@@ -162,7 +164,7 @@ describe('MfRecordConverter', () => {
         credit_account: '普通預金',
       });
 
-      const result = converter.convertRow(record);
+      const result = converter.convertRow(record, 'test-org-id');
 
       expect(result.transaction_type).toBe('income');
     });

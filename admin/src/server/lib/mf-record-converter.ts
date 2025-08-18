@@ -1,34 +1,11 @@
 import { MfCsvRecord } from './mf-csv-loader';
-import { TransactionType } from '@/shared/model/transaction';
+import { TransactionType, CreateTransactionInput } from '@/shared/model/transaction';
 
-export interface ConvertedMfRecord {
-  transaction_no: string;
-  transaction_date: string;
-  financial_year: number;
-  transaction_type: TransactionType;
-  debit_account: string;
-  debit_sub_account: string;
-  debit_department: string;
-  debit_partner: string;
-  debit_tax_category: string;
-  debit_invoice: string;
-  debit_amount: number;
-  credit_account: string;
-  credit_sub_account: string;
-  credit_department: string;
-  credit_partner: string;
-  credit_tax_category: string;
-  credit_invoice: string;
-  credit_amount: number;
-  description: string;
-  tags: string;
-  memo: string;
-}
 
 export class MfRecordConverter {
   constructor() {}
 
-  public convertRow(record: MfCsvRecord): ConvertedMfRecord {
+  public convertRow(record: MfCsvRecord, politicalOrganizationId: string): CreateTransactionInput {
     const debitAmount = this.parseAmount(record.debit_amount);
     const creditAmount = this.parseAmount(record.credit_amount);
     const transactionType = this.determineTransactionType(
@@ -38,8 +15,9 @@ export class MfRecordConverter {
     const financialYear = this.extractFinancialYear(record.transaction_date);
 
     return {
+      political_organization_id: politicalOrganizationId,
       transaction_no: record.transaction_no,
-      transaction_date: record.transaction_date,
+      transaction_date: new Date(record.transaction_date),
       financial_year: financialYear,
       transaction_type: transactionType,
       debit_account: record.debit_account,
@@ -47,18 +25,16 @@ export class MfRecordConverter {
       debit_department: record.debit_department,
       debit_partner: record.debit_partner,
       debit_tax_category: record.debit_tax_category,
-      debit_invoice: record.debit_invoice,
       debit_amount: debitAmount,
       credit_account: record.credit_account,
       credit_sub_account: record.credit_sub_account,
       credit_department: record.credit_department,
       credit_partner: record.credit_partner,
       credit_tax_category: record.credit_tax_category,
-      credit_invoice: record.credit_invoice,
       credit_amount: creditAmount,
       description: record.description,
-      tags: record.tags,
-      memo: record.memo,
+      description_1: record.tags,
+      description_2: record.memo,
     };
   }
 

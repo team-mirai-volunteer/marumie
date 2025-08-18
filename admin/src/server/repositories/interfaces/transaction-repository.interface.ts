@@ -1,6 +1,5 @@
 import {
   Transaction,
-  TransactionType,
   CreateTransactionInput,
   UpdateTransactionInput,
   TransactionFilters,
