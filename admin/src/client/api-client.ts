@@ -10,6 +10,18 @@ export interface UpdatePoliticalOrganizationRequest {
   description?: string;
 }
 
+export interface UploadCsvRequest {
+  file: File;
+  politicalOrganizationId: string;
+}
+
+export interface UploadCsvResponse {
+  ok: boolean;
+  processedCount: number;
+  savedCount: number;
+  message: string;
+}
+
 export class ApiClient {
   private baseUrl: string;
 
@@ -29,6 +41,22 @@ export class ApiClient {
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+    }
+
+    return response.json();
+  }
+
+  private async requestFormData<T>(url: string, formData: FormData): Promise<T> {
+    const response = await fetch(`${this.baseUrl}${url}`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMsg = errorData.error || 'Upload failed';
+      const details = errorData.details ? ` Details: ${Array.isArray(errorData.details) ? errorData.details.join(', ') : errorData.details}` : '';
+      throw new Error(errorMsg + details);
     }
 
     return response.json();
@@ -60,6 +88,14 @@ export class ApiClient {
 
   async listPoliticalOrganizations(): Promise<PoliticalOrganization[]> {
     return this.request<PoliticalOrganization[]>('/api/political-organizations');
+  }
+
+  async uploadCsv(data: UploadCsvRequest): Promise<UploadCsvResponse> {
+    const formData = new FormData();
+    formData.append('file', data.file);
+    formData.append('politicalOrganizationId', data.politicalOrganizationId);
+    
+    return this.requestFormData<UploadCsvResponse>('/api/upload-csv', formData);
   }
 }
 

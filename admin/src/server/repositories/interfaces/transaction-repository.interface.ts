@@ -1,6 +1,5 @@
 import {
   Transaction,
-  TransactionType,
   CreateTransactionInput,
   UpdateTransactionInput,
   TransactionFilters,
@@ -13,4 +12,8 @@ export interface ITransactionRepository {
   update(id: string, input: UpdateTransactionInput): Promise<Transaction>;
   delete(id: string): Promise<void>;
   createMany(inputs: CreateTransactionInput[]): Promise<Transaction[]>;
+  createManySkipDuplicates(inputs: CreateTransactionInput[]): Promise<{
+    created: Transaction[];
+    skipped: number;
+  }>;
 }

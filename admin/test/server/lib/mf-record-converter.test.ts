@@ -1,5 +1,6 @@
-import { MfRecordConverter, ConvertedMfRecord } from '../../../src/server/lib/mf-record-converter';
-import { MfCsvRecord } from '../../../src/server/lib/mf-csv-loader';
+import { MfRecordConverter } from '@/server/lib/mf-record-converter';
+import { MfCsvRecord } from '@/server/lib/mf-csv-loader';
+import { CreateTransactionInput } from '@/shared/model/transaction';
 
 describe('MfRecordConverter', () => {
   let converter: MfRecordConverter;
@@ -38,7 +39,7 @@ describe('MfRecordConverter', () => {
         credit_amount: '500000',
       });
 
-      const result = converter.convertRow(record);
+      const result = converter.convertRow(record, 'test-org-id');
 
       expect(result.debit_amount).toBe(1500000);
       expect(result.credit_amount).toBe(500000);
@@ -50,7 +51,7 @@ describe('MfRecordConverter', () => {
         credit_amount: '500,000',
       });
 
-      const result = converter.convertRow(record);
+      const result = converter.convertRow(record, 'test-org-id');
 
       expect(result.debit_amount).toBe(1500000);
       expect(result.credit_amount).toBe(500000);
@@ -62,7 +63,7 @@ describe('MfRecordConverter', () => {
         credit_amount: '',
       });
 
-      const result = converter.convertRow(record);
+      const result = converter.convertRow(record, 'test-org-id');
 
       expect(result.debit_amount).toBe(0);
       expect(result.credit_amount).toBe(0);
@@ -74,46 +75,43 @@ describe('MfRecordConverter', () => {
         credit_amount: 'abc123',
       });
 
-      const result = converter.convertRow(record);
+      const result = converter.convertRow(record, 'test-org-id');
 
       expect(result.debit_amount).toBe(0);
       expect(result.credit_amount).toBe(0);
     });
 
-    it('should set transaction_type to 収入 when debit_account is 普通預金', () => {
+    it('should set transaction_type to income when debit_account is 普通預金', () => {
       const record = createMockRecord({
         debit_account: '普通預金',
         credit_account: '寄附金',
       });
 
-      const result = converter.convertRow(record);
+      const result = converter.convertRow(record, 'test-org-id');
 
-      expect(result.transaction_type).toBe('収入');
-      expect(result.mapped_transaction_type).toBe('income');
+      expect(result.transaction_type).toBe('income');
     });
 
-    it('should set transaction_type to 支出 when credit_account is 普通預金', () => {
+    it('should set transaction_type to expense when credit_account is 普通預金', () => {
       const record = createMockRecord({
         debit_account: '事務費',
         credit_account: '普通預金',
       });
 
-      const result = converter.convertRow(record);
+      const result = converter.convertRow(record, 'test-org-id');
 
-      expect(result.transaction_type).toBe('支出');
-      expect(result.mapped_transaction_type).toBe('expense');
+      expect(result.transaction_type).toBe('expense');
     });
 
-    it('should set transaction_type to それ以外 when neither account is 普通預金', () => {
+    it('should set transaction_type to other when neither account is 普通預金', () => {
       const record = createMockRecord({
         debit_account: '事務費',
         credit_account: '寄附金',
       });
 
-      const result = converter.convertRow(record);
+      const result = converter.convertRow(record, 'test-org-id');
 
-      expect(result.transaction_type).toBe('それ以外');
-      expect(result.mapped_transaction_type).toBe('other');
+      expect(result.transaction_type).toBe('other');
     });
 
     it('should calculate financial year correctly', () => {
@@ -121,21 +119,21 @@ describe('MfRecordConverter', () => {
       const marchRecord = createMockRecord({
         transaction_date: '2025/3/15',
       });
-      const marchResult = converter.convertRow(marchRecord);
+      const marchResult = converter.convertRow(marchRecord, 'test-org-id');
       expect(marchResult.financial_year).toBe(2024);
 
       // Test April (start of fiscal year) - should be current year
       const aprilRecord = createMockRecord({
         transaction_date: '2025/4/1',
       });
-      const aprilResult = converter.convertRow(aprilRecord);
+      const aprilResult = converter.convertRow(aprilRecord, 'test-org-id');
       expect(aprilResult.financial_year).toBe(2025);
 
       // Test December (after April) - should be current year
       const decemberRecord = createMockRecord({
         transaction_date: '2025/12/31',
       });
-      const decemberResult = converter.convertRow(decemberRecord);
+      const decemberResult = converter.convertRow(decemberRecord, 'test-org-id');
       expect(decemberResult.financial_year).toBe(2025);
     });
 
@@ -149,10 +147,11 @@ describe('MfRecordConverter', () => {
         memo: 'テストメモ',
       });
 
-      const result = converter.convertRow(record);
+      const result = converter.convertRow(record, 'test-org-id');
 
+      expect(result.political_organization_id).toBe('test-org-id');
       expect(result.transaction_no).toBe('123');
-      expect(result.transaction_date).toBe('2025/12/31');
+      expect(result.transaction_date).toEqual(new Date('2025/12/31'));
       expect(result.debit_account).toBe('普通預金');
       expect(result.debit_sub_account).toBe('テスト銀行');
       expect(result.tags).toBe('テストタグ');
@@ -165,10 +164,101 @@ describe('MfRecordConverter', () => {
         credit_account: '普通預金',
       });
 
-      const result = converter.convertRow(record);
+      const result = converter.convertRow(record, 'test-org-id');
 
-      expect(result.transaction_type).toBe('収入');
-      expect(result.mapped_transaction_type).toBe('income');
+      expect(result.transaction_type).toBe('income');
+    });
+
+    describe('description splitting logic', () => {
+      it('should split description with 1 word into description_1 only', () => {
+        const record = createMockRecord({
+          description: '振込1',
+        });
+
+        const result = converter.convertRow(record, 'test-org-id');
+
+        expect(result.description).toBe('振込1');
+        expect(result.description_1).toBe('振込1');
+        expect(result.description_2).toBeUndefined();
+        expect(result.description_3).toBeUndefined();
+      });
+
+      it('should split description with 2 words into description_1 and description_3', () => {
+        const record = createMockRecord({
+          description: '振込1 TEAM',
+        });
+
+        const result = converter.convertRow(record, 'test-org-id');
+
+        expect(result.description).toBe('振込1 TEAM');
+        expect(result.description_1).toBe('振込1');
+        expect(result.description_2).toBeUndefined();
+        expect(result.description_3).toBe('TEAM');
+      });
+
+      it('should split description with 3 words into description_1, description_2, and description_3', () => {
+        const record = createMockRecord({
+          description: '振込1 ウルシバラ シゲル',
+        });
+
+        const result = converter.convertRow(record, 'test-org-id');
+
+        expect(result.description).toBe('振込1 ウルシバラ シゲル');
+        expect(result.description_1).toBe('振込1');
+        expect(result.description_2).toBe('ウルシバラ');
+        expect(result.description_3).toBe('シゲル');
+      });
+
+      it('should split description with 4+ words and combine 3rd+ words into description_3', () => {
+        const record = createMockRecord({
+          description: '振込1 A B C D E',
+        });
+
+        const result = converter.convertRow(record, 'test-org-id');
+
+        expect(result.description).toBe('振込1 A B C D E');
+        expect(result.description_1).toBe('振込1');
+        expect(result.description_2).toBe('A');
+        expect(result.description_3).toBe('B C D E');
+      });
+
+      it('should handle empty description', () => {
+        const record = createMockRecord({
+          description: '',
+        });
+
+        const result = converter.convertRow(record, 'test-org-id');
+
+        expect(result.description).toBe('');
+        expect(result.description_1).toBeUndefined();
+        expect(result.description_2).toBeUndefined();
+        expect(result.description_3).toBeUndefined();
+      });
+
+      it('should handle description with multiple spaces', () => {
+        const record = createMockRecord({
+          description: '振込1   TEAM   NAME',
+        });
+
+        const result = converter.convertRow(record, 'test-org-id');
+
+        expect(result.description).toBe('振込1   TEAM   NAME');
+        expect(result.description_1).toBe('振込1');
+        expect(result.description_2).toBe('TEAM');
+        expect(result.description_3).toBe('NAME');
+      });
+    });
+
+    it('should preserve tags and memo fields as-is', () => {
+      const record = createMockRecord({
+        tags: 'テストタグ値',
+        memo: 'テストメモ値',
+      });
+
+      const result = converter.convertRow(record, 'test-org-id');
+
+      expect(result.tags).toBe('テストタグ値');
+      expect(result.memo).toBe('テストメモ値');
     });
   });
 
@@ -184,11 +274,4 @@ describe('MfRecordConverter', () => {
     });
   });
 
-  describe('mapTransactionType', () => {
-    it('should map Japanese transaction types to English correctly', () => {
-      expect(converter.mapTransactionType('収入')).toBe('income');
-      expect(converter.mapTransactionType('支出')).toBe('expense');
-      expect(converter.mapTransactionType('それ以外')).toBe('other');
-    });
-  });
 });

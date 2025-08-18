@@ -1,32 +1,52 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { apiClient } from '@/client/api-client';
+import { PoliticalOrganization } from '@/shared/model/political-organization';
 
 export default function UploadCsvPage() {
   const [file, setFile] = useState<File | null>(null);
   const [politicalOrganizationId, setPoliticalOrganizationId] = useState<string>('');
   const [message, setMessage] = useState<string>('');
   const [uploading, setUploading] = useState(false);
+  const [organizations, setOrganizations] = useState<PoliticalOrganization[]>([]);
+  const [loadingOrganizations, setLoadingOrganizations] = useState(true);
+
+  useEffect(() => {
+    async function fetchOrganizations() {
+      try {
+        const data = await apiClient.listPoliticalOrganizations();
+        setOrganizations(data);
+        // 最初の政治団体を自動選択
+        if (data.length > 0) {
+          setPoliticalOrganizationId(data[0].id);
+        }
+      } catch (error) {
+        console.error('Error fetching organizations:', error);
+        setMessage('Error loading political organizations');
+      } finally {
+        setLoadingOrganizations(false);
+      }
+    }
+
+    fetchOrganizations();
+  }, []);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!file || !politicalOrganizationId) return;
     setUploading(true);
     setMessage('');
+    
     try {
-      const form = new FormData();
-      form.append('file', file);
-      form.append('politicalOrganizationId', politicalOrganizationId);
-      const res = await fetch('/api/upload-csv', { method: 'POST', body: form });
-      const json = await res.json();
-      if (!res.ok) {
-        const errorMsg = json.error || 'Upload failed';
-        const details = json.details ? ` Details: ${Array.isArray(json.details) ? json.details.join(', ') : json.details}` : '';
-        throw new Error(errorMsg + details);
-      }
-      setMessage(json.message || `Successfully processed ${json.processedCount} records and saved ${json.savedCount} transactions`);
-    } catch (err: any) {
-      setMessage(`Error: ${err.message || String(err)}`);
+      const result = await apiClient.uploadCsv({
+        file,
+        politicalOrganizationId,
+      });
+      
+      setMessage(result.message || `Successfully processed ${result.processedCount} records and saved ${result.savedCount} transactions`);
+    } catch (err) {
+      setMessage(`Error: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setUploading(false);
     }
@@ -38,17 +58,30 @@ export default function UploadCsvPage() {
       <form onSubmit={onSubmit} className="column" style={{ gap: 12 }}>
         <div>
           <label htmlFor="politicalOrganizationId" className="label">
-            Political Organization ID:
+            Political Organization:
           </label>
-          <input
-            id="politicalOrganizationId"
-            className="input"
-            type="text"
-            placeholder="Enter political organization ID"
-            value={politicalOrganizationId}
-            onChange={(e) => setPoliticalOrganizationId(e.target.value)}
-            required
-          />
+          {loadingOrganizations ? (
+            <div className="input" style={{ color: '#666' }}>
+              Loading organizations...
+            </div>
+          ) : (
+            <select
+              id="politicalOrganizationId"
+              className="input"
+              value={politicalOrganizationId}
+              onChange={(e) => setPoliticalOrganizationId(e.target.value)}
+              required
+            >
+              {organizations.length === 0 && (
+                <option value="">No political organizations found</option>
+              )}
+              {organizations.map((org) => (
+                <option key={org.id} value={org.id}>
+                  {org.name}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
         <div>
           <label htmlFor="csvFile" className="label">
@@ -65,7 +98,7 @@ export default function UploadCsvPage() {
         </div>
         <button 
           className="button" 
-          disabled={!file || !politicalOrganizationId || uploading}
+          disabled={!file || !politicalOrganizationId || uploading || loadingOrganizations}
           type="submit"
         >
           {uploading ? 'Processing…' : 'Upload and Process'}
