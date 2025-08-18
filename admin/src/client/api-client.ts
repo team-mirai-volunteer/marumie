@@ -12,8 +12,6 @@ export interface UpdatePoliticalOrganizationRequest {
 }
 
 export interface UploadCsvRequest {
-
-
   file: File;
   politicalOrganizationId: string;
 }
