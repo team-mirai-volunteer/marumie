@@ -85,32 +85,32 @@ importers:
   admin:
     dependencies:
       '@prisma/client':
-        specifier: '*'
+        specifier: ^6.14.0
         version: 6.14.0(prisma@6.14.0(typescript@5.9.2))(typescript@5.9.2)
       iconv-lite:
         specifier: ^0.6.3
         version: 0.6.3
       next:
-        specifier: '*'
+        specifier: 15.4.6
         version: 15.4.6(@babel/core@7.28.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react:
-        specifier: '*'
+        specifier: 19.1.0
         version: 19.1.0
       react-dom:
-        specifier: '*'
+        specifier: 19.1.0
         version: 19.1.0(react@19.1.0)
     devDependencies:
       '@types/jest':
         specifier: ^29.5.12
         version: 29.5.14
       '@types/node':
-        specifier: '*'
+        specifier: ^20
         version: 20.19.11
       '@types/react':
-        specifier: '*'
+        specifier: ^19
         version: 19.1.10
       '@types/react-dom':
-        specifier: '*'
+        specifier: ^19
         version: 19.1.7(@types/react@19.1.10)
       jest:
         specifier: ^29.7.0
@@ -119,14 +119,36 @@ importers:
         specifier: ^29.1.2
         version: 29.4.1(@babel/core@7.28.3)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.3))(jest-util@29.7.0)(jest@29.7.0(@types/node@20.19.11))(typescript@5.9.2)
       typescript:
-        specifier: '*'
+        specifier: ^5
         version: 5.9.2
 
   webapp:
     dependencies:
       '@prisma/client':
-        specifier: '*'
+        specifier: ^6.14.0
         version: 6.14.0(prisma@6.14.0(typescript@5.9.2))(typescript@5.9.2)
+      next:
+        specifier: 15.4.6
+        version: 15.4.6(@babel/core@7.28.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+    devDependencies:
+      '@types/node':
+        specifier: ^20
+        version: 20.19.11
+      '@types/react':
+        specifier: ^19
+        version: 19.1.10
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.1.7(@types/react@19.1.10)
+      typescript:
+        specifier: ^5
+        version: 5.9.2
 
 packages:
 

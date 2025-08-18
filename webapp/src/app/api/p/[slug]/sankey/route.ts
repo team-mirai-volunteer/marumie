@@ -1,4 +1,11 @@
-// // typecheckを通すために一時的に全てコメントアウトしています。
+// typecheckを通すために一時的に全てコメントアウトしています。
+
+import { NextResponse } from 'next/server';
+
+// 一時的なプレースホルダー関数
+export async function GET() {
+  return NextResponse.json({ message: 'Not implemented yet' });
+}
 
 // import { NextResponse } from 'next/server';
 // import { PrismaClient } from '@prisma/client';
