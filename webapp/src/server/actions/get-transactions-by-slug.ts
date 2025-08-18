@@ -1,8 +1,8 @@
 "use server";
 
 import { PrismaClient } from "@prisma/client";
-import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
 import { PrismaPoliticalOrganizationRepository } from "@/server/repositories/prisma-political-organization.repository";
+import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
 import {
   type GetTransactionsBySlugParams,
   GetTransactionsBySlugUsecase,

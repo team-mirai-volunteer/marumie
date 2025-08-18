@@ -28,7 +28,7 @@
         "useImportType": "error"
       },
       "nursery": {
-        "useSortedClasses": "error"
+        "useSortedClasses": "off"
       }
     }
   },

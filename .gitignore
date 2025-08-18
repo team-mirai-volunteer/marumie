@@ -1,4 +1,4 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+g See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 data/*
 !data/sampledata.csv
 */.next/*
@@ -57,3 +57,4 @@ prisma/dev.db*
 admin/node_modules
 webapp/node_modules
 packages/db/node_modules
+.roo
