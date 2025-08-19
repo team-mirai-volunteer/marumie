@@ -3,11 +3,11 @@ import "client-only";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
-import type { Transaction } from "@/shared/models/transaction";
+import type { DisplayTransaction } from "@/types/display-transaction";
 import TransactionTableRow from "./TransactionTableRow";
 
 interface TransactionTableProps {
-  transactions: Transaction[];
+  transactions: DisplayTransaction[];
   total: number;
   page: number;
   perPage: number;
@@ -50,17 +50,8 @@ export default function TransactionTable({
     }
   };
 
-  const getMainAccount = useCallback((transaction: Transaction) => {
-    let account: string;
-    if (transaction.transaction_type === "expense") {
-      account = transaction.debit_account;
-    } else if (transaction.transaction_type === "income") {
-      account = transaction.credit_account;
-    } else {
-      account = transaction.debit_account;
-    }
-    const accountParts = account.split("_");
-    return accountParts[accountParts.length - 1];
+  const getMainAccount = useCallback((transaction: DisplayTransaction) => {
+    return transaction.category;
   }, []);
 
   const sortedTransactions = useMemo(() => {
@@ -72,18 +63,16 @@ export default function TransactionTable({
 
       switch (sortField) {
         case "date":
-          aValue = new Date(a.transaction_date).getTime();
-          bValue = new Date(b.transaction_date).getTime();
+          aValue = new Date(a.date).getTime();
+          bValue = new Date(b.date).getTime();
           break;
         case "account":
           aValue = getMainAccount(a);
           bValue = getMainAccount(b);
           break;
         case "amount":
-          aValue =
-            a.transaction_type === "expense" ? -a.debit_amount : a.debit_amount;
-          bValue =
-            b.transaction_type === "expense" ? -b.debit_amount : b.debit_amount;
+          aValue = a.amount;
+          bValue = b.amount;
           break;
         default:
           return 0;
