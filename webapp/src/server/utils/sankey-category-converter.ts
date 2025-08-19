@@ -61,6 +61,22 @@ export function convertCategoryAggregationToSankeyData(
     expenseByCategory.set(item.category, current + item.totalAmount);
   }
 
+  // 収入と支出の合計を計算
+  const totalIncome = Array.from(incomeByCategory.values()).reduce((sum, amount) => sum + amount, 0);
+  const totalExpense = Array.from(expenseByCategory.values()).reduce((sum, amount) => sum + amount, 0);
+
+  // 収入 > 支出の場合、「現残高」を追加
+  if (totalIncome > totalExpense) {
+    const currentBalance = totalIncome - totalExpense;
+    expenseByCategory.set("現残高", currentBalance);
+    
+    // 支出データに「現残高」レコードを追加（UI用）
+    aggregation.expense.push({
+      category: "現残高",
+      totalAmount: currentBalance,
+    });
+  }
+
   for (const category of expenseByCategory.keys()) {
     if (!nodeIds.has(category)) {
       nodes.push({
