@@ -1,5 +1,7 @@
 import "server-only";
 import SankeyChart from "@/client/components/features/sankey/SankeyChart";
+import MainColumn from "@/client/components/layout/MainColumn";
+import MainColumnCard from "@/client/components/layout/MainColumnCard";
 import { getSankeyData } from "@/server/actions/get-sankey-data";
 
 export default async function PoliticianPage({
@@ -13,15 +15,17 @@ export default async function PoliticianPage({
   const sankeyData = await getSankeyData({ slug });
 
   return (
-    <main className="p-6 space-y-6">
-      <h1 className="text-2xl font-semibold">{slug}</h1>
-      {sankeyData ? (
-        <SankeyChart data={sankeyData} />
-      ) : (
-        <div className="text-gray-500">
-          サンキー図データが取得できませんでした
-        </div>
-      )}
-    </main>
+    <MainColumn>
+      <MainColumnCard>
+        <h1 className="text-2xl font-semibold">{slug}</h1>
+        {sankeyData ? (
+          <SankeyChart data={sankeyData} />
+        ) : (
+          <div className="text-gray-500">
+            サンキー図データが取得できませんでした
+          </div>
+        )}
+      </MainColumnCard>
+    </MainColumn>
   );
 }
