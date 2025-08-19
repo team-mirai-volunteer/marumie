@@ -36,7 +36,7 @@ export default async function PoliticianPage({
         <CardHeader
           icon={
             <Image
-              src="/icon-cashflow.svg"
+              src="/icons/icon-cashflow.svg"
               alt="Cash flow icon"
               width={30}
               height={31}
@@ -64,7 +64,7 @@ export default async function PoliticianPage({
         <CardHeader
           icon={
             <Image
-              src="/icon-barchart.svg"
+              src="/icons/icon-barchart.svg"
               alt="Bar chart icon"
               width={30}
               height={30}
@@ -89,7 +89,7 @@ export default async function PoliticianPage({
         <CardHeader
           icon={
             <Image
-              src="/icon-heart-handshake.svg"
+              src="/icons/icon-heart-handshake.svg"
               alt="Heart handshake icon"
               width={30}
               height={30}
@@ -163,7 +163,7 @@ export default async function PoliticianPage({
         <CardHeader
           icon={
             <Image
-              src="/icon-cashback.svg"
+              src="/icons/icon-cashback.svg"
               alt="Cash move icon"
               width={30}
               height={30}
