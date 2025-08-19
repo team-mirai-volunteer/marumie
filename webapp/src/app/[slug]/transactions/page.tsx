@@ -2,7 +2,7 @@ import "server-only";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import TransactionTable from "@/client/components/TransactionTable";
+import TransactionTable from "@/client/components/features/transaction/TransactionTable";
 import { getTransactionsBySlugAction } from "@/server/actions/get-transactions-by-slug";
 
 interface TransactionsPageProps {
