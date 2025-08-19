@@ -1,12 +1,12 @@
-interface FinancialCellProps {
+interface CardSummaryProps {
   children: React.ReactNode;
   className?: string;
 }
 
-export default function FinancialCell({
+export default function CardSummary({
   children,
-  className = '',
-}: FinancialCellProps) {
+  className = "",
+}: CardSummaryProps) {
   return (
     <div
       className={`
