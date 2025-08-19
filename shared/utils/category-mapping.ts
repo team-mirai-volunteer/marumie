@@ -100,13 +100,3 @@ export const ACCOUNT_CATEGORY_MAPPING: Record<string, CategoryMapping> = {
   }
 };
 
-/**
- * アカウント名からカテゴリマッピングを取得する関数
- * 存在しない場合は"unknown"を返す
- */
-export function getCategoryMapping(account: string): CategoryMapping {
-  return ACCOUNT_CATEGORY_MAPPING[account] || {
-    category: "unknown",
-    subcategory: "unknown"
-  };
-}

@@ -1,6 +1,17 @@
-import type { Transaction } from "@/shared/models/transaction";
 import type { DisplayTransaction } from "@/types/display-transaction";
-import { getCategoryMapping } from "./category-mapping";
+import type { Transaction } from "@/shared/models/transaction";
+import { type CategoryMapping, ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
+
+/**
+ * アカウント名からカテゴリマッピングを取得する関数
+ * 存在しない場合は"unknown"を返す
+ */
+export function getCategoryMapping(account: string): CategoryMapping {
+  return ACCOUNT_CATEGORY_MAPPING[account] || {
+    category: "unknown",
+    subcategory: "unknown"
+  };
+}
 
 /**
  * Transaction を DisplayTransaction に変換する関数
