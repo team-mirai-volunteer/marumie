@@ -21,6 +21,9 @@
     "build:all": "pnpm build:webapp && pnpm build:admin",
     "start": "pnpm --filter webapp start",
     "start:admin": "pnpm --filter admin start",
+    "deploy:webapp": "pnpm --filter webapp deploy-app",
+    "deploy:admin": "pnpm --filter admin deploy-app",
+    "deploy:all": "pnpm deploy:webapp && pnpm deploy:admin",
 
     "// Code Quality": "======================================",
     "lint": "pnpm lint:webapp && pnpm lint:admin",
