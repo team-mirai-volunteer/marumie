@@ -89,7 +89,7 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,css,md}": [
-      "biome format --write",
+      "biome format --write .",
       "git add"
     ]
   }
