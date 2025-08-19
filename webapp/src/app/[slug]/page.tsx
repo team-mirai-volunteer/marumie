@@ -213,10 +213,39 @@ export default async function PoliticianPage({
           icon={
             <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
               <title>Bar chart icon</title>
-              <rect x="3.75" y="3.75" width="22.5" height="22.5" stroke="#2AA693" strokeWidth="2" fill="none"/>
-              <line x1="22.5" y1="11.25" x2="22.5" y2="21.25" stroke="#2AA693" strokeWidth="2"/>
-              <line x1="16.25" y1="6.25" x2="16.25" y2="21.25" stroke="#2AA693" strokeWidth="2"/>
-              <line x1="10" y1="17.5" x2="10" y2="21.25" stroke="#2AA693" strokeWidth="2"/>
+              <rect
+                x="3.75"
+                y="3.75"
+                width="22.5"
+                height="22.5"
+                stroke="#2AA693"
+                strokeWidth="2"
+                fill="none"
+              />
+              <line
+                x1="22.5"
+                y1="11.25"
+                x2="22.5"
+                y2="21.25"
+                stroke="#2AA693"
+                strokeWidth="2"
+              />
+              <line
+                x1="16.25"
+                y1="6.25"
+                x2="16.25"
+                y2="21.25"
+                stroke="#2AA693"
+                strokeWidth="2"
+              />
+              <line
+                x1="10"
+                y1="17.5"
+                x2="10"
+                y2="21.25"
+                stroke="#2AA693"
+                strokeWidth="2"
+              />
             </svg>
           }
           title="１年間の収支の推移"
@@ -239,10 +268,20 @@ export default async function PoliticianPage({
           icon={
             <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
               <title>Heart handshake icon</title>
-              <path d="M2.49 3.74h25.02v22.51H2.49z" stroke="#2AA693" strokeWidth="2" fill="none"/>
-              <path d="M10.32 6.7h15.62v8.45H10.32z" stroke="#2AA693" strokeWidth="2" fill="none"/>
-              <circle cx="21.25" cy="17.5" r="1.25" fill="#2AA693"/>
-              <circle cx="17.5" cy="21.25" r="1.25" fill="#2AA693"/>
+              <path
+                d="M2.49 3.74h25.02v22.51H2.49z"
+                stroke="#2AA693"
+                strokeWidth="2"
+                fill="none"
+              />
+              <path
+                d="M10.32 6.7h15.62v8.45H10.32z"
+                stroke="#2AA693"
+                strokeWidth="2"
+                fill="none"
+              />
+              <circle cx="21.25" cy="17.5" r="1.25" fill="#2AA693" />
+              <circle cx="17.5" cy="21.25" r="1.25" fill="#2AA693" />
             </svg>
           }
           title="これまでの累計寄付金額"
@@ -259,19 +298,35 @@ export default async function PoliticianPage({
                 <span className="text-[#6B7280]">前日比</span>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <title>Arrow up icon</title>
-                  <path d="M12 5l7 7-7 7" stroke="#238778" strokeWidth="2" fill="none"/>
-                  <path d="M5 5l7 7" stroke="#238778" strokeWidth="2" fill="none"/>
+                  <path
+                    d="M12 5l7 7-7 7"
+                    stroke="#238778"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                  <path
+                    d="M5 5l7 7"
+                    stroke="#238778"
+                    strokeWidth="2"
+                    fill="none"
+                  />
                 </svg>
                 <span className="text-[#238778] font-bold">8,000</span>
                 <span className="text-[#6B7280]">円</span>
               </div>
             </div>
             <div className="flex items-end gap-1">
-              <span className="text-[#000000] font-bold text-[40px] leading-[30px]">1</span>
+              <span className="text-[#000000] font-bold text-[40px] leading-[30px]">
+                1
+              </span>
               <span className="text-[#000000] font-bold text-base">億</span>
-              <span className="text-[#000000] font-bold text-[40px] leading-[30px]">7462</span>
+              <span className="text-[#000000] font-bold text-[40px] leading-[30px]">
+                7462
+              </span>
               <span className="text-[#000000] font-bold text-base">万</span>
-              <span className="text-[#000000] font-bold text-[40px] leading-[30px]">4000</span>
+              <span className="text-[#000000] font-bold text-[40px] leading-[30px]">
+                4000
+              </span>
               <span className="text-[#000000] font-bold text-base">円</span>
             </div>
           </CardSummary>
@@ -283,23 +338,39 @@ export default async function PoliticianPage({
                 <span className="text-[#6B7280]">前日比</span>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <title>Arrow up icon</title>
-                  <path d="M12 5l7 7-7 7" stroke="#238778" strokeWidth="2" fill="none"/>
-                  <path d="M5 5l7 7" stroke="#238778" strokeWidth="2" fill="none"/>
+                  <path
+                    d="M12 5l7 7-7 7"
+                    stroke="#238778"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                  <path
+                    d="M5 5l7 7"
+                    stroke="#238778"
+                    strokeWidth="2"
+                    fill="none"
+                  />
                 </svg>
                 <span className="text-[#238778] font-bold">12</span>
                 <span className="text-[#6B7280]">件</span>
               </div>
             </div>
             <div className="flex items-end gap-1">
-              <span className="text-[#000000] font-bold text-[40px] leading-[30px]">7118</span>
+              <span className="text-[#000000] font-bold text-[40px] leading-[30px]">
+                7118
+              </span>
               <span className="text-[#000000] font-bold text-base">件</span>
             </div>
           </CardSummary>
 
           <CardSummary className="flex-1">
-            <div className="text-[#000000] font-bold text-base mb-4">企業団体献金</div>
+            <div className="text-[#000000] font-bold text-base mb-4">
+              企業団体献金
+            </div>
             <div className="flex items-end gap-1">
-              <span className="text-[#000000] font-bold text-[40px] leading-[30px]">0</span>
+              <span className="text-[#000000] font-bold text-[40px] leading-[30px]">
+                0
+              </span>
               <span className="text-[#000000] font-bold text-base">件</span>
             </div>
           </CardSummary>
@@ -318,7 +389,10 @@ export default async function PoliticianPage({
           <p className="text-[#000000] font-bold text-base mb-6">
             チームみらいは、皆さまのご支援・ご寄付のおかげで活動を続けられております。
           </p>
-          <button type="button" className="bg-gradient-to-r from-[#BCECD3] to-[#64D8C6] border border-black rounded-[40px] px-6 py-2 text-[#000000] font-bold text-base hover:opacity-90 transition-opacity">
+          <button
+            type="button"
+            className="bg-gradient-to-r from-[#BCECD3] to-[#64D8C6] border border-black rounded-[40px] px-6 py-2 text-[#000000] font-bold text-base hover:opacity-90 transition-opacity"
+          >
             ご寄付はこちら
           </button>
         </div>
@@ -330,9 +404,24 @@ export default async function PoliticianPage({
           icon={
             <svg width="29" height="30" viewBox="0 0 29 30" fill="none">
               <title>Cash move icon</title>
-              <path d="M3.63 6.25h22.96v21.25H3.63z" stroke="#2AA693" strokeWidth="2" fill="none"/>
-              <path d="M4.83 5h16.92v12.5H4.83z" stroke="#2AA693" strokeWidth="2" fill="none"/>
-              <path d="M10.88 8.75h12.08v12.5H10.88z" stroke="#2AA693" strokeWidth="2" fill="none"/>
+              <path
+                d="M3.63 6.25h22.96v21.25H3.63z"
+                stroke="#2AA693"
+                strokeWidth="2"
+                fill="none"
+              />
+              <path
+                d="M4.83 5h16.92v12.5H4.83z"
+                stroke="#2AA693"
+                strokeWidth="2"
+                fill="none"
+              />
+              <path
+                d="M10.88 8.75h12.08v12.5H10.88z"
+                stroke="#2AA693"
+                strokeWidth="2"
+                fill="none"
+              />
             </svg>
           }
           title="すべての出入金"
@@ -401,7 +490,8 @@ export default async function PoliticianPage({
                 本ページに記載されている収支のデータソース
               </h3>
               <p className="text-[15px] leading-[1.87] text-[#1F2937]">
-                マネーフォワード クラウド・XXX銀行・マネーフォワード クラウド・XXX銀行・
+                マネーフォワード クラウド・XXX銀行・マネーフォワード
+                クラウド・XXX銀行・
               </p>
             </div>
 
