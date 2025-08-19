@@ -3,11 +3,7 @@ import "client-only";
 
 import { ResponsiveSankey } from "@nivo/sankey";
 import { useEffect, useState } from "react";
-
-type SankeyData = {
-  nodes: { id: string }[];
-  links: { source: string; target: string; value: number }[];
-};
+import type { SankeyData } from "@/types/sankey";
 
 export default function SankeyChart({ slug }: { slug: string }) {
   const [data, setData] = useState<SankeyData | null>(null);
@@ -38,15 +34,20 @@ export default function SankeyChart({ slug }: { slug: string }) {
     <div style={{ height: 600 }}>
       <ResponsiveSankey
         data={data}
-        margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+        margin={{ top: 40, right: 160, bottom: 40, left: 160 }}
         align="justify"
-        colors={{ scheme: "category10" }}
-        valueFormat={(v) => Math.round(v as number).toLocaleString("ja-JP")}
+        colors={{ scheme: "nivo" }}
+        valueFormat={(v) => `¥${Math.round(v as number).toLocaleString("ja-JP")}`}
         nodeOpacity={1}
         nodeBorderWidth={1}
         nodeBorderColor={{ from: "color", modifiers: [["darker", 0.8]] }}
-        linkOpacity={0.5}
+        nodeThickness={24}
+        nodeSpacing={16}
+        linkOpacity={0.6}
         enableLinkGradient
+        labelPosition="outside"
+        labelOrientation="horizontal"
+        labelTextColor={{ from: "color", modifiers: [["darker", 1]] }}
       />
     </div>
   );
