@@ -32,7 +32,9 @@
     "typecheck:admin": "pnpm --filter admin type-check",
 
     "// Testing": "===========================================",
-    "test": "pnpm --filter admin test",
+    "test": "pnpm test:admin && pnpm test:webapp",
+    "test:admin": "pnpm --filter admin test",
+    "test:webapp": "pnpm --filter webapp test",
     "test:watch": "pnpm --filter admin test:watch",
 
     "// Database": "==========================================",
