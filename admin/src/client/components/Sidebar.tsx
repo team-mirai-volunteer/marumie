@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -49,6 +50,17 @@ export default function Sidebar() {
           CSVアップロード
         </Link>
       </nav>
+      <form
+        onSubmit={async (e) => {
+          e.preventDefault();
+          const supabase = createSupabaseBrowserClient();
+          await supabase.auth.signOut();
+          window.location.href = "/login";
+        }}
+        style={{ marginTop: 16 }}
+      >
+        <button className="button" type="submit">Sign out</button>
+      </form>
     </aside>
   );
 }
