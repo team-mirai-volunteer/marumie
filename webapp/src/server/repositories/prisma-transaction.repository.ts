@@ -10,6 +10,7 @@ import type {
   SankeyCategoryAggregationResult,
   TransactionCategoryAggregation,
 } from "./interfaces/transaction-repository.interface";
+import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 
 export class PrismaTransactionRepository implements ITransactionRepository {
   constructor(private prisma: PrismaClient) {}
@@ -97,7 +98,6 @@ export class PrismaTransactionRepository implements ITransactionRepository {
         account: item.creditAccount || "",
         amount: Number(item._sum.creditAmount || 0),
       })),
-      true,
     );
 
     const expense = this.aggregateByCategory(
@@ -105,7 +105,6 @@ export class PrismaTransactionRepository implements ITransactionRepository {
         account: item.debitAccount || "",
         amount: Number(item._sum.debitAmount || 0),
       })),
-      false,
     );
 
     return { income, expense };
@@ -113,12 +112,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
 
   private aggregateByCategory(
     accountData: Array<{ account: string; amount: number }>,
-    isIncome: boolean,
   ): TransactionCategoryAggregation[] {
-    const {
-      ACCOUNT_CATEGORY_MAPPING,
-    } = require("@/shared/utils/category-mapping");
-
     const categoryMap = new Map<
       string,
       { category: string; subcategory?: string; totalAmount: number }

@@ -15,7 +15,6 @@ export default function SankeyChart({ data }: SankeyChartProps) {
       return "#4F566B"; // 中央のbox
     }
 
-
     // 収入関連のカテゴリとサブカテゴリを定義
     const incomeCategories = new Set([
       "寄付",
