@@ -3,6 +3,7 @@ import type {
   Transaction,
   TransactionFilters,
 } from "@/shared/models/transaction";
+import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 import type {
   ITransactionRepository,
   PaginatedResult,
@@ -10,7 +11,6 @@ import type {
   SankeyCategoryAggregationResult,
   TransactionCategoryAggregation,
 } from "./interfaces/transaction-repository.interface";
-import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 
 export class PrismaTransactionRepository implements ITransactionRepository {
   constructor(private prisma: PrismaClient) {}
