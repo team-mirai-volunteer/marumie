@@ -1,10 +1,10 @@
 "use client";
 import "client-only";
 
-import type { Transaction } from "@/shared/models/transaction";
+import type { DisplayTransaction } from "@/types/display-transaction";
 
 interface TransactionTableRowProps {
-  transaction: Transaction;
+  transaction: DisplayTransaction;
 }
 
 export default function TransactionTableRow({
@@ -22,36 +22,15 @@ export default function TransactionTableRow({
     return `${year}.${month}.${day}`;
   };
 
-  const getMainAccount = () => {
-    let account, subAccount;
-
-    if (transaction.transaction_type === "expense") {
-      account = transaction.debit_account;
-      subAccount = transaction.debit_sub_account;
-    } else if (transaction.transaction_type === "income") {
-      account = transaction.credit_account;
-      subAccount = transaction.credit_sub_account;
-    } else {
-      account = transaction.debit_account;
-      subAccount = transaction.debit_sub_account;
-    }
-
-    // アンダースコアで分割して最後のアイテムを取得
-    const accountParts = account.split("_");
-    const displayAccount = accountParts[accountParts.length - 1];
-
-    return {
-      account: displayAccount,
-      subAccount: subAccount,
-    };
+  const mainAccount = {
+    account: transaction.category,
+    subAccount: transaction.subcategory,
   };
-
-  const mainAccount = getMainAccount();
 
   return (
     <tr className="hover:bg-gray-50">
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-        {formatDate(transaction.transaction_date)}
+        {formatDate(transaction.date)}
       </td>
       <td className="px-6 py-4 text-sm text-gray-900">
         {transaction.tags || "-"}
@@ -63,9 +42,7 @@ export default function TransactionTableRow({
         )}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
-        {transaction.transaction_type === "expense"
-          ? formatCurrency(-transaction.debit_amount)
-          : formatCurrency(transaction.debit_amount)}
+        {formatCurrency(transaction.amount)}
       </td>
     </tr>
   );
