@@ -1,10 +1,10 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -26,41 +26,49 @@ export default function LoginPage() {
   }
 
   return (
+    <div className="card">
+      <h1>Login</h1>
+      <form
+        onSubmit={onSubmit}
+        className=""
+        style={{ display: "grid", gap: 12 }}
+      >
+        <label>
+          <div className="muted">Email</div>
+          <input
+            className="input"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </label>
+        <label>
+          <div className="muted">Password</div>
+          <input
+            className="input"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </label>
+        <button className="button" type="submit">
+          Sign in
+        </button>
+        {error && <div className="muted">{error}</div>}
+      </form>
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
     <div className="container" style={{ gridTemplateColumns: "1fr" }}>
       <main className="content" style={{ maxWidth: 480, margin: "0 auto" }}>
-        <div className="card">
-          <h1>Login</h1>
-          <form
-            onSubmit={onSubmit}
-            className=""
-            style={{ display: "grid", gap: 12 }}
-          >
-            <label>
-              <div className="muted">Email</div>
-              <input
-                className="input"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </label>
-            <label>
-              <div className="muted">Password</div>
-              <input
-                className="input"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </label>
-            <button className="button" type="submit">
-              Sign in
-            </button>
-            {error && <div className="muted">{error}</div>}
-          </form>
-        </div>
+        <Suspense fallback={<div className="card">Loading…</div>}>
+          <LoginForm />
+        </Suspense>
       </main>
     </div>
   );
