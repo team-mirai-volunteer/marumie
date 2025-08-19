@@ -1,7 +1,9 @@
 import "server-only";
 import SankeyChart from "@/client/components/features/sankey/SankeyChart";
+import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumn from "@/client/components/layout/MainColumn";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
+import CashFlowIcon from "@/client/components/ui/CashFlowIcon";
 import { getSankeyData } from "@/server/actions/get-sankey-data";
 
 export default async function PoliticianPage({
@@ -17,7 +19,12 @@ export default async function PoliticianPage({
   return (
     <MainColumn>
       <MainColumnCard>
-        <h1 className="text-2xl font-semibold">{slug}</h1>
+        <CardHeader
+          icon={<CashFlowIcon />}
+          title="チームみらいの収支の流れ"
+          updatedAt="2025.8.14時点"
+          subtitle="チームみらいはどこからお金を得て、何に使っているのか"
+        />
         {sankeyData ? (
           <SankeyChart data={sankeyData} />
         ) : (

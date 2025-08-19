@@ -1,7 +1,9 @@
 import "server-only";
 import Link from "next/link";
+import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumn from "@/client/components/layout/MainColumn";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
+import ListIcon from "@/client/components/ui/ListIcon";
 import { getAllPoliticalOrganizations } from "@/server/actions/get-all-political-organizations";
 
 export const dynamic = "force-dynamic";
@@ -12,10 +14,14 @@ export default async function Home() {
   return (
     <MainColumn>
       <MainColumnCard>
-        <h1 className="text-2xl font-semibold">TOP</h1>
+        <CardHeader
+          icon={<ListIcon />}
+          title="政治団体一覧"
+          updatedAt="2025.8.19時点"
+          subtitle="登録されている政治団体の一覧を表示しています"
+        />
 
-        <section className="space-y-4">
-          <h2 className="text-xl font-medium">政治団体一覧</h2>
+        <section className="space-y-4 w-full">
           <div className="space-y-3">
             {politicalOrganizations.map((org) => (
               <div
