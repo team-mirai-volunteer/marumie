@@ -96,7 +96,7 @@ export default async function TransactionsPage({
           <CardHeader
             icon={
               <Image
-                src="/cashflow.svg"
+                src="/icons/icon-cashflow.svg"
                 alt="Cash flow icon"
                 width={30}
                 height={31}

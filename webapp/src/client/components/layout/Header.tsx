@@ -21,7 +21,7 @@ export default function Header() {
               <div className="w-12 h-10 relative">
                 {/* Team Mirai Logo */}
                 <Image
-                  src="/team-mirai-logo.svg"
+                  src="/logos/team-mirai-logo.svg"
                   alt="Team Mirai Logo"
                   fill
                   className="object-contain"
