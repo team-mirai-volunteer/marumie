@@ -81,7 +81,7 @@ export function convertToSankeyData(
   for (const [subKey] of incomeBySubcategory) {
     const [, subcategory] = subKey.split("|");
     nodes.push({
-      id: `income-sub-${subcategory}`,
+      id: `${subcategory}`,
       label: subcategory,
     });
   }
@@ -89,21 +89,21 @@ export function convertToSankeyData(
   // 2. 収入カテゴリノード
   for (const category of incomeByCategory.keys()) {
     nodes.push({
-      id: `income-cat-${category}`,
+      id: `${category}`,
       label: category,
     });
   }
 
   // 3. 中央の合計ノード
   nodes.push({
-    id: "total",
+    id: "合計",
     label: "合計",
   });
 
   // 4. 支出カテゴリノード
   for (const category of expenseByCategory.keys()) {
     nodes.push({
-      id: `expense-cat-${category}`,
+      id: `${category}`,
       label: category,
     });
   }
@@ -112,7 +112,7 @@ export function convertToSankeyData(
   for (const [subKey] of expenseBySubcategory) {
     const [, subcategory] = subKey.split("|");
     nodes.push({
-      id: `expense-sub-${subcategory}`,
+      id: `${subcategory}`,
       label: subcategory,
     });
   }
@@ -123,8 +123,8 @@ export function convertToSankeyData(
   for (const [subKey, data] of incomeBySubcategory) {
     const [, subcategory] = subKey.split("|");
     links.push({
-      source: `income-sub-${subcategory}`,
-      target: `income-cat-${data.category}`,
+      source: `${subcategory}`,
+      target: `${data.category}`,
       value: data.amount,
     });
   }
@@ -132,8 +132,8 @@ export function convertToSankeyData(
   // 2. 収入カテゴリ → 合計
   for (const [category, amount] of incomeByCategory) {
     links.push({
-      source: `income-cat-${category}`,
-      target: "total",
+      source: `${category}`,
+      target: "合計",
       value: amount,
     });
   }
@@ -141,8 +141,8 @@ export function convertToSankeyData(
   // 3. 合計 → 支出カテゴリ
   for (const [category, amount] of expenseByCategory) {
     links.push({
-      source: "total",
-      target: `expense-cat-${category}`,
+      source: "合計",
+      target: `${category}`,
       value: amount,
     });
   }
@@ -151,8 +151,8 @@ export function convertToSankeyData(
   for (const [subKey, data] of expenseBySubcategory) {
     const [, subcategory] = subKey.split("|");
     links.push({
-      source: `expense-cat-${data.category}`,
-      target: `expense-sub-${subcategory}`,
+      source: `${data.category}`,
+      target: `${subcategory}`,
       value: data.amount,
     });
   }

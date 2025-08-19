@@ -17,6 +17,7 @@ export default function SankeyChart({ slug }: { slug: string }) {
       )
       .then((json) => {
         console.log("Sankey data:", json);
+        console.log("First node:", json.nodes?.[0]);
         if (isMounted) setData(json);
       })
       .catch((e) => {
@@ -30,16 +31,18 @@ export default function SankeyChart({ slug }: { slug: string }) {
   if (error) return <div className="text-red-500">{error}</div>;
   if (!data) return <div>Loading...</div>;
 
-  // カスタム色設定関数
+  // カスタム色設定関数  
   const getNodeColor = (node: { id: string }) => {
-    if (node.id.startsWith('income-')) {
-      return '#2AA693'; // 収入のbox
-    } else if (node.id === 'total') {
+    if (node.id === '合計') {
       return '#4F566B'; // 中央のbox
-    } else if (node.id.startsWith('expense-')) {
-      return '#EF4444'; // 支出のbox
     }
-    return '#4F566B'; // デフォルト
+    // 収入関連のカテゴリ・サブカテゴリを判定（仮のリスト）
+    const incomeCategories = ['寄付', 'その他', '機関紙誌収入', '個人からの寄付', '法人等寄付', '機関紙', '雑収入'];
+    if (incomeCategories.includes(node.id)) {
+      return '#2AA693'; // 収入のbox
+    }
+    // それ以外は支出とみなす
+    return '#EF4444'; // 支出のbox
   };
 
 
@@ -48,11 +51,11 @@ export default function SankeyChart({ slug }: { slug: string }) {
     <div style={{ height: 600 }} className="sankey-container">
       <style jsx global>{`
         .sankey-container svg path {
-          fill: #E5E7EB !important;
-          opacity: 0.6 !important;
+          fill: #D1D5DB !important;
+          opacity: 0.8 !important;
         }
         .sankey-container svg path:hover {
-          opacity: 0.8 !important;
+          opacity: 0.9 !important;
         }
       `}</style>
       <ResponsiveSankey
