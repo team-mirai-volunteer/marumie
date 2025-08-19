@@ -10,7 +10,7 @@ export default async function PoliticianPage({
   return (
     <main className="p-6 space-y-6">
       <h1 className="text-2xl font-semibold">{slug}</h1>
-      <SankeyChart />
+      <SankeyChart slug={slug} />
     </main>
   );
 }

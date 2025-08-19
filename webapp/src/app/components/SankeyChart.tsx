@@ -9,13 +9,13 @@ type SankeyData = {
   links: { source: string; target: string; value: number }[];
 };
 
-export default function SankeyChart() {
+export default function SankeyChart({ slug }: { slug: string }) {
   const [data, setData] = useState<SankeyData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
-    fetch(`/api/p/${encodeURIComponent("チームみらい")}/sankey`)
+    fetch(`/api/p/${encodeURIComponent(slug)}/sankey`)
       .then((r) =>
         r.ok ? r.json() : Promise.reject(new Error("Failed to fetch")),
       )
@@ -29,7 +29,7 @@ export default function SankeyChart() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [slug]);
 
   if (error) return <div className="text-red-500">{error}</div>;
   if (!data) return <div>Loading...</div>;

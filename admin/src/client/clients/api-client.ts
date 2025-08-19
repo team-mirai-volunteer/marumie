@@ -3,6 +3,7 @@ import type { Transaction } from "@/shared/models/transaction";
 
 export interface CreatePoliticalOrganizationRequest {
   name: string;
+  slug: string;
   description?: string;
 }
 
