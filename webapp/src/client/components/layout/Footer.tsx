@@ -8,7 +8,7 @@ export default function Footer() {
         {/* Logo */}
         <div className="w-[150px] h-[127px] relative">
           <Image
-            src="/team-mirai-logo.svg"
+            src="/logos/team-mirai-logo.svg"
             alt="Team Mirai Logo"
             fill
             className="object-contain"
