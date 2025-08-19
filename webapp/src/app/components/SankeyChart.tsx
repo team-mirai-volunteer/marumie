@@ -2,56 +2,41 @@
 import "client-only";
 
 import { ResponsiveSankey } from "@nivo/sankey";
-import { useEffect, useState } from "react";
 import type { SankeyData } from "@/types/sankey";
 
-export default function SankeyChart({ slug }: { slug: string }) {
-  const [data, setData] = useState<SankeyData | null>(null);
-  const [error, setError] = useState<string | null>(null);
+interface SankeyChartProps {
+  data: SankeyData;
+}
 
-  useEffect(() => {
-    let isMounted = true;
-    fetch(`/api/p/${encodeURIComponent(slug)}/sankey`)
-      .then((r) =>
-        r.ok ? r.json() : Promise.reject(new Error("Failed to fetch")),
-      )
-      .then((json) => {
-        console.log("Sankey data:", json);
-        console.log("First node:", json.nodes?.[0]);
-        if (isMounted) setData(json);
-      })
-      .catch((e) => {
-        if (isMounted) setError(String(e));
-      });
-    return () => {
-      isMounted = false;
-    };
-  }, [slug]);
+export default function SankeyChart({ data }: SankeyChartProps) {
 
-  if (error) return <div className="text-red-500">{error}</div>;
-  if (!data) return <div>Loading...</div>;
-
-  // カスタム色設定関数  
+  // カスタム色設定関数
   const getNodeColor = (node: { id: string }) => {
-    if (node.id === '合計') {
-      return '#4F566B'; // 中央のbox
+    if (node.id === "合計") {
+      return "#4F566B"; // 中央のbox
     }
     // 収入関連のカテゴリ・サブカテゴリを判定（仮のリスト）
-    const incomeCategories = ['寄付', 'その他', '機関紙誌収入', '個人からの寄付', '法人等寄付', '機関紙', '雑収入'];
+    const incomeCategories = [
+      "寄付",
+      "その他",
+      "機関紙誌収入",
+      "個人からの寄付",
+      "法人等寄付",
+      "機関紙",
+      "雑収入",
+    ];
     if (incomeCategories.includes(node.id)) {
-      return '#2AA693'; // 収入のbox
+      return "#2AA693"; // 収入のbox
     }
     // それ以外は支出とみなす
-    return '#EF4444'; // 支出のbox
+    return "#EF4444"; // 支出のbox
   };
-
-
 
   return (
     <div style={{ height: 600 }} className="sankey-container">
       <style jsx global>{`
         .sankey-container svg path {
-          fill: #D1D5DB !important;
+          fill: #d1d5db !important;
           opacity: 0.8 !important;
         }
         .sankey-container svg path:hover {
@@ -63,7 +48,9 @@ export default function SankeyChart({ slug }: { slug: string }) {
         margin={{ top: 40, right: 160, bottom: 40, left: 160 }}
         align="justify"
         colors={getNodeColor}
-        valueFormat={(v) => `¥${Math.round(v as number).toLocaleString("ja-JP")}`}
+        valueFormat={(v) =>
+          `¥${Math.round(v as number).toLocaleString("ja-JP")}`
+        }
         nodeOpacity={1}
         nodeBorderWidth={1}
         nodeBorderColor={{ from: "color", modifiers: [["darker", 0.8]] }}
