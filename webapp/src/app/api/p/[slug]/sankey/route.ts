@@ -17,7 +17,7 @@ export async function GET(
   const { slug } = await params;
 
   const politicalOrganization = await prisma.politicalOrganization.findFirst({
-    where: { name: slug },
+    where: { slug: slug },
   });
   if (!politicalOrganization) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });

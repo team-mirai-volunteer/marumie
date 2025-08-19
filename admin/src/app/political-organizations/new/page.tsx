@@ -15,10 +15,16 @@ export default function NewPoliticalOrganizationPage() {
 
   const handleSubmit = async (formData: {
     name: string;
+    slug: string;
     description: string;
   }) => {
     if (!formData.name.trim()) {
       setError("政治団体名は必須です");
+      return;
+    }
+
+    if (!formData.slug.trim()) {
+      setError("スラッグは必須です");
       return;
     }
 
@@ -28,6 +34,7 @@ export default function NewPoliticalOrganizationPage() {
 
       const requestData: CreatePoliticalOrganizationRequest = {
         name: formData.name.trim(),
+        slug: formData.slug.trim(),
         ...(formData.description?.trim() && {
           description: formData.description.trim(),
         }),
