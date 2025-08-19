@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import TransactionTable from "@/client/components/features/transaction/TransactionTable";
+import MainColumn from "@/client/components/layout/MainColumn";
+import MainColumnCard from "@/client/components/layout/MainColumnCard";
 import { getTransactionsBySlugAction } from "@/server/actions/get-transactions-by-slug";
 
 interface TransactionsPageProps {
@@ -81,26 +83,28 @@ export default async function TransactionsPage({
     });
 
     return (
-      <main className="p-6 space-y-6">
-        <div className="flex items-center space-x-4">
-          <Link href={`/${slug}`} className="text-blue-600 hover:underline">
-            ← {data.politicalOrganization.name}
-          </Link>
-        </div>
+      <MainColumn>
+        <MainColumnCard>
+          <div className="flex items-center space-x-4">
+            <Link href={`/${slug}`} className="text-blue-600 hover:underline">
+              ← {data.politicalOrganization.name}
+            </Link>
+          </div>
 
-        <h1 className="text-2xl font-semibold">
-          取引一覧 - {data.politicalOrganization.name}
-        </h1>
+          <h1 className="text-2xl font-semibold">
+            取引一覧 - {data.politicalOrganization.name}
+          </h1>
 
-        <TransactionTable
-          transactions={data.transactions}
-          total={data.total}
-          page={data.page}
-          perPage={data.perPage}
-          totalPages={data.totalPages}
-          slug={slug}
-        />
-      </main>
+          <TransactionTable
+            transactions={data.transactions}
+            total={data.total}
+            page={data.page}
+            perPage={data.perPage}
+            totalPages={data.totalPages}
+            slug={slug}
+          />
+        </MainColumnCard>
+      </MainColumn>
     );
   } catch (error) {
     if (error instanceof Error && error.message.includes("not found")) {
