@@ -13,8 +13,8 @@ export async function POST(request: Request) {
   }
 
   const cookieStore = await cookies();
-  const url = process.env.SUPABASE_URL as string;
-  const anon = process.env.SUPABASE_ANON_KEY as string;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
+  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
 
   function toNextSameSite(value: CookieOptions["sameSite"]): "lax" | "strict" | "none" | undefined {
     return value === "lax" || value === "strict" || value === "none" ? value : undefined;
