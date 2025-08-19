@@ -32,9 +32,10 @@ export class GetSankeyAggregationUsecase {
       }
 
       // 集計データを取得（フィルタなし、全データ）
-      const aggregation = await this.transactionRepository.getCategoryAggregationForSankey(
-        politicalOrganization.id
-      );
+      const aggregation =
+        await this.transactionRepository.getCategoryAggregationForSankey(
+          politicalOrganization.id,
+        );
 
       // Sankeyデータに変換
       const sankeyData = convertCategoryAggregationToSankeyData(aggregation);

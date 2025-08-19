@@ -6,7 +6,7 @@ import type { SankeyCategoryAggregationResult } from "../repositories/interfaces
  * subcategoryがあるものは5層、ないものは3層になる
  */
 export function convertCategoryAggregationToSankeyData(
-  aggregation: SankeyCategoryAggregationResult
+  aggregation: SankeyCategoryAggregationResult,
 ): SankeyData {
   const nodes: SankeyNode[] = [];
   const links: SankeyLink[] = [];
@@ -16,7 +16,7 @@ export function convertCategoryAggregationToSankeyData(
 
   // 収入データの処理: subcategoryがあるものとないものを分別
   const incomeByCategory = new Map<string, number>();
-  
+
   // 1. 収入サブカテゴリノード（subcategoryがあるもの）
   for (const item of aggregation.income) {
     if (item.subcategory) {

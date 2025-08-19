@@ -36,6 +36,6 @@ export interface ITransactionRepository {
     pagination?: PaginationOptions,
   ): Promise<PaginatedResult<Transaction>>;
   getCategoryAggregationForSankey(
-    politicalOrganizationId: string
+    politicalOrganizationId: string,
   ): Promise<SankeyCategoryAggregationResult>;
 }

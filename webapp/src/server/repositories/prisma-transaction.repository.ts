@@ -65,14 +65,14 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   }
 
   async getCategoryAggregationForSankey(
-    politicalOrganizationId: string
+    politicalOrganizationId: string,
   ): Promise<SankeyCategoryAggregationResult> {
     // 収入の集計（account別）
     const incomeAggregation = await this.prisma.transaction.groupBy({
-      by: ['creditAccount'],
+      by: ["creditAccount"],
       where: {
         politicalOrganizationId: BigInt(politicalOrganizationId),
-        transactionType: 'income',
+        transactionType: "income",
       },
       _sum: {
         creditAmount: true,
@@ -81,10 +81,10 @@ export class PrismaTransactionRepository implements ITransactionRepository {
 
     // 支出の集計（account別）
     const expenseAggregation = await this.prisma.transaction.groupBy({
-      by: ['debitAccount'],
+      by: ["debitAccount"],
       where: {
         politicalOrganizationId: BigInt(politicalOrganizationId),
-        transactionType: 'expense',
+        transactionType: "expense",
       },
       _sum: {
         debitAmount: true,
@@ -92,30 +92,43 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     });
 
     // accountからcategory/subcategoryにマッピングして集計
-    const income = this.aggregateByCategory(incomeAggregation.map(item => ({
-      account: item.creditAccount || '',
-      amount: Number(item._sum.creditAmount || 0),
-    })), true);
+    const income = this.aggregateByCategory(
+      incomeAggregation.map((item) => ({
+        account: item.creditAccount || "",
+        amount: Number(item._sum.creditAmount || 0),
+      })),
+      true,
+    );
 
-    const expense = this.aggregateByCategory(expenseAggregation.map(item => ({
-      account: item.debitAccount || '',
-      amount: Number(item._sum.debitAmount || 0),
-    })), false);
+    const expense = this.aggregateByCategory(
+      expenseAggregation.map((item) => ({
+        account: item.debitAccount || "",
+        amount: Number(item._sum.debitAmount || 0),
+      })),
+      false,
+    );
 
     return { income, expense };
   }
 
   private aggregateByCategory(
     accountData: Array<{ account: string; amount: number }>,
-    isIncome: boolean
+    isIncome: boolean,
   ): TransactionCategoryAggregation[] {
-    const { ACCOUNT_CATEGORY_MAPPING } = require('@/shared/utils/category-mapping');
-    
-    const categoryMap = new Map<string, { category: string; subcategory?: string; totalAmount: number }>();
+    const {
+      ACCOUNT_CATEGORY_MAPPING,
+    } = require("@/shared/utils/category-mapping");
+
+    const categoryMap = new Map<
+      string,
+      { category: string; subcategory?: string; totalAmount: number }
+    >();
 
     for (const item of accountData) {
-      const mapping = ACCOUNT_CATEGORY_MAPPING[item.account] || { category: item.account };
-      const key = mapping.subcategory 
+      const mapping = ACCOUNT_CATEGORY_MAPPING[item.account] || {
+        category: item.account,
+      };
+      const key = mapping.subcategory
         ? `${mapping.category}|${mapping.subcategory}`
         : mapping.category;
 
