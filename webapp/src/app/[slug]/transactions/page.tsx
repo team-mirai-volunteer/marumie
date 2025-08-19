@@ -1,12 +1,12 @@
 import "server-only";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import TransactionTable from "@/client/components/features/transaction/TransactionTable";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumn from "@/client/components/layout/MainColumn";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
-import CashFlowIcon from "@/client/components/ui/CashFlowIcon";
 import { getTransactionsBySlugAction } from "@/server/actions/get-transactions-by-slug";
 
 interface TransactionsPageProps {
@@ -94,7 +94,14 @@ export default async function TransactionsPage({
           </div>
 
           <CardHeader
-            icon={<CashFlowIcon />}
+            icon={
+              <Image
+                src="/cashflow.svg"
+                alt="Cash flow icon"
+                width={30}
+                height={31}
+              />
+            }
             title={`取引一覧 - ${data.politicalOrganization.name}`}
             updatedAt="2025.8.19時点"
             subtitle="政治資金の取引履歴を詳細に表示しています"

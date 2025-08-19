@@ -1,9 +1,9 @@
 import "server-only";
+import Image from "next/image";
 import SankeyChart from "@/client/components/features/sankey/SankeyChart";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumn from "@/client/components/layout/MainColumn";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
-import CashFlowIcon from "@/client/components/ui/CashFlowIcon";
 import { getSankeyData } from "@/server/actions/get-sankey-data";
 
 export default async function PoliticianPage({
@@ -20,7 +20,14 @@ export default async function PoliticianPage({
     <MainColumn>
       <MainColumnCard>
         <CardHeader
-          icon={<CashFlowIcon />}
+          icon={
+            <Image
+              src="/cashflow.svg"
+              alt="Cash flow icon"
+              width={30}
+              height={31}
+            />
+          }
           title="チームみらいの収支の流れ"
           updatedAt="2025.8.14時点"
           subtitle="チームみらいはどこからお金を得て、何に使っているのか"
