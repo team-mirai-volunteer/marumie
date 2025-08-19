@@ -1,4 +1,4 @@
-import type { SankeyData, SankeyNode, SankeyLink } from "@/types/sankey";
+import type { SankeyData, SankeyLink, SankeyNode } from "@/types/sankey";
 import type { SankeyCategoryAggregationResult } from "../repositories/interfaces/transaction-repository.interface";
 
 /**

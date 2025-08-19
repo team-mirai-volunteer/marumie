@@ -27,7 +27,7 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "format": "biome check --write --unsafe",
+    "format": "biome check --write .",
     "test": "jest",
     "test:watch": "jest --watch"
   }

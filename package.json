@@ -26,7 +26,7 @@
     "lint": "pnpm lint:webapp && pnpm lint:admin",
     "lint:webapp": "pnpm --filter webapp lint",
     "lint:admin": "pnpm --filter admin lint",
-    "format": "biome format --write .",
+    "format": "pnpm --filter webapp format && pnpm --filter admin format",
     "typecheck": "pnpm typecheck:webapp && pnpm typecheck:admin",
     "typecheck:webapp": "pnpm --filter webapp type-check",
     "typecheck:admin": "pnpm --filter admin type-check",
@@ -91,7 +91,7 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,css,md}": [
-      "biome format --write .",
+      "npm run format",
       "git add"
     ]
   }

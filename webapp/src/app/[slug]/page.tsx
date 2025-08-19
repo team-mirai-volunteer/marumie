@@ -1,5 +1,5 @@
 import "server-only";
-import SankeyChart from "@/app/components/SankeyChart";
+import SankeyChart from "@/client/components/features/sankey/SankeyChart";
 import { getSankeyData } from "@/server/actions/get-sankey-data";
 
 export default async function PoliticianPage({
