@@ -41,14 +41,15 @@ export class UploadMfCsvUsecase {
       }
 
       const validationResult = this.validator.validateRecords(csvRecords);
-      
+
       if (!validationResult.isValid) {
         const errorMessages = [
           `無効なアカウントラベルが見つかりました: ${validationResult.invalidAccountLabels.join(", ")}`,
           `エラー詳細:`,
-          ...validationResult.errors.map(error => 
-            `取引番号: ${error.record.transaction_no}, ${error.errors.join(", ")}`
-          )
+          ...validationResult.errors.map(
+            (error) =>
+              `取引番号: ${error.record.transaction_no}, ${error.errors.join(", ")}`,
+          ),
         ];
         result.errors.push(...errorMessages);
         return result;

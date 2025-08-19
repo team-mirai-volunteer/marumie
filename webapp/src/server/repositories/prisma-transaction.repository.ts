@@ -7,7 +7,10 @@ import type {
   ITransactionRepository,
   PaginatedResult,
   PaginationOptions,
+  SankeyCategoryAggregationResult,
+  TransactionCategoryAggregation,
 } from "./interfaces/transaction-repository.interface";
+import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 
 export class PrismaTransactionRepository implements ITransactionRepository {
   constructor(private prisma: PrismaClient) {}
@@ -60,6 +63,82 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       perPage,
       totalPages,
     };
+  }
+
+  async getCategoryAggregationForSankey(
+    politicalOrganizationId: string,
+  ): Promise<SankeyCategoryAggregationResult> {
+    // 収入の集計（account別）
+    const incomeAggregation = await this.prisma.transaction.groupBy({
+      by: ["creditAccount"],
+      where: {
+        politicalOrganizationId: BigInt(politicalOrganizationId),
+        transactionType: "income",
+      },
+      _sum: {
+        creditAmount: true,
+      },
+    });
+
+    // 支出の集計（account別）
+    const expenseAggregation = await this.prisma.transaction.groupBy({
+      by: ["debitAccount"],
+      where: {
+        politicalOrganizationId: BigInt(politicalOrganizationId),
+        transactionType: "expense",
+      },
+      _sum: {
+        debitAmount: true,
+      },
+    });
+
+    // accountからcategory/subcategoryにマッピングして集計
+    const income = this.aggregateByCategory(
+      incomeAggregation.map((item) => ({
+        account: item.creditAccount || "",
+        amount: Number(item._sum.creditAmount || 0),
+      })),
+    );
+
+    const expense = this.aggregateByCategory(
+      expenseAggregation.map((item) => ({
+        account: item.debitAccount || "",
+        amount: Number(item._sum.debitAmount || 0),
+      })),
+    );
+
+    return { income, expense };
+  }
+
+  private aggregateByCategory(
+    accountData: Array<{ account: string; amount: number }>,
+  ): TransactionCategoryAggregation[] {
+    const categoryMap = new Map<
+      string,
+      { category: string; subcategory?: string; totalAmount: number }
+    >();
+
+    for (const item of accountData) {
+      const mapping = ACCOUNT_CATEGORY_MAPPING[item.account] || {
+        category: item.account,
+      };
+      const key = mapping.subcategory
+        ? `${mapping.category}|${mapping.subcategory}`
+        : mapping.category;
+
+      const existing = categoryMap.get(key);
+      if (existing) {
+        existing.totalAmount += item.amount;
+      } else {
+        categoryMap.set(key, {
+          category: mapping.category,
+          subcategory: mapping.subcategory,
+          totalAmount: item.amount,
+        });
+      }
+    }
+
+    return Array.from(categoryMap.values());
   }
 
   private buildWhereClause(

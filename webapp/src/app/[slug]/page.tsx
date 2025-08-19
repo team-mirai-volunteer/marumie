@@ -8,7 +8,7 @@ export default async function PoliticianPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  
+
   // サーバーサイドでサンキーデータを取得
   const sankeyData = await getSankeyData({ slug });
 
@@ -18,7 +18,9 @@ export default async function PoliticianPage({
       {sankeyData ? (
         <SankeyChart data={sankeyData} />
       ) : (
-        <div className="text-gray-500">サンキー図データが取得できませんでした</div>
+        <div className="text-gray-500">
+          サンキー図データが取得できませんでした
+        </div>
       )}
     </main>
   );

@@ -9,25 +9,34 @@ interface SankeyChartProps {
 }
 
 export default function SankeyChart({ data }: SankeyChartProps) {
-
   // カスタム色設定関数
   const getNodeColor = (node: { id: string }) => {
     if (node.id === "合計") {
       return "#4F566B"; // 中央のbox
     }
-    // 収入関連のカテゴリ・サブカテゴリを判定（仮のリスト）
-    const incomeCategories = [
+
+    // 収入関連のカテゴリとサブカテゴリを定義
+    const incomeCategories = new Set([
       "寄付",
+      "機関紙誌+その他事業収入",
+      "借入金",
+      "交付金",
       "その他",
-      "機関紙誌収入",
+    ]);
+
+    const incomeSubcategories = new Set([
       "個人からの寄付",
-      "法人等寄付",
-      "機関紙",
-      "雑収入",
-    ];
-    if (incomeCategories.includes(node.id)) {
+      "法人その他の団体からの寄附",
+      "政治団体からの寄附",
+      "政党匿名寄付",
+      "党費・会費",
+    ]);
+
+    // ノードIDが収入カテゴリまたはサブカテゴリに含まれるかチェック
+    if (incomeCategories.has(node.id) || incomeSubcategories.has(node.id)) {
       return "#2AA693"; // 収入のbox
     }
+
     // それ以外は支出とみなす
     return "#EF4444"; // 支出のbox
   };
