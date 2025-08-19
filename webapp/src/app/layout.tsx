@@ -26,6 +26,9 @@ const inter = Inter({
   weight: ["400", "700"],
 });
 
+// Note: FOT-TsukuGo Pro is a commercial font that would need to be loaded separately
+// For now, we'll use Inter as a fallback in the header component
+
 export const metadata: Metadata = {
   title: "Mirai Open Data - チームみらいの政治資金をオープンに",
   description:
