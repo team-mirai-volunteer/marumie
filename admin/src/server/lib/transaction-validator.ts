@@ -17,6 +17,7 @@ export class TransactionValidator {
     const errors: ValidationError[] = [];
     const invalidAccountLabels = new Set<string>();
     const validAccountLabels = new Set(Object.keys(ACCOUNT_CATEGORY_MAPPING));
+    validAccountLabels.add("普通預金");
 
     for (const record of records) {
       const recordErrors: string[] = [];
