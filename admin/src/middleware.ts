@@ -9,8 +9,8 @@ export async function middleware(request: NextRequest) {
   });
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
+    process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://placeholder.supabase.co",
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "placeholder-key",
     {
       cookies: {
         getAll() {
@@ -29,16 +29,22 @@ export async function middleware(request: NextRequest) {
     },
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  if (!user && !request.nextUrl.pathname.startsWith("/login")) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
+    if (!user && !request.nextUrl.pathname.startsWith("/login")) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
 
-  if (user && request.nextUrl.pathname.startsWith("/login")) {
-    return NextResponse.redirect(new URL("/", request.url));
+    if (user && request.nextUrl.pathname.startsWith("/login")) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+  } catch (_error) {
+    if (!request.nextUrl.pathname.startsWith("/login")) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
   }
 
   return response;

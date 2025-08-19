@@ -22,6 +22,14 @@ export default function LoginPage() {
       });
 
       if (error) {
+        if (
+          error.message.includes("Invalid API key") ||
+          error.message.includes("placeholder")
+        ) {
+          throw new Error(
+            "認証システムが正しく設定されていません。管理者にお問い合わせください。",
+          );
+        }
         throw new Error(error.message);
       }
 
