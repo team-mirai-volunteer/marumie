@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -18,6 +20,12 @@ export default function Sidebar() {
       return pathname === "/";
     }
     return pathname.startsWith(path);
+  };
+
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
   };
 
   return (
@@ -49,6 +57,15 @@ export default function Sidebar() {
           CSVアップロード
         </Link>
       </nav>
+      <div style={{ marginTop: "auto", padding: "16px 0" }}>
+        <button
+          onClick={handleLogout}
+          className="button"
+          style={{ width: "100%", background: "#ef4444", color: "white" }}
+        >
+          ログアウト
+        </button>
+      </div>
     </aside>
   );
 }

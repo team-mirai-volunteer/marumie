@@ -1,7 +1,8 @@
+import { createClient } from "@/lib/supabase/client";
 import { NextResponse } from "next/server";
 
-export async function POST(request: Request) {
-  // Dummy login endpoint; always succeeds for now
-  const _ = await request.json().catch(() => ({}));
-  return NextResponse.json({ ok: true });
+export async function POST() {
+  const supabase = createClient();
+  await supabase.auth.signOut();
+  return NextResponse.json({ success: true });
 }
