@@ -1,6 +1,7 @@
 import type { CreateTransactionInput } from "@/shared/models/transaction";
 import { MfCsvLoader } from "../lib/mf-csv-loader";
 import { MfRecordConverter } from "../lib/mf-record-converter";
+import { TransactionValidator } from "../lib/transaction-validator";
 import type { ITransactionRepository } from "../repositories/interfaces/transaction-repository.interface";
 
 export interface UploadMfCsvInput {
@@ -20,6 +21,7 @@ export class UploadMfCsvUsecase {
     private transactionRepository: ITransactionRepository,
     private csvLoader: MfCsvLoader = new MfCsvLoader(),
     private recordConverter: MfRecordConverter = new MfRecordConverter(),
+    private validator: TransactionValidator = new TransactionValidator(),
   ) {}
 
   async execute(input: UploadMfCsvInput): Promise<UploadMfCsvResult> {
@@ -35,6 +37,20 @@ export class UploadMfCsvUsecase {
       result.processedCount = csvRecords.length;
 
       if (csvRecords.length === 0) {
+        return result;
+      }
+
+      const validationResult = this.validator.validateRecords(csvRecords);
+      
+      if (!validationResult.isValid) {
+        const errorMessages = [
+          `無効なアカウントラベルが見つかりました: ${validationResult.invalidAccountLabels.join(", ")}`,
+          `エラー詳細:`,
+          ...validationResult.errors.map(error => 
+            `取引番号: ${error.record.transaction_no}, ${error.errors.join(", ")}`
+          )
+        ];
+        result.errors.push(...errorMessages);
         return result;
       }
 
