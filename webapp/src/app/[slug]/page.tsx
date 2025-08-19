@@ -36,7 +36,7 @@ export default async function PoliticianPage({
         <CardHeader
           icon={
             <Image
-              src="/cashflow.svg"
+              src="/icon-cashflow.svg"
               alt="Cash flow icon"
               width={30}
               height={31}
@@ -63,42 +63,12 @@ export default async function PoliticianPage({
       <MainColumnCard>
         <CardHeader
           icon={
-            <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-              <title>Bar chart icon</title>
-              <rect
-                x="3.75"
-                y="3.75"
-                width="22.5"
-                height="22.5"
-                stroke="#2AA693"
-                strokeWidth="2"
-                fill="none"
-              />
-              <line
-                x1="22.5"
-                y1="11.25"
-                x2="22.5"
-                y2="21.25"
-                stroke="#2AA693"
-                strokeWidth="2"
-              />
-              <line
-                x1="16.25"
-                y1="6.25"
-                x2="16.25"
-                y2="21.25"
-                stroke="#2AA693"
-                strokeWidth="2"
-              />
-              <line
-                x1="10"
-                y1="17.5"
-                x2="10"
-                y2="21.25"
-                stroke="#2AA693"
-                strokeWidth="2"
-              />
-            </svg>
+            <Image
+              src="/icon-barchart.svg"
+              alt="Bar chart icon"
+              width={30}
+              height={30}
+            />
           }
           title="１年間の収支の推移"
           updatedAt="2025.8.14時点"
@@ -118,23 +88,12 @@ export default async function PoliticianPage({
       <MainColumnCard>
         <CardHeader
           icon={
-            <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-              <title>Heart handshake icon</title>
-              <path
-                d="M2.49 3.74h25.02v22.51H2.49z"
-                stroke="#2AA693"
-                strokeWidth="2"
-                fill="none"
-              />
-              <path
-                d="M10.32 6.7h15.62v8.45H10.32z"
-                stroke="#2AA693"
-                strokeWidth="2"
-                fill="none"
-              />
-              <circle cx="21.25" cy="17.5" r="1.25" fill="#2AA693" />
-              <circle cx="17.5" cy="21.25" r="1.25" fill="#2AA693" />
-            </svg>
+            <Image
+              src="/icon-heart-handshake.svg"
+              alt="Heart handshake icon"
+              width={30}
+              height={30}
+            />
           }
           title="これまでの累計寄付金額"
           updatedAt="2025.8.14時点"
@@ -203,27 +162,12 @@ export default async function PoliticianPage({
       <MainColumnCard>
         <CardHeader
           icon={
-            <svg width="29" height="30" viewBox="0 0 29 30" fill="none">
-              <title>Cash move icon</title>
-              <path
-                d="M3.63 6.25h22.96v21.25H3.63z"
-                stroke="#2AA693"
-                strokeWidth="2"
-                fill="none"
-              />
-              <path
-                d="M4.83 5h16.92v12.5H4.83z"
-                stroke="#2AA693"
-                strokeWidth="2"
-                fill="none"
-              />
-              <path
-                d="M10.88 8.75h12.08v12.5H10.88z"
-                stroke="#2AA693"
-                strokeWidth="2"
-                fill="none"
-              />
-            </svg>
+            <Image
+              src="/icon-cashback.svg"
+              alt="Cash move icon"
+              width={30}
+              height={30}
+            />
           }
           title="すべての出入金"
           updatedAt="2025.8.14時点"
