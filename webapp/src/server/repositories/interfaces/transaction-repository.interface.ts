@@ -16,6 +16,18 @@ export interface PaginationOptions {
   perPage: number;
 }
 
+// Sankey集計データの型定義
+export interface TransactionCategoryAggregation {
+  category: string;
+  subcategory?: string;
+  totalAmount: number;
+}
+
+export interface SankeyCategoryAggregationResult {
+  income: TransactionCategoryAggregation[];
+  expense: TransactionCategoryAggregation[];
+}
+
 export interface ITransactionRepository {
   findById(id: string): Promise<Transaction | null>;
   findAll(filters?: TransactionFilters): Promise<Transaction[]>;
@@ -23,4 +35,7 @@ export interface ITransactionRepository {
     filters?: TransactionFilters,
     pagination?: PaginationOptions,
   ): Promise<PaginatedResult<Transaction>>;
+  getCategoryAggregationForSankey(
+    politicalOrganizationId: string
+  ): Promise<SankeyCategoryAggregationResult>;
 }
