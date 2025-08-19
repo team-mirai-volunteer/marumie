@@ -1,4 +1,5 @@
 "use client";
+import "client-only";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -7,7 +8,7 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <header className="px-4 py-4">
+    <header className="fixed top-0 left-0 right-0 z-50 px-4 py-4">
       {/* Main Header Container with rounded background */}
       <div className="bg-white rounded-[100px] px-8 py-0">
         <div className="flex justify-between items-center h-16">
@@ -57,19 +58,19 @@ export default function Header() {
             style={{ fontFamily: "var(--font-noto-sans)" }}
           >
             <Link
-              href="/cash-flow"
+              href="#cash-flow"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap"
             >
               収支の流れ
             </Link>
             <Link
-              href="/annual-trends"
+              href="#annual-trends"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap"
             >
               1年間の推移
             </Link>
             <Link
-              href="/donations"
+              href="#donations"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap"
             >
               寄付金額
@@ -81,7 +82,7 @@ export default function Header() {
               すべての出入金
             </Link>
             <Link
-              href="/about-data"
+              href="#about-data"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap"
             >
               データについて
@@ -118,21 +119,21 @@ export default function Header() {
             style={{ fontFamily: "var(--font-noto-sans)" }}
           >
             <Link
-              href="/cash-flow"
+              href="#cash-flow"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               収支の流れ
             </Link>
             <Link
-              href="/annual-trends"
+              href="#annual-trends"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               1年間の推移
             </Link>
             <Link
-              href="/donations"
+              href="#donations"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
@@ -146,7 +147,7 @@ export default function Header() {
               すべての出入金
             </Link>
             <Link
-              href="/about-data"
+              href="#about-data"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >

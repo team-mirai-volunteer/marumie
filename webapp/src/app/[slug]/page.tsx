@@ -209,7 +209,7 @@ export default async function PoliticianPage({
 
       {/* セクション5: 説明セクション */}
       <MainColumnCard>
-        <div className="bg-white rounded-[21.68px] p-12 space-y-9">
+        <div className="bg-white rounded-[21.68px] p-6 space-y-6">
           <div className="text-center">
             <h2 className="text-[34px] font-bold leading-[1.5] text-[#1F2937] mb-4">
               党首も毎日これを見て、お金をやりくりしています🤔
@@ -220,7 +220,7 @@ export default async function PoliticianPage({
             </p>
           </div>
 
-          <div className="space-y-9">
+          <div className="space-y-6">
             <div>
               <h3 className="text-lg font-bold text-[#1F2937] mb-3">
                 Mirai Open Dataについて
