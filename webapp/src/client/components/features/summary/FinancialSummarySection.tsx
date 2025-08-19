@@ -1,6 +1,6 @@
-import FinancialSummaryCard from "./FinancialSummaryCard";
 import { formatAmount } from "@/server/utils/financial-calculator";
 import type { SankeyData, SankeyLink } from "@/types/sankey";
+import FinancialSummaryCard from "./FinancialSummaryCard";
 
 interface FinancialSummarySectionProps {
   sankeyData: SankeyData | null;

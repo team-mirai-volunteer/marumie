@@ -5,11 +5,9 @@ interface FinancialSummaryProps {
 
 export default function FinancialSummary({
   children,
-  className = '',
+  className = "",
 }: FinancialSummaryProps) {
   return (
-    <div className={`flex items-center gap-6 ${className}`}>
-      {children}
-    </div>
+    <div className={`flex items-center gap-6 ${className}`}>{children}</div>
   );
 }

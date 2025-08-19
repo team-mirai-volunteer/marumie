@@ -2,13 +2,13 @@ import "server-only";
 import Image from "next/image";
 import Link from "next/link";
 import SankeyChart from "@/client/components/features/sankey/SankeyChart";
+import ComplexDonationSummaryCard from "@/client/components/features/summary/ComplexDonationSummaryCard";
+import DonationSummaryCard from "@/client/components/features/summary/DonationSummaryCard";
+import FinancialSummarySection from "@/client/components/features/summary/FinancialSummarySection";
 import TransactionTable from "@/client/components/features/transaction/TransactionTable";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumn from "@/client/components/layout/MainColumn";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
-import FinancialSummarySection from "@/client/components/features/summary/FinancialSummarySection";
-import DonationSummaryCard from "@/client/components/features/summary/DonationSummaryCard";
-import ComplexDonationSummaryCard from "@/client/components/features/summary/ComplexDonationSummaryCard";
 import { getSankeyData } from "@/server/actions/get-sankey-data";
 import { getTransactionsBySlugAction } from "@/server/actions/get-transactions-by-slug";
 
@@ -154,7 +154,7 @@ export default async function PoliticianPage({
             finalUnit="円"
             previousDayChange={{
               value: "8,000",
-              unit: "円"
+              unit: "円",
             }}
           />
 
@@ -165,7 +165,7 @@ export default async function PoliticianPage({
             unit="件"
             previousDayChange={{
               value: "12",
-              unit: "件"
+              unit: "件",
             }}
           />
 

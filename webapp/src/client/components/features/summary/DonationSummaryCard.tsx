@@ -38,12 +38,7 @@ export default function DonationSummaryCard({
                 strokeWidth="2"
                 fill="none"
               />
-              <path
-                d="M5 5l7 7"
-                stroke="#238778"
-                strokeWidth="2"
-                fill="none"
-              />
+              <path d="M5 5l7 7" stroke="#238778" strokeWidth="2" fill="none" />
             </svg>
             <span className="text-[#238778] font-bold">
               {previousDayChange.value}
