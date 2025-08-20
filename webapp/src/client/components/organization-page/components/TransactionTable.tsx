@@ -19,7 +19,6 @@ export default function TransactionTable({
 }: TransactionTableProps) {
   return (
     <div className="space-y-6">
-
       <div className="overflow-x-auto">
         <div className="min-w-full bg-white">
           <TransactionTableHeader allowControl={allowControl} />

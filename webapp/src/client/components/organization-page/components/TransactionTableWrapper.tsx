@@ -1,7 +1,8 @@
 "use client";
 import "client-only";
 
-import { useId, useState } from "react";
+import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
 import type { DisplayTransaction } from "@/types/display-transaction";
 import TransactionTable from "./TransactionTable";
 
@@ -22,68 +23,66 @@ export default function TransactionTableWrapper({
   totalPages,
   allowControl = true,
 }: TransactionTableWrapperProps) {
-  const [currentPage, setCurrentPage] = useState(page);
-  const [itemsPerPage, setItemsPerPage] = useState(perPage);
-  const perPageId = useId();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const handlePageChange = (newPage: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", newPage.toString());
+    router.push(`?${params.toString()}`);
+  };
+
+  const startItem = (page - 1) * perPage + 1;
+  const endItem = Math.min(page * perPage, total);
 
   return (
     <>
       <TransactionTable
         transactions={transactions}
         total={total}
-        page={currentPage}
-        perPage={itemsPerPage}
+        page={page}
+        perPage={perPage}
         allowControl={allowControl}
       />
 
-      {/* ページネーションコントロール */}
-      <div className="mt-6 flex items-center justify-between">
-        <div className="text-gray-600 text-sm">
-          {total}件中 {(currentPage - 1) * itemsPerPage + 1}-
-          {Math.min(currentPage * itemsPerPage, total)}件を表示
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-            disabled={currentPage === 1}
-            className="px-3 py-1 text-sm border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            前へ
-          </button>
-          <span className="text-sm text-gray-600">
-            ページ {currentPage} / {totalPages}
-          </span>
-          <button
-            type="button"
-            onClick={() =>
-              setCurrentPage(Math.min(totalPages, currentPage + 1))
-            }
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 text-sm border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            次へ
-          </button>
+      {/* Figmaデザインに基づくページネーション */}
+      <div className="flex items-center justify-between py-3.5">
+        <div className="text-sm font-medium text-[#6A7383] leading-5 tracking-[0.5%]">
+          {total}件中 {startItem}-{endItem}件を表示
         </div>
 
-        <div className="flex items-center gap-2">
-          <label htmlFor={perPageId} className="text-sm text-gray-600">
-            表示件数:
-          </label>
-          <select
-            id={perPageId}
-            value={itemsPerPage}
-            onChange={(e) => {
-              setItemsPerPage(Number(e.target.value));
-              setCurrentPage(1);
-            }}
-            className="px-2 py-1 text-sm border rounded"
+        <div className="flex items-center gap-2 px-0.5">
+          <button
+            type="button"
+            onClick={() => handlePageChange(Math.max(1, page - 1))}
+            disabled={page === 1}
+            className="flex items-center justify-center w-8 h-8 border border-[rgba(60,66,87,0.12)] rounded shadow-[0px_1px_1px_0px_rgba(0,0,0,0.08)] bg-white hover:bg-gray-50 disabled:bg-[#F4F4F5] disabled:cursor-not-allowed transition-colors"
+            aria-label="前のページ"
           >
-            <option value={10}>10件</option>
-            <option value={20}>20件</option>
-            <option value={50}>50件</option>
-            <option value={100}>100件</option>
-          </select>
+            <Image
+              src="/icons/icon_chevron-down.svg"
+              alt="前のページ"
+              width={20}
+              height={20}
+              className={`transform rotate-90 ${page === 1 ? "opacity-30" : "opacity-100"}`}
+            />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
+            disabled={page === totalPages}
+            className="flex items-center justify-center w-8 h-8 border border-[rgba(60,66,87,0.12)] rounded shadow-[0px_1px_1px_0px_rgba(0,0,0,0.08)] bg-white hover:bg-gray-50 disabled:bg-[#F4F4F5] disabled:cursor-not-allowed transition-colors"
+            aria-label="次のページ"
+          >
+            <Image
+              src="/icons/icon_chevron-down.svg"
+              alt="次のページ"
+              width={20}
+              height={20}
+              className={`transform -rotate-90 ${page === totalPages ? "opacity-30" : "opacity-100"}`}
+            />
+          </button>
         </div>
       </div>
     </>
