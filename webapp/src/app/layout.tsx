@@ -4,6 +4,15 @@ import "./globals.css";
 import Footer from "@/client/components/layout/Footer";
 import Header from "@/client/components/layout/Header";
 
+// Noto Sans JP for Japanese text with proper weights
+const notoSansJP = Noto_Sans({
+  variable: "--font-noto-sans-jp",
+  subsets: ["latin"],
+  weight: ["400", "500", "700", "900"],
+  display: "swap",
+  style: ["normal"],
+});
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -18,6 +27,8 @@ const notoSans = Noto_Sans({
   variable: "--font-noto-sans",
   subsets: ["latin", "latin-ext"],
   weight: ["400", "500", "700", "800", "900"],
+  display: "swap",
+  preload: true,
 });
 
 const inter = Inter({
@@ -43,6 +54,8 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <head>
+        {/* Google Fonts CDN for Noto Sans JP - Required for proper Japanese font weight rendering
+            Next.js font optimization alone doesn't provide sufficient weight for Japanese characters */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link
@@ -51,7 +64,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${notoSans.variable} ${inter.variable} antialiased pt-24`}
+        className={`${geistSans.variable} ${geistMono.variable} ${notoSans.variable} ${notoSansJP.variable} ${inter.variable} antialiased pt-24`}
       >
         <Header />
         {children}

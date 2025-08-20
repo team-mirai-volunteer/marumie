@@ -14,8 +14,8 @@ export const Title = ({ children, className = "" }: TypographyProps) => (
   <h1
     className={`text-[27px] leading-[1.52] tracking-[0.01em] ${className}`}
     style={{
-      fontFamily: "'Noto Sans JP', var(--font-noto-sans), sans-serif",
-      fontWeight: 700
+      fontFamily: "'Noto Sans JP', var(--font-noto-sans-jp), var(--font-noto-sans), sans-serif",
+      fontWeight: 700,
     }}
   >
     {children}
@@ -23,26 +23,36 @@ export const Title = ({ children, className = "" }: TypographyProps) => (
 );
 
 /**
- * Subtitle Component - Figma style_HTFODT
- * 14px, medium, line-height 1.21, letter-spacing 0.01em
+ * Subtitle Component - Figma style_SG2NS4
+ * 14px, medium (500), line-height 1.21, letter-spacing 0.01em
+ * Used for "チームみらいはどこからお金を得て、何に使っているのか"
  */
 export const Subtitle = ({ children, className = "" }: TypographyProps) => (
   <p
-    className={`text-[14px] font-medium leading-[1.21] tracking-[0.01em] ${className}`}
-    style={{ fontFamily: "var(--font-noto-sans)" }}
+    className={`text-[14px] leading-[1.21] tracking-[0.01em] ${className}`}
+    style={{
+      fontFamily: "'Noto Sans JP', var(--font-noto-sans-jp), var(--font-noto-sans), sans-serif",
+      fontWeight: 500,
+      color: "var(--color-black-500)"
+    }}
   >
     {children}
   </p>
 );
 
 /**
- * Label Component - Figma style_YJIRG3
- * 11px, bold, line-height 1.55
+ * Label Component - Figma style_0MXVB5
+ * 11px, bold (700), line-height 1.55
+ * Used for "2025.8.14時点"
  */
 export const Label = ({ children, className = "" }: TypographyProps) => (
   <span
-    className={`text-[11px] font-bold leading-[1.55] ${className}`}
-    style={{ fontFamily: "var(--font-noto-sans)" }}
+    className={`text-[11px] leading-[1.55] ${className}`}
+    style={{
+      fontFamily: "'Noto Sans JP', var(--font-noto-sans-jp), var(--font-noto-sans), sans-serif",
+      fontWeight: 700,
+      color: "var(--color-black-600)"
+    }}
   >
     {children}
   </span>
