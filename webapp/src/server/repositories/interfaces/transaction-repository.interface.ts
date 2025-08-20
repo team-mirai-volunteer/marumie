@@ -35,6 +35,13 @@ export interface MonthlyAggregation {
   expense: number;
 }
 
+// 日次寄付データの型定義
+export interface DailyDonationData {
+  date: string; // "YYYY-MM-DD" 形式
+  dailyAmount: number; // その日の寄付額
+  cumulativeAmount: number; // 累積寄付額
+}
+
 export interface ITransactionRepository {
   findById(id: string): Promise<Transaction | null>;
   findAll(filters?: TransactionFilters): Promise<Transaction[]>;
@@ -50,4 +57,8 @@ export interface ITransactionRepository {
     politicalOrganizationId: string,
     financialYear: number,
   ): Promise<MonthlyAggregation[]>;
+  getDailyDonationData(
+    politicalOrganizationId: string,
+    financialYear: number,
+  ): Promise<DailyDonationData[]>;
 }

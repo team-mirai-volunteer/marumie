@@ -26,7 +26,7 @@ export default async function PoliticianPage({
     <MainColumn>
       <CashFlowSection sankeyData={data?.sankeyData ?? null} />
       <MonthlyTrendsSection monthlyData={data?.monthlyData} />
-      <DonationSummarySection />
+      <DonationSummarySection donationSummary={data?.donationSummary} />
       <TransactionsSection
         transactionData={data?.transactionData ?? null}
         slug={slug}
