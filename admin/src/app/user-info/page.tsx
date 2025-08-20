@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/client";
 
+export const runtime = "nodejs";
+
 export default async function UserInfoPage() {
   const supabase = createClient();
   const {
