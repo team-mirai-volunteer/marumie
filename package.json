@@ -39,7 +39,8 @@
 
     "// Database": "==========================================",
     "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev",
+    "db:migrate": "pnpm -s dotenv -e .env.dev -- prisma migrate dev",
+    "db:migrate:prod": "pnpm -s dotenv -e .env.prod -- prisma migrate deploy",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:seed": "node prisma/seed.cjs",
     "db:reset": "pnpm supabase:reset && pnpm db:migrate && pnpm db:seed",
