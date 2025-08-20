@@ -1,10 +1,10 @@
-'use client';
-import 'client-only';
+"use client";
+import "client-only";
 import Image from "next/image";
 import Link from "next/link";
-import TransactionTable from "@/client/components/organization-page/components/TransactionTable";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
+import TransactionTable from "@/client/components/organization-page/components/TransactionTable";
 
 import type { DisplayTransaction } from "@/types/display-transaction";
 
@@ -21,9 +21,9 @@ interface TransactionsSectionProps {
   slug: string;
 }
 
-export default function TransactionsSection({ 
-  transactionData, 
-  slug 
+export default function TransactionsSection({
+  transactionData,
+  slug,
 }: TransactionsSectionProps) {
   return (
     <MainColumnCard>

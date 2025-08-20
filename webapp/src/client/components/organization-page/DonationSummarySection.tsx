@@ -1,10 +1,9 @@
-'use client';
-import 'client-only';
+"use client";
+import "client-only";
 import Image from "next/image";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 import BaseCard from "@/client/components/ui/BaseCard";
-
 
 export default function DonationSummarySection() {
   return (
@@ -31,18 +30,44 @@ export default function DonationSummarySection() {
             <div className="text-[#000000] font-bold text-base">寄付金額</div>
             <div className="flex items-center gap-1 text-sm">
               <span className="text-[#6B7280]">前日比</span>
-              <Image src="/icons/icon-arrow-up.svg" alt="Arrow up icon" width={24} height={24} />
+              <Image
+                src="/icons/icon-arrow-up.svg"
+                alt="Arrow up icon"
+                width={24}
+                height={24}
+              />
               <span className="text-[#238778] font-bold">8,000</span>
               <span className="text-[#6B7280]">円</span>
             </div>
           </div>
           <div className="flex items-end gap-1">
-            <span className="font-bold text-[40px] leading-[30px]" style={{ color: "#000000" }}>1</span>
-            <span className="font-bold text-base" style={{ color: "#000000" }}>億</span>
-            <span className="font-bold text-[40px] leading-[30px]" style={{ color: "#000000" }}>7462</span>
-            <span className="font-bold text-base" style={{ color: "#000000" }}>万</span>
-            <span className="font-bold text-[40px] leading-[30px]" style={{ color: "#000000" }}>4000</span>
-            <span className="font-bold text-base" style={{ color: "#000000" }}>円</span>
+            <span
+              className="font-bold text-[40px] leading-[30px]"
+              style={{ color: "#000000" }}
+            >
+              1
+            </span>
+            <span className="font-bold text-base" style={{ color: "#000000" }}>
+              億
+            </span>
+            <span
+              className="font-bold text-[40px] leading-[30px]"
+              style={{ color: "#000000" }}
+            >
+              7462
+            </span>
+            <span className="font-bold text-base" style={{ color: "#000000" }}>
+              万
+            </span>
+            <span
+              className="font-bold text-[40px] leading-[30px]"
+              style={{ color: "#000000" }}
+            >
+              4000
+            </span>
+            <span className="font-bold text-base" style={{ color: "#000000" }}>
+              円
+            </span>
           </div>
         </BaseCard>
 
@@ -52,25 +77,46 @@ export default function DonationSummarySection() {
             <div className="text-[#000000] font-bold text-base">寄付件数</div>
             <div className="flex items-center gap-1 text-sm">
               <span className="text-[#6B7280]">前日比</span>
-              <Image src="/icons/icon-arrow-up.svg" alt="Arrow up icon" width={24} height={24} />
+              <Image
+                src="/icons/icon-arrow-up.svg"
+                alt="Arrow up icon"
+                width={24}
+                height={24}
+              />
               <span className="text-[#238778] font-bold">12</span>
               <span className="text-[#6B7280]">件</span>
             </div>
           </div>
           <div className="flex items-end gap-1">
-            <span className="font-bold text-[40px] leading-[30px]" style={{ color: "#000000" }}>7118</span>
-            <span className="font-bold text-base" style={{ color: "#000000" }}>件</span>
+            <span
+              className="font-bold text-[40px] leading-[30px]"
+              style={{ color: "#000000" }}
+            >
+              7118
+            </span>
+            <span className="font-bold text-base" style={{ color: "#000000" }}>
+              件
+            </span>
           </div>
         </BaseCard>
 
         {/* 企業団体献金カード */}
         <BaseCard className="flex-1">
           <div className="flex justify-between items-start mb-4">
-            <div className="text-[#000000] font-bold text-base">企業団体献金</div>
+            <div className="text-[#000000] font-bold text-base">
+              企業団体献金
+            </div>
           </div>
           <div className="flex items-end gap-1">
-            <span className="font-bold text-[40px] leading-[30px]" style={{ color: "#000000" }}>0</span>
-            <span className="font-bold text-base" style={{ color: "#000000" }}>件</span>
+            <span
+              className="font-bold text-[40px] leading-[30px]"
+              style={{ color: "#000000" }}
+            >
+              0
+            </span>
+            <span className="font-bold text-base" style={{ color: "#000000" }}>
+              件
+            </span>
           </div>
         </BaseCard>
       </div>

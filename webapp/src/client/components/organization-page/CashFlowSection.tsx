@@ -1,10 +1,10 @@
-'use client';
-import 'client-only';
+"use client";
+import "client-only";
 import Image from "next/image";
-import SankeyChart from "@/client/components/organization-page/components/SankeyChart";
-import FinancialSummarySection from "@/client/components/features/summary/FinancialSummarySection";
+import FinancialSummarySection from "@/client/components/organization-page/components/FinancialSummarySection";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
+import SankeyChart from "@/client/components/organization-page/components/SankeyChart";
 
 import type { SankeyData } from "@/types/sankey";
 

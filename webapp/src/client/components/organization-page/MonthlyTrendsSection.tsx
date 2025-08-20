@@ -4,9 +4,7 @@ import Image from "next/image";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 
-interface MonthlyTrendsSectionProps {
-  // 将来的に月次データを追加
-}
+type MonthlyTrendsSectionProps = {};
 
 export default function MonthlyTrendsSection({}: MonthlyTrendsSectionProps) {
   return (

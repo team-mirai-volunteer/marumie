@@ -1,10 +1,8 @@
-'use client';
-import 'client-only';
+"use client";
+import "client-only";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 
-interface ExplanationSectionProps {
-  // propsなし（静的コンテンツ）
-}
+type ExplanationSectionProps = {};
 
 export default function ExplanationSection({}: ExplanationSectionProps) {
   return (
@@ -41,9 +39,7 @@ export default function ExplanationSection({}: ExplanationSectionProps) {
           </div>
 
           <div>
-            <h3 className="text-lg font-bold text-[#1F2937] mb-3">
-              免責事項
-            </h3>
+            <h3 className="text-lg font-bold text-[#1F2937] mb-3">免責事項</h3>
             <p className="text-[15px] leading-[1.87] text-[#1F2937]">
               本ページに記載されているデータは収支報告書と異なる場合があるよ。テキストが入ります。テキストが入ります。テキストが入ります。テキストが入ります。テキストが入ります。テキストが入ります。テキストが入ります。
             </p>

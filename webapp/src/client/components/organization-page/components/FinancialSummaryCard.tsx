@@ -31,10 +31,7 @@ export default function FinancialSummaryCard({
           {amount.main}
         </span>
         {amount.secondary && (
-          <span
-            className="font-bold text-base"
-            style={{ color: amountColor }}
-          >
+          <span className="font-bold text-base" style={{ color: amountColor }}>
             {amount.secondary}
           </span>
         )}
@@ -46,10 +43,7 @@ export default function FinancialSummaryCard({
             {amount.tertiary}
           </span>
         )}
-        <span
-          className="font-bold text-base"
-          style={{ color: amountColor }}
-        >
+        <span className="font-bold text-base" style={{ color: amountColor }}>
           {amount.unit}
         </span>
       </div>
