@@ -20,7 +20,7 @@
   },
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "cd ../ && prisma generate && prisma migrate deploy && cd webapp && next build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",

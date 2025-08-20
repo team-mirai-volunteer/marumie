@@ -16,7 +16,7 @@
 
     "// Build & Deploy": "====================================",
     "build": "pnpm build:webapp",
-    "build:webapp": "prisma generate && prisma migrate deploy && pnpm --filter webapp build",
+    "build:webapp": "pnpm --filter webapp build",
     "build:admin": "pnpm --filter admin build",
     "build:all": "pnpm build:webapp && pnpm build:admin",
     "start": "pnpm --filter webapp start",
