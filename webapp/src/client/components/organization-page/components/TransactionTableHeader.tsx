@@ -11,7 +11,10 @@ export default function TransactionTableHeader({
     <div className="bg-white">
       <div className="flex items-center h-12 border-b border-[#D5DBE1] px-0">
         {/* 日付 - 140px width to match row */}
-        <div className="flex items-center justify-start px-4 h-full" style={{ width: '140px' }}>
+        <div
+          className="flex items-center justify-start px-4 h-full"
+          style={{ width: "140px" }}
+        >
           <div className="flex items-center gap-1 h-5">
             <span className="text-gray-800 text-sm font-bold leading-[1.5]">
               日付
@@ -39,13 +42,11 @@ export default function TransactionTableHeader({
           </div>
         </div>
 
-        {/* Empty space for plus sign - 24px width */}
-        <div className="flex items-center justify-center h-full" style={{ width: '24px' }}>
-          {/* Empty space for plus sign */}
-        </div>
-
-        {/* 金額 - 120px width to match row */}
-        <div className="flex items-center justify-start h-full" style={{ width: '120px' }}>
+        {/* 金額 - 144px width to match row (combined plus/minus + amount) */}
+        <div
+          className="flex items-center justify-end h-full"
+          style={{ width: "144px" }}
+        >
           <div className="flex items-center gap-1 h-5">
             <span className="text-gray-800 text-sm font-bold leading-[1.5]">
               金額
@@ -64,28 +65,8 @@ export default function TransactionTableHeader({
           </div>
         </div>
 
-        {/* 決済手段 - 88px width to match row */}
-        <div className="flex items-center justify-center h-full" style={{ width: '88px' }}>
-          <div className="flex items-center gap-1 h-12">
-            <span className="text-gray-800 text-sm font-bold leading-[1.5]">
-              決済手段
-            </span>
-            {allowControl && (
-              <div className="w-3 h-2 flex items-center justify-center">
-                <Image
-                  src="/icons/icon_filter.svg"
-                  alt="Filter payment method"
-                  width={12}
-                  height={8}
-                  className="w-3 h-2"
-                />
-              </div>
-            )}
-          </div>
-        </div>
-
         {/* カテゴリー - 160px width to match row */}
-        <div className="flex items-center h-full" style={{ width: '160px' }}>
+        <div className="flex items-center h-full" style={{ width: "160px" }}>
           <div className="flex items-center gap-1 h-12">
             <span className="text-gray-800 text-sm font-bold leading-[1.5]">
               カテゴリー
