@@ -27,10 +27,10 @@ export default function TransactionTable({
       </div>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white">
+        <div className="min-w-full bg-white">
           <TransactionTableHeader allowControl={allowControl} />
           <TransactionTableBody transactions={transactions} />
-        </table>
+        </div>
       </div>
     </div>
   );

@@ -8,11 +8,11 @@ export default function TransactionTableHeader({
   allowControl = false,
 }: TransactionTableHeaderProps) {
   return (
-    <thead className="bg-white">
-      <tr className="h-12 border-b border-[#D5DBE1]">
-        {/* 日付 - Sortable when allowControl is true */}
-        <th className="px-4 py-0 text-left w-35">
-          <div className="flex items-center justify-center gap-1 h-5">
+    <div className="bg-white">
+      <div className="flex items-center h-12 border-b border-[#D5DBE1] px-0">
+        {/* 日付 - 140px width to match row */}
+        <div className="flex items-center justify-start px-4 h-full" style={{ width: '140px' }}>
+          <div className="flex items-center gap-1 h-5">
             <span className="text-gray-800 text-sm font-bold leading-[1.5]">
               日付
             </span>
@@ -28,20 +28,25 @@ export default function TransactionTableHeader({
               </div>
             )}
           </div>
-        </th>
+        </div>
 
-        {/* 項目項目 - No controls */}
-        <th className="px-0 py-0 text-left flex-1">
+        {/* 項目項目 - flexible width to match row */}
+        <div className="flex items-center h-full flex-1">
           <div className="flex items-center h-5">
             <span className="text-gray-800 text-sm font-bold leading-[1.286] tracking-[0.071em]">
               項目項目
             </span>
           </div>
-        </th>
+        </div>
 
-        {/* 金額 - Sortable when allowControl is true */}
-        <th className="px-4 py-0 text-left w-30">
-          <div className="flex items-center justify-center gap-1 h-5">
+        {/* Empty space for plus sign - 24px width */}
+        <div className="flex items-center justify-center h-full" style={{ width: '24px' }}>
+          {/* Empty space for plus sign */}
+        </div>
+
+        {/* 金額 - 120px width to match row */}
+        <div className="flex items-center justify-start h-full" style={{ width: '120px' }}>
+          <div className="flex items-center gap-1 h-5">
             <span className="text-gray-800 text-sm font-bold leading-[1.5]">
               金額
             </span>
@@ -57,11 +62,11 @@ export default function TransactionTableHeader({
               </div>
             )}
           </div>
-        </th>
+        </div>
 
-        {/* 決済手段 - Filterable when allowControl is true */}
-        <th className="px-0 py-0 text-left w-22">
-          <div className="flex items-center justify-center gap-1 h-12">
+        {/* 決済手段 - 88px width to match row */}
+        <div className="flex items-center justify-center h-full" style={{ width: '88px' }}>
+          <div className="flex items-center gap-1 h-12">
             <span className="text-gray-800 text-sm font-bold leading-[1.5]">
               決済手段
             </span>
@@ -77,11 +82,11 @@ export default function TransactionTableHeader({
               </div>
             )}
           </div>
-        </th>
+        </div>
 
-        {/* カテゴリー - Filterable when allowControl is true */}
-        <th className="px-0 py-0 text-left w-40">
-          <div className="flex items-center justify-center gap-1 h-12">
+        {/* カテゴリー - 160px width to match row */}
+        <div className="flex items-center h-full" style={{ width: '160px' }}>
+          <div className="flex items-center gap-1 h-12">
             <span className="text-gray-800 text-sm font-bold leading-[1.5]">
               カテゴリー
             </span>
@@ -97,8 +102,8 @@ export default function TransactionTableHeader({
               </div>
             )}
           </div>
-        </th>
-      </tr>
-    </thead>
+        </div>
+      </div>
+    </div>
   );
 }
