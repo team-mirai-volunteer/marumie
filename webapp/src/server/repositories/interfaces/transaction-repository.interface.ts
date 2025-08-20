@@ -42,7 +42,6 @@ export interface DailyDonationData {
   cumulativeAmount: number; // 累積寄付額
 }
 
-
 export interface ITransactionRepository {
   findById(id: string): Promise<Transaction | null>;
   findAll(filters?: TransactionFilters): Promise<Transaction[]>;
