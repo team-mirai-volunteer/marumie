@@ -9,6 +9,7 @@ import {
   type GetTransactionsBySlugParams,
   GetTransactionsBySlugUsecase,
 } from "@/server/usecases/get-transactions-by-slug-usecase";
+import { GetDailyDonationUsecase } from "@/server/usecases/get-daily-donation-usecase";
 
 const prisma = new PrismaClient();
 
@@ -40,8 +41,13 @@ export async function getTransactionPageDataAction(
     politicalOrganizationRepository,
   );
 
-  // 3つのUsecaseを並列実行
-  const [transactionData, monthlyData, sankeyData] = await Promise.all([
+  const donationUsecase = new GetDailyDonationUsecase(
+    transactionRepository,
+    politicalOrganizationRepository,
+  );
+
+  // 4つのUsecaseを並列実行
+  const [transactionData, monthlyData, sankeyData, donationData] = await Promise.all([
     transactionUsecase.execute(params),
     monthlyUsecase.execute({
       slug: params.slug,
@@ -51,11 +57,17 @@ export async function getTransactionPageDataAction(
       slug: params.slug,
       financialYear: params.financialYear,
     }),
+    donationUsecase.execute({
+      slug: params.slug,
+      financialYear: params.financialYear,
+      today: new Date(),
+    }),
   ]);
 
   return {
     transactionData,
     monthlyData: monthlyData.monthlyData,
     sankeyData: sankeyData.sankeyData,
+    donationSummary: donationData.donationSummary,
   };
 }

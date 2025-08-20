@@ -1,7 +1,7 @@
-import type {
+import {
   Prisma,
-  PrismaClient,
-  Transaction as PrismaTransaction,
+  type PrismaClient,
+  type Transaction as PrismaTransaction,
 } from "@prisma/client";
 import type {
   Transaction,
@@ -9,6 +9,7 @@ import type {
 } from "@/shared/models/transaction";
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 import type {
+  DailyDonationData,
   ITransactionRepository,
   MonthlyAggregation,
   PaginatedResult,
@@ -194,6 +195,47 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     return Array.from(monthlyMap.values()).sort((a, b) =>
       a.yearMonth.localeCompare(b.yearMonth),
     );
+  }
+
+  async getDailyDonationData(
+    politicalOrganizationId: string,
+    financialYear: number,
+  ): Promise<DailyDonationData[]> {
+    // 寄付カテゴリに該当するアカウントキーを抽出
+    const donationAccountKeys = Object.keys(ACCOUNT_CATEGORY_MAPPING).filter(
+      (key) => ACCOUNT_CATEGORY_MAPPING[key].category === "寄付"
+    );
+
+    // 寄付に該当するアカウントからの収入データを日別に集計
+    const dailyDonationResults = await this.prisma.$queryRaw<
+      Array<{ transaction_date: Date; total_amount: number }>
+    >`
+      SELECT 
+        transaction_date,
+        SUM(credit_amount) as total_amount
+      FROM transactions 
+      WHERE political_organization_id = ${BigInt(politicalOrganizationId)}
+        AND financial_year = ${financialYear}
+        AND transaction_type = 'income'
+        AND credit_account IN (${Prisma.join(donationAccountKeys)})
+      GROUP BY transaction_date
+      ORDER BY transaction_date
+    `;
+
+    // 日付文字列にフォーマットし、累積額を計算
+    let cumulativeAmount = 0;
+    const dailyData: DailyDonationData[] = dailyDonationResults.map((item) => {
+      const dailyAmount = Number(item.total_amount);
+      cumulativeAmount += dailyAmount;
+      
+      return {
+        date: item.transaction_date.toISOString().split('T')[0], // YYYY-MM-DD形式
+        dailyAmount,
+        cumulativeAmount,
+      };
+    });
+
+    return dailyData;
   }
 
   private aggregateByCategory(
