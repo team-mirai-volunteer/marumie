@@ -57,7 +57,11 @@ export default function RootLayout({
         {/* Google Fonts CDN for Noto Sans JP - Required for proper Japanese font weight rendering
             Next.js font optimization alone doesn't provide sufficient weight for Japanese characters */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin=""
+        />
         <link
           href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap"
           rel="stylesheet"
