@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 
 const notoSans = Noto_Sans({
   variable: "--font-noto-sans",
-  subsets: ["latin"],
-  weight: ["400", "700"],
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "700", "800", "900"],
 });
 
 const inter = Inter({
@@ -42,6 +42,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${notoSans.variable} ${inter.variable} antialiased pt-24`}
       >
