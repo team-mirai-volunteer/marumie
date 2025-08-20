@@ -4,9 +4,7 @@ import Image from "next/image";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 
-type MonthlyTrendsSectionProps = {};
-
-export default function MonthlyTrendsSection({}: MonthlyTrendsSectionProps) {
+export default function MonthlyTrendsSection() {
   return (
     <MainColumnCard>
       <CardHeader

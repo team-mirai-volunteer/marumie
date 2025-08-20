@@ -2,9 +2,7 @@
 import "client-only";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 
-type ExplanationSectionProps = {};
-
-export default function ExplanationSection({}: ExplanationSectionProps) {
+export default function ExplanationSection() {
   return (
     <MainColumnCard>
       <div className="bg-white rounded-[21.68px] p-6 space-y-6">
