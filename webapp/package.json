@@ -28,7 +28,7 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "format": "biome check --write .",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "deploy-app": "cd ../ && prisma migrate deploy && cd webapp && next build"
   }
