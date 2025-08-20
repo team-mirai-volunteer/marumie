@@ -203,7 +203,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   ): Promise<DailyDonationData[]> {
     // 寄付カテゴリに該当するアカウントキーを抽出
     const donationAccountKeys = Object.keys(ACCOUNT_CATEGORY_MAPPING).filter(
-      (key) => ACCOUNT_CATEGORY_MAPPING[key].category === "寄付"
+      (key) => ACCOUNT_CATEGORY_MAPPING[key].category === "寄付",
     );
 
     // 寄付に該当するアカウントからの収入データを日別に集計
@@ -227,9 +227,9 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     const dailyData: DailyDonationData[] = dailyDonationResults.map((item) => {
       const dailyAmount = Number(item.total_amount);
       cumulativeAmount += dailyAmount;
-      
+
       return {
-        date: item.transaction_date.toISOString().split('T')[0], // YYYY-MM-DD形式
+        date: item.transaction_date.toISOString().split("T")[0], // YYYY-MM-DD形式
         dailyAmount,
         cumulativeAmount,
       };

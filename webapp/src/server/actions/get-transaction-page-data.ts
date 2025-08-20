@@ -3,13 +3,13 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaPoliticalOrganizationRepository } from "@/server/repositories/prisma-political-organization.repository";
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
+import { GetDailyDonationUsecase } from "@/server/usecases/get-daily-donation-usecase";
 import { GetMonthlyTransactionAggregationUsecase } from "@/server/usecases/get-monthly-transaction-aggregation-usecase";
 import { GetSankeyAggregationUsecase } from "@/server/usecases/get-sankey-aggregation-usecase";
 import {
   type GetTransactionsBySlugParams,
   GetTransactionsBySlugUsecase,
 } from "@/server/usecases/get-transactions-by-slug-usecase";
-import { GetDailyDonationUsecase } from "@/server/usecases/get-daily-donation-usecase";
 
 const prisma = new PrismaClient();
 
@@ -47,22 +47,23 @@ export async function getTransactionPageDataAction(
   );
 
   // 4つのUsecaseを並列実行
-  const [transactionData, monthlyData, sankeyData, donationData] = await Promise.all([
-    transactionUsecase.execute(params),
-    monthlyUsecase.execute({
-      slug: params.slug,
-      financialYear: params.financialYear,
-    }),
-    sankeyUsecase.execute({
-      slug: params.slug,
-      financialYear: params.financialYear,
-    }),
-    donationUsecase.execute({
-      slug: params.slug,
-      financialYear: params.financialYear,
-      today: new Date(),
-    }),
-  ]);
+  const [transactionData, monthlyData, sankeyData, donationData] =
+    await Promise.all([
+      transactionUsecase.execute(params),
+      monthlyUsecase.execute({
+        slug: params.slug,
+        financialYear: params.financialYear,
+      }),
+      sankeyUsecase.execute({
+        slug: params.slug,
+        financialYear: params.financialYear,
+      }),
+      donationUsecase.execute({
+        slug: params.slug,
+        financialYear: params.financialYear,
+        today: new Date(),
+      }),
+    ]);
 
   return {
     transactionData,

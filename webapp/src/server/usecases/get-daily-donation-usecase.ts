@@ -44,7 +44,7 @@ export class GetDailyDonationUsecase {
       // Usecaseでサマリー計算を実行
       const donationSummary = this.calculateDonationSummary(
         dailyDonationData,
-        params.today
+        params.today,
       );
 
       return { donationSummary };
@@ -57,21 +57,24 @@ export class GetDailyDonationUsecase {
 
   private calculateDonationSummary(
     dailyDonationData: DailyDonationData[],
-    today: Date
+    today: Date,
   ): DonationSummaryData {
     // 統計情報を計算
-    const totalAmount = dailyDonationData[dailyDonationData.length - 1]?.cumulativeAmount || 0;
+    const totalAmount =
+      dailyDonationData[dailyDonationData.length - 1]?.cumulativeAmount || 0;
     const totalDays = dailyDonationData.length;
 
     // 今日と昨日の日付を文字列で準備
-    const todayStr = today.toISOString().split('T')[0];
+    const todayStr = today.toISOString().split("T")[0];
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    const yesterdayStr = yesterday.toISOString().split("T")[0];
 
     // 今日と昨日の寄付データを検索
-    const todayData = dailyDonationData.find(item => item.date === todayStr);
-    const yesterdayData = dailyDonationData.find(item => item.date === yesterdayStr);
+    const todayData = dailyDonationData.find((item) => item.date === todayStr);
+    const yesterdayData = dailyDonationData.find(
+      (item) => item.date === yesterdayStr,
+    );
 
     // 前日比の計算（常に差分を計算）
     const todayDonation = todayData?.dailyAmount || 0;

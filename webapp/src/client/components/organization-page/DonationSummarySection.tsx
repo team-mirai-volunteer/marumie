@@ -26,7 +26,6 @@ interface DonationSummarySectionProps {
 export default function DonationSummarySection({
   donationSummary,
 }: DonationSummarySectionProps) {
-
   // サーバーサイドで計算された統計情報を使用
   const totalDonationAmount = donationSummary?.totalAmount || 0;
   const totalDonationDays = donationSummary?.totalDays || 0;
@@ -39,11 +38,15 @@ export default function DonationSummarySection({
     const oku = Math.floor(amount / 100000000); // 億
     const man = Math.floor((amount % 100000000) / 10000); // 万
     const en = amount % 10000; // 円
-    
+
     return { oku, man, en };
   };
 
-  const { oku: totalOku, man: totalMan, en: totalEn } = formatLargeAmount(totalDonationAmount);
+  const {
+    oku: totalOku,
+    man: totalMan,
+    en: totalEn,
+  } = formatLargeAmount(totalDonationAmount);
 
   return (
     <MainColumnCard>
@@ -66,11 +69,16 @@ export default function DonationSummarySection({
         {/* 寄付金額カード */}
         <BaseCard className="flex-1">
           <div className="flex justify-between items-start mb-4">
-            <div className="text-[#000000] font-bold text-base">累計寄付金額</div>
+            <div className="text-[#000000] font-bold text-base">
+              累計寄付金額
+            </div>
             <div className="flex items-center gap-1 text-sm">
               <span className="text-[#6B7280]">前日比</span>
-              <span className={`font-bold ${dayOverDayChange > 0 ? 'text-[#238778]' : dayOverDayChange < 0 ? 'text-red-500' : 'text-[#6B7280]'}`}>
-                {dayOverDayChange > 0 ? '+' : ''}{dayOverDayChange.toLocaleString()}
+              <span
+                className={`font-bold ${dayOverDayChange > 0 ? "text-[#238778]" : dayOverDayChange < 0 ? "text-red-500" : "text-[#6B7280]"}`}
+              >
+                {dayOverDayChange > 0 ? "+" : ""}
+                {dayOverDayChange.toLocaleString()}
               </span>
               <span className="text-[#6B7280]">円</span>
             </div>
@@ -84,7 +92,10 @@ export default function DonationSummarySection({
                 >
                   {totalOku}
                 </span>
-                <span className="font-bold text-base" style={{ color: "#000000" }}>
+                <span
+                  className="font-bold text-base"
+                  style={{ color: "#000000" }}
+                >
                   億
                 </span>
               </>
@@ -97,7 +108,10 @@ export default function DonationSummarySection({
                 >
                   {totalMan}
                 </span>
-                <span className="font-bold text-base" style={{ color: "#000000" }}>
+                <span
+                  className="font-bold text-base"
+                  style={{ color: "#000000" }}
+                >
                   万
                 </span>
               </>
@@ -118,10 +132,13 @@ export default function DonationSummarySection({
         <BaseCard className="flex-1">
           <div className="flex justify-between items-start mb-4">
             <div className="text-[#000000] font-bold text-base">寄付件数</div>
-<div className="flex items-center gap-1 text-sm">
+            <div className="flex items-center gap-1 text-sm">
               <span className="text-[#6B7280]">前日比</span>
-              <span className={`font-bold ${donationCountChange > 0 ? 'text-[#238778]' : donationCountChange < 0 ? 'text-red-500' : 'text-[#6B7280]'}`}>
-                {donationCountChange > 0 ? '+' : ''}{donationCountChange}
+              <span
+                className={`font-bold ${donationCountChange > 0 ? "text-[#238778]" : donationCountChange < 0 ? "text-red-500" : "text-[#6B7280]"}`}
+              >
+                {donationCountChange > 0 ? "+" : ""}
+                {donationCountChange}
               </span>
               <span className="text-[#6B7280]">件</span>
             </div>
