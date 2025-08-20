@@ -43,7 +43,7 @@ export default function CardHeader({
 
       {/* サブタイトル */}
       <p
-        className="text-[14px] font-medium leading-[1.21] tracking-[0.01em] text-gray-400"
+        className="text-[14px] font-medium leading-[1.21] tracking-[0.01em] text-[--color-text-secondary]"
         style={{ fontFamily: "var(--font-noto-sans)" }}
       >
         {subtitle}

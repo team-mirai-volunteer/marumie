@@ -7,17 +7,33 @@
     rgba(238, 246, 226, 1) 100%
   );
   --foreground: #171717;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: linear-gradient(
-      135deg,
-      rgba(226, 246, 243, 1) 0%,
-      rgba(238, 246, 226, 1) 100%
-    );
-    --foreground: #ededed;
-  }
+  /* Figma Design System Colors */
+  /* Black系 */
+  --color-black-500: #85868E;
+  --color-black-600: #6B7280;
+  --color-black-700: #4B5563;
+  --color-black-800: #1F2937;
+  --color-black-900: #000000;
+
+  /* Green系 (Primary) */
+  --color-primary-400: #30BCA7;
+  --color-primary-500: #2AA693;
+  --color-primary-600: #238778;
+
+  /* Red系 (Danger) */
+  --color-danger-500: #EF4444;
+  --color-danger-600: #DC2626;
+
+  /* Background */
+  --color-white: #FFFFFF;
+
+  /* Semantic colors */
+  --color-income: var(--color-primary-500);
+  --color-expense: var(--color-danger-500);
+  --color-text-primary: var(--color-black-900);
+  --color-text-secondary: var(--color-black-500);
+  --color-text-muted: var(--color-black-600);
 }
 
 body {
