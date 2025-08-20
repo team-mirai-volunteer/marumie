@@ -54,25 +54,28 @@ export default async function TransactionsPage({
       : searchParamsResolved.page || "1",
     10,
   );
-  const perPage = parseInt(
-    Array.isArray(searchParamsResolved.perPage)
-      ? searchParamsResolved.perPage[0] || "50"
-      : searchParamsResolved.perPage || "50",
-    10,
-  );
+  const perPage = 20; // Fixed value
 
   const transactionType = Array.isArray(searchParamsResolved.transactionType)
     ? searchParamsResolved.transactionType[0]
     : searchParamsResolved.transactionType;
 
-  const financialYear = searchParamsResolved.financialYear
-    ? parseInt(
-        Array.isArray(searchParamsResolved.financialYear)
-          ? searchParamsResolved.financialYear[0]
-          : searchParamsResolved.financialYear,
-        10,
-      )
-    : 2025; // デフォルト値
+  // sortBy: 'date' | 'amount' (read from 'sort' URL parameter)
+  const sortBy = Array.isArray(searchParamsResolved.sort)
+    ? searchParamsResolved.sort[0]
+    : searchParamsResolved.sort;
+
+  // order: 'asc' | 'desc'
+  const order = Array.isArray(searchParamsResolved.order)
+    ? searchParamsResolved.order[0]
+    : searchParamsResolved.order;
+
+  // filter: categoryName
+  const categoryName = Array.isArray(searchParamsResolved.categoryName)
+    ? searchParamsResolved.categoryName[0]
+    : searchParamsResolved.categoryName;
+
+  const financialYear = 2025; // 固定値
 
   try {
     const data = await getTransactionsBySlugAction({
@@ -85,6 +88,9 @@ export default async function TransactionsPage({
         | "other"
         | undefined,
       financialYear,
+      sortBy: sortBy as "date" | "amount" | undefined,
+      order: order as "asc" | "desc" | undefined,
+      categoryName: categoryName || undefined,
     });
 
     return (
@@ -93,15 +99,15 @@ export default async function TransactionsPage({
           <CardHeader
             icon={
               <Image
-                src="/icons/icon-cashflow.svg"
-                alt="Cash flow icon"
+                src="/icons/icon-cashback.svg"
+                alt="Cash move icon"
                 width={30}
-                height={31}
+                height={30}
               />
             }
-            title={`取引一覧 - ${data.politicalOrganization.name}`}
+            title="すべての出入金"
             updatedAt="2025.8.19時点"
-            subtitle="政治資金の取引履歴を詳細に表示しています"
+            subtitle="どこから政治資金を得て、何に使っているのか"
           />
 
           <TransactionTableWrapper

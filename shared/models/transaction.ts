@@ -67,4 +67,5 @@ export interface TransactionFilters {
   date_from?: Date;
   date_to?: Date;
   financial_year?: number;
+  category_name?: string;
 }

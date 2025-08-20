@@ -16,6 +16,9 @@ export interface GetTransactionsBySlugParams {
   dateFrom?: Date;
   dateTo?: Date;
   financialYear: number;
+  sortBy?: "date" | "amount";
+  order?: "asc" | "desc";
+  categoryName?: string;
 }
 
 export interface GetTransactionsBySlugResult {
@@ -62,24 +65,58 @@ export class GetTransactionsBySlugUsecase {
       if (params.dateTo) {
         filters.date_to = params.dateTo;
       }
+      if (params.categoryName) {
+        filters.category_name = params.categoryName;
+      }
       filters.financial_year = params.financialYear;
 
-      const pagination: PaginationOptions = {
-        page,
-        perPage,
-      };
+      let transactions: DisplayTransaction[];
+      let total: number;
 
-      const result = await this.transactionRepository.findWithPagination(
-        filters,
-        pagination,
-      );
+      if (params.sortBy === "amount") {
+        // For amount sorting, get ALL data first, then sort and paginate
+        const allTransactions =
+          await this.transactionRepository.findAll(filters);
+        const allDisplayTransactions =
+          convertToDisplayTransactions(allTransactions);
+
+        // Sort all transactions by amount
+        allDisplayTransactions.sort((a, b) => {
+          const order = params.order === "asc" ? 1 : -1;
+          return (a.amount - b.amount) * order;
+        });
+
+        // Apply pagination after sorting
+        total = allDisplayTransactions.length;
+        const startIndex = (page - 1) * perPage;
+        const endIndex = startIndex + perPage;
+        transactions = allDisplayTransactions.slice(startIndex, endIndex);
+      } else {
+        // For date sorting or no sorting, use database-level pagination
+        const pagination: PaginationOptions = {
+          page,
+          perPage,
+          sortBy: params.sortBy,
+          order: params.order,
+        };
+
+        const result = await this.transactionRepository.findWithPagination(
+          filters,
+          pagination,
+        );
+
+        transactions = convertToDisplayTransactions(result.items);
+        total = result.total;
+      }
+
+      const totalPages = Math.ceil(total / perPage);
 
       return {
-        transactions: convertToDisplayTransactions(result.items),
-        total: result.total,
-        page: result.page,
-        perPage: result.perPage,
-        totalPages: result.totalPages,
+        transactions,
+        total,
+        page,
+        perPage,
+        totalPages,
         politicalOrganization,
       };
     } catch (error) {

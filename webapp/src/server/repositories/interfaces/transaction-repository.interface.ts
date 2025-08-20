@@ -14,6 +14,8 @@ export interface PaginatedResult<T> {
 export interface PaginationOptions {
   page: number;
   perPage: number;
+  sortBy?: "date" | "amount";
+  order?: "asc" | "desc";
 }
 
 // Sankey集計データの型定義
