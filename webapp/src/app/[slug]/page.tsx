@@ -19,16 +19,16 @@ export default async function PoliticianPage({
     slug,
     page: 1,
     perPage: 7, // 表示用に7件のみ取得
-    financialYear: new Date().getFullYear(), // デフォルト値
+    financialYear: 2025, // デフォルト値
   }).catch(() => null);
 
   return (
     <MainColumn>
-      <CashFlowSection sankeyData={data?.sankeyData} />
+      <CashFlowSection sankeyData={data?.sankeyData ?? null} />
       <MonthlyTrendsSection monthlyData={data?.monthlyData} />
       <DonationSummarySection />
       <TransactionsSection
-        transactionData={data?.transactionData}
+        transactionData={data?.transactionData ?? null}
         slug={slug}
       />
       <ExplanationSection />
