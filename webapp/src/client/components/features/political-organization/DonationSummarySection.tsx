@@ -1,16 +1,14 @@
 'use client';
 import 'client-only';
 import Image from "next/image";
-import ComplexDonationSummaryCard from "@/client/components/features/summary/ComplexDonationSummaryCard";
-import DonationSummaryCard from "@/client/components/features/summary/DonationSummaryCard";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
+import BaseCard from "@/client/components/ui/BaseCard";
+import PreviousDayChange from "@/client/components/ui/PreviousDayChange";
+import ValueDisplay from "@/client/components/ui/ValueDisplay";
 
-interface DonationSummarySectionProps {
-  // 将来的に寄付統計データを追加
-}
 
-export default function DonationSummarySection({}: DonationSummarySectionProps) {
+export default function DonationSummarySection() {
   return (
     <MainColumnCard>
       <CardHeader
@@ -29,38 +27,56 @@ export default function DonationSummarySection({}: DonationSummarySectionProps) 
 
       {/* 寄付統計サマリー */}
       <div className="flex items-center gap-6">
-        <ComplexDonationSummaryCard
-          className="flex-1"
-          title="寄付金額"
-          mainValue="1"
-          mainUnit="億"
-          secondaryValue="7462"
-          secondaryUnit="万"
-          tertiaryValue="4000"
-          finalUnit="円"
-          previousDayChange={{
-            value: "8,000",
-            unit: "円",
-          }}
-        />
+        {/* 寄付金額カード */}
+        <BaseCard className="flex-1">
+          <div className="flex justify-between items-start mb-4">
+            <div className="text-[#000000] font-bold text-base">寄付金額</div>
+            <PreviousDayChange
+              value="8,000"
+              unit="円"
+            />
+          </div>
+          <ValueDisplay
+            parts={[
+              { value: "1", isLarge: true },
+              { value: "億", isLarge: false },
+              { value: "7462", isLarge: true },
+              { value: "万", isLarge: false },
+              { value: "4000", isLarge: true },
+              { value: "円", isLarge: false },
+            ]}
+          />
+        </BaseCard>
 
-        <DonationSummaryCard
-          className="flex-1"
-          title="寄付件数"
-          value="7118"
-          unit="件"
-          previousDayChange={{
-            value: "12",
-            unit: "件",
-          }}
-        />
+        {/* 寄付件数カード */}
+        <BaseCard className="flex-1">
+          <div className="flex justify-between items-start mb-4">
+            <div className="text-[#000000] font-bold text-base">寄付件数</div>
+            <PreviousDayChange
+              value="12"
+              unit="件"
+            />
+          </div>
+          <ValueDisplay
+            parts={[
+              { value: "7118", isLarge: true },
+              { value: "件", isLarge: false },
+            ]}
+          />
+        </BaseCard>
 
-        <DonationSummaryCard
-          className="flex-1"
-          title="企業団体献金"
-          value="0"
-          unit="件"
-        />
+        {/* 企業団体献金カード */}
+        <BaseCard className="flex-1">
+          <div className="flex justify-between items-start mb-4">
+            <div className="text-[#000000] font-bold text-base">企業団体献金</div>
+          </div>
+          <ValueDisplay
+            parts={[
+              { value: "0", isLarge: true },
+              { value: "件", isLarge: false },
+            ]}
+          />
+        </BaseCard>
       </div>
 
       {/* プレースホルダーグラフ */}
