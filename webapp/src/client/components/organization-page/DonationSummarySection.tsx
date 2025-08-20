@@ -4,20 +4,7 @@ import Image from "next/image";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 import BaseCard from "@/client/components/ui/BaseCard";
-
-interface DailyDonationData {
-  date: string; // "YYYY-MM-DD" 形式
-  dailyAmount: number; // その日の寄付額
-  cumulativeAmount: number; // 累積寄付額
-}
-
-interface DonationSummaryData {
-  dailyDonationData: DailyDonationData[];
-  totalAmount: number; // 累計寄付金額
-  totalDays: number; // 寄付日数
-  amountDayOverDay: number; // 寄付金額の前日比
-  countDayOverDay: number; // 寄付件数の前日比
-}
+import type { DonationSummaryData } from "@/server/usecases/get-daily-donation-usecase";
 
 interface DonationSummarySectionProps {
   donationSummary?: DonationSummaryData;

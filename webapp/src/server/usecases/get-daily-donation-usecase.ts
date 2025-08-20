@@ -1,9 +1,16 @@
 import type { IPoliticalOrganizationRepository } from "../repositories/interfaces/political-organization-repository.interface";
 import type {
   DailyDonationData,
-  DonationSummaryData,
   ITransactionRepository,
 } from "../repositories/interfaces/transaction-repository.interface";
+
+export interface DonationSummaryData {
+  dailyDonationData: DailyDonationData[];
+  totalAmount: number; // 累計寄付金額
+  totalDays: number; // 寄付日数
+  amountDayOverDay: number; // 寄付金額の前日比
+  countDayOverDay: number; // 寄付件数の前日比
+}
 
 export interface GetDailyDonationParams {
   slug: string;
