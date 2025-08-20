@@ -341,8 +341,8 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     const sortOrder = order || "desc";
 
     if (sortBy === "amount") {
-      // Sort by debit amount (for expenses) or credit amount (for income)
-      // We'll use debit amount as the primary sort
+      // In double-entry bookkeeping, debitAmount and creditAmount are usually equal
+      // We'll sort by debitAmount since it represents the transaction value
       return { debitAmount: sortOrder };
     }
 

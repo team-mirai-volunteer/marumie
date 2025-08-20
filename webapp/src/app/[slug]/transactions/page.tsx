@@ -60,10 +60,10 @@ export default async function TransactionsPage({
     ? searchParamsResolved.transactionType[0]
     : searchParamsResolved.transactionType;
 
-  // sortBy: 'date' | 'amount'
-  const sortBy = Array.isArray(searchParamsResolved.sortBy)
-    ? searchParamsResolved.sortBy[0]
-    : searchParamsResolved.sortBy;
+  // sortBy: 'date' | 'amount' (read from 'sort' URL parameter)
+  const sortBy = Array.isArray(searchParamsResolved.sort)
+    ? searchParamsResolved.sort[0]
+    : searchParamsResolved.sort;
 
   // order: 'asc' | 'desc'
   const order = Array.isArray(searchParamsResolved.order)
