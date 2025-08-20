@@ -127,7 +127,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   ): Promise<MonthlyAggregation[]> {
     const [incomeResults, expenseResults] = await Promise.all([
       this.prisma.$queryRaw<
-        Array<{ year: bigint; month: bigint; total_amount: any }>
+        Array<{ year: bigint; month: bigint; total_amount: number }>
       >`
         SELECT 
           EXTRACT(YEAR FROM transaction_date) as year,
@@ -141,7 +141,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
         ORDER BY year, month
       `,
       this.prisma.$queryRaw<
-        Array<{ year: bigint; month: bigint; total_amount: any }>
+        Array<{ year: bigint; month: bigint; total_amount: number }>
       >`
         SELECT 
           EXTRACT(YEAR FROM transaction_date) as year,
@@ -170,8 +170,10 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       if (!monthlyMap.has(yearMonth)) {
         monthlyMap.set(yearMonth, { yearMonth, income: 0, expense: 0 });
       }
-      const existing = monthlyMap.get(yearMonth)!;
-      existing.income = Number(item.total_amount);
+      const existing = monthlyMap.get(yearMonth);
+      if (existing) {
+        existing.income = Number(item.total_amount);
+      }
     }
 
     // 支出データを追加
@@ -182,8 +184,10 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       if (!monthlyMap.has(yearMonth)) {
         monthlyMap.set(yearMonth, { yearMonth, income: 0, expense: 0 });
       }
-      const existing = monthlyMap.get(yearMonth)!;
-      existing.expense = Number(item.total_amount);
+      const existing = monthlyMap.get(yearMonth);
+      if (existing) {
+        existing.expense = Number(item.total_amount);
+      }
     }
 
     // 結果を配列に変換して年月順でソート

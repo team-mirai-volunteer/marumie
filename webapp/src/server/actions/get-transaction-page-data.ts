@@ -3,10 +3,7 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaPoliticalOrganizationRepository } from "@/server/repositories/prisma-political-organization.repository";
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
-import {
-  type GetMonthlyTransactionAggregationParams,
-  GetMonthlyTransactionAggregationUsecase,
-} from "@/server/usecases/get-monthly-transaction-aggregation-usecase";
+import { GetMonthlyTransactionAggregationUsecase } from "@/server/usecases/get-monthly-transaction-aggregation-usecase";
 import { GetSankeyAggregationUsecase } from "@/server/usecases/get-sankey-aggregation-usecase";
 import {
   type GetTransactionsBySlugParams,
