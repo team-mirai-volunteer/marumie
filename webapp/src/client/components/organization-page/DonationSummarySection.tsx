@@ -1,5 +1,4 @@
-"use client";
-import "client-only";
+import "server-only";
 import Image from "next/image";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
