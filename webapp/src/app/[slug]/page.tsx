@@ -5,6 +5,7 @@ import DonationSummarySection from "@/client/components/organization-page/Donati
 import ExplanationSection from "@/client/components/organization-page/ExplanationSection";
 import MonthlyTrendsSection from "@/client/components/organization-page/MonthlyTrendsSection";
 import TransactionsSection from "@/client/components/organization-page/TransactionsSection";
+import WhySection from "@/client/components/organization-page/WhySection";
 import { getTransactionPageDataAction } from "@/server/actions/get-transaction-page-data";
 
 export default async function PoliticianPage({
@@ -27,6 +28,7 @@ export default async function PoliticianPage({
       <CashFlowSection sankeyData={data?.sankeyData ?? null} />
       <MonthlyTrendsSection monthlyData={data?.monthlyData} />
       <DonationSummarySection donationSummary={data?.donationSummary} />
+      <WhySection />
       <TransactionsSection
         transactionData={data?.transactionData ?? null}
         slug={slug}
