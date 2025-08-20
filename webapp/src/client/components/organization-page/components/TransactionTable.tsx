@@ -1,7 +1,6 @@
 "use client";
 import "client-only";
 
-import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import type { DisplayTransaction } from "@/types/display-transaction";
 import TransactionTableRow from "./TransactionTableRow";
@@ -11,8 +10,6 @@ interface TransactionTableProps {
   total: number;
   page: number;
   perPage: number;
-  totalPages: number;
-  slug: string;
 }
 
 export default function TransactionTable({
@@ -20,26 +17,11 @@ export default function TransactionTable({
   total,
   page,
   perPage,
-  totalPages,
-  slug,
 }: TransactionTableProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const [sortField, setSortField] = useState<
     "date" | "account" | "amount" | null
   >(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-
-  const buildPageUrl = (newPage: number) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("page", newPage.toString());
-    return `/${slug}/transactions?${params.toString()}`;
-  };
-
-  const handlePageChange = (newPage: number) => {
-    const url = buildPageUrl(newPage);
-    router.push(url);
-  };
 
   const handleSort = (field: "date" | "account" | "amount") => {
     if (sortField === field) {
@@ -137,34 +119,6 @@ export default function TransactionTable({
           </table>
         </div>
       </div>
-
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <div className="text-gray-600 text-sm">
-            ページ {page} / {totalPages}
-          </div>
-          <div className="flex space-x-2">
-            {page > 1 && (
-              <button
-                type="button"
-                onClick={() => handlePageChange(page - 1)}
-                className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm hover:bg-gray-50"
-              >
-                前へ
-              </button>
-            )}
-            {page < totalPages && (
-              <button
-                type="button"
-                onClick={() => handlePageChange(page + 1)}
-                className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm hover:bg-gray-50"
-              >
-                次へ
-              </button>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

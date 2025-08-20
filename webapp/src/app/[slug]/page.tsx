@@ -18,7 +18,7 @@ export default async function PoliticianPage({
   const data = await getTransactionPageDataAction({
     slug,
     page: 1,
-    perPage: 7, // 表示用に7件のみ取得
+    perPage: 6, // 表示用に7件のみ取得
     financialYear: 2025, // デフォルト値
   }).catch(() => null);
 

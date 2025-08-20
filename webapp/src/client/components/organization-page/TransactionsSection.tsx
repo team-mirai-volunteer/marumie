@@ -43,28 +43,24 @@ export default function TransactionsSection({
       />
 
       {transactionData ? (
-        <>
+        <div className="relative">
           <TransactionTable
             transactions={transactionData.transactions}
             total={transactionData.total}
             page={transactionData.page}
             perPage={transactionData.perPage}
-            totalPages={transactionData.totalPages}
-            slug={slug}
           />
 
-          {/* もっと見るボタン */}
-          <div className="relative">
-            {/* グラデーションオーバーレイ */}
-            <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent pointer-events-none" />
-
-            <div className="flex justify-center pt-8">
+          {/* グラデーションオーバーレイ - テーブルの一番下の部分にかかる */}
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white via-white/70 to-transparent">
+            {/* もっと見るボタン - グラデーション内に配置 */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
               <Link href={`/${slug}/transactions`}>
                 <MainButton>もっと見る</MainButton>
               </Link>
             </div>
           </div>
-        </>
+        </div>
       ) : (
         <div className="text-gray-500 text-center py-8">
           取引データが取得できませんでした
