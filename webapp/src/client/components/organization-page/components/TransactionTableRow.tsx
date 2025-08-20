@@ -27,16 +27,47 @@ export default function TransactionTableRow({
     return transaction.subcategory || transaction.category;
   };
 
-  const getCategoryColors = (category: string) => {
-    // Return the same colors for all categories initially
+  const getCategoryColors = (category: string, subcategory?: string) => {
+    // Special colors for donation category based on Figma design
+    if (category === "寄付") {
+      return {
+        fontColor: "#1F2937",
+        borderColor: "#E0F6C9",
+        bgColor: "#E0F6C9",
+      };
+    }
+
+    // Special colors for advertising expenses subcategory based on Figma design
+    if (subcategory === "宣伝費") {
+      return {
+        fontColor: "#0369A1",
+        borderColor: "#0369A1",
+        bgColor: "#FFFFFF",
+      };
+    }
+
+    // Special colors for election-related expenses subcategory based on Figma design
+    if (subcategory === "選挙関係費") {
+      return {
+        fontColor: "#1F2937",
+        borderColor: "#F5D0FE",
+        bgColor: "#F5D0FE",
+      };
+    }
+
+    // Return the same colors for all other categories initially
     return {
       fontColor: "#1F2937",
       borderColor: "#99F6E4",
-      bgColor: "#99F6E4"
+      bgColor: "#99F6E4",
     };
   };
 
   const isIncome = transaction.transactionType === "income";
+  const categoryColors = getCategoryColors(
+    transaction.category,
+    transaction.subcategory,
+  );
 
   return (
     <div className="w-full">
@@ -106,18 +137,18 @@ export default function TransactionTableRow({
           <div className="flex justify-center items-center h-11">
             <div
               className="flex flex-col justify-center items-center gap-2 px-3 rounded-full border"
-              style={{ 
-                backgroundColor: getCategoryColors(transaction.category).bgColor,
-                borderColor: getCategoryColors(transaction.category).borderColor,
-                borderWidth: "1px"
+              style={{
+                backgroundColor: categoryColors.bgColor,
+                borderColor: categoryColors.borderColor,
+                borderWidth: "1px",
               }}
             >
               <span
                 className="font-medium text-xs leading-5 text-center"
-                style={{ 
-                  fontFamily: "Noto Sans JP", 
+                style={{
+                  fontFamily: "Noto Sans JP",
                   lineHeight: "1.67em",
-                  color: getCategoryColors(transaction.category).fontColor
+                  color: categoryColors.fontColor,
                 }}
               >
                 {getCategoryLabel(transaction)}
