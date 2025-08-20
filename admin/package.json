@@ -10,8 +10,7 @@
     "type-check": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "deploy-app": "cd ../ && prisma migrate deploy && cd admin && next build"
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@prisma/client": "^6.14.0",
