@@ -11,10 +11,7 @@ export default function TransactionTableBody({
   return (
     <tbody className="divide-y divide-gray-200 bg-white">
       {transactions.map((transaction) => (
-        <TransactionTableRow
-          key={transaction.id}
-          transaction={transaction}
-        />
+        <TransactionTableRow key={transaction.id} transaction={transaction} />
       ))}
     </tbody>
   );

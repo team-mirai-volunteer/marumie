@@ -1,6 +1,6 @@
 import type { DisplayTransaction } from "@/types/display-transaction";
-import TransactionTableHeader from "./TransactionTableHeader";
 import TransactionTableBody from "./TransactionTableBody";
+import TransactionTableHeader from "./TransactionTableHeader";
 
 interface TransactionTableProps {
   transactions: DisplayTransaction[];
@@ -26,13 +26,11 @@ export default function TransactionTable({
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <TransactionTableHeader allowControl={allowControl} />
-            <TransactionTableBody transactions={transactions} />
-          </table>
-        </div>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white">
+          <TransactionTableHeader allowControl={allowControl} />
+          <TransactionTableBody transactions={transactions} />
+        </table>
       </div>
     </div>
   );
