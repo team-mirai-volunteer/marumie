@@ -33,7 +33,7 @@ export default function Header() {
             {/* Title and Subtitle */}
             <div className="flex items-end gap-4 -mt-1">
               <Image
-                src="/open-data-logo.png"
+                src="/logos/open-data-logo.png"
                 alt="みらいオープンデータ"
                 width={200}
                 height={50}
@@ -98,13 +98,19 @@ export default function Header() {
           >
             <div className="w-6 h-6 flex flex-col justify-center items-center">
               <span
-                className={`block w-5 h-0.5 bg-black transition-all duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-1" : ""}`}
+                className={`block w-5 h-0.5 bg-black transition-all duration-300 ${
+                  isMobileMenuOpen ? "rotate-45 translate-y-1" : ""
+                }`}
               ></span>
               <span
-                className={`block w-5 h-0.5 bg-black mt-1 transition-all duration-300 ${isMobileMenuOpen ? "opacity-0" : ""}`}
+                className={`block w-5 h-0.5 bg-black mt-1 transition-all duration-300 ${
+                  isMobileMenuOpen ? "opacity-0" : ""
+                }`}
               ></span>
               <span
-                className={`block w-5 h-0.5 bg-black mt-1 transition-all duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-1" : ""}`}
+                className={`block w-5 h-0.5 bg-black mt-1 transition-all duration-300 ${
+                  isMobileMenuOpen ? "-rotate-45 -translate-y-1" : ""
+                }`}
               ></span>
             </div>
           </button>
