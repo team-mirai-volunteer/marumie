@@ -19,12 +19,6 @@ export default function TransactionTable({
 }: TransactionTableProps) {
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="text-gray-600 text-sm">
-          {total}件中 {(page - 1) * perPage + 1}-
-          {Math.min(page * perPage, total)}件を表示
-        </div>
-      </div>
 
       <div className="overflow-x-auto">
         <div className="min-w-full bg-white">

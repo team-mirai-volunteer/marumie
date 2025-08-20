@@ -54,16 +54,26 @@ export default async function TransactionsPage({
       : searchParamsResolved.page || "1",
     10,
   );
-  const perPage = parseInt(
-    Array.isArray(searchParamsResolved.perPage)
-      ? searchParamsResolved.perPage[0] || "50"
-      : searchParamsResolved.perPage || "50",
-    10,
-  );
+  const perPage = 20; // Fixed value
 
   const transactionType = Array.isArray(searchParamsResolved.transactionType)
     ? searchParamsResolved.transactionType[0]
     : searchParamsResolved.transactionType;
+
+  // sortBy: 'date' | 'amount'
+  const sortBy = Array.isArray(searchParamsResolved.sortBy)
+    ? searchParamsResolved.sortBy[0]
+    : searchParamsResolved.sortBy;
+
+  // order: 'asc' | 'desc'
+  const order = Array.isArray(searchParamsResolved.order)
+    ? searchParamsResolved.order[0]
+    : searchParamsResolved.order;
+
+  // filter: categoryName
+  const categoryName = Array.isArray(searchParamsResolved.categoryName)
+    ? searchParamsResolved.categoryName[0]
+    : searchParamsResolved.categoryName;
 
   const financialYear = 2025; // 固定値
 
@@ -78,6 +88,9 @@ export default async function TransactionsPage({
         | "other"
         | undefined,
       financialYear,
+      sortBy: sortBy as "date" | "amount" | undefined,
+      order: order as "asc" | "desc" | undefined,
+      categoryName: categoryName || undefined,
     });
 
     return (

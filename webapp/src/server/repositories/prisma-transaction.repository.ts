@@ -50,10 +50,13 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     const perPage = pagination?.perPage || 50;
     const skip = (page - 1) * perPage;
 
+    // Build orderBy based on sortBy and order parameters
+    const orderBy = this.buildOrderByClause(pagination?.sortBy, pagination?.order);
+
     const [transactions, total] = await Promise.all([
       this.prisma.transaction.findMany({
         where,
-        orderBy: { transactionDate: "desc" },
+        orderBy,
         skip,
         take: perPage,
       }),
@@ -310,7 +313,38 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       }
     }
 
+    // Filter by category name
+    if (filters?.category_name) {
+      // This will need to filter by matching accounts that map to the category
+      const accountsForCategory = Object.entries(ACCOUNT_CATEGORY_MAPPING)
+        .filter(([_, mapping]) => mapping.category === filters.category_name)
+        .map(([account]) => account);
+      
+      if (accountsForCategory.length > 0) {
+        where.OR = [
+          { debitAccount: { in: accountsForCategory } },
+          { creditAccount: { in: accountsForCategory } },
+        ];
+      }
+    }
+
     return where;
+  }
+
+  private buildOrderByClause(
+    sortBy?: "date" | "amount",
+    order?: "asc" | "desc",
+  ): Prisma.TransactionOrderByWithRelationInput {
+    const sortOrder = order || "desc";
+    
+    if (sortBy === "amount") {
+      // Sort by debit amount (for expenses) or credit amount (for income)
+      // We'll use debit amount as the primary sort
+      return { debitAmount: sortOrder };
+    }
+    
+    // Default to sorting by date
+    return { transactionDate: sortOrder };
   }
 
   private mapToTransaction(prismaTransaction: PrismaTransaction): Transaction {

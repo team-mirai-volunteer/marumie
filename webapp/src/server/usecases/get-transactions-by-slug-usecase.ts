@@ -16,6 +16,9 @@ export interface GetTransactionsBySlugParams {
   dateFrom?: Date;
   dateTo?: Date;
   financialYear: number;
+  sortBy?: "date" | "amount";
+  order?: "asc" | "desc";
+  categoryName?: string;
 }
 
 export interface GetTransactionsBySlugResult {
@@ -62,11 +65,16 @@ export class GetTransactionsBySlugUsecase {
       if (params.dateTo) {
         filters.date_to = params.dateTo;
       }
+      if (params.categoryName) {
+        filters.category_name = params.categoryName;
+      }
       filters.financial_year = params.financialYear;
 
       const pagination: PaginationOptions = {
         page,
         perPage,
+        sortBy: params.sortBy,
+        order: params.order,
       };
 
       const result = await this.transactionRepository.findWithPagination(

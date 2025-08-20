@@ -38,6 +38,10 @@ export default function TransactionTableWrapper({
 
       {/* ページネーションコントロール */}
       <div className="mt-6 flex items-center justify-between">
+        <div className="text-gray-600 text-sm">
+          {total}件中 {(currentPage - 1) * itemsPerPage + 1}-
+          {Math.min(currentPage * itemsPerPage, total)}件を表示
+        </div>
         <div className="flex items-center gap-2">
           <button
             type="button"
