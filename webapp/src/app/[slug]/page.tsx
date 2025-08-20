@@ -5,6 +5,7 @@ import DonationSummarySection from "@/client/components/organization-page/Donati
 import ExplanationSection from "@/client/components/organization-page/ExplanationSection";
 import MonthlyTrendsSection from "@/client/components/organization-page/MonthlyTrendsSection";
 import TransactionsSection from "@/client/components/organization-page/TransactionsSection";
+import WhySection from "@/client/components/organization-page/WhySection";
 import { getTransactionPageDataAction } from "@/server/actions/get-transaction-page-data";
 
 export default async function PoliticianPage({
@@ -18,7 +19,7 @@ export default async function PoliticianPage({
   const data = await getTransactionPageDataAction({
     slug,
     page: 1,
-    perPage: 7, // 表示用に7件のみ取得
+    perPage: 6, // 表示用に7件のみ取得
     financialYear: 2025, // デフォルト値
   }).catch(() => null);
 
@@ -27,6 +28,7 @@ export default async function PoliticianPage({
       <CashFlowSection sankeyData={data?.sankeyData ?? null} />
       <MonthlyTrendsSection monthlyData={data?.monthlyData} />
       <DonationSummarySection donationSummary={data?.donationSummary} />
+      <WhySection />
       <TransactionsSection
         transactionData={data?.transactionData ?? null}
         slug={slug}

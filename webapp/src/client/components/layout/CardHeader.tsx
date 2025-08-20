@@ -1,3 +1,5 @@
+import { Label, Subtitle, Title } from "@/client/components/ui/Typography";
+
 interface CardHeaderProps {
   icon: React.ReactNode;
   title: string;
@@ -22,32 +24,17 @@ export default function CardHeader({
           </div>
 
           {/* タイトル */}
-          <h1
-            className="text-[27px] font-bold leading-[1.52] tracking-[0.01em] text-black"
-            style={{ fontFamily: "var(--font-noto-sans)" }}
-          >
-            {title}
-          </h1>
+          <Title className="text-[--color-text-primary]">{title}</Title>
         </div>
 
         {/* 更新時刻 */}
         <div className="flex-shrink-0">
-          <span
-            className="text-[11px] font-bold leading-[1.55] text-gray-500"
-            style={{ fontFamily: "var(--font-noto-sans)" }}
-          >
-            {updatedAt}
-          </span>
+          <Label className="text-[--color-text-muted]">{updatedAt}</Label>
         </div>
       </div>
 
       {/* サブタイトル */}
-      <p
-        className="text-[14px] font-medium leading-[1.21] tracking-[0.01em] text-gray-400"
-        style={{ fontFamily: "var(--font-noto-sans)" }}
-      >
-        {subtitle}
-      </p>
+      <Subtitle className="text-[--color-text-secondary]">{subtitle}</Subtitle>
     </div>
   );
 }

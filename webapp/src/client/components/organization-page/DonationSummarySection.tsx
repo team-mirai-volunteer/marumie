@@ -3,6 +3,7 @@ import Image from "next/image";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 import BaseCard from "@/client/components/ui/BaseCard";
+import MainButton from "@/client/components/ui/MainButton";
 import type { DonationSummaryData } from "@/server/usecases/get-daily-donation-usecase";
 
 interface DonationSummarySectionProps {
@@ -187,12 +188,7 @@ export default function DonationSummarySection({
         <p className="text-[#000000] font-bold text-base mb-6">
           チームみらいは、皆さまのご支援・ご寄付のおかげで活動を続けられております。
         </p>
-        <button
-          type="button"
-          className="bg-gradient-to-r from-[#BCECD3] to-[#64D8C6] border border-black rounded-[40px] px-6 py-2 text-[#000000] font-bold text-base hover:opacity-90 transition-opacity"
-        >
-          ご寄付はこちら
-        </button>
+        <MainButton>ご寄付はこちら</MainButton>
       </div>
     </MainColumnCard>
   );
