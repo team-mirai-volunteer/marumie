@@ -7,46 +7,6 @@ interface TransactionTableRowProps {
   transaction: DisplayTransaction;
 }
 
-// Bank icon component (SVG from Figma)
-const BankIcon = () => (
-  <div className="relative w-7 h-7">
-    <svg
-      width="28"
-      height="28"
-      viewBox="0 0 28 28"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <title>Bank Icon</title>
-      <g transform="translate(3.5, 3.5)">
-        <g>
-          <rect x="3.15" y="8.4" width="2.1" height="7.35" fill="#000000" />
-          <rect x="9.45" y="8.4" width="2.1" height="7.35" fill="#000000" />
-          <rect x="0" y="17.85" width="21" height="2.1" fill="#000000" />
-          <rect x="15.75" y="8.4" width="2.1" height="7.35" fill="#000000" />
-          <rect x="0" y="0" width="21" height="6.3" fill="#000000" />
-        </g>
-        <g transform="translate(17, 15.83)">
-          <circle cx="5" cy="5" r="3.5" fill="#FFFFFF" />
-          <svg
-            x="0"
-            y="0"
-            width="10"
-            height="10"
-            viewBox="0 0 10 10"
-            fill="none"
-          >
-            <title>Star Icon</title>
-            <path
-              d="M5 0L6.545 3.455L10 5L6.545 6.545L5 10L3.455 6.545L0 5L3.455 3.455L5 0Z"
-              fill="#30BCA7"
-            />
-          </svg>
-        </g>
-      </g>
-    </svg>
-  </div>
-);
 
 export default function TransactionTableRow({
   transaction,
@@ -79,7 +39,7 @@ export default function TransactionTableRow({
   return (
     <div className="w-full">
       {/* Main row container */}
-      <div className="flex items-end bg-white h-16 px-0">
+      <div className="flex items-end bg-white h-16 px-0 pr-4">
         {/* Date section - 140px width */}
         <div
           className="flex items-center justify-start px-4 h-full"
@@ -114,10 +74,10 @@ export default function TransactionTableRow({
           </span>
         </div>
 
-        {/* Amount section with plus/minus - 144px width (24px + 120px) */}
+        {/* Amount section with plus/minus - 180px width */}
         <div
-          className="flex items-center justify-end h-full"
-          style={{ width: "144px" }}
+          className="flex items-center justify-end h-full pr-6"
+          style={{ width: "180px" }}
         >
           <span
             className="leading-4 text-right"
@@ -138,7 +98,7 @@ export default function TransactionTableRow({
 
         {/* Category label section - 160px width */}
         <div
-          className="flex items-center h-full gap-2"
+          className="flex items-center h-full gap-2 pl-4"
           style={{ width: "160px" }}
         >
           <div className="flex justify-center items-center h-11">

@@ -9,7 +9,7 @@ export default function TransactionTableHeader({
 }: TransactionTableHeaderProps) {
   return (
     <div className="bg-white">
-      <div className="flex items-center h-12 border-b border-[#D5DBE1] px-0">
+      <div className="flex items-center h-12 border-b border-[#D5DBE1] px-0 pr-4">
         {/* 日付 - 140px width to match row */}
         <div
           className="flex items-center justify-start px-4 h-full"
@@ -42,10 +42,10 @@ export default function TransactionTableHeader({
           </div>
         </div>
 
-        {/* 金額 - 144px width to match row (combined plus/minus + amount) */}
+        {/* 金額 - 180px width to match row (combined plus/minus + amount) */}
         <div
-          className="flex items-center justify-end h-full"
-          style={{ width: "144px" }}
+          className="flex items-center justify-end h-full pr-6"
+          style={{ width: "180px" }}
         >
           <div className="flex items-center gap-1 h-5">
             <span className="text-gray-800 text-sm font-bold leading-[1.5]">
@@ -66,7 +66,7 @@ export default function TransactionTableHeader({
         </div>
 
         {/* カテゴリー - 160px width to match row */}
-        <div className="flex items-center h-full" style={{ width: "160px" }}>
+        <div className="flex items-center h-full pl-4" style={{ width: "160px" }}>
           <div className="flex items-center gap-1 h-12">
             <span className="text-gray-800 text-sm font-bold leading-[1.5]">
               カテゴリー
