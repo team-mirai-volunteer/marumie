@@ -42,8 +42,6 @@ export async function getTransactionPageDataAction(
     politicalOrganizationRepository,
   );
 
-  console.log("getTransactionPageDataAction called with params:", params);
-
   // 3つのUsecaseを並列実行
   const [transactionData, monthlyData, sankeyData] = await Promise.all([
     transactionUsecase.execute(params),
@@ -57,16 +55,9 @@ export async function getTransactionPageDataAction(
     }),
   ]);
 
-  console.log("Monthly data result:", monthlyData);
-  console.log("Sankey data result:", sankeyData);
-
-  const result = {
+  return {
     transactionData,
     monthlyData: monthlyData.monthlyData,
     sankeyData: sankeyData.sankeyData,
   };
-
-  console.log("Final action result:", JSON.stringify(result, null, 2));
-
-  return result;
 }
