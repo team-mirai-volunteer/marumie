@@ -27,7 +27,10 @@ export default async function PoliticianPage({
       <CashFlowSection sankeyData={data?.sankeyData} />
       <MonthlyTrendsSection monthlyData={data?.monthlyData} />
       <DonationSummarySection />
-      <TransactionsSection transactionData={data?.transactionData} slug={slug} />
+      <TransactionsSection
+        transactionData={data?.transactionData}
+        slug={slug}
+      />
       <ExplanationSection />
     </MainColumn>
   );

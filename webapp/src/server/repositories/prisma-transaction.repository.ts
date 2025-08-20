@@ -125,9 +125,10 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     politicalOrganizationId: string,
     financialYear: number,
   ): Promise<MonthlyAggregation[]> {
-
     const [incomeResults, expenseResults] = await Promise.all([
-      this.prisma.$queryRaw<Array<{ year: bigint; month: bigint; total_amount: any }>>`
+      this.prisma.$queryRaw<
+        Array<{ year: bigint; month: bigint; total_amount: any }>
+      >`
         SELECT 
           EXTRACT(YEAR FROM transaction_date) as year,
           EXTRACT(MONTH FROM transaction_date) as month,
@@ -139,7 +140,9 @@ export class PrismaTransactionRepository implements ITransactionRepository {
         GROUP BY EXTRACT(YEAR FROM transaction_date), EXTRACT(MONTH FROM transaction_date)
         ORDER BY year, month
       `,
-      this.prisma.$queryRaw<Array<{ year: bigint; month: bigint; total_amount: any }>>`
+      this.prisma.$queryRaw<
+        Array<{ year: bigint; month: bigint; total_amount: any }>
+      >`
         SELECT 
           EXTRACT(YEAR FROM transaction_date) as year,
           EXTRACT(MONTH FROM transaction_date) as month,
@@ -150,17 +153,20 @@ export class PrismaTransactionRepository implements ITransactionRepository {
           AND transaction_type = 'expense'
         GROUP BY EXTRACT(YEAR FROM transaction_date), EXTRACT(MONTH FROM transaction_date)
         ORDER BY year, month
-      `
+      `,
     ]);
 
     // 年月別のマップを作成
-    const monthlyMap = new Map<string, { yearMonth: string; income: number; expense: number }>();
+    const monthlyMap = new Map<
+      string,
+      { yearMonth: string; income: number; expense: number }
+    >();
 
     // 収入データを追加
     for (const item of incomeResults) {
       const year = Number(item.year);
       const month = Number(item.month);
-      const yearMonth = `${year}-${month.toString().padStart(2, '0')}`;
+      const yearMonth = `${year}-${month.toString().padStart(2, "0")}`;
       if (!monthlyMap.has(yearMonth)) {
         monthlyMap.set(yearMonth, { yearMonth, income: 0, expense: 0 });
       }
@@ -172,7 +178,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     for (const item of expenseResults) {
       const year = Number(item.year);
       const month = Number(item.month);
-      const yearMonth = `${year}-${month.toString().padStart(2, '0')}`;
+      const yearMonth = `${year}-${month.toString().padStart(2, "0")}`;
       if (!monthlyMap.has(yearMonth)) {
         monthlyMap.set(yearMonth, { yearMonth, income: 0, expense: 0 });
       }
@@ -181,8 +187,9 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     }
 
     // 結果を配列に変換して年月順でソート
-    return Array.from(monthlyMap.values())
-      .sort((a, b) => a.yearMonth.localeCompare(b.yearMonth));
+    return Array.from(monthlyMap.values()).sort((a, b) =>
+      a.yearMonth.localeCompare(b.yearMonth),
+    );
   }
 
   private aggregateByCategory(

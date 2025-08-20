@@ -32,10 +32,11 @@ export class GetMonthlyTransactionAggregationUsecase {
         );
       }
 
-      const monthlyData = await this.transactionRepository.getMonthlyAggregation(
-        politicalOrganization.id,
-        params.financialYear,
-      );
+      const monthlyData =
+        await this.transactionRepository.getMonthlyAggregation(
+          politicalOrganization.id,
+          params.financialYear,
+        );
 
       return { monthlyData };
     } catch (error) {
