@@ -1,5 +1,4 @@
-"use client";
-import "client-only";
+import "server-only";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 
 export default function ExplanationSection() {
