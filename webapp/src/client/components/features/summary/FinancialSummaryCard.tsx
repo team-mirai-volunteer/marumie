@@ -1,8 +1,6 @@
 "use client";
 import "client-only";
 import BaseCard from "@/client/components/ui/BaseCard";
-import type { ValuePart } from "@/client/components/ui/ValueDisplay";
-import ValueDisplay from "@/client/components/ui/ValueDisplay";
 import type { FormattedAmount } from "@/server/utils/financial-calculator";
 
 interface FinancialSummaryCardProps {
@@ -20,23 +18,41 @@ export default function FinancialSummaryCard({
   amountColor,
   className = "",
 }: FinancialSummaryCardProps) {
-  const parts: ValuePart[] = [];
-
-  parts.push({ value: amount.main, isLarge: true, color: amountColor });
-  if (amount.secondary) {
-    parts.push({ value: amount.secondary, isLarge: false, color: amountColor });
-  }
-  if (amount.tertiary) {
-    parts.push({ value: amount.tertiary, isLarge: true, color: amountColor });
-  }
-  parts.push({ value: amount.unit, isLarge: false, color: amountColor });
-
   return (
     <BaseCard className={className}>
       <div className={`font-bold text-base mb-4`} style={{ color: titleColor }}>
         {title}
       </div>
-      <ValueDisplay parts={parts} />
+      <div className="flex items-end gap-1">
+        <span
+          className="font-bold text-[40px] leading-[30px]"
+          style={{ color: amountColor }}
+        >
+          {amount.main}
+        </span>
+        {amount.secondary && (
+          <span
+            className="font-bold text-base"
+            style={{ color: amountColor }}
+          >
+            {amount.secondary}
+          </span>
+        )}
+        {amount.tertiary && (
+          <span
+            className="font-bold text-[40px] leading-[30px]"
+            style={{ color: amountColor }}
+          >
+            {amount.tertiary}
+          </span>
+        )}
+        <span
+          className="font-bold text-base"
+          style={{ color: amountColor }}
+        >
+          {amount.unit}
+        </span>
+      </div>
     </BaseCard>
   );
 }
