@@ -60,9 +60,7 @@ export default function TransactionsSection({
 
             <div className="flex justify-center pt-8">
               <Link href={`/${slug}/transactions`}>
-                <MainButton>
-                  もっと見る
-                </MainButton>
+                <MainButton>もっと見る</MainButton>
               </Link>
             </div>
           </div>

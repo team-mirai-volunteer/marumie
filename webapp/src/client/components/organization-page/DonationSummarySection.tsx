@@ -188,9 +188,7 @@ export default function DonationSummarySection({
         <p className="text-[#000000] font-bold text-base mb-6">
           チームみらいは、皆さまのご支援・ご寄付のおかげで活動を続けられております。
         </p>
-        <MainButton>
-          ご寄付はこちら
-        </MainButton>
+        <MainButton>ご寄付はこちら</MainButton>
       </div>
     </MainColumnCard>
   );

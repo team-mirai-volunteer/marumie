@@ -1,19 +1,19 @@
-import Button from './Button';
+import Button from "./Button";
 
 interface MainButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
   className?: string;
-  type?: 'button' | 'submit' | 'reset';
+  type?: "button" | "submit" | "reset";
   disabled?: boolean;
 }
 
 export default function MainButton({
   children,
   onClick,
-  className = '',
-  type = 'button',
-  disabled = false
+  className = "",
+  type = "button",
+  disabled = false,
 }: MainButtonProps) {
   return (
     <Button
@@ -38,11 +38,13 @@ export default function MainButton({
         leading-[1.5em]
         hover:opacity-90
         ${className}
-      `.trim().replace(/\s+/g, ' ')}
+      `
+        .trim()
+        .replace(/\s+/g, " ")}
       style={{
-        fontFamily: 'Noto Sans JP, sans-serif',
+        fontFamily: "Noto Sans JP, sans-serif",
         fontWeight: 700,
-        fontSize: '16px',
+        fontSize: "16px",
       }}
     >
       {children}
