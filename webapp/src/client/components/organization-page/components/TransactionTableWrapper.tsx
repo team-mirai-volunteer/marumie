@@ -32,17 +32,38 @@ export default function TransactionTableWrapper({
     router.push(`?${params.toString()}`);
   };
 
+  const handleSort = (field: "date" | "amount") => {
+    const params = new URLSearchParams(searchParams.toString());
+    const currentSort = params.get("sort");
+    const currentOrder = params.get("order");
+
+    // Toggle order if sorting the same field, otherwise default to desc
+    if (currentSort === field) {
+      params.set("order", currentOrder === "desc" ? "asc" : "desc");
+    } else {
+      params.set("sort", field);
+      params.set("order", "desc");
+    }
+
+    // Reset to page 1 when sorting changes
+    params.set("page", "1");
+    router.push(`?${params.toString()}`);
+  };
+
   const startItem = (page - 1) * perPage + 1;
   const endItem = Math.min(page * perPage, total);
+
+  const currentSort = searchParams.get("sort") as "date" | "amount" | null;
+  const currentOrder = searchParams.get("order") as "asc" | "desc" | null;
 
   return (
     <>
       <TransactionTable
         transactions={transactions}
-        total={total}
-        page={page}
-        perPage={perPage}
         allowControl={allowControl}
+        onSort={handleSort}
+        currentSort={currentSort}
+        currentOrder={currentOrder}
       />
 
       {/* Figmaデザインに基づくページネーション */}

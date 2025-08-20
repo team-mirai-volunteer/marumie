@@ -4,24 +4,29 @@ import TransactionTableHeader from "./TransactionTableHeader";
 
 interface TransactionTableProps {
   transactions: DisplayTransaction[];
-  total: number;
-  page: number;
-  perPage: number;
   allowControl?: boolean;
+  onSort?: (field: "date" | "amount") => void;
+  currentSort?: "date" | "amount" | null;
+  currentOrder?: "asc" | "desc" | null;
 }
 
 export default function TransactionTable({
   transactions,
-  total,
-  page,
-  perPage,
   allowControl = false,
+  onSort,
+  currentSort,
+  currentOrder,
 }: TransactionTableProps) {
   return (
     <div className="space-y-6">
       <div className="overflow-x-auto">
         <div className="min-w-full bg-white">
-          <TransactionTableHeader allowControl={allowControl} />
+          <TransactionTableHeader
+            allowControl={allowControl}
+            onSort={onSort}
+            currentSort={currentSort}
+            currentOrder={currentOrder}
+          />
           <TransactionTableBody transactions={transactions} />
         </div>
       </div>

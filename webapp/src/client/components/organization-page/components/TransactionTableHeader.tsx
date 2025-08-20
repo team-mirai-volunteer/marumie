@@ -2,10 +2,16 @@ import Image from "next/image";
 
 interface TransactionTableHeaderProps {
   allowControl?: boolean;
+  onSort?: (field: "date" | "amount") => void;
+  currentSort?: "date" | "amount" | null;
+  currentOrder?: "asc" | "desc" | null;
 }
 
 export default function TransactionTableHeader({
   allowControl = false,
+  onSort,
+  currentSort,
+  currentOrder,
 }: TransactionTableHeaderProps) {
   return (
     <div className="bg-white">
@@ -15,22 +21,41 @@ export default function TransactionTableHeader({
           className="flex items-center justify-start px-4 h-full"
           style={{ width: "140px" }}
         >
-          <div className="flex items-center gap-1 h-5">
-            <span className="text-gray-800 text-sm font-bold leading-[1.5]">
-              日付
-            </span>
-            {allowControl && (
+          {allowControl && onSort ? (
+            <button
+              type="button"
+              onClick={() => onSort("date")}
+              className="flex items-center gap-1 h-5 hover:opacity-70 transition-opacity"
+            >
+              <span className="text-gray-800 text-sm font-bold leading-[1.5]">
+                日付
+              </span>
               <div className="w-5 h-5 flex items-center justify-center">
                 <Image
                   src="/icons/icon_chevron-down.svg"
                   alt="Sort by date"
                   width={20}
                   height={20}
-                  className="w-5 h-5"
+                  className={`w-5 h-5 transition-transform ${
+                    currentSort === "date"
+                      ? currentOrder === "asc"
+                        ? "rotate-180"
+                        : ""
+                      : ""
+                  }`}
+                  style={{
+                    opacity: currentSort === "date" ? 1 : 0.5,
+                  }}
                 />
               </div>
-            )}
-          </div>
+            </button>
+          ) : (
+            <div className="flex items-center gap-1 h-5">
+              <span className="text-gray-800 text-sm font-bold leading-[1.5]">
+                日付
+              </span>
+            </div>
+          )}
         </div>
 
         {/* 項目項目 - flexible width to match row */}
@@ -47,22 +72,41 @@ export default function TransactionTableHeader({
           className="flex items-center justify-end h-full pr-6"
           style={{ width: "180px" }}
         >
-          <div className="flex items-center gap-1 h-5">
-            <span className="text-gray-800 text-sm font-bold leading-[1.5]">
-              金額
-            </span>
-            {allowControl && (
+          {allowControl && onSort ? (
+            <button
+              type="button"
+              onClick={() => onSort("amount")}
+              className="flex items-center gap-1 h-5 hover:opacity-70 transition-opacity"
+            >
+              <span className="text-gray-800 text-sm font-bold leading-[1.5]">
+                金額
+              </span>
               <div className="w-5 h-5 flex items-center justify-center">
                 <Image
                   src="/icons/icon_chevron-down.svg"
                   alt="Sort by amount"
                   width={20}
                   height={20}
-                  className="w-5 h-5"
+                  className={`w-5 h-5 transition-transform ${
+                    currentSort === "amount"
+                      ? currentOrder === "asc"
+                        ? "rotate-180"
+                        : ""
+                      : ""
+                  }`}
+                  style={{
+                    opacity: currentSort === "amount" ? 1 : 0.5,
+                  }}
                 />
               </div>
-            )}
-          </div>
+            </button>
+          ) : (
+            <div className="flex items-center gap-1 h-5">
+              <span className="text-gray-800 text-sm font-bold leading-[1.5]">
+                金額
+              </span>
+            </div>
+          )}
         </div>
 
         {/* カテゴリー - 160px width to match row */}
