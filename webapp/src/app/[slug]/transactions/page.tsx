@@ -1,8 +1,12 @@
 import "server-only";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import TransactionTable from "@/client/components/TransactionTable";
+import CardHeader from "@/client/components/layout/CardHeader";
+import MainColumn from "@/client/components/layout/MainColumn";
+import MainColumnCard from "@/client/components/layout/MainColumnCard";
+import TransactionTable from "@/client/components/organization-page/components/TransactionTable";
 import { getTransactionsBySlugAction } from "@/server/actions/get-transactions-by-slug";
 
 interface TransactionsPageProps {
@@ -81,26 +85,38 @@ export default async function TransactionsPage({
     });
 
     return (
-      <main className="p-6 space-y-6">
-        <div className="flex items-center space-x-4">
-          <Link href={`/${slug}`} className="text-blue-600 hover:underline">
-            ← {data.politicalOrganization.name}
-          </Link>
-        </div>
+      <MainColumn>
+        <MainColumnCard>
+          <div className="flex items-center space-x-4 w-full">
+            <Link href={`/${slug}`} className="text-blue-600 hover:underline">
+              ← {data.politicalOrganization.name}
+            </Link>
+          </div>
 
-        <h1 className="text-2xl font-semibold">
-          取引一覧 - {data.politicalOrganization.name}
-        </h1>
+          <CardHeader
+            icon={
+              <Image
+                src="/icons/icon-cashflow.svg"
+                alt="Cash flow icon"
+                width={30}
+                height={31}
+              />
+            }
+            title={`取引一覧 - ${data.politicalOrganization.name}`}
+            updatedAt="2025.8.19時点"
+            subtitle="政治資金の取引履歴を詳細に表示しています"
+          />
 
-        <TransactionTable
-          transactions={data.transactions}
-          total={data.total}
-          page={data.page}
-          perPage={data.perPage}
-          totalPages={data.totalPages}
-          slug={slug}
-        />
-      </main>
+          <TransactionTable
+            transactions={data.transactions}
+            total={data.total}
+            page={data.page}
+            perPage={data.perPage}
+            totalPages={data.totalPages}
+            slug={slug}
+          />
+        </MainColumnCard>
+      </MainColumn>
     );
   } catch (error) {
     if (error instanceof Error && error.message.includes("not found")) {

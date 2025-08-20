@@ -1,13 +1,12 @@
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
-import type {
-  Transaction,
-  TransactionFilters,
-} from "@/shared/models/transaction";
+import type { TransactionFilters } from "@/shared/models/transaction";
+import type { DisplayTransaction } from "@/types/display-transaction";
 import type { IPoliticalOrganizationRepository } from "../repositories/interfaces/political-organization-repository.interface";
 import type {
   ITransactionRepository,
   PaginationOptions,
 } from "../repositories/interfaces/transaction-repository.interface";
+import { convertToDisplayTransactions } from "../utils/transaction-converter";
 
 export interface GetTransactionsBySlugParams {
   slug: string;
@@ -20,7 +19,7 @@ export interface GetTransactionsBySlugParams {
 }
 
 export interface GetTransactionsBySlugResult {
-  transactions: Transaction[];
+  transactions: DisplayTransaction[];
   total: number;
   page: number;
   perPage: number;
@@ -78,7 +77,7 @@ export class GetTransactionsBySlugUsecase {
       );
 
       return {
-        transactions: result.items,
+        transactions: convertToDisplayTransactions(result.items),
         total: result.total,
         page: result.page,
         perPage: result.perPage,

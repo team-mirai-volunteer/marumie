@@ -113,5 +113,37 @@ describe("UploadMfCsvUsecase", () => {
       expect(result.errors).toContain("Database connection failed");
       expect(result.savedCount).toBe(0);
     });
+
+    it("should reject invalid account labels and not call repository", async () => {
+      // 有効と無効のアカウントラベルを含む2行のCSV
+      const csvContent = `取引No,取引日,借方勘定科目,借方補助科目,借方部門,借方取引先,借方税区分,借方インボイス,借方金額,貸方勘定科目,貸方補助科目,貸方部門,貸方取引先,貸方税区分,貸方インボイス,貸方金額,摘要,仕訳メモ,タグ
+1,2025/6/1,人件費,,,,,,1000,普通預金,,,,,,1000,給与支払,,
+2,2025/6/2,無効な科目,,,,,,2000,普通預金,,,,,,2000,無効な取引,,`;
+
+      const input: UploadMfCsvInput = {
+        csvContent,
+        politicalOrganizationId: "test-org-id",
+      };
+
+      const result = await usecase.execute(input);
+
+      // バリデーションエラーが発生していることを確認
+      expect(result.errors.length).toBeGreaterThan(0);
+      expect(result.errors[0]).toContain("無効なアカウントラベルが見つかりました:");
+      expect(result.errors[0]).toContain("無効な科目");
+
+      // エラー詳細を確認
+      const errorDetailMessages = result.errors.filter(msg => msg.includes("取引番号:"));
+      expect(errorDetailMessages.length).toBeGreaterThan(0);
+      expect(errorDetailMessages.some(msg => msg.includes("無効な科目"))).toBe(true);
+
+      // Repositoryが呼び出されていないことを確認
+      expect(mockRepository.createManySkipDuplicates).not.toHaveBeenCalled();
+
+      // 処理したレコード数は2だが、保存されたレコード数は0
+      expect(result.processedCount).toBe(2);
+      expect(result.savedCount).toBe(0);
+      expect(result.skippedCount).toBe(0);
+    });
   });
 });

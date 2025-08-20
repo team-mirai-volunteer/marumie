@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Noto_Sans, Inter } from "next/font/google";
+import { Geist, Geist_Mono, Inter, Noto_Sans } from "next/font/google";
 import "./globals.css";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import Footer from "@/client/components/layout/Footer";
+import Header from "@/client/components/layout/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,6 +26,9 @@ const inter = Inter({
   weight: ["400", "700"],
 });
 
+// Note: FOT-TsukuGo Pro is a commercial font that would need to be loaded separately
+// For now, we'll use Inter as a fallback in the header component
+
 export const metadata: Metadata = {
   title: "Mirai Open Data - チームみらいの政治資金をオープンに",
   description:
@@ -40,7 +43,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${notoSans.variable} ${inter.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${notoSans.variable} ${inter.variable} antialiased pt-24`}
       >
         <Header />
         {children}

@@ -26,18 +26,21 @@
     "lint": "pnpm lint:webapp && pnpm lint:admin",
     "lint:webapp": "pnpm --filter webapp lint",
     "lint:admin": "pnpm --filter admin lint",
-    "format": "biome format --write .",
+    "format": "pnpm --filter webapp format && pnpm --filter admin format",
     "typecheck": "pnpm typecheck:webapp && pnpm typecheck:admin",
     "typecheck:webapp": "pnpm --filter webapp type-check",
     "typecheck:admin": "pnpm --filter admin type-check",
 
     "// Testing": "===========================================",
-    "test": "pnpm --filter admin test",
+    "test": "pnpm test:admin && pnpm test:webapp",
+    "test:admin": "pnpm --filter admin test",
+    "test:webapp": "pnpm --filter webapp test",
     "test:watch": "pnpm --filter admin test:watch",
 
     "// Database": "==========================================",
     "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev",
+    "db:migrate": "pnpm -s dotenv -e .env.dev -- prisma migrate dev",
+    "db:migrate:prod": "pnpm -s dotenv -e .env.prod -- prisma migrate deploy",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:seed": "node prisma/seed.cjs",
     "db:reset": "pnpm supabase:reset && pnpm db:migrate && pnpm db:seed",
@@ -89,7 +92,7 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,css,md}": [
-      "biome format --write",
+      "npm run format",
       "git add"
     ]
   }
