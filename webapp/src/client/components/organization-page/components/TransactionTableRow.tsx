@@ -7,7 +7,6 @@ interface TransactionTableRowProps {
   transaction: DisplayTransaction;
 }
 
-
 export default function TransactionTableRow({
   transaction,
 }: TransactionTableRowProps) {
@@ -23,15 +22,18 @@ export default function TransactionTableRow({
     return `${year}.${month}.${day}`;
   };
 
-  const getCategoryLabel = (category: string) => {
-    // Map categories to Japanese labels
-    const categoryMap: { [key: string]: string } = {
-      政党交付金: "交付金",
-      寄付: "寄付",
-      その他収入: "その他",
-      // Add more mappings as needed
+  const getCategoryLabel = (transaction: DisplayTransaction) => {
+    // Use subcategory if available, otherwise use category
+    return transaction.subcategory || transaction.category;
+  };
+
+  const getCategoryColors = (category: string) => {
+    // Return the same colors for all categories initially
+    return {
+      fontColor: "#1F2937",
+      borderColor: "#99F6E4",
+      bgColor: "#99F6E4"
     };
-    return categoryMap[category] || category;
   };
 
   const isIncome = transaction.transactionType === "income";
@@ -103,14 +105,22 @@ export default function TransactionTableRow({
         >
           <div className="flex justify-center items-center h-11">
             <div
-              className="flex flex-col justify-center items-center gap-2 px-3 rounded-full"
-              style={{ backgroundColor: "#99F6E4" }}
+              className="flex flex-col justify-center items-center gap-2 px-3 rounded-full border"
+              style={{ 
+                backgroundColor: getCategoryColors(transaction.category).bgColor,
+                borderColor: getCategoryColors(transaction.category).borderColor,
+                borderWidth: "1px"
+              }}
             >
               <span
-                className="text-gray-800 font-medium text-xs leading-5 text-center"
-                style={{ fontFamily: "Noto Sans JP", lineHeight: "1.67em" }}
+                className="font-medium text-xs leading-5 text-center"
+                style={{ 
+                  fontFamily: "Noto Sans JP", 
+                  lineHeight: "1.67em",
+                  color: getCategoryColors(transaction.category).fontColor
+                }}
               >
-                {getCategoryLabel(transaction.category)}
+                {getCategoryLabel(transaction)}
               </span>
             </div>
           </div>

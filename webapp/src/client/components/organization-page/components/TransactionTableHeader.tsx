@@ -66,7 +66,10 @@ export default function TransactionTableHeader({
         </div>
 
         {/* カテゴリー - 160px width to match row */}
-        <div className="flex items-center h-full pl-4" style={{ width: "160px" }}>
+        <div
+          className="flex items-center h-full pl-4"
+          style={{ width: "160px" }}
+        >
           <div className="flex items-center gap-1 h-12">
             <span className="text-gray-800 text-sm font-bold leading-[1.5]">
               カテゴリー
