@@ -65,14 +65,7 @@ export default async function TransactionsPage({
     ? searchParamsResolved.transactionType[0]
     : searchParamsResolved.transactionType;
 
-  const financialYear = searchParamsResolved.financialYear
-    ? parseInt(
-        Array.isArray(searchParamsResolved.financialYear)
-          ? searchParamsResolved.financialYear[0]
-          : searchParamsResolved.financialYear,
-        10,
-      )
-    : 2025; // デフォルト値
+  const financialYear = 2025; // 固定値
 
   try {
     const data = await getTransactionsBySlugAction({
@@ -93,15 +86,15 @@ export default async function TransactionsPage({
           <CardHeader
             icon={
               <Image
-                src="/icons/icon-cashflow.svg"
-                alt="Cash flow icon"
+                src="/icons/icon-cashback.svg"
+                alt="Cash move icon"
                 width={30}
-                height={31}
+                height={30}
               />
             }
-            title={`取引一覧 - ${data.politicalOrganization.name}`}
+            title="すべての出入金"
             updatedAt="2025.8.19時点"
-            subtitle="政治資金の取引履歴を詳細に表示しています"
+            subtitle="どこから政治資金を得て、何に使っているのか"
           />
 
           <TransactionTableWrapper
