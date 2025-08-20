@@ -6,7 +6,8 @@ interface TypographyProps {
 }
 
 // Font family constants for DRY principle
-const FONT_FAMILY_PRIMARY = "'Noto Sans JP', var(--font-noto-sans-jp), var(--font-noto-sans), sans-serif";
+const FONT_FAMILY_PRIMARY =
+  "'Noto Sans JP', var(--font-noto-sans-jp), var(--font-noto-sans), sans-serif";
 const FONT_FAMILY_SECONDARY = "var(--font-noto-sans)";
 
 export const Title = ({ children, className = "" }: TypographyProps) => (

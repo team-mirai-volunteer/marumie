@@ -5,6 +5,7 @@ import Link from "next/link";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 import TransactionTable from "@/client/components/organization-page/components/TransactionTable";
+import MainButton from "@/client/components/ui/MainButton";
 
 import type { DisplayTransaction } from "@/types/display-transaction";
 
@@ -58,11 +59,10 @@ export default function TransactionsSection({
             <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent pointer-events-none" />
 
             <div className="flex justify-center pt-8">
-              <Link
-                href={`/${slug}/transactions`}
-                className="bg-gradient-to-r from-[#BCECD3] to-[#64D8C6] border border-black rounded-[40px] px-6 py-2 text-[#000000] font-bold text-base hover:opacity-90 transition-opacity"
-              >
-                もっと見る
+              <Link href={`/${slug}/transactions`}>
+                <MainButton>
+                  もっと見る
+                </MainButton>
               </Link>
             </div>
           </div>
