@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import TransactionTable from "@/client/components/features/transaction/TransactionTable";
+import TransactionTable from "@/client/components/organization-page/components/TransactionTable";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumn from "@/client/components/layout/MainColumn";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";

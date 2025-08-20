@@ -2,7 +2,7 @@
 import 'client-only';
 import Image from "next/image";
 import Link from "next/link";
-import TransactionTable from "@/client/components/features/transaction/TransactionTable";
+import TransactionTable from "@/client/components/organization-page/components/TransactionTable";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 

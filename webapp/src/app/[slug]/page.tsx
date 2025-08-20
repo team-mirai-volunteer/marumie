@@ -1,10 +1,10 @@
 import "server-only";
 import MainColumn from "@/client/components/layout/MainColumn";
-import CashFlowSection from "@/client/components/features/political-organization/CashFlowSection";
-import MonthlyTrendsSection from "@/client/components/features/political-organization/MonthlyTrendsSection";
-import DonationSummarySection from "@/client/components/features/political-organization/DonationSummarySection";
-import TransactionsSection from "@/client/components/features/political-organization/TransactionsSection";
-import ExplanationSection from "@/client/components/features/political-organization/ExplanationSection";
+import CashFlowSection from "@/client/components/organization-page/CashFlowSection";
+import MonthlyTrendsSection from "@/client/components/organization-page/MonthlyTrendsSection";
+import DonationSummarySection from "@/client/components/organization-page/DonationSummarySection";
+import TransactionsSection from "@/client/components/organization-page/TransactionsSection";
+import ExplanationSection from "@/client/components/organization-page/ExplanationSection";
 import { getSankeyData } from "@/server/actions/get-sankey-data";
 import { getTransactionsBySlugAction } from "@/server/actions/get-transactions-by-slug";
 
