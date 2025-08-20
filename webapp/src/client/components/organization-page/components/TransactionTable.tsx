@@ -8,6 +8,9 @@ interface TransactionTableProps {
   onSort?: (field: "date" | "amount") => void;
   currentSort?: "date" | "amount" | null;
   currentOrder?: "asc" | "desc" | null;
+  total?: number;
+  page?: number;
+  perPage?: number;
 }
 
 export default function TransactionTable({
