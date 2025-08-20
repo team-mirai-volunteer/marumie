@@ -5,6 +5,7 @@ import { convertCategoryAggregationToSankeyData } from "../utils/sankey-category
 
 export interface GetSankeyAggregationParams {
   slug: string;
+  financialYear: number;
 }
 
 export interface GetSankeyAggregationResult {
@@ -31,10 +32,11 @@ export class GetSankeyAggregationUsecase {
         );
       }
 
-      // 集計データを取得（フィルタなし、全データ）
+      // 集計データを取得
       const aggregation =
         await this.transactionRepository.getCategoryAggregationForSankey(
           politicalOrganization.id,
+          params.financialYear,
         );
 
       // Sankeyデータに変換

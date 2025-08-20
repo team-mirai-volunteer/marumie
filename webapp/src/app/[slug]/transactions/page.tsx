@@ -19,11 +19,15 @@ export async function generateMetadata({
 }: TransactionsPageProps): Promise<Metadata> {
   const { slug } = await params;
 
+  // financialYearのデフォルト値を設定
+  const currentFinancialYear = 2025;
+
   try {
     const result = await getTransactionsBySlugAction({
       slug,
       page: 1,
       perPage: 1,
+      financialYear: currentFinancialYear,
     });
 
     return {
@@ -69,7 +73,7 @@ export default async function TransactionsPage({
           : searchParamsResolved.financialYear,
         10,
       )
-    : undefined;
+    : 2025; // デフォルト値
 
   try {
     const data = await getTransactionsBySlugAction({

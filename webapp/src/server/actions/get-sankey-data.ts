@@ -10,6 +10,7 @@ const prisma = new PrismaClient();
 
 interface GetSankeyDataParams {
   slug: string;
+  financialYear: number;
 }
 
 export async function getSankeyData(
@@ -27,9 +28,10 @@ export async function getSankeyData(
       politicalOrganizationRepository,
     );
 
-    // 集計クエリを実行してSankeyデータを取得（slugのみ）
+    // 集計クエリを実行してSankeyデータを取得
     const result = await getSankeyAggregationUsecase.execute({
       slug: params.slug,
+      financialYear: params.financialYear,
     });
 
     return result.sankeyData;

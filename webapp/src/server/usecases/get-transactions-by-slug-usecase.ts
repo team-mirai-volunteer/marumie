@@ -15,7 +15,7 @@ export interface GetTransactionsBySlugParams {
   transactionType?: "income" | "expense" | "other";
   dateFrom?: Date;
   dateTo?: Date;
-  financialYear?: number;
+  financialYear: number;
 }
 
 export interface GetTransactionsBySlugResult {
@@ -62,9 +62,7 @@ export class GetTransactionsBySlugUsecase {
       if (params.dateTo) {
         filters.date_to = params.dateTo;
       }
-      if (params.financialYear) {
-        filters.financial_year = params.financialYear;
-      }
+      filters.financial_year = params.financialYear;
 
       const pagination: PaginationOptions = {
         page,

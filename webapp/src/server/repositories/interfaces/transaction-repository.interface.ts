@@ -28,6 +28,13 @@ export interface SankeyCategoryAggregationResult {
   expense: TransactionCategoryAggregation[];
 }
 
+// 月次集計データの型定義
+export interface MonthlyAggregation {
+  yearMonth: string; // "YYYY-MM" 形式
+  income: number;
+  expense: number;
+}
+
 export interface ITransactionRepository {
   findById(id: string): Promise<Transaction | null>;
   findAll(filters?: TransactionFilters): Promise<Transaction[]>;
@@ -37,5 +44,10 @@ export interface ITransactionRepository {
   ): Promise<PaginatedResult<Transaction>>;
   getCategoryAggregationForSankey(
     politicalOrganizationId: string,
+    financialYear: number,
   ): Promise<SankeyCategoryAggregationResult>;
+  getMonthlyAggregation(
+    politicalOrganizationId: string,
+    financialYear: number,
+  ): Promise<MonthlyAggregation[]>;
 }
