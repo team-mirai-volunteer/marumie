@@ -7,7 +7,7 @@ import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumn from "@/client/components/layout/MainColumn";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 import TransactionTable from "@/client/components/organization-page/components/TransactionTable";
-import { getTransactionsBySlugAction } from "@/server/actions/get-transactions-by-slug";
+import { getTransactionPageDataAction } from "@/server/actions/get-transaction-page-data";
 
 interface TransactionsPageProps {
   params: Promise<{ slug: string }>;
@@ -20,15 +20,16 @@ export async function generateMetadata({
   const { slug } = await params;
 
   try {
-    const result = await getTransactionsBySlugAction({
+    const result = await getTransactionPageDataAction({
       slug,
       page: 1,
       perPage: 1,
+      financialYear: new Date().getFullYear(), // デフォルト値を設定
     });
 
     return {
-      title: `取引一覧 - ${result.politicalOrganization.name}`,
-      description: `${result.politicalOrganization.name}の政治資金取引一覧を表示しています。`,
+      title: `取引一覧 - ${result.transactionData.politicalOrganization.name}`,
+      description: `${result.transactionData.politicalOrganization.name}の政治資金取引一覧を表示しています。`,
     };
   } catch {
     return {
@@ -69,10 +70,10 @@ export default async function TransactionsPage({
           : searchParamsResolved.financialYear,
         10,
       )
-    : undefined;
+    : new Date().getFullYear(); // デフォルトは現在の年
 
   try {
-    const data = await getTransactionsBySlugAction({
+    const data = await getTransactionPageDataAction({
       slug,
       page,
       perPage,
@@ -84,12 +85,14 @@ export default async function TransactionsPage({
       financialYear,
     });
 
+    console.log("getTransactionPageDataAction result:", JSON.stringify(data, null, 2));
+
     return (
       <MainColumn>
         <MainColumnCard>
           <div className="flex items-center space-x-4 w-full">
             <Link href={`/${slug}`} className="text-blue-600 hover:underline">
-              ← {data.politicalOrganization.name}
+              ← {data.transactionData.politicalOrganization.name}
             </Link>
           </div>
 
@@ -102,17 +105,33 @@ export default async function TransactionsPage({
                 height={31}
               />
             }
-            title={`取引一覧 - ${data.politicalOrganization.name}`}
+            title={`取引一覧 - ${data.transactionData.politicalOrganization.name}`}
             updatedAt="2025.8.19時点"
             subtitle="政治資金の取引履歴を詳細に表示しています"
           />
 
+          {/* 月次収支推移グラフ */}
+          {data.monthlyData && data.monthlyData.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-2">月次収支推移グラフ</h3>
+              <div className="text-sm text-gray-600 mb-4">
+                実装予定
+              </div>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h4 className="font-medium mb-2">データ（JSON形式）:</h4>
+                <pre className="text-xs bg-white p-3 rounded border overflow-auto max-h-64">
+                  {JSON.stringify(data.monthlyData, null, 2)}
+                </pre>
+              </div>
+            </div>
+          )}
+
           <TransactionTable
-            transactions={data.transactions}
-            total={data.total}
-            page={data.page}
-            perPage={data.perPage}
-            totalPages={data.totalPages}
+            transactions={data.transactionData.transactions}
+            total={data.transactionData.total}
+            page={data.transactionData.page}
+            perPage={data.transactionData.perPage}
+            totalPages={data.transactionData.totalPages}
             slug={slug}
           />
         </MainColumnCard>

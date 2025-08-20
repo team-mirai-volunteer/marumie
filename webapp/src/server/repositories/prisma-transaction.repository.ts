@@ -10,6 +10,7 @@ import type {
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 import type {
   ITransactionRepository,
+  MonthlyAggregation,
   PaginatedResult,
   PaginationOptions,
   SankeyCategoryAggregationResult,
@@ -71,12 +72,18 @@ export class PrismaTransactionRepository implements ITransactionRepository {
 
   async getCategoryAggregationForSankey(
     politicalOrganizationId: string,
+    financialYear: number,
   ): Promise<SankeyCategoryAggregationResult> {
+    const baseWhere = {
+      politicalOrganizationId: BigInt(politicalOrganizationId),
+      financialYear,
+    };
+
     // 収入の集計（account別）
     const incomeAggregation = await this.prisma.transaction.groupBy({
       by: ["creditAccount"],
       where: {
-        politicalOrganizationId: BigInt(politicalOrganizationId),
+        ...baseWhere,
         transactionType: "income",
       },
       _sum: {
@@ -88,7 +95,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     const expenseAggregation = await this.prisma.transaction.groupBy({
       by: ["debitAccount"],
       where: {
-        politicalOrganizationId: BigInt(politicalOrganizationId),
+        ...baseWhere,
         transactionType: "expense",
       },
       _sum: {
@@ -112,6 +119,93 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     );
 
     return { income, expense };
+  }
+
+  async getMonthlyAggregation(
+    politicalOrganizationId: string,
+    financialYear: number,
+  ): Promise<MonthlyAggregation[]> {
+    console.log("getMonthlyAggregation called with:", { politicalOrganizationId, financialYear });
+    
+    const where: Prisma.TransactionWhereInput = {
+      politicalOrganizationId: BigInt(politicalOrganizationId),
+      financialYear,
+    };
+
+    console.log("Where clause:", where);
+
+    try {
+      // 生のSQLで年月次集計を実行
+      console.log("Starting raw SQL aggregation...");
+
+      const [incomeResults, expenseResults] = await Promise.all([
+        this.prisma.$queryRaw<Array<{ year: bigint; month: bigint; total_amount: any }>>`
+          SELECT 
+            EXTRACT(YEAR FROM transaction_date) as year,
+            EXTRACT(MONTH FROM transaction_date) as month,
+            SUM(credit_amount) as total_amount
+          FROM transactions 
+          WHERE political_organization_id = ${BigInt(politicalOrganizationId)}
+            AND financial_year = ${financialYear}
+            AND transaction_type = 'income'
+          GROUP BY EXTRACT(YEAR FROM transaction_date), EXTRACT(MONTH FROM transaction_date)
+          ORDER BY year, month
+        `,
+        this.prisma.$queryRaw<Array<{ year: bigint; month: bigint; total_amount: any }>>`
+          SELECT 
+            EXTRACT(YEAR FROM transaction_date) as year,
+            EXTRACT(MONTH FROM transaction_date) as month,
+            SUM(debit_amount) as total_amount
+          FROM transactions 
+          WHERE political_organization_id = ${BigInt(politicalOrganizationId)}
+            AND financial_year = ${financialYear}
+            AND transaction_type = 'expense'
+          GROUP BY EXTRACT(YEAR FROM transaction_date), EXTRACT(MONTH FROM transaction_date)
+          ORDER BY year, month
+        `
+      ]);
+
+      console.log("Income results:", incomeResults);
+      console.log("Expense results:", expenseResults);
+
+      // 年月別のマップを作成
+      const monthlyMap = new Map<string, { yearMonth: string; income: number; expense: number }>();
+
+      // 収入データを追加
+      for (const item of incomeResults) {
+        const year = Number(item.year);
+        const month = Number(item.month);
+        const yearMonth = `${year}-${month.toString().padStart(2, '0')}`;
+        if (!monthlyMap.has(yearMonth)) {
+          monthlyMap.set(yearMonth, { yearMonth, income: 0, expense: 0 });
+        }
+        const existing = monthlyMap.get(yearMonth)!;
+        existing.income = Number(item.total_amount);
+      }
+
+      // 支出データを追加
+      for (const item of expenseResults) {
+        const year = Number(item.year);
+        const month = Number(item.month);
+        const yearMonth = `${year}-${month.toString().padStart(2, '0')}`;
+        if (!monthlyMap.has(yearMonth)) {
+          monthlyMap.set(yearMonth, { yearMonth, income: 0, expense: 0 });
+        }
+        const existing = monthlyMap.get(yearMonth)!;
+        existing.expense = Number(item.total_amount);
+      }
+
+      // 結果を配列に変換して年月順でソート
+      const result = Array.from(monthlyMap.values())
+        .sort((a, b) => a.yearMonth.localeCompare(b.yearMonth));
+
+    console.log("Monthly aggregation result:", result);
+    
+      return result;
+    } catch (error) {
+      console.error("Error in getMonthlyAggregation:", error);
+      throw error;
+    }
   }
 
   private aggregateByCategory(

@@ -5,8 +5,7 @@ import DonationSummarySection from "@/client/components/organization-page/Donati
 import ExplanationSection from "@/client/components/organization-page/ExplanationSection";
 import MonthlyTrendsSection from "@/client/components/organization-page/MonthlyTrendsSection";
 import TransactionsSection from "@/client/components/organization-page/TransactionsSection";
-import { getSankeyData } from "@/server/actions/get-sankey-data";
-import { getTransactionsBySlugAction } from "@/server/actions/get-transactions-by-slug";
+import { getTransactionPageDataAction } from "@/server/actions/get-transaction-page-data";
 
 export default async function PoliticianPage({
   params,
@@ -15,22 +14,20 @@ export default async function PoliticianPage({
 }) {
   const { slug } = await params;
 
-  // サーバーサイドでサンキーデータを取得
-  const sankeyData = await getSankeyData({ slug });
-
-  // トランザクションデータを取得（最初の数件のみ）
-  const transactionData = await getTransactionsBySlugAction({
+  // 統合アクションで全データを取得
+  const data = await getTransactionPageDataAction({
     slug,
     page: 1,
     perPage: 7, // 表示用に7件のみ取得
+    financialYear: new Date().getFullYear(), // デフォルト値
   }).catch(() => null);
 
   return (
     <MainColumn>
-      <CashFlowSection sankeyData={sankeyData} />
-      <MonthlyTrendsSection />
+      <CashFlowSection sankeyData={data?.sankeyData} />
+      <MonthlyTrendsSection monthlyData={data?.monthlyData} />
       <DonationSummarySection />
-      <TransactionsSection transactionData={transactionData} slug={slug} />
+      <TransactionsSection transactionData={data?.transactionData} slug={slug} />
       <ExplanationSection />
     </MainColumn>
   );
