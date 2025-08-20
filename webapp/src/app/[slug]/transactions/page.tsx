@@ -1,12 +1,11 @@
 import "server-only";
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumn from "@/client/components/layout/MainColumn";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
-import TransactionTable from "@/client/components/organization-page/components/TransactionTable";
+import TransactionTableWrapper from "@/client/components/organization-page/components/TransactionTableWrapper";
 import { getTransactionsBySlugAction } from "@/server/actions/get-transactions-by-slug";
 
 interface TransactionsPageProps {
@@ -91,12 +90,6 @@ export default async function TransactionsPage({
     return (
       <MainColumn>
         <MainColumnCard>
-          <div className="flex items-center space-x-4 w-full">
-            <Link href={`/${slug}`} className="text-blue-600 hover:underline">
-              ← {data.politicalOrganization.name}
-            </Link>
-          </div>
-
           <CardHeader
             icon={
               <Image
@@ -111,13 +104,12 @@ export default async function TransactionsPage({
             subtitle="政治資金の取引履歴を詳細に表示しています"
           />
 
-          <TransactionTable
+          <TransactionTableWrapper
             transactions={data.transactions}
             total={data.total}
             page={data.page}
             perPage={data.perPage}
             totalPages={data.totalPages}
-            slug={slug}
           />
         </MainColumnCard>
       </MainColumn>
