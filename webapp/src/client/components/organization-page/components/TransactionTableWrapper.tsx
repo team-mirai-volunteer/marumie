@@ -11,6 +11,7 @@ interface TransactionTableWrapperProps {
   page: number;
   perPage: number;
   totalPages: number;
+  allowControl?: boolean;
 }
 
 export default function TransactionTableWrapper({
@@ -19,6 +20,7 @@ export default function TransactionTableWrapper({
   page,
   perPage,
   totalPages,
+  allowControl = true,
 }: TransactionTableWrapperProps) {
   const [currentPage, setCurrentPage] = useState(page);
   const [itemsPerPage, setItemsPerPage] = useState(perPage);
@@ -31,6 +33,7 @@ export default function TransactionTableWrapper({
         total={total}
         page={currentPage}
         perPage={itemsPerPage}
+        allowControl={allowControl}
       />
 
       {/* ページネーションコントロール */}

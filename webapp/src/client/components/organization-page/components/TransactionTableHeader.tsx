@@ -1,0 +1,82 @@
+interface TransactionTableHeaderProps {
+  allowControl?: boolean;
+}
+
+export default function TransactionTableHeader({
+  allowControl = false,
+}: TransactionTableHeaderProps) {
+  return (
+    <thead className="bg-white">
+      <tr className="h-12 border-b border-gray-200">
+        {/* 日付 - Sortable when allowControl is true */}
+        <th className="px-4 py-0 text-left w-35">
+          <div className="flex items-center justify-center gap-1 h-5">
+            <span className="text-gray-800 text-sm font-bold leading-[1.5]">日付</span>
+            {allowControl && (
+              <div className="w-5 h-5 flex items-center justify-center">
+                <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <title>Sort by date</title>
+                  <path d="M1 1L6 6L11 1" stroke="#1F2937" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+            )}
+          </div>
+        </th>
+
+        {/* 項目項目 - No controls */}
+        <th className="px-0 py-0 text-left flex-1">
+          <div className="flex items-center h-5">
+            <span className="text-gray-800 text-sm font-bold leading-[1.286] tracking-[0.071em]">項目項目</span>
+          </div>
+        </th>
+
+        {/* 金額 - Sortable when allowControl is true */}
+        <th className="px-4 py-0 text-left w-30">
+          <div className="flex items-center justify-center gap-1 h-5">
+            <span className="text-gray-800 text-sm font-bold leading-[1.5]">金額</span>
+            {allowControl && (
+              <div className="w-5 h-5 flex items-center justify-center">
+                <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <title>Sort by amount</title>
+                  <path d="M1 1L6 6L11 1" stroke="#1F2937" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+            )}
+          </div>
+        </th>
+
+        {/* 決済手段 - Filterable when allowControl is true */}
+        <th className="px-0 py-0 text-left w-22">
+          <div className="flex items-center justify-center gap-1 h-12">
+            <span className="text-gray-800 text-sm font-bold leading-[1.5]">決済手段</span>
+            {allowControl && (
+              <div className="w-4 h-4 flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <title>Filter payment method</title>
+                  <rect width="16" height="16" fill="white"/>
+                  <path d="M2 4H14L12 8H4L2 4Z" fill="#1F2937"/>
+                </svg>
+              </div>
+            )}
+          </div>
+        </th>
+
+        {/* カテゴリー - Filterable when allowControl is true */}
+        <th className="px-0 py-0 text-left w-40">
+          <div className="flex items-center justify-center gap-1 h-12">
+            <span className="text-gray-800 text-sm font-bold leading-[1.5]">カテゴリー</span>
+            {allowControl && (
+              <div className="w-4 h-4 flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <title>Filter category</title>
+                  <rect width="16" height="16" fill="white"/>
+                  <path d="M2 4H14L12 8H4L2 4Z" fill="#1F2937"/>
+                </svg>
+              </div>
+            )}
+          </div>
+        </th>
+      </tr>
+    </thead>
+  );
+}

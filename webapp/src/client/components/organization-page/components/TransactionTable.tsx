@@ -1,11 +1,13 @@
 import type { DisplayTransaction } from "@/types/display-transaction";
-import TransactionTableRow from "./TransactionTableRow";
+import TransactionTableHeader from "./TransactionTableHeader";
+import TransactionTableBody from "./TransactionTableBody";
 
 interface TransactionTableProps {
   transactions: DisplayTransaction[];
   total: number;
   page: number;
   perPage: number;
+  allowControl?: boolean;
 }
 
 export default function TransactionTable({
@@ -13,6 +15,7 @@ export default function TransactionTable({
   total,
   page,
   perPage,
+  allowControl = false,
 }: TransactionTableProps) {
   return (
     <div className="space-y-6">
@@ -26,30 +29,8 @@ export default function TransactionTable({
       <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left font-medium text-gray-500 text-xs uppercase tracking-wider">
-                  取引日
-                </th>
-                <th className="px-6 py-3 text-left font-medium text-gray-500 text-xs uppercase tracking-wider">
-                  収入項目
-                </th>
-                <th className="px-6 py-3 text-left font-medium text-gray-500 text-xs uppercase tracking-wider">
-                  会計科目
-                </th>
-                <th className="px-6 py-3 text-right font-medium text-gray-500 text-xs uppercase tracking-wider">
-                  金額
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
-              {transactions.map((transaction) => (
-                <TransactionTableRow
-                  key={transaction.id}
-                  transaction={transaction}
-                />
-              ))}
-            </tbody>
+            <TransactionTableHeader allowControl={allowControl} />
+            <TransactionTableBody transactions={transactions} />
           </table>
         </div>
       </div>
