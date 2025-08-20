@@ -320,7 +320,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     if (filters?.category_name) {
       // This will need to filter by matching accounts that map to the category
       const accountsForCategory = Object.entries(ACCOUNT_CATEGORY_MAPPING)
-        .filter(([_, mapping]) => mapping.category === filters.category_name)
+        .filter(([, mapping]) => mapping.category === filters.category_name)
         .map(([account]) => account);
 
       if (accountsForCategory.length > 0) {
