@@ -24,12 +24,15 @@ export default function TransactionTable({
     <div className="space-y-6">
       <div className="overflow-x-auto">
         <div className="min-w-full bg-white">
-          <TransactionTableHeader
-            allowControl={allowControl}
-            onSort={onSort}
-            currentSort={currentSort}
-            currentOrder={currentOrder}
-          />
+          {/* Show header only on desktop */}
+          <div className="hidden sm:block">
+            <TransactionTableHeader
+              allowControl={allowControl}
+              onSort={onSort}
+              currentSort={currentSort}
+              currentOrder={currentOrder}
+            />
+          </div>
           <TransactionTableBody transactions={transactions} />
         </div>
       </div>
