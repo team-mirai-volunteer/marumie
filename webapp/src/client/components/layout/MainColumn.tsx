@@ -8,7 +8,9 @@ export default function MainColumn({
   className = "",
 }: MainColumnProps) {
   return (
-    <main className={`mx-auto max-w-[1032px] px-5 sm:px-6 py-6 space-y-6 ${className}`}>
+    <main
+      className={`mx-auto max-w-[1032px] px-5 sm:px-6 py-6 space-y-6 ${className}`}
+    >
       {children}
     </main>
   );
