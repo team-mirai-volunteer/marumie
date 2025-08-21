@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+@layer utilities {
+  .font-japanese {
+    font-family: var(--font-noto-sans-jp), 'Noto Sans JP', sans-serif;
+  }
+  .font-english {
+    font-family: var(--font-noto-sans), 'Noto Sans', sans-serif;
+  }
+}
+
 :root {
   --background: linear-gradient(
     135deg,
