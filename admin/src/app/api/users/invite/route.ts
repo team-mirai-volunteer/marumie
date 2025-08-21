@@ -1,7 +1,7 @@
 import 'server-only';
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth/roles";
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function POST(request: Request) {
   try {
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
     }
 
-    const supabase = createClient();
+    const supabase = createAdminClient();
 
     // Send invitation using Supabase Admin API
     const { data, error } = await supabase.auth.admin.inviteUserByEmail(email, {
