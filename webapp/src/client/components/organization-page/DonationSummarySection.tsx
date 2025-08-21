@@ -2,9 +2,9 @@ import "server-only";
 import Image from "next/image";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
-import BaseCard from "@/client/components/ui/BaseCard";
 import MainButton from "@/client/components/ui/MainButton";
 import type { DonationSummaryData } from "@/server/usecases/get-daily-donation-usecase";
+import DonationSummaryCards from "./DonationSummaryCards";
 
 interface DonationSummarySectionProps {
   donationSummary?: DonationSummaryData;
@@ -52,112 +52,14 @@ export default function DonationSummarySection({
       />
 
       {/* 寄付統計サマリー */}
-      <div className="flex items-center gap-6">
-        {/* 寄付金額カード */}
-        <BaseCard className="flex-1">
-          <div className="flex justify-between items-start mb-4">
-            <div className="text-[#1F2937] font-bold text-base">
-              累計寄付金額
-            </div>
-            <div className="flex items-center gap-[2px]">
-              <span className="text-[#238778] font-bold text-[11px] leading-[17px]">
-                前日比
-              </span>
-              <Image
-                src="/icons/icon-arrow-up.svg"
-                alt="上向き矢印"
-                width={24}
-                height={24}
-                className="flex-shrink-0"
-              />
-              <span className="font-bold text-[#238778] text-[16px] leading-[16px]">
-                {dayOverDayChange.toLocaleString()}
-              </span>
-              <span className="text-[#238778] font-bold text-[11px] leading-[17px]">
-                円
-              </span>
-            </div>
-          </div>
-          <div className="flex items-baseline gap-1">
-            {totalOku > 0 && (
-              <>
-                <span className="font-bold text-[40px] leading-[30px] text-[#1F2937]">
-                  {totalOku}
-                </span>
-                <span className="font-bold text-base leading-[30px] text-[#1F2937]">
-                  億
-                </span>
-              </>
-            )}
-            {totalMan > 0 && (
-              <>
-                <span className="font-bold text-[40px] leading-[30px] text-[#1F2937]">
-                  {totalMan}
-                </span>
-                <span className="font-bold text-base leading-[30px] text-[#1F2937]">
-                  万
-                </span>
-              </>
-            )}
-            <span className="font-bold text-[40px] leading-[30px] text-[#1F2937]">
-              {totalEn}
-            </span>
-            <span className="font-bold text-base leading-[30px] text-[#1F2937]">
-              円
-            </span>
-          </div>
-        </BaseCard>
-
-        {/* 寄付件数カード */}
-        <BaseCard className="w-60">
-          <div className="flex justify-between items-start mb-4">
-            <div className="text-[#1F2937] font-bold text-base">寄付件数</div>
-            <div className="flex items-center gap-[2px]">
-              <span className="text-[#238778] font-bold text-[11px] leading-[17px]">
-                前日比
-              </span>
-              <Image
-                src="/icons/icon-arrow-up.svg"
-                alt="上向き矢印"
-                width={24}
-                height={24}
-                className="flex-shrink-0"
-              />
-              <span className="font-bold text-[#238778] text-[16px] leading-[16px]">
-                {donationCountChange}
-              </span>
-              <span className="text-[#238778] font-bold text-[11px] leading-[17px]">
-                件
-              </span>
-            </div>
-          </div>
-          <div className="flex items-baseline gap-1">
-            <span className="font-bold text-[40px] leading-[30px] text-[#1F2937]">
-              {totalDonationDays}
-            </span>
-            <span className="font-bold text-base leading-[30px] text-[#1F2937]">
-              件
-            </span>
-          </div>
-        </BaseCard>
-
-        {/* 企業団体献金カード */}
-        <BaseCard className="w-60">
-          <div className="flex justify-between items-start mb-4">
-            <div className="text-[#1F2937] font-bold text-base">
-              企業団体献金
-            </div>
-          </div>
-          <div className="flex items-baseline gap-1">
-            <span className="font-bold text-[40px] leading-[30px] text-[#1F2937]">
-              0
-            </span>
-            <span className="font-bold text-base leading-[30px] text-[#1F2937]">
-              件
-            </span>
-          </div>
-        </BaseCard>
-      </div>
+      <DonationSummaryCards
+        totalOku={totalOku}
+        totalMan={totalMan}
+        totalEn={totalEn}
+        totalDonationDays={totalDonationDays}
+        dayOverDayChange={dayOverDayChange}
+        donationCountChange={donationCountChange}
+      />
 
       {/* 寄付データ詳細表示 */}
       {dailyDonationData.length > 0 ? (

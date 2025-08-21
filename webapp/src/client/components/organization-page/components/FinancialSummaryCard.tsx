@@ -20,35 +20,43 @@ export default function FinancialSummaryCard({
 }: FinancialSummaryCardProps) {
   return (
     <BaseCard className={className}>
-      <div className={`font-bold text-base mb-4`} style={{ color: titleColor }}>
-        {title}
-      </div>
-      <div className="flex items-baseline gap-1">
-        <span
-          className="font-bold text-[40px] leading-[30px]"
-          style={{ color: amountColor }}
+      <div className="flex flex-row sm:flex-col justify-between sm:justify-start items-center sm:items-start gap-5 sm:gap-4">
+        <div
+          className={`font-bold text-sm sm:text-base`}
+          style={{ color: titleColor }}
         >
-          {amount.main}
-        </span>
-        {amount.secondary && (
-          <span className="font-bold text-base" style={{ color: amountColor }}>
-            {amount.secondary}
-          </span>
-        )}
-        {amount.tertiary && (
+          {title}
+        </div>
+        <div className="flex items-baseline gap-1">
           <span
-            className="font-bold text-[40px] leading-[30px]"
+            className="font-bold text-xl sm:text-[40px] leading-5 sm:leading-[30px]"
             style={{ color: amountColor }}
           >
-            {amount.tertiary}
+            {amount.main}
           </span>
-        )}
-        <span
-          className="font-bold text-base leading-[30px]"
-          style={{ color: amountColor }}
-        >
-          {amount.unit}
-        </span>
+          {amount.secondary && (
+            <span
+              className="font-bold text-xs sm:text-base"
+              style={{ color: amountColor }}
+            >
+              {amount.secondary}
+            </span>
+          )}
+          {amount.tertiary && (
+            <span
+              className="font-bold text-xl sm:text-[40px] leading-5 sm:leading-[30px]"
+              style={{ color: amountColor }}
+            >
+              {amount.tertiary}
+            </span>
+          )}
+          <span
+            className="font-bold text-xs sm:text-base leading-5 sm:leading-[30px]"
+            style={{ color: "#6B7280" }}
+          >
+            {amount.unit}
+          </span>
+        </div>
       </div>
     </BaseCard>
   );

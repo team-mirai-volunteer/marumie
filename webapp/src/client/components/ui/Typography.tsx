@@ -9,7 +9,7 @@ interface TypographyProps {
 
 export const Title = ({ children, className = "" }: TypographyProps) => (
   <h1
-    className={`text-[27px] leading-[1.52] tracking-[0.01em] font-japanese font-bold ${className}`}
+    className={`text-[20px] sm:text-[27px] leading-[1.52] tracking-[0.01em] font-japanese font-bold ${className}`}
   >
     {children}
   </h1>
