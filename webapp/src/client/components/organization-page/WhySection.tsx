@@ -1,4 +1,4 @@
-import 'server-only';
+import "server-only";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 
 export default function WhySection() {
