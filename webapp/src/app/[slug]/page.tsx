@@ -1,5 +1,12 @@
 import "server-only";
-import SankeyChart from "@/app/components/SankeyChart";
+import MainColumn from "@/client/components/layout/MainColumn";
+import CashFlowSection from "@/client/components/organization-page/CashFlowSection";
+import DonationSummarySection from "@/client/components/organization-page/DonationSummarySection";
+import ExplanationSection from "@/client/components/organization-page/ExplanationSection";
+import MonthlyTrendsSection from "@/client/components/organization-page/MonthlyTrendsSection";
+import TransactionsSection from "@/client/components/organization-page/TransactionsSection";
+import WhySection from "@/client/components/organization-page/WhySection";
+import { getTransactionPageDataAction } from "@/server/actions/get-transaction-page-data";
 
 export default async function PoliticianPage({
   params,
@@ -7,10 +14,26 @@ export default async function PoliticianPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+
+  // 統合アクションで全データを取得
+  const data = await getTransactionPageDataAction({
+    slug,
+    page: 1,
+    perPage: 6, // 表示用に7件のみ取得
+    financialYear: 2025, // デフォルト値
+  }).catch(() => null);
+
   return (
-    <main className="p-6 space-y-6">
-      <h1 className="text-2xl font-semibold">{slug}</h1>
-      <SankeyChart slug={slug} />
-    </main>
+    <MainColumn>
+      <CashFlowSection sankeyData={data?.sankeyData ?? null} />
+      <MonthlyTrendsSection monthlyData={data?.monthlyData} />
+      <DonationSummarySection donationSummary={data?.donationSummary} />
+      <WhySection />
+      <TransactionsSection
+        transactionData={data?.transactionData ?? null}
+        slug={slug}
+      />
+      <ExplanationSection />
+    </MainColumn>
   );
 }

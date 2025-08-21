@@ -1,8 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Noto_Sans, Inter } from "next/font/google";
+import { Geist, Geist_Mono, Inter, Noto_Sans } from "next/font/google";
 import "./globals.css";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import Footer from "@/client/components/layout/Footer";
+import Header from "@/client/components/layout/Header";
+
+// Noto Sans JP for Japanese text with proper weights
+const notoSansJP = Noto_Sans({
+  variable: "--font-noto-sans-jp",
+  subsets: ["latin"],
+  weight: ["400", "500", "700", "900"],
+  display: "swap",
+  style: ["normal"],
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,8 +25,10 @@ const geistMono = Geist_Mono({
 
 const notoSans = Noto_Sans({
   variable: "--font-noto-sans",
-  subsets: ["latin"],
-  weight: ["400", "700"],
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "700", "800", "900"],
+  display: "swap",
+  preload: true,
 });
 
 const inter = Inter({
@@ -25,6 +36,9 @@ const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "700"],
 });
+
+// Note: FOT-TsukuGo Pro is a commercial font that would need to be loaded separately
+// For now, we'll use Inter as a fallback in the header component
 
 export const metadata: Metadata = {
   title: "Mirai Open Data - チームみらいの政治資金をオープンに",
@@ -39,8 +53,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
+      <head />
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${notoSans.variable} ${inter.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${notoSans.variable} ${notoSansJP.variable} ${inter.variable} antialiased pt-24`}
       >
         <Header />
         {children}

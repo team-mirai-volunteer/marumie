@@ -1,13 +1,12 @@
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
-import type {
-  Transaction,
-  TransactionFilters,
-} from "@/shared/models/transaction";
+import type { TransactionFilters } from "@/shared/models/transaction";
+import type { DisplayTransaction } from "@/types/display-transaction";
 import type { IPoliticalOrganizationRepository } from "../repositories/interfaces/political-organization-repository.interface";
 import type {
   ITransactionRepository,
   PaginationOptions,
 } from "../repositories/interfaces/transaction-repository.interface";
+import { convertToDisplayTransactions } from "../utils/transaction-converter";
 
 export interface GetTransactionsBySlugParams {
   slug: string;
@@ -16,11 +15,14 @@ export interface GetTransactionsBySlugParams {
   transactionType?: "income" | "expense" | "other";
   dateFrom?: Date;
   dateTo?: Date;
-  financialYear?: number;
+  financialYear: number;
+  sortBy?: "date" | "amount";
+  order?: "asc" | "desc";
+  categoryName?: string;
 }
 
 export interface GetTransactionsBySlugResult {
-  transactions: Transaction[];
+  transactions: DisplayTransaction[];
   total: number;
   page: number;
   perPage: number;
@@ -63,26 +65,58 @@ export class GetTransactionsBySlugUsecase {
       if (params.dateTo) {
         filters.date_to = params.dateTo;
       }
-      if (params.financialYear) {
-        filters.financial_year = params.financialYear;
+      if (params.categoryName) {
+        filters.category_name = params.categoryName;
+      }
+      filters.financial_year = params.financialYear;
+
+      let transactions: DisplayTransaction[];
+      let total: number;
+
+      if (params.sortBy === "amount") {
+        // For amount sorting, get ALL data first, then sort and paginate
+        const allTransactions =
+          await this.transactionRepository.findAll(filters);
+        const allDisplayTransactions =
+          convertToDisplayTransactions(allTransactions);
+
+        // Sort all transactions by amount
+        allDisplayTransactions.sort((a, b) => {
+          const order = params.order === "asc" ? 1 : -1;
+          return (a.amount - b.amount) * order;
+        });
+
+        // Apply pagination after sorting
+        total = allDisplayTransactions.length;
+        const startIndex = (page - 1) * perPage;
+        const endIndex = startIndex + perPage;
+        transactions = allDisplayTransactions.slice(startIndex, endIndex);
+      } else {
+        // For date sorting or no sorting, use database-level pagination
+        const pagination: PaginationOptions = {
+          page,
+          perPage,
+          sortBy: params.sortBy,
+          order: params.order,
+        };
+
+        const result = await this.transactionRepository.findWithPagination(
+          filters,
+          pagination,
+        );
+
+        transactions = convertToDisplayTransactions(result.items);
+        total = result.total;
       }
 
-      const pagination: PaginationOptions = {
-        page,
-        perPage,
-      };
-
-      const result = await this.transactionRepository.findWithPagination(
-        filters,
-        pagination,
-      );
+      const totalPages = Math.ceil(total / perPage);
 
       return {
-        transactions: result.items,
-        total: result.total,
-        page: result.page,
-        perPage: result.perPage,
-        totalPages: result.totalPages,
+        transactions,
+        total,
+        page,
+        perPage,
+        totalPages,
         politicalOrganization,
       };
     } catch (error) {

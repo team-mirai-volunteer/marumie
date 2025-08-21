@@ -1,8 +1,11 @@
 import "server-only";
 import type { Metadata } from "next";
-import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
-import TransactionTable from "@/client/components/TransactionTable";
+import CardHeader from "@/client/components/layout/CardHeader";
+import MainColumn from "@/client/components/layout/MainColumn";
+import MainColumnCard from "@/client/components/layout/MainColumnCard";
+import TransactionTableWrapper from "@/client/components/organization-page/components/TransactionTableWrapper";
 import { getTransactionsBySlugAction } from "@/server/actions/get-transactions-by-slug";
 
 interface TransactionsPageProps {
@@ -15,11 +18,15 @@ export async function generateMetadata({
 }: TransactionsPageProps): Promise<Metadata> {
   const { slug } = await params;
 
+  // financialYearのデフォルト値を設定
+  const currentFinancialYear = 2025;
+
   try {
     const result = await getTransactionsBySlugAction({
       slug,
       page: 1,
       perPage: 1,
+      financialYear: currentFinancialYear,
     });
 
     return {
@@ -47,25 +54,28 @@ export default async function TransactionsPage({
       : searchParamsResolved.page || "1",
     10,
   );
-  const perPage = parseInt(
-    Array.isArray(searchParamsResolved.perPage)
-      ? searchParamsResolved.perPage[0] || "50"
-      : searchParamsResolved.perPage || "50",
-    10,
-  );
+  const perPage = 20; // Fixed value
 
   const transactionType = Array.isArray(searchParamsResolved.transactionType)
     ? searchParamsResolved.transactionType[0]
     : searchParamsResolved.transactionType;
 
-  const financialYear = searchParamsResolved.financialYear
-    ? parseInt(
-        Array.isArray(searchParamsResolved.financialYear)
-          ? searchParamsResolved.financialYear[0]
-          : searchParamsResolved.financialYear,
-        10,
-      )
-    : undefined;
+  // sortBy: 'date' | 'amount' (read from 'sort' URL parameter)
+  const sortBy = Array.isArray(searchParamsResolved.sort)
+    ? searchParamsResolved.sort[0]
+    : searchParamsResolved.sort;
+
+  // order: 'asc' | 'desc'
+  const order = Array.isArray(searchParamsResolved.order)
+    ? searchParamsResolved.order[0]
+    : searchParamsResolved.order;
+
+  // filter: categoryName
+  const categoryName = Array.isArray(searchParamsResolved.categoryName)
+    ? searchParamsResolved.categoryName[0]
+    : searchParamsResolved.categoryName;
+
+  const financialYear = 2025; // 固定値
 
   try {
     const data = await getTransactionsBySlugAction({
@@ -78,29 +88,37 @@ export default async function TransactionsPage({
         | "other"
         | undefined,
       financialYear,
+      sortBy: sortBy as "date" | "amount" | undefined,
+      order: order as "asc" | "desc" | undefined,
+      categoryName: categoryName || undefined,
     });
 
     return (
-      <main className="p-6 space-y-6">
-        <div className="flex items-center space-x-4">
-          <Link href={`/${slug}`} className="text-blue-600 hover:underline">
-            ← {data.politicalOrganization.name}
-          </Link>
-        </div>
+      <MainColumn>
+        <MainColumnCard>
+          <CardHeader
+            icon={
+              <Image
+                src="/icons/icon-cashback.svg"
+                alt="Cash move icon"
+                width={30}
+                height={30}
+              />
+            }
+            title="すべての出入金"
+            updatedAt="2025.8.19時点"
+            subtitle="どこから政治資金を得て、何に使っているのか"
+          />
 
-        <h1 className="text-2xl font-semibold">
-          取引一覧 - {data.politicalOrganization.name}
-        </h1>
-
-        <TransactionTable
-          transactions={data.transactions}
-          total={data.total}
-          page={data.page}
-          perPage={data.perPage}
-          totalPages={data.totalPages}
-          slug={slug}
-        />
-      </main>
+          <TransactionTableWrapper
+            transactions={data.transactions}
+            total={data.total}
+            page={data.page}
+            perPage={data.perPage}
+            totalPages={data.totalPages}
+          />
+        </MainColumnCard>
+      </MainColumn>
     );
   } catch (error) {
     if (error instanceof Error && error.message.includes("not found")) {
