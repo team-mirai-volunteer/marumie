@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You've been invited to Poli Money Alpha</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #4f46e5; color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; background: #f9f9f9; }
+        .button { 
+            display: inline-block; 
+            background: #4f46e5; 
+            color: white; 
+            padding: 12px 24px; 
+            text-decoration: none; 
+            border-radius: 5px; 
+            margin: 20px 0;
+        }
+        .footer { padding: 20px; text-align: center; color: #666; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to Poli Money Alpha</h1>
+        </div>
+        <div class="content">
+            <h2>You've been invited!</h2>
+            <p>An administrator has invited you to join Poli Money Alpha, our political finance transparency platform.</p>
+            
+            <p>Click the button below to accept your invitation and set up your account:</p>
+            
+            <div style="text-align: center;">
+                <a href="{{ .ConfirmationURL }}" class="button">Accept Invitation</a>
+            </div>
+            
+            <p>Or copy and paste this link in your browser:</p>
+            <p style="word-break: break-all; background: #eee; padding: 10px; font-family: monospace;">
+                {{ .ConfirmationURL }}
+            </p>
+            
+            <p><strong>Note:</strong> This invitation link will expire in 24 hours.</p>
+        </div>
+        <div class="footer">
+            <p>If you didn't expect this invitation, you can safely ignore this email.</p>
+            <p>&copy; 2025 Poli Money Alpha</p>
+        </div>
+    </div>
+</body>
+</html>

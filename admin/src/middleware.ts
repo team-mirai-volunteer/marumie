@@ -45,7 +45,11 @@ export async function middleware(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user && !request.nextUrl.pathname.startsWith("/login")) {
+    // Allow access to auth-related pages without authentication
+    const authPaths = ["/login", "/auth/callback", "/auth/setup"];
+    const isAuthPath = authPaths.some(path => request.nextUrl.pathname.startsWith(path));
+    
+    if (!user && !isAuthPath) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
 
@@ -53,7 +57,11 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/", request.url));
     }
   } catch (_error) {
-    if (!request.nextUrl.pathname.startsWith("/login")) {
+    // Allow access to auth-related pages even on errors
+    const authPaths = ["/login", "/auth/callback", "/auth/setup"];
+    const isAuthPath = authPaths.some(path => request.nextUrl.pathname.startsWith(path));
+    
+    if (!isAuthPath) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
   }
