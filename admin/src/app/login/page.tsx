@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -12,17 +13,24 @@ export default function LoginPage() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+
     try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
-      if (!res.ok) {
-        const j = await res.json().catch(() => ({}));
-        throw new Error(j.error || "Login failed");
+
+      if (error) {
+        if (error.message.includes("Invalid API key")) {
+          throw new Error(
+            "認証システムが正しく設定されていません。管理者にお問い合わせください。",
+          );
+        }
+        throw new Error(error.message);
       }
-      router.replace("/upload-csv");
+
+      router.replace("/");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : String(err));
     }

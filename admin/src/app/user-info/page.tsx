@@ -1,6 +1,19 @@
+import { createClient } from "@/lib/supabase/client";
+
+export const runtime = "nodejs";
+
 export default async function UserInfoPage() {
-  // Placeholder: could fetch from your auth/session
-  const user = { id: "demo-user", email: "demo@example.com" };
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return <div className="card">ユーザー情報が見つかりません</div>;
+  }
+
+  const userRole = user.user_metadata?.role || "user";
+
   return (
     <div className="card">
       <h1>User Info</h1>
@@ -10,7 +23,15 @@ export default async function UserInfoPage() {
       <p>
         <b>Email:</b> {user.email}
       </p>
-      <p className="muted">Auth wiring to be added later.</p>
+      <p>
+        <b>Role:</b> {userRole}
+      </p>
+      <p>
+        <b>Last Sign In:</b>{" "}
+        {user.last_sign_in_at
+          ? new Date(user.last_sign_in_at).toLocaleString("ja-JP")
+          : "N/A"}
+      </p>
     </div>
   );
 }
