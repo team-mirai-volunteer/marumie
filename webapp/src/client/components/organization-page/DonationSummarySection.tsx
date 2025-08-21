@@ -56,108 +56,103 @@ export default function DonationSummarySection({
         {/* 寄付金額カード */}
         <BaseCard className="flex-1">
           <div className="flex justify-between items-start mb-4">
-            <div className="text-[#000000] font-bold text-base">
+            <div className="text-[#1F2937] font-bold text-base">
               累計寄付金額
             </div>
-            <div className="flex items-center gap-1 text-sm">
-              <span className="text-[#6B7280]">前日比</span>
-              <span
-                className={`font-bold ${dayOverDayChange > 0 ? "text-[#238778]" : dayOverDayChange < 0 ? "text-red-500" : "text-[#6B7280]"}`}
-              >
-                {dayOverDayChange > 0 ? "+" : ""}
+            <div className="flex items-center gap-[2px]">
+              <span className="text-[#238778] font-bold text-[11px] leading-[17px]">
+                前日比
+              </span>
+              <Image
+                src="/icons/icon-arrow-up.svg"
+                alt="上向き矢印"
+                width={24}
+                height={24}
+                className="flex-shrink-0"
+              />
+              <span className="font-bold text-[#238778] text-[16px] leading-[16px]">
                 {dayOverDayChange.toLocaleString()}
               </span>
-              <span className="text-[#6B7280]">円</span>
+              <span className="text-[#238778] font-bold text-[11px] leading-[17px]">
+                円
+              </span>
             </div>
           </div>
-          <div className="flex items-end gap-1">
+          <div className="flex items-baseline gap-1">
             {totalOku > 0 && (
               <>
-                <span
-                  className="font-bold text-[40px] leading-[30px]"
-                  style={{ color: "#000000" }}
-                >
+                <span className="font-bold text-[40px] leading-[30px] text-[#1F2937]">
                   {totalOku}
                 </span>
-                <span
-                  className="font-bold text-base"
-                  style={{ color: "#000000" }}
-                >
+                <span className="font-bold text-base leading-[30px] text-[#1F2937]">
                   億
                 </span>
               </>
             )}
             {totalMan > 0 && (
               <>
-                <span
-                  className="font-bold text-[40px] leading-[30px]"
-                  style={{ color: "#000000" }}
-                >
+                <span className="font-bold text-[40px] leading-[30px] text-[#1F2937]">
                   {totalMan}
                 </span>
-                <span
-                  className="font-bold text-base"
-                  style={{ color: "#000000" }}
-                >
+                <span className="font-bold text-base leading-[30px] text-[#1F2937]">
                   万
                 </span>
               </>
             )}
-            <span
-              className="font-bold text-[40px] leading-[30px]"
-              style={{ color: "#000000" }}
-            >
+            <span className="font-bold text-[40px] leading-[30px] text-[#1F2937]">
               {totalEn}
             </span>
-            <span className="font-bold text-base" style={{ color: "#000000" }}>
+            <span className="font-bold text-base leading-[30px] text-[#1F2937]">
               円
             </span>
           </div>
         </BaseCard>
 
         {/* 寄付件数カード */}
-        <BaseCard className="flex-1">
+        <BaseCard className="w-60">
           <div className="flex justify-between items-start mb-4">
-            <div className="text-[#000000] font-bold text-base">寄付件数</div>
-            <div className="flex items-center gap-1 text-sm">
-              <span className="text-[#6B7280]">前日比</span>
-              <span
-                className={`font-bold ${donationCountChange > 0 ? "text-[#238778]" : donationCountChange < 0 ? "text-red-500" : "text-[#6B7280]"}`}
-              >
-                {donationCountChange > 0 ? "+" : ""}
+            <div className="text-[#1F2937] font-bold text-base">寄付件数</div>
+            <div className="flex items-center gap-[2px]">
+              <span className="text-[#238778] font-bold text-[11px] leading-[17px]">
+                前日比
+              </span>
+              <Image
+                src="/icons/icon-arrow-up.svg"
+                alt="上向き矢印"
+                width={24}
+                height={24}
+                className="flex-shrink-0"
+              />
+              <span className="font-bold text-[#238778] text-[16px] leading-[16px]">
                 {donationCountChange}
               </span>
-              <span className="text-[#6B7280]">件</span>
+              <span className="text-[#238778] font-bold text-[11px] leading-[17px]">
+                件
+              </span>
             </div>
           </div>
-          <div className="flex items-end gap-1">
-            <span
-              className="font-bold text-[40px] leading-[30px]"
-              style={{ color: "#000000" }}
-            >
+          <div className="flex items-baseline gap-1">
+            <span className="font-bold text-[40px] leading-[30px] text-[#1F2937]">
               {totalDonationDays}
             </span>
-            <span className="font-bold text-base" style={{ color: "#000000" }}>
+            <span className="font-bold text-base leading-[30px] text-[#1F2937]">
               件
             </span>
           </div>
         </BaseCard>
 
         {/* 企業団体献金カード */}
-        <BaseCard className="flex-1">
+        <BaseCard className="w-60">
           <div className="flex justify-between items-start mb-4">
-            <div className="text-[#000000] font-bold text-base">
+            <div className="text-[#1F2937] font-bold text-base">
               企業団体献金
             </div>
           </div>
-          <div className="flex items-end gap-1">
-            <span
-              className="font-bold text-[40px] leading-[30px]"
-              style={{ color: "#000000" }}
-            >
+          <div className="flex items-baseline gap-1">
+            <span className="font-bold text-[40px] leading-[30px] text-[#1F2937]">
               0
             </span>
-            <span className="font-bold text-base" style={{ color: "#000000" }}>
+            <span className="font-bold text-base leading-[30px] text-[#1F2937]">
               件
             </span>
           </div>
@@ -185,7 +180,7 @@ export default function DonationSummarySection({
 
       {/* 寄付メッセージとボタン */}
       <div className="bg-white rounded-lg p-8 text-center">
-        <p className="text-[#000000] font-bold text-base mb-6">
+        <p className="text-[#1F2937] font-bold text-base mb-6">
           チームみらいは、皆さまのご支援・ご寄付のおかげで活動を続けられております。
         </p>
         <MainButton>ご寄付はこちら</MainButton>
