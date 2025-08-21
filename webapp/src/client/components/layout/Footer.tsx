@@ -33,10 +33,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="w-full text-center">
-          <p
-            className="text-black text-sm leading-[1.193359375em]"
-            style={{ fontFamily: "SF Pro, var(--font-geist-sans)" }}
-          >
+          <p className="text-black text-sm leading-[1.193359375em]">
             © 2025 Team Mirai
           </p>
         </div>
