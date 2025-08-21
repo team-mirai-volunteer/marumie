@@ -11,7 +11,10 @@ export default function TransactionTableRow({
   transaction,
 }: TransactionTableRowProps) {
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("ja-JP").format(amount);
+    return new Intl.NumberFormat("ja-JP", {
+      style: "decimal",
+      useGrouping: true,
+    }).format(amount);
   };
 
   const formatDate = (date: string | Date) => {
@@ -71,8 +74,64 @@ export default function TransactionTableRow({
 
   return (
     <div className="w-full">
-      {/* Main row container */}
-      <div className="flex items-end bg-white h-16 px-0 pr-4">
+      {/* SP Layout - Vertical stacked layout */}
+      <div className="sm:hidden flex flex-col bg-white gap-1 px-0 py-2">
+        {/* Date section */}
+        <div className="flex">
+          <span className="text-xs text-[#4B5563] font-normal">
+            {formatDate(transaction.date)}
+          </span>
+        </div>
+
+        {/* Title and Amount section */}
+        <div className="flex items-center justify-between gap-4">
+          <span
+            className="text-sm font-bold text-[#1F2937] flex-1"
+            style={{
+              fontFamily: "Noto Sans JP",
+              lineHeight: "1.43em",
+            }}
+          >
+            {transaction.tags || transaction.category}
+          </span>
+          <span
+            className="text-base font-bold text-right"
+            style={{
+              color: isIncome ? "#238778" : "#DC2626",
+            }}
+          >
+            {isIncome ? "+" : "-"}
+            {formatCurrency(Math.abs(transaction.amount))}
+          </span>
+        </div>
+
+        {/* Category label section */}
+        <div className="flex items-center">
+          <div
+            className="flex items-center gap-2 px-2 py-0.5 rounded-full border"
+            style={{
+              backgroundColor: categoryColors.bgColor,
+              borderColor: categoryColors.borderColor,
+              borderWidth: "1px",
+              height: "18px",
+            }}
+          >
+            <span
+              className="text-xs font-medium text-center"
+              style={{
+                fontFamily: "Noto Sans JP",
+                lineHeight: "1em",
+                color: categoryColors.fontColor,
+              }}
+            >
+              {getCategoryLabel(transaction)}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop Layout - Original horizontal layout */}
+      <div className="hidden sm:flex items-end bg-white h-16 px-0 pr-4">
         {/* Date section - 140px width */}
         <div
           className="flex items-center justify-start px-4 h-full"

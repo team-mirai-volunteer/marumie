@@ -32,8 +32,8 @@ export default function CardHeader({
         </Subtitle>
       </div>
 
-      {/* 右側：更新時刻 */}
-      <div className="flex-shrink-0 self-end sm:self-start">
+      {/* 右側：更新時刻 - SPでは非表示 */}
+      <div className="hidden sm:flex flex-shrink-0 self-end sm:self-start">
         <Label className="text-[--color-text-muted]">{updatedAt}</Label>
       </div>
     </div>
