@@ -40,10 +40,10 @@ export default function FinancialSummarySection({
   const financialData = calculateFinancialData(sankeyData);
 
   return (
-    <div className="flex items-center gap-6">
+    <div className="flex flex-col sm:flex-row gap-2 sm:gap-6">
       <FinancialSummaryCard
         className="flex-1"
-        title="収入"
+        title="収入総額"
         amount={formatAmount(financialData.income)}
         titleColor="#238778"
         amountColor="#1F2937"
@@ -51,7 +51,7 @@ export default function FinancialSummarySection({
 
       <FinancialSummaryCard
         className="flex-1"
-        title="支出"
+        title="支出総額"
         amount={formatAmount(financialData.expense)}
         titleColor="#DC2626"
         amountColor="#1F2937"
@@ -61,8 +61,8 @@ export default function FinancialSummarySection({
         className="flex-1"
         title="現在の残高"
         amount={formatAmount(financialData.balance)}
-        titleColor="#000000"
-        amountColor="#000000"
+        titleColor="#1F2937"
+        amountColor="#1F2937"
       />
     </div>
   );

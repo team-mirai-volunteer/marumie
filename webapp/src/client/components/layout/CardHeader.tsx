@@ -27,7 +27,9 @@ export default function CardHeader({
         </div>
 
         {/* サブタイトル */}
-        <Subtitle className="text-[--color-text-secondary]">{subtitle}</Subtitle>
+        <Subtitle className="text-[--color-text-secondary]">
+          {subtitle}
+        </Subtitle>
       </div>
 
       {/* 右側：更新時刻 */}
