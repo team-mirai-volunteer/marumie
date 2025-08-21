@@ -52,31 +52,31 @@ export default function Header() {
           {/* Desktop Navigation Menu */}
           <nav className="hidden lg:flex items-center gap-6">
             <Link
-              href="#cash-flow"
+              href="/#cash-flow"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap"
             >
               収支の流れ
             </Link>
             <Link
-              href="#annual-trends"
+              href="/#monthly-trends"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap"
             >
               1年間の推移
             </Link>
             <Link
-              href="#donations"
+              href="/#donation-summary"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap"
             >
               寄付金額
             </Link>
             <Link
-              href="/"
+              href="/#transactions"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap"
             >
               すべての出入金
             </Link>
             <Link
-              href="#about-data"
+              href="/#explanation"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap"
             >
               データについて
@@ -116,35 +116,35 @@ export default function Header() {
         <nav className="lg:hidden mt-4 pb-4 bg-white rounded-2xl px-6 py-4">
           <div className="flex flex-col space-y-3">
             <Link
-              href="#cash-flow"
+              href="/#cash-flow"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               収支の流れ
             </Link>
             <Link
-              href="#annual-trends"
+              href="/#monthly-trends"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               1年間の推移
             </Link>
             <Link
-              href="#donations"
+              href="/#donation-summary"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               寄付金額
             </Link>
             <Link
-              href="/"
+              href="/#transactions"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               すべての出入金
             </Link>
             <Link
-              href="#about-data"
+              href="/#explanation"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >

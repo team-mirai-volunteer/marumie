@@ -9,14 +9,11 @@ import TransactionTableWrapper from "@/client/components/organization-page/compo
 import { getTransactionsBySlugAction } from "@/server/actions/get-transactions-by-slug";
 
 interface TransactionsPageProps {
-  params: Promise<{ slug: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export async function generateMetadata({
-  params,
-}: TransactionsPageProps): Promise<Metadata> {
-  const { slug } = await params;
+export async function generateMetadata(): Promise<Metadata> {
+  const slug = "team-mirai";
 
   // financialYearのデフォルト値を設定
   const currentFinancialYear = 2025;
@@ -42,10 +39,9 @@ export async function generateMetadata({
 }
 
 export default async function TransactionsPage({
-  params,
   searchParams,
 }: TransactionsPageProps) {
-  const { slug } = await params;
+  const slug = "team-mirai";
   const searchParamsResolved = await searchParams;
 
   const page = parseInt(

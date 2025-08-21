@@ -14,7 +14,7 @@ interface CashFlowSectionProps {
 
 export default function CashFlowSection({ sankeyData }: CashFlowSectionProps) {
   return (
-    <MainColumnCard>
+    <MainColumnCard id="cash-flow">
       <CardHeader
         icon={
           <Image

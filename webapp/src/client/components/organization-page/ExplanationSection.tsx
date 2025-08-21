@@ -3,7 +3,7 @@ import MainColumnCard from "@/client/components/layout/MainColumnCard";
 
 export default function ExplanationSection() {
   return (
-    <MainColumnCard>
+    <MainColumnCard id="explanation">
       <div className="space-y-6">
         <div>
           <h3 className="text-lg font-bold text-[#1F2937] mb-3">

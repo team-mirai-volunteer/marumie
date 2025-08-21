@@ -17,7 +17,7 @@ export default function MonthlyTrendsSection({
   monthlyData,
 }: MonthlyTrendsSectionProps) {
   return (
-    <MainColumnCard>
+    <MainColumnCard id="monthly-trends">
       <CardHeader
         icon={
           <Image

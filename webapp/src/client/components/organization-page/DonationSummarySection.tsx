@@ -36,7 +36,7 @@ export default function DonationSummarySection({
   } = formatLargeAmount(totalDonationAmount);
 
   return (
-    <MainColumnCard>
+    <MainColumnCard id="donation-summary">
       <CardHeader
         icon={
           <Image
