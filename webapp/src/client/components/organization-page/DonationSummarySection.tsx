@@ -60,7 +60,9 @@ export default function DonationSummarySection({
               累計寄付金額
             </div>
             <div className="flex items-center gap-[2px]">
-              <span className="text-[#238778] font-bold text-[11px] leading-[17px]">前日比</span>
+              <span className="text-[#238778] font-bold text-[11px] leading-[17px]">
+                前日比
+              </span>
               <Image
                 src="/icons/icon-arrow-up.svg"
                 alt="上向き矢印"
@@ -71,7 +73,9 @@ export default function DonationSummarySection({
               <span className="font-bold text-[#238778] text-[16px] leading-[16px]">
                 {dayOverDayChange.toLocaleString()}
               </span>
-              <span className="text-[#238778] font-bold text-[11px] leading-[17px]">円</span>
+              <span className="text-[#238778] font-bold text-[11px] leading-[17px]">
+                円
+              </span>
             </div>
           </div>
           <div className="flex items-baseline gap-1">
@@ -109,7 +113,9 @@ export default function DonationSummarySection({
           <div className="flex justify-between items-start mb-4">
             <div className="text-[#1F2937] font-bold text-base">寄付件数</div>
             <div className="flex items-center gap-[2px]">
-              <span className="text-[#238778] font-bold text-[11px] leading-[17px]">前日比</span>
+              <span className="text-[#238778] font-bold text-[11px] leading-[17px]">
+                前日比
+              </span>
               <Image
                 src="/icons/icon-arrow-up.svg"
                 alt="上向き矢印"
@@ -120,7 +126,9 @@ export default function DonationSummarySection({
               <span className="font-bold text-[#238778] text-[16px] leading-[16px]">
                 {donationCountChange}
               </span>
-              <span className="text-[#238778] font-bold text-[11px] leading-[17px]">件</span>
+              <span className="text-[#238778] font-bold text-[11px] leading-[17px]">
+                件
+              </span>
             </div>
           </div>
           <div className="flex items-baseline gap-1">

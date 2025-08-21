@@ -25,9 +25,7 @@ export default async function Home() {
       <MonthlyTrendsSection monthlyData={data?.monthlyData} />
       <DonationSummarySection donationSummary={data?.donationSummary} />
       <WhySection />
-      <TransactionsSection
-        transactionData={data?.transactionData ?? null}
-      />
+      <TransactionsSection transactionData={data?.transactionData ?? null} />
       <ExplanationSection />
     </MainColumn>
   );

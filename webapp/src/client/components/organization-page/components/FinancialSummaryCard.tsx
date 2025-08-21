@@ -43,7 +43,10 @@ export default function FinancialSummaryCard({
             {amount.tertiary}
           </span>
         )}
-        <span className="font-bold text-base leading-[30px]" style={{ color: amountColor }}>
+        <span
+          className="font-bold text-base leading-[30px]"
+          style={{ color: amountColor }}
+        >
           {amount.unit}
         </span>
       </div>
