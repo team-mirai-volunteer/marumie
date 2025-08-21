@@ -41,7 +41,7 @@
     "db:seed": "node prisma/seed.cjs",
     "db:reset": "pnpm supabase:reset && pnpm db:migrate && pnpm db:seed",
     "db:studio": "prisma studio",
-    "postinstall": "prisma generate",
+    "postinstall": "prisma generate && npx simple-git-hooks",
     "// Supabase": "==========================================",
     "supabase:init": "pnpm dlx supabase init",
     "supabase:start": "pnpm dlx supabase start",
