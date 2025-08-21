@@ -14,22 +14,29 @@ export default function Sidebar() {
 
   useEffect(() => {
     setIsClient(true);
+  }, []);
+
+  // Fetch user role when pathname changes (including after login)
+  useEffect(() => {
+    if (!isClient) return;
     
-    // Fetch user role on client side
     const fetchUserRole = async () => {
       try {
         const response = await fetch('/api/user/role');
         if (response.ok) {
           const { role } = await response.json();
           setUserRole(role);
+        } else {
+          setUserRole(null);
         }
       } catch (error) {
         console.error('Error fetching user role:', error);
+        setUserRole(null);
       }
     };
     
     fetchUserRole();
-  }, []);
+  }, [isClient, pathname]);
 
   const isActive = (path: string) => {
     if (!isClient) return false; // SSR時は常にfalse
