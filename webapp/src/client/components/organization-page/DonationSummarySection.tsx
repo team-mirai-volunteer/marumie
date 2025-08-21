@@ -56,7 +56,7 @@ export default function DonationSummarySection({
         {/* 寄付金額カード */}
         <BaseCard className="flex-1">
           <div className="flex justify-between items-start mb-4">
-            <div className="text-[#000000] font-bold text-base">
+            <div className="text-[#1F2937] font-bold text-base">
               累計寄付金額
             </div>
             <div className="flex items-center gap-1 text-sm">
@@ -70,46 +70,31 @@ export default function DonationSummarySection({
               <span className="text-[#6B7280]">円</span>
             </div>
           </div>
-          <div className="flex items-end gap-1">
+          <div className="flex items-baseline gap-1">
             {totalOku > 0 && (
               <>
-                <span
-                  className="font-bold text-[40px] leading-[30px]"
-                  style={{ color: "#000000" }}
-                >
+                <span className="font-bold text-[40px] leading-[30px] text-[#1F2937]">
                   {totalOku}
                 </span>
-                <span
-                  className="font-bold text-base"
-                  style={{ color: "#000000" }}
-                >
+                <span className="font-bold text-base leading-[30px] text-[#1F2937]">
                   億
                 </span>
               </>
             )}
             {totalMan > 0 && (
               <>
-                <span
-                  className="font-bold text-[40px] leading-[30px]"
-                  style={{ color: "#000000" }}
-                >
+                <span className="font-bold text-[40px] leading-[30px] text-[#1F2937]">
                   {totalMan}
                 </span>
-                <span
-                  className="font-bold text-base"
-                  style={{ color: "#000000" }}
-                >
+                <span className="font-bold text-base leading-[30px] text-[#1F2937]">
                   万
                 </span>
               </>
             )}
-            <span
-              className="font-bold text-[40px] leading-[30px]"
-              style={{ color: "#000000" }}
-            >
+            <span className="font-bold text-[40px] leading-[30px] text-[#1F2937]">
               {totalEn}
             </span>
-            <span className="font-bold text-base" style={{ color: "#000000" }}>
+            <span className="font-bold text-base leading-[30px] text-[#1F2937]">
               円
             </span>
           </div>
@@ -118,7 +103,7 @@ export default function DonationSummarySection({
         {/* 寄付件数カード */}
         <BaseCard className="flex-1">
           <div className="flex justify-between items-start mb-4">
-            <div className="text-[#000000] font-bold text-base">寄付件数</div>
+            <div className="text-[#1F2937] font-bold text-base">寄付件数</div>
             <div className="flex items-center gap-1 text-sm">
               <span className="text-[#6B7280]">前日比</span>
               <span
@@ -130,14 +115,11 @@ export default function DonationSummarySection({
               <span className="text-[#6B7280]">件</span>
             </div>
           </div>
-          <div className="flex items-end gap-1">
-            <span
-              className="font-bold text-[40px] leading-[30px]"
-              style={{ color: "#000000" }}
-            >
+          <div className="flex items-baseline gap-1">
+            <span className="font-bold text-[40px] leading-[30px] text-[#1F2937]">
               {totalDonationDays}
             </span>
-            <span className="font-bold text-base" style={{ color: "#000000" }}>
+            <span className="font-bold text-base leading-[30px] text-[#1F2937]">
               件
             </span>
           </div>
@@ -146,18 +128,15 @@ export default function DonationSummarySection({
         {/* 企業団体献金カード */}
         <BaseCard className="flex-1">
           <div className="flex justify-between items-start mb-4">
-            <div className="text-[#000000] font-bold text-base">
+            <div className="text-[#1F2937] font-bold text-base">
               企業団体献金
             </div>
           </div>
-          <div className="flex items-end gap-1">
-            <span
-              className="font-bold text-[40px] leading-[30px]"
-              style={{ color: "#000000" }}
-            >
+          <div className="flex items-baseline gap-1">
+            <span className="font-bold text-[40px] leading-[30px] text-[#1F2937]">
               0
             </span>
-            <span className="font-bold text-base" style={{ color: "#000000" }}>
+            <span className="font-bold text-base leading-[30px] text-[#1F2937]">
               件
             </span>
           </div>
@@ -185,7 +164,7 @@ export default function DonationSummarySection({
 
       {/* 寄付メッセージとボタン */}
       <div className="bg-white rounded-lg p-8 text-center">
-        <p className="text-[#000000] font-bold text-base mb-6">
+        <p className="text-[#1F2937] font-bold text-base mb-6">
           チームみらいは、皆さまのご支援・ご寄付のおかげで活動を続けられております。
         </p>
         <MainButton>ご寄付はこちら</MainButton>
