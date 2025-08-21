@@ -22,7 +22,7 @@ export default function Sidebar() {
     
     const fetchUserRole = async () => {
       try {
-        const response = await fetch('/api/user/role');
+        const response = await fetch('/api/users/me/role');
         if (response.ok) {
           const { role } = await response.json();
           setUserRole(role);
