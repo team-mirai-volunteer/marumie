@@ -11,7 +11,7 @@ export default function MainColumnCard({
 }: MainColumnCardProps) {
   return (
     <div
-      className={`bg-white rounded-[24px] p-12 space-y-8 scroll-mt-24 ${className}`}
+      className={`bg-white rounded-[24px] px-[18px] py-8 sm:p-12 space-y-8 scroll-mt-24 ${className}`}
       id={id}
     >
       {children}
