@@ -42,7 +42,6 @@ export default function MainButton({
         .trim()
         .replace(/\s+/g, " ")}
       style={{
-        fontFamily: "Noto Sans JP, sans-serif",
         fontWeight: 700,
         fontSize: "16px",
       }}

@@ -42,10 +42,7 @@ export default function Header() {
               />
               <p
                 className="text-sm text-black hidden sm:block"
-                style={{
-                  fontFamily: "var(--font-noto-sans)",
-                  transform: "translateY(4px)",
-                }}
+                style={{ transform: "translateY(4px)" }}
               >
                 チームみらいの政治資金をオープンに
               </p>
@@ -53,10 +50,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation Menu */}
-          <nav
-            className="hidden lg:flex items-center gap-6"
-            style={{ fontFamily: "var(--font-noto-sans)" }}
-          >
+          <nav className="hidden lg:flex items-center gap-6">
             <Link
               href="#cash-flow"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap"
@@ -120,10 +114,7 @@ export default function Header() {
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
         <nav className="lg:hidden mt-4 pb-4 bg-white rounded-2xl px-6 py-4">
-          <div
-            className="flex flex-col space-y-3"
-            style={{ fontFamily: "var(--font-noto-sans)" }}
-          >
+          <div className="flex flex-col space-y-3">
             <Link
               href="#cash-flow"
               className="text-sm font-bold text-black hover:text-teal-600 transition-colors py-2"

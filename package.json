@@ -13,7 +13,6 @@
     "dev:setup": "pnpm install && pnpm db:reset && echo 'Setup complete! Run: pnpm dev'",
     "dev:webapp": "pnpm --filter webapp dev",
     "dev:admin": "pnpm --filter admin dev",
-
     "// Build & Deploy": "====================================",
     "build": "pnpm build:webapp",
     "build:webapp": "pnpm --filter webapp build",
@@ -21,7 +20,6 @@
     "build:all": "pnpm build:webapp && pnpm build:admin",
     "start": "pnpm --filter webapp start",
     "start:admin": "pnpm --filter admin start",
-
     "// Code Quality": "======================================",
     "lint": "pnpm lint:webapp && pnpm lint:admin",
     "lint:webapp": "pnpm --filter webapp lint",
@@ -30,13 +28,11 @@
     "typecheck": "pnpm typecheck:webapp && pnpm typecheck:admin",
     "typecheck:webapp": "pnpm --filter webapp type-check",
     "typecheck:admin": "pnpm --filter admin type-check",
-
     "// Testing": "===========================================",
     "test": "pnpm test:admin && pnpm test:webapp",
     "test:admin": "pnpm --filter admin test",
     "test:webapp": "pnpm --filter webapp test",
     "test:watch": "pnpm --filter admin test:watch",
-
     "// Database": "==========================================",
     "db:generate": "prisma generate",
     "db:migrate": "pnpm -s dotenv -e .env.dev -- prisma migrate dev",
@@ -46,7 +42,6 @@
     "db:reset": "pnpm supabase:reset && pnpm db:migrate && pnpm db:seed",
     "db:studio": "prisma studio",
     "postinstall": "prisma generate",
-
     "// Supabase": "==========================================",
     "supabase:init": "pnpm dlx supabase init",
     "supabase:start": "pnpm dlx supabase start",
@@ -54,7 +49,6 @@
     "supabase:status": "pnpm dlx supabase status",
     "supabase:reset": "pnpm dlx supabase db reset",
     "supabase:types": "pnpm dlx supabase gen types typescript --local > supabase/types.gen.ts",
-
     "// Utilities": "=========================================",
     "clean": "pnpm supabase:stop && rm -rf node_modules */node_modules",
     "fresh": "pnpm clean && pnpm install && pnpm dev:setup"
@@ -62,6 +56,7 @@
   "dependencies": {
     "@nivo/sankey": "^0.99.0",
     "@prisma/client": "^6.14.0",
+    "@supabase/supabase-js": "^2.55.0",
     "csv-parse": "^5.5.6",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",

@@ -2,13 +2,20 @@
 
 この管理画面はシンプルな Supabase 認証を導入しています。ログインしないと画面を閲覧できません。
 
-#### やってほしいこと（2点）
+#### セットアップ方法
 
-1. Supabase のダッシュボードでログイン用ユーザーを作成する
-   - Supabase ダッシュボード → Authentication → Users → Create new user
-   - 任意のメールアドレス・パスワードで作成
+ローカル開発環境では、データベースシードで自動的にテストユーザーが作成されます：
 
-2. 環境変数を設定する
+```bash
+# プロジェクトルートから
+pnpm db:seed
+```
+
+これで以下のテストユーザーが作成されます：
+- **Email**: `foo@example.com`
+- **Password**: `bar@example.com`
+
+**環境変数を設定する**
    - `./admin/.env.example` を `./admin/.env.local` にコピー
    - `NEXT_PUBLIC_SUPABASE_URL` と `NEXT_PUBLIC_SUPABASE_ANON_KEY` を設定
    - 値は Supabase ダッシュボード → Settings → API から取得できます（Project URL と anon key）
@@ -18,13 +25,6 @@ cp ./admin/.env.example ./admin/.env.local
 # .env.local を開いて URL と anon key を設定
 ```
 
-その後、開発サーバーを再起動してください。
-
-```bash
-# プロジェクトルートから
-pnpm -C ./admin dev
-# → http://localhost:3001/login にアクセス
-```
 
 #### よくあるエラー
 

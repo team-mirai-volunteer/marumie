@@ -20,14 +20,12 @@ export default function Footer() {
           <Link
             href="/privacy-policy"
             className="text-black text-sm font-semibold leading-[2em] text-center hover:opacity-80 transition-opacity"
-            style={{ fontFamily: "FOT-TsukuGo Pro, var(--font-noto-sans)" }}
           >
             プライバシーポリシー
           </Link>
           <Link
             href="/terms"
             className="text-black text-sm font-semibold leading-[2em] text-center hover:opacity-80 transition-opacity"
-            style={{ fontFamily: "FOT-TsukuGo Pro, var(--font-noto-sans)" }}
           >
             特定商取引法に基づく表記
           </Link>
@@ -35,10 +33,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="w-full text-center">
-          <p
-            className="text-black text-sm leading-[1.193359375em]"
-            style={{ fontFamily: "SF Pro, var(--font-geist-sans)" }}
-          >
+          <p className="text-black text-sm leading-[1.193359375em]">
             © 2025 Team Mirai
           </p>
         </div>
