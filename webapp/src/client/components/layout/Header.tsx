@@ -44,7 +44,7 @@ export default function Header() {
                 className="text-sm text-black hidden sm:block"
                 style={{ transform: "translateY(4px)" }}
               >
-                チームみらいの政治資金をオープンに
+                政治資金をまるごと公開
               </p>
             </div>
           </Link>

@@ -48,7 +48,7 @@ export default function DonationSummarySection({
         }
         title="これまでの累計寄付金額"
         updatedAt="2025.8.14時点"
-        subtitle="チームみらいにいただいた寄付金額と推移"
+        subtitle="いただいた寄付総額と直近1ヶ月の推移"
       />
 
       {/* 寄付統計サマリー */}

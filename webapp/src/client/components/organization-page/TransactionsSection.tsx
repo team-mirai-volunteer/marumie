@@ -37,7 +37,7 @@ export default function TransactionsSection({
         }
         title="すべての出入金"
         updatedAt="2025.8.14時点"
-        subtitle="どこから政治資金を得て、何に使っているか"
+        subtitle="今年のすべての出入金のリスト"
       />
 
       {transactionData ? (
