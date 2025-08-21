@@ -29,7 +29,7 @@ export default function MonthlyTrendsSection({
         }
         title="１年間の収支の推移"
         updatedAt="2025.8.14時点"
-        subtitle="チームみらいは毎月いくらの収入と支出があるか"
+        subtitle="今年の年始から月ごとの収入と支出"
       />
 
       {/* 月次データ表示 */}

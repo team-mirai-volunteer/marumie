@@ -26,7 +26,7 @@ export default function CashFlowSection({ sankeyData }: CashFlowSectionProps) {
         }
         title="チームみらいの収支の流れ"
         updatedAt="2025.8.14時点"
-        subtitle="チームみらいはどこからお金を得て、何に使っているのか"
+        subtitle="どこからお金を得て、何に使っているか"
       />
 
       {/* 財務サマリー */}
