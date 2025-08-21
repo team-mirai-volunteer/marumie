@@ -31,7 +31,7 @@ export default async function SetupPage({ searchParams }: SetupPageProps) {
               Complete your account setup
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
-              You've been invited to join Poli Money Alpha. Please set up your password to continue.
+              You&apos;ve been invited to join Poli Money Alpha. Please set up your password to continue.
             </p>
           </div>
           <SetupForm userEmail={user.email!} />
