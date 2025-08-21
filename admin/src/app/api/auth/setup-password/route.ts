@@ -23,9 +23,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Update the user's password
+    // Update the user's password and mark password as set
     const { error: updateError } = await supabase.auth.updateUser({
-      password: password
+      password: password,
+      data: { password_set: true }
     });
 
     if (updateError) {

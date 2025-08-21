@@ -3,7 +3,11 @@ import { createClient } from '@/lib/supabase/client';
 import { redirect } from 'next/navigation';
 import SetupForm from '@/client/components/SetupForm';
 
-export default async function SetupPage() {
+interface SetupPageProps {
+  searchParams: Promise<{ from?: string }>;
+}
+
+export default async function SetupPage({ searchParams }: SetupPageProps) {
   const supabase = createClient();
   
   // Check if user is authenticated
@@ -13,9 +17,12 @@ export default async function SetupPage() {
     redirect('/login');
   }
 
-  // Check if user needs to set up password (invited users)
-  if (user.email_confirmed_at && !user.last_sign_in_at) {
-    // This is likely an invited user who needs to set up their account
+  // Check if this is coming from an invitation flow
+  const params = await searchParams;
+  const fromInvite = params.from === 'invite';
+  
+  if (fromInvite) {
+    // This is an invited user who needs to set up their password
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">

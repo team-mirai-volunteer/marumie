@@ -55,13 +55,14 @@ export default function SetupForm({ userEmail }: SetupFormProps) {
   };
 
   return (
-    <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
-      <p className="text-sm text-blue-800">
-        Setting up account for: <strong>{userEmail}</strong>
-      </p>
-    </div>
+    <>
+      <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
+        <p className="text-sm text-blue-800">
+          Setting up account for: <strong>{userEmail}</strong>
+        </p>
+      </div>
 
-    <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+      <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
       <div className="rounded-md shadow-sm -space-y-px">
         <div>
           <label htmlFor="password" className="sr-only">
@@ -107,5 +108,6 @@ export default function SetupForm({ userEmail }: SetupFormProps) {
         </button>
       </div>
     </form>
+    </>
   );
 }
