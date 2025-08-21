@@ -13,7 +13,9 @@ export default function WhySection() {
           </div>
           <p className="text-xs sm:text-base font-medium sm:font-normal leading-[1.667] sm:leading-[1.75] tracking-[0.01em] text-[#6B7280] sm:text-[#1F2937] font-japanese">
             チームみらいのお金の流れは、ほぼリアルタイムにすべてここに反映されています。
-            <span className="hidden sm:inline"><br /></span>
+            <span className="hidden sm:inline">
+              <br />
+            </span>
             私たちがなぜここまでオープンにするのか、その理由はこちらのnoteをお読みください。
           </p>
         </div>
