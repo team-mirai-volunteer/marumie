@@ -20,14 +20,12 @@ export default function Footer() {
           <Link
             href="/privacy-policy"
             className="text-black text-sm font-semibold leading-[2em] text-center hover:opacity-80 transition-opacity"
-            style={{ fontFamily: "FOT-TsukuGo Pro, var(--font-noto-sans)" }}
           >
             プライバシーポリシー
           </Link>
           <Link
             href="/terms"
             className="text-black text-sm font-semibold leading-[2em] text-center hover:opacity-80 transition-opacity"
-            style={{ fontFamily: "FOT-TsukuGo Pro, var(--font-noto-sans)" }}
           >
             特定商取引法に基づく表記
           </Link>

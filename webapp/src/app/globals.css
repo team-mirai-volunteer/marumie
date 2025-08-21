@@ -48,6 +48,6 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-noto-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-noto-sans-jp), 'Noto Sans JP', var(--font-noto-sans), Arial, Helvetica, sans-serif;
   min-height: 100vh;
 }
