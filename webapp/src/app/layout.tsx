@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter, Noto_Sans, Noto_Sans_JP } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Inter,
+  Noto_Sans,
+  Noto_Sans_JP,
+} from "next/font/google";
 import "./globals.css";
 import Footer from "@/client/components/layout/Footer";
 import Header from "@/client/components/layout/Header";

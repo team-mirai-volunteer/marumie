@@ -10,22 +10,24 @@
 
 例: `docs/20250815_1430_ユーザー認証システム設計.md`
 
-## webappコーディングルール
+## webapp コーディングルール
 
-webapp内のページおよびコンポーネントファイルには、必ず以下のいずれかのimportを先頭に追加すること：
+webapp 内のページおよびコンポーネントファイルには、必ず以下のいずれかの import を先頭に追加すること：
 
-- **サーバーコンポーネント（ページファイル、サーバーサイドで実行されるコンポーネント）**: `import 'server-only';`
-- **クライアントコンポーネント（'use client'を使用するコンポーネント）**: `import 'client-only';`
+- **サーバーコンポーネント（ページファイル、サーバーサイドで実行されるコンポーネント）**: `import "server-only";`
+- **クライアントコンポーネント（'use client'を使用するコンポーネント）**: `import "client-only";`
 
 ### 適用対象
+
 - `webapp/src/app/**/page.tsx` - サーバーコンポーネントページ
 - `webapp/src/client/components/**/*.tsx` - クライアントコンポーネント
 - `webapp/src/server/components/**/*.tsx` - サーバーコンポーネント（もしある場合）
 
 ### 例
+
 ```typescript
 // サーバーコンポーネントの場合
-import 'server-only';
+import "server-only";
 import Link from "next/link";
 
 export default async function Page() {
@@ -33,14 +35,12 @@ export default async function Page() {
 }
 
 // クライアントコンポーネントの場合
-'use client';
-import 'client-only';
+"use client";
+import "client-only";
 
 export default function ClientComponent() {
   // ...
 }
 ```
 
-### 重要事項
-- **クライアントコンポーネント**: `'use client';`ディレクティブは必ず最初の行に配置すること
-- `import 'client-only';`は`'use client';`の後に記述する
+見た目の定義のみを行うコンポーネントなど、サーバー・クライアントどちらで呼ばれても問題ないものには追加不要。

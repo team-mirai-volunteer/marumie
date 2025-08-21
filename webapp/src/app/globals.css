@@ -2,10 +2,10 @@
 
 @layer utilities {
   .font-japanese {
-    font-family: var(--font-noto-sans-jp), 'Noto Sans JP', sans-serif;
+    font-family: var(--font-noto-sans-jp), "Noto Sans JP", sans-serif;
   }
   .font-english {
-    font-family: var(--font-noto-sans), 'Noto Sans', sans-serif;
+    font-family: var(--font-noto-sans), "Noto Sans", sans-serif;
   }
 }
 
@@ -48,6 +48,8 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-noto-sans-jp), 'Noto Sans JP', var(--font-noto-sans), Arial, Helvetica, sans-serif;
+  font-family:
+    var(--font-noto-sans-jp), "Noto Sans JP", var(--font-noto-sans), Arial,
+    Helvetica, sans-serif;
   min-height: 100vh;
 }
