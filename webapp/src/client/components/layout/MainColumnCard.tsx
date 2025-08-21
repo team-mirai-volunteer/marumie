@@ -10,7 +10,10 @@ export default function MainColumnCard({
   id,
 }: MainColumnCardProps) {
   return (
-    <div className={`bg-white rounded-[24px] p-12 space-y-8 scroll-mt-24 ${className}`} id={id}>
+    <div
+      className={`bg-white rounded-[24px] p-12 space-y-8 scroll-mt-24 ${className}`}
+      id={id}
+    >
       {children}
     </div>
   );

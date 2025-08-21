@@ -19,12 +19,10 @@ interface TransactionData {
 
 interface TransactionsSectionProps {
   transactionData: TransactionData | null;
-  slug: string;
 }
 
 export default function TransactionsSection({
   transactionData,
-  slug,
 }: TransactionsSectionProps) {
   return (
     <MainColumnCard id="transactions">

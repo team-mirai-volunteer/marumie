@@ -29,6 +29,9 @@
       },
       "nursery": {
         "useSortedClasses": "off"
+      },
+      "correctness": {
+        "useUniqueElementIds": "off"
       }
     }
   },
