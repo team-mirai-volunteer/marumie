@@ -27,7 +27,6 @@ export default async function Home() {
       <WhySection />
       <TransactionsSection
         transactionData={data?.transactionData ?? null}
-        slug={slug}
       />
       <ExplanationSection />
     </MainColumn>
