@@ -27,7 +27,7 @@ export default function TransactionsSection({
   slug,
 }: TransactionsSectionProps) {
   return (
-    <MainColumnCard>
+    <MainColumnCard id="transactions">
       <CardHeader
         icon={
           <Image
@@ -55,7 +55,7 @@ export default function TransactionsSection({
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white via-white/70 to-transparent">
             {/* もっと見るボタン - グラデーション内に配置 */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-              <Link href={`/${slug}/transactions`}>
+              <Link href="/transactions">
                 <MainButton>もっと見る</MainButton>
               </Link>
             </div>
