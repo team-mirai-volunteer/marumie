@@ -26,7 +26,14 @@ export function createClient(): SupabaseClient {
             const { cookies } = await import("next/headers");
             const cookieStore = await cookies();
             for (const { name, value, options } of cookiesToSet) {
-              cookieStore.set(name, value, options);
+              cookieStore.set(name, value, {
+                ...options,
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 60 * 60 * 24 * 7, // 7 days
+                path: '/',
+              });
             }
           } catch (_error) {}
         },
