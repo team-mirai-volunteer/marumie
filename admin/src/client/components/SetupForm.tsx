@@ -55,21 +55,14 @@ export default function SetupForm({ userEmail }: SetupFormProps) {
   };
 
   return (
+    <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
+      <p className="text-sm text-blue-800">
+        Setting up account for: <strong>{userEmail}</strong>
+      </p>
+    </div>
+
     <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
       <div className="rounded-md shadow-sm -space-y-px">
-        <div>
-          <label htmlFor="email" className="sr-only">
-            Email address
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={userEmail}
-            disabled
-            className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm bg-gray-50"
-            placeholder="Email address"
-          />
-        </div>
         <div>
           <label htmlFor="password" className="sr-only">
             Password
@@ -80,8 +73,8 @@ export default function SetupForm({ userEmail }: SetupFormProps) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-            placeholder="Password"
+            className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            placeholder="Enter your password"
           />
         </div>
         <div>
@@ -95,7 +88,7 @@ export default function SetupForm({ userEmail }: SetupFormProps) {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
             className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-            placeholder="Confirm password"
+            placeholder="Confirm your password"
           />
         </div>
       </div>
