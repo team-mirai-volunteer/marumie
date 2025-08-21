@@ -17,6 +17,22 @@ enum TransactionType {
   other
 }
 
+enum UserRole {
+  admin
+  user
+}
+
+model User {
+  id        String   @id @default(uuid())
+  authId    String   @unique @map("auth_id") // References Supabase auth.users.id
+  email     String   @unique @db.VarChar(255)
+  role      UserRole @default(user)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
 model PoliticalOrganization {
   id           BigInt        @id @default(autoincrement())
   name         String        @db.VarChar(255)

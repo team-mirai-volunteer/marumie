@@ -49,8 +49,10 @@ async function seedAdminUser() {
     console.log('Creating admin user...');
 
     // Default credentials for local development
-    const DEFAULT_EMAIL = 'foo@example.com';
-    const DEFAULT_PASSWORD = 'bar@example.com';
+    const ADMIN_EMAIL = 'foo@example.com';
+    const ADMIN_PASSWORD = 'foo@example.com';
+    const USER_EMAIL = 'bar@example.com';
+    const USER_PASSWORD = 'bar@example.com';
 
     // Get Supabase configuration from environment variables
     const supabaseUrl = process.env.SUPABASE_URL || 'http://127.0.0.1:54321';
@@ -78,27 +80,91 @@ async function seedAdminUser() {
             throw new Error(`Failed to list users: ${listError.message}`);
         }
 
-        const existingUser = existingUsers.users?.find(user => user.email === DEFAULT_EMAIL);
+        // Check for existing users
+        const existingAdmin = existingUsers.users?.find(user => user.email === ADMIN_EMAIL);
+        const existingUser = existingUsers.users?.find(user => user.email === USER_EMAIL);
 
+        // Create admin user
+        if (existingAdmin) {
+            console.log(`✅ Admin user '${ADMIN_EMAIL}' already exists in Supabase`);
+            
+            const existingDbAdmin = await prisma.user.findUnique({
+                where: { authId: existingAdmin.id }
+            });
+
+            if (!existingDbAdmin) {
+                await prisma.user.create({
+                    data: {
+                        authId: existingAdmin.id,
+                        email: ADMIN_EMAIL,
+                        role: 'admin'
+                    }
+                });
+                console.log('✅ Database admin record created');
+            }
+        } else {
+            const { data: newAdmin, error: adminError } = await supabase.auth.admin.createUser({
+                email: ADMIN_EMAIL,
+                password: ADMIN_PASSWORD,
+                email_confirm: true,
+            });
+
+            if (adminError) {
+                throw new Error(`Failed to create admin: ${adminError.message}`);
+            }
+
+            await prisma.user.create({
+                data: {
+                    authId: newAdmin.user.id,
+                    email: ADMIN_EMAIL,
+                    role: 'admin'
+                }
+            });
+            console.log(`✅ Admin user created: ${ADMIN_EMAIL}`);
+        }
+
+        // Create regular user
         if (existingUser) {
-            console.log(`✅ Admin user '${DEFAULT_EMAIL}' already exists`);
-            return;
+            console.log(`✅ Regular user '${USER_EMAIL}' already exists in Supabase`);
+            
+            const existingDbUser = await prisma.user.findUnique({
+                where: { authId: existingUser.id }
+            });
+
+            if (!existingDbUser) {
+                await prisma.user.create({
+                    data: {
+                        authId: existingUser.id,
+                        email: USER_EMAIL,
+                        role: 'user'
+                    }
+                });
+                console.log('✅ Database user record created');
+            }
+        } else {
+            const { data: newUser, error: userError } = await supabase.auth.admin.createUser({
+                email: USER_EMAIL,
+                password: USER_PASSWORD,
+                email_confirm: true,
+            });
+
+            if (userError) {
+                throw new Error(`Failed to create user: ${userError.message}`);
+            }
+
+            await prisma.user.create({
+                data: {
+                    authId: newUser.user.id,
+                    email: USER_EMAIL,
+                    role: 'user'
+                }
+            });
+            console.log(`✅ Regular user created: ${USER_EMAIL}`);
         }
 
-        // Create the admin user
-        const { error: createError } = await supabase.auth.admin.createUser({
-            email: DEFAULT_EMAIL,
-            password: DEFAULT_PASSWORD,
-            email_confirm: true, // Skip email confirmation for local development
-        });
-
-        if (createError) {
-            throw new Error(`Failed to create user: ${createError.message}`);
-        }
-
-        console.log('✅ Admin user created successfully!');
-        console.log(`   Email: ${DEFAULT_EMAIL}`);
-        console.log(`   Password: ${DEFAULT_PASSWORD}`);
+        console.log('✅ User seeding completed!');
+        console.log(`   Admin: ${ADMIN_EMAIL} / ${ADMIN_PASSWORD}`);
+        console.log(`   User: ${USER_EMAIL} / ${USER_PASSWORD}`);
         console.log('   You can now log in to the admin panel at http://localhost:3001/login');
 
     } catch (error) {
