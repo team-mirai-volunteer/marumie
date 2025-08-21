@@ -59,15 +59,19 @@ export default function DonationSummarySection({
             <div className="text-[#1F2937] font-bold text-base">
               累計寄付金額
             </div>
-            <div className="flex items-center gap-1 text-sm">
-              <span className="text-[#6B7280]">前日比</span>
-              <span
-                className={`font-bold ${dayOverDayChange > 0 ? "text-[#238778]" : dayOverDayChange < 0 ? "text-red-500" : "text-[#6B7280]"}`}
-              >
-                {dayOverDayChange > 0 ? "+" : ""}
+            <div className="flex items-center gap-[2px]">
+              <span className="text-[#238778] font-bold text-[11px] leading-[17px]">前日比</span>
+              <Image
+                src="/icons/icon-arrow-up.svg"
+                alt="上向き矢印"
+                width={24}
+                height={24}
+                className="flex-shrink-0"
+              />
+              <span className="font-bold text-[#238778] text-[16px] leading-[16px]">
                 {dayOverDayChange.toLocaleString()}
               </span>
-              <span className="text-[#6B7280]">円</span>
+              <span className="text-[#238778] font-bold text-[11px] leading-[17px]">円</span>
             </div>
           </div>
           <div className="flex items-baseline gap-1">
@@ -101,18 +105,22 @@ export default function DonationSummarySection({
         </BaseCard>
 
         {/* 寄付件数カード */}
-        <BaseCard className="flex-1">
+        <BaseCard className="w-60">
           <div className="flex justify-between items-start mb-4">
             <div className="text-[#1F2937] font-bold text-base">寄付件数</div>
-            <div className="flex items-center gap-1 text-sm">
-              <span className="text-[#6B7280]">前日比</span>
-              <span
-                className={`font-bold ${donationCountChange > 0 ? "text-[#238778]" : donationCountChange < 0 ? "text-red-500" : "text-[#6B7280]"}`}
-              >
-                {donationCountChange > 0 ? "+" : ""}
+            <div className="flex items-center gap-[2px]">
+              <span className="text-[#238778] font-bold text-[11px] leading-[17px]">前日比</span>
+              <Image
+                src="/icons/icon-arrow-up.svg"
+                alt="上向き矢印"
+                width={24}
+                height={24}
+                className="flex-shrink-0"
+              />
+              <span className="font-bold text-[#238778] text-[16px] leading-[16px]">
                 {donationCountChange}
               </span>
-              <span className="text-[#6B7280]">件</span>
+              <span className="text-[#238778] font-bold text-[11px] leading-[17px]">件</span>
             </div>
           </div>
           <div className="flex items-baseline gap-1">
@@ -126,7 +134,7 @@ export default function DonationSummarySection({
         </BaseCard>
 
         {/* 企業団体献金カード */}
-        <BaseCard className="flex-1">
+        <BaseCard className="w-60">
           <div className="flex justify-between items-start mb-4">
             <div className="text-[#1F2937] font-bold text-base">
               企業団体献金

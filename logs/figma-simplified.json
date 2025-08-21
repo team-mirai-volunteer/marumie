@@ -1,0 +1,566 @@
+{
+  "name": "mirai-open-data",
+  "lastModified": "2025-08-20T15:02:38Z",
+  "thumbnailUrl": "https://s3-alpha.figma.com/thumbnails/626798ab-cca3-4a97-8ff6-6d852352daba?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQ4GOSFWCXTH6DU7C%2F20250821%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250821T000000Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=74ec3f4942c4e1463df5253e8471538f4c383031e7b6d9f9750e72884774fa8f",
+  "nodes": [
+    {
+      "id": "7:1119",
+      "name": "Frame 163",
+      "type": "FRAME",
+      "layout": "layout_ALYNIG",
+      "children": [
+        {
+          "id": "7:1120",
+          "name": "Frame 154",
+          "type": "FRAME",
+          "layout": "layout_51FK3L",
+          "strokes": "stroke_WWZIG3",
+          "borderRadius": "16px",
+          "children": [
+            {
+              "id": "7:1121",
+              "name": "Frame 164",
+              "type": "FRAME",
+              "layout": "layout_AJ15JC",
+              "children": [
+                {
+                  "id": "7:1122",
+                  "name": "Frame 167",
+                  "type": "FRAME",
+                  "layout": "layout_78QHVA",
+                  "children": [
+                    {
+                      "id": "7:1123",
+                      "name": "Frame 153",
+                      "type": "FRAME",
+                      "layout": "layout_927OIG",
+                      "children": [
+                        {
+                          "id": "7:1124",
+                          "name": "寄付金額",
+                          "type": "TEXT",
+                          "layout": "layout_PPUCHU",
+                          "text": "寄付金額",
+                          "textStyle": "style_RCYV3N",
+                          "fills": "fill_RHOYGK"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "7:1125",
+                      "name": "Frame 166",
+                      "type": "FRAME",
+                      "layout": "layout_P08XIY",
+                      "children": [
+                        {
+                          "id": "7:1126",
+                          "name": "前日比",
+                          "type": "TEXT",
+                          "layout": "layout_PPUCHU",
+                          "text": "前日比",
+                          "textStyle": "style_X90AEL",
+                          "fills": "fill_S9UDJW"
+                        },
+                        {
+                          "id": "7:1127",
+                          "name": "icon/arrow-up",
+                          "type": "INSTANCE",
+                          "layout": "layout_GQFPDT",
+                          "fills": "fill_B3CQ40",
+                          "componentId": "7:575",
+                          "children": [
+                            {
+                              "id": "I7:1127;4:747",
+                              "name": "Vector",
+                              "type": "IMAGE-SVG",
+                              "layout": "layout_R9WCXZ",
+                              "strokes": "stroke_UW2SS4"
+                            },
+                            {
+                              "id": "I7:1127;4:748",
+                              "name": "Vector",
+                              "type": "IMAGE-SVG",
+                              "layout": "layout_UBAN6V",
+                              "strokes": "stroke_UW2SS4"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "7:1128",
+                          "name": "8,000",
+                          "type": "TEXT",
+                          "layout": "layout_PPUCHU",
+                          "text": "8,000",
+                          "textStyle": "style_JVFJCR",
+                          "fills": "fill_S9UDJW"
+                        },
+                        {
+                          "id": "7:1129",
+                          "name": "円",
+                          "type": "TEXT",
+                          "layout": "layout_PPUCHU",
+                          "text": "円",
+                          "textStyle": "style_X90AEL",
+                          "fills": "fill_S9UDJW"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "7:1130",
+                  "name": "Frame 152",
+                  "type": "FRAME",
+                  "layout": "layout_CP5PSR",
+                  "children": [
+                    {
+                      "id": "7:1131",
+                      "name": "1",
+                      "type": "TEXT",
+                      "layout": "layout_PPUCHU",
+                      "text": "1",
+                      "textStyle": "style_G6PQ4C",
+                      "fills": "fill_RHOYGK"
+                    },
+                    {
+                      "id": "7:1132",
+                      "name": "億",
+                      "type": "TEXT",
+                      "layout": "layout_PPUCHU",
+                      "text": "億",
+                      "textStyle": "style_RCYV3N",
+                      "fills": "fill_RHOYGK"
+                    },
+                    {
+                      "id": "7:1133",
+                      "name": "7462",
+                      "type": "TEXT",
+                      "layout": "layout_PPUCHU",
+                      "text": "7462",
+                      "textStyle": "style_G6PQ4C",
+                      "fills": "fill_RHOYGK"
+                    },
+                    {
+                      "id": "7:1134",
+                      "name": "万",
+                      "type": "TEXT",
+                      "layout": "layout_PPUCHU",
+                      "text": "万",
+                      "textStyle": "style_RCYV3N",
+                      "fills": "fill_RHOYGK"
+                    },
+                    {
+                      "id": "7:1135",
+                      "name": "4000",
+                      "type": "TEXT",
+                      "layout": "layout_PPUCHU",
+                      "text": "4000",
+                      "textStyle": "style_G6PQ4C",
+                      "fills": "fill_RHOYGK"
+                    },
+                    {
+                      "id": "7:1136",
+                      "name": "円",
+                      "type": "TEXT",
+                      "layout": "layout_PPUCHU",
+                      "text": "円",
+                      "textStyle": "style_RCYV3N",
+                      "fills": "fill_RHOYGK"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "7:1137",
+          "name": "Frame 155",
+          "type": "FRAME",
+          "layout": "layout_UTF6JF",
+          "strokes": "stroke_WWZIG3",
+          "borderRadius": "16px",
+          "children": [
+            {
+              "id": "7:1138",
+              "name": "Frame 153",
+              "type": "FRAME",
+              "layout": "layout_KKC442",
+              "children": [
+                {
+                  "id": "7:1139",
+                  "name": "Frame 180",
+                  "type": "FRAME",
+                  "layout": "layout_73A3O4",
+                  "children": [
+                    {
+                      "id": "7:1140",
+                      "name": "寄付件数",
+                      "type": "TEXT",
+                      "layout": "layout_PPUCHU",
+                      "text": "寄付件数",
+                      "textStyle": "style_RCYV3N",
+                      "fills": "fill_RHOYGK"
+                    },
+                    {
+                      "id": "7:1141",
+                      "name": "Frame 166",
+                      "type": "FRAME",
+                      "layout": "layout_P08XIY",
+                      "children": [
+                        {
+                          "id": "7:1142",
+                          "name": "前日比",
+                          "type": "TEXT",
+                          "layout": "layout_PPUCHU",
+                          "text": "前日比",
+                          "textStyle": "style_X90AEL",
+                          "fills": "fill_S9UDJW"
+                        },
+                        {
+                          "id": "7:1143",
+                          "name": "icon/arrow-up",
+                          "type": "INSTANCE",
+                          "layout": "layout_GQFPDT",
+                          "fills": "fill_B3CQ40",
+                          "componentId": "7:575",
+                          "children": [
+                            {
+                              "id": "I7:1143;4:747",
+                              "name": "Vector",
+                              "type": "IMAGE-SVG",
+                              "layout": "layout_R9WCXZ",
+                              "strokes": "stroke_UW2SS4"
+                            },
+                            {
+                              "id": "I7:1143;4:748",
+                              "name": "Vector",
+                              "type": "IMAGE-SVG",
+                              "layout": "layout_UBAN6V",
+                              "strokes": "stroke_UW2SS4"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "7:1144",
+                          "name": "12",
+                          "type": "TEXT",
+                          "layout": "layout_PPUCHU",
+                          "text": "12",
+                          "textStyle": "style_JVFJCR",
+                          "fills": "fill_S9UDJW"
+                        },
+                        {
+                          "id": "7:1145",
+                          "name": "件",
+                          "type": "TEXT",
+                          "layout": "layout_PPUCHU",
+                          "text": "件",
+                          "textStyle": "style_X90AEL",
+                          "fills": "fill_S9UDJW"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "7:1146",
+                  "name": "Frame 152",
+                  "type": "FRAME",
+                  "layout": "layout_CP5PSR",
+                  "children": [
+                    {
+                      "id": "7:1147",
+                      "name": "7118",
+                      "type": "TEXT",
+                      "layout": "layout_PPUCHU",
+                      "text": "7118",
+                      "textStyle": "style_G6PQ4C",
+                      "fills": "fill_RHOYGK"
+                    },
+                    {
+                      "id": "7:1148",
+                      "name": "件",
+                      "type": "TEXT",
+                      "layout": "layout_PPUCHU",
+                      "text": "件",
+                      "textStyle": "style_OUNGTA",
+                      "fills": "fill_RHOYGK"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "7:1149",
+          "name": "Frame 156",
+          "type": "FRAME",
+          "layout": "layout_UTF6JF",
+          "strokes": "stroke_WWZIG3",
+          "borderRadius": "16px",
+          "children": [
+            {
+              "id": "7:1150",
+              "name": "Frame 153",
+              "type": "FRAME",
+              "layout": "layout_KKC442",
+              "children": [
+                {
+                  "id": "7:1151",
+                  "name": "企業団体献金",
+                  "type": "TEXT",
+                  "layout": "layout_PPUCHU",
+                  "text": "企業団体献金",
+                  "textStyle": "style_RCYV3N",
+                  "fills": "fill_RHOYGK"
+                },
+                {
+                  "id": "7:1152",
+                  "name": "Frame 152",
+                  "type": "FRAME",
+                  "layout": "layout_CP5PSR",
+                  "children": [
+                    {
+                      "id": "7:1153",
+                      "name": "0",
+                      "type": "TEXT",
+                      "layout": "layout_PPUCHU",
+                      "text": "0",
+                      "textStyle": "style_G6PQ4C",
+                      "fills": "fill_RHOYGK"
+                    },
+                    {
+                      "id": "7:1154",
+                      "name": "件",
+                      "type": "TEXT",
+                      "layout": "layout_PPUCHU",
+                      "text": "件",
+                      "textStyle": "style_OUNGTA",
+                      "fills": "fill_RHOYGK"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "components": {
+    "7:575": {
+      "id": "7:575",
+      "key": "f8bfafc5392d3a8f105b73a2da40e2b41dc7f75b",
+      "name": "icon/arrow-up"
+    }
+  },
+  "componentSets": {},
+  "globalVars": {
+    "styles": {
+      "layout_ALYNIG": {
+        "mode": "row",
+        "alignItems": "center",
+        "alignSelf": "stretch",
+        "gap": "24px",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "hug"
+        }
+      },
+      "layout_51FK3L": {
+        "mode": "column",
+        "justifyContent": "center",
+        "gap": "16px",
+        "padding": "16px 32px",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "fixed"
+        }
+      },
+      "stroke_WWZIG3": {
+        "colors": [
+          "#E5E7EB"
+        ],
+        "strokeWeight": "1px"
+      },
+      "layout_AJ15JC": {
+        "mode": "column",
+        "justifyContent": "center",
+        "alignSelf": "stretch",
+        "gap": "16px",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "hug"
+        }
+      },
+      "layout_78QHVA": {
+        "mode": "row",
+        "alignSelf": "stretch",
+        "gap": "16px",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "hug"
+        }
+      },
+      "layout_927OIG": {
+        "mode": "column",
+        "justifyContent": "center",
+        "gap": "24px",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "hug"
+        }
+      },
+      "layout_PPUCHU": {
+        "mode": "none",
+        "sizing": {
+          "horizontal": "hug",
+          "vertical": "hug"
+        }
+      },
+      "style_RCYV3N": {
+        "fontFamily": "Noto Sans JP",
+        "fontWeight": 700,
+        "fontSize": 16,
+        "lineHeight": "1.75em",
+        "textAlignHorizontal": "LEFT",
+        "textAlignVertical": "TOP"
+      },
+      "fill_RHOYGK": [
+        "#000000"
+      ],
+      "layout_P08XIY": {
+        "mode": "row",
+        "alignItems": "center",
+        "alignSelf": "stretch",
+        "gap": "2px",
+        "sizing": {
+          "horizontal": "hug",
+          "vertical": "fill"
+        }
+      },
+      "style_X90AEL": {
+        "fontFamily": "Noto Sans JP",
+        "fontWeight": 700,
+        "fontSize": 11,
+        "lineHeight": "1.5454545454545454em",
+        "textAlignHorizontal": "LEFT",
+        "textAlignVertical": "TOP"
+      },
+      "fill_S9UDJW": [
+        "#238778"
+      ],
+      "layout_GQFPDT": {
+        "mode": "none",
+        "sizing": {
+          "horizontal": "fixed",
+          "vertical": "fixed"
+        },
+        "dimensions": {
+          "width": 24,
+          "height": 24
+        }
+      },
+      "fill_B3CQ40": [
+        "#FFFFFF"
+      ],
+      "layout_R9WCXZ": {
+        "mode": "none",
+        "sizing": {},
+        "locationRelativeToParent": {
+          "x": 12,
+          "y": 5
+        },
+        "dimensions": {
+          "width": 0,
+          "height": 14
+        }
+      },
+      "stroke_UW2SS4": {
+        "colors": [
+          "#238778"
+        ],
+        "strokeWeight": "2px"
+      },
+      "layout_UBAN6V": {
+        "mode": "none",
+        "sizing": {},
+        "locationRelativeToParent": {
+          "x": 5,
+          "y": 5
+        },
+        "dimensions": {
+          "width": 14,
+          "height": 7
+        }
+      },
+      "style_JVFJCR": {
+        "fontFamily": "SF Pro",
+        "fontWeight": 700,
+        "fontSize": 16,
+        "lineHeight": "1em",
+        "textAlignHorizontal": "LEFT",
+        "textAlignVertical": "TOP"
+      },
+      "layout_CP5PSR": {
+        "mode": "row",
+        "alignItems": "flex-end",
+        "gap": "4px",
+        "sizing": {
+          "horizontal": "hug",
+          "vertical": "hug"
+        }
+      },
+      "style_G6PQ4C": {
+        "fontFamily": "SF Pro",
+        "fontWeight": 700,
+        "fontSize": 40,
+        "lineHeight": "0.75em",
+        "letterSpacing": "1%",
+        "textAlignHorizontal": "LEFT",
+        "textAlignVertical": "TOP"
+      },
+      "layout_UTF6JF": {
+        "mode": "column",
+        "justifyContent": "center",
+        "gap": "8px",
+        "padding": "24px 32px",
+        "sizing": {
+          "horizontal": "fixed",
+          "vertical": "fixed"
+        },
+        "dimensions": {
+          "width": 240,
+          "height": 115
+        }
+      },
+      "layout_KKC442": {
+        "mode": "column",
+        "justifyContent": "center",
+        "gap": "24px",
+        "sizing": {
+          "horizontal": "hug",
+          "vertical": "hug"
+        }
+      },
+      "layout_73A3O4": {
+        "mode": "row",
+        "gap": "24px",
+        "sizing": {
+          "horizontal": "hug",
+          "vertical": "hug"
+        }
+      },
+      "style_OUNGTA": {
+        "fontFamily": "Noto Sans JP",
+        "fontWeight": 700,
+        "fontSize": 16,
+        "lineHeight": "1em",
+        "textAlignHorizontal": "LEFT",
+        "textAlignVertical": "TOP"
+      }
+    }
+  }
+}
