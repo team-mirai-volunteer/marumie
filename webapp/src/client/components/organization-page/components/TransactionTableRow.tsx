@@ -79,14 +79,8 @@ export default function TransactionTableRow({
           style={{ width: "140px" }}
         >
           <span
-            className="leading-4"
-            style={{
-              fontFamily:
-                '"SF Pro Display", "SF Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-              fontWeight: 700,
-              fontSize: "16px",
-              color: "#1F2937",
-            }}
+            className="leading-4 font-bold text-base text-[#1F2937]"
+            style={{}}
           >
             {formatDate(transaction.date)}
           </span>
@@ -95,13 +89,8 @@ export default function TransactionTableRow({
         {/* Title section - flexible width */}
         <div className="flex items-center h-full flex-1">
           <span
-            className="leading-7"
-            style={{
-              fontFamily: '"Noto Sans JP", "Noto Sans", sans-serif',
-              fontWeight: 700,
-              fontSize: "16px",
-              color: "#1F2937",
-            }}
+            className="leading-7 font-bold text-base text-[#1F2937]"
+            style={{}}
           >
             {transaction.tags || transaction.category}
           </span>
@@ -113,12 +102,8 @@ export default function TransactionTableRow({
           style={{ width: "180px" }}
         >
           <span
-            className="leading-4 text-right"
+            className="leading-4 text-right font-bold text-xl"
             style={{
-              fontFamily:
-                '"SF Pro Display", "SF Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-              fontWeight: 700,
-              fontSize: "20px",
               lineHeight: "1em",
               color: isIncome ? "#238778" : "#DC2626",
               letterSpacing: "1%",
@@ -146,7 +131,6 @@ export default function TransactionTableRow({
               <span
                 className="font-medium text-xs leading-5 text-center"
                 style={{
-                  fontFamily: "Noto Sans JP",
                   lineHeight: "1.67em",
                   color: categoryColors.fontColor,
                 }}
