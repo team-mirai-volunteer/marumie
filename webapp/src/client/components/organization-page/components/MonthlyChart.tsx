@@ -107,7 +107,8 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
         },
       },
       axisBorder: {
-        show: false,
+        show: true,
+        color: "#E2E8F0",
       },
       axisTicks: {
         show: false,
@@ -137,6 +138,13 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
         min: yAxisMin,
         max: yAxisMax,
         tickAmount: 4,
+        axisBorder: {
+          show: true,
+          color: "#E2E8F0",
+        },
+        axisTicks: {
+          show: false,
+        },
       },
     ],
     grid: {
@@ -149,7 +157,7 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
       },
       yaxis: {
         lines: {
-          show: true,
+          show: false,
         },
       },
     },
@@ -195,6 +203,12 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
         {
           y: 0,
           borderColor: "#4B5563",
+          borderWidth: 1,
+          strokeDashArray: 0,
+        },
+        {
+          y: yAxisMin,
+          borderColor: "#E2E8F0",
           borderWidth: 1,
           strokeDashArray: 0,
         },
