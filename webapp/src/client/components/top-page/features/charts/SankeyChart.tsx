@@ -129,7 +129,51 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
         const elements = [];
 
         // セカンダリラベル（パーセンテージ）- 値がある場合のみ表示
-        if (percentageText) {
+        if (node.id === "合計") {
+          // 合計ノードの特別処理
+          // 上のラベル：「収入支出\n100%」
+          elements.push(
+            <text
+              key={`${node.id}-top`}
+              x={node.x + node.width / 2}
+              y={percentageY - 10}
+              textAnchor="middle"
+              dominantBaseline="bottom"
+              fill={boxColor}
+              fontSize="8px"
+              fontWeight="bold"
+            >
+              <tspan x={node.x + node.width / 2} dy="0">
+                収入支出
+              </tspan>
+              <tspan x={node.x + node.width / 2} dy="10">
+                100%
+              </tspan>
+            </text>,
+          );
+
+          // 下のラベル：金額
+          const amountText = node.value
+            ? `${Math.round(node.value / 10000).toLocaleString("ja-JP")}万円`
+            : "";
+          if (amountText) {
+            elements.push(
+              <text
+                key={`${node.id}-bottom`}
+                x={node.x + node.width / 2}
+                y={node.y + node.height + 15}
+                textAnchor="middle"
+                dominantBaseline="top"
+                fill={boxColor}
+                fontSize="8px"
+                fontWeight="bold"
+              >
+                {amountText}
+              </text>,
+            );
+          }
+        } else if (percentageText) {
+          // 通常のノードのパーセンテージ表示
           elements.push(
             <text
               key={`${node.id}-percentage`}
@@ -146,50 +190,52 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
           );
         }
 
-        // プライマリラベル（ノード名）
-        if (label.length <= maxCharsPerLine) {
-          elements.push(
-            <text
-              key={`${node.id}-primary`}
-              x={x}
-              y={node.y + node.height / 2}
-              textAnchor={textAnchor}
-              dominantBaseline="central"
-              fill="#1F2937"
-              fontSize="8px"
-              fontWeight="bold"
-            >
-              {label}
-            </text>,
-          );
-        } else {
-          // 複数行に分割
-          const lines = [];
-          for (let i = 0; i < label.length; i += maxCharsPerLine) {
-            lines.push(label.substring(i, i + maxCharsPerLine));
-          }
+        // プライマリラベル（ノード名）- 合計ノードは除外
+        if (node.id !== "合計") {
+          if (label.length <= maxCharsPerLine) {
+            elements.push(
+              <text
+                key={`${node.id}-primary`}
+                x={x}
+                y={node.y + node.height / 2}
+                textAnchor={textAnchor}
+                dominantBaseline="central"
+                fill="#1F2937"
+                fontSize="8px"
+                fontWeight="bold"
+              >
+                {label}
+              </text>,
+            );
+          } else {
+            // 複数行に分割
+            const lines = [];
+            for (let i = 0; i < label.length; i += maxCharsPerLine) {
+              lines.push(label.substring(i, i + maxCharsPerLine));
+            }
 
-          elements.push(
-            <text
-              key={`${node.id}-primary`}
-              x={x}
-              y={node.y + node.height / 2 - (lines.length - 1) * 6}
-              textAnchor={textAnchor}
-              fill="#1F2937"
-              fontSize="8px"
-              fontWeight="bold"
-            >
-              {lines.map((line, index) => (
-                <tspan
-                  key={`${node.id}-${index}`}
-                  x={x}
-                  dy={index === 0 ? 0 : 12}
-                >
-                  {line}
-                </tspan>
-              ))}
-            </text>,
-          );
+            elements.push(
+              <text
+                key={`${node.id}-primary`}
+                x={x}
+                y={node.y + node.height / 2 - (lines.length - 1) * 6}
+                textAnchor={textAnchor}
+                fill="#1F2937"
+                fontSize="8px"
+                fontWeight="bold"
+              >
+                {lines.map((line, index) => (
+                  <tspan
+                    key={`${node.id}-${index}`}
+                    x={x}
+                    dy={index === 0 ? 0 : 12}
+                  >
+                    {line}
+                  </tspan>
+                ))}
+              </text>,
+            );
+          }
         }
 
         return elements;
