@@ -5,11 +5,40 @@ import Link from "next/link";
 import { useState } from "react";
 import HamburgerMenuButton from "../ui/HamburgerMenuButton";
 
+const navigationItems = [
+  { href: "/", label: "トップ", desktopLabel: null },
+  {
+    href: "/#cash-flow",
+    label: "チームみらいの収支の流れ",
+    desktopLabel: "収支の流れ",
+  },
+  {
+    href: "/#monthly-trends",
+    label: "１年間の収支推移",
+    desktopLabel: "1年間の推移",
+  },
+  {
+    href: "/#donation-summary",
+    label: "これまでの寄付金額",
+    desktopLabel: "寄付金額",
+  },
+  {
+    href: "/#transactions",
+    label: "すべての出入金",
+    desktopLabel: "すべての出入金",
+  },
+  {
+    href: "/#explanation",
+    label: "データについて",
+    desktopLabel: "データについて",
+  },
+];
+
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 px-2.5 py-3 lg:px-6 lg:py-4">
+    <header className="fixed top-0 left-0 right-0 z-40 px-2.5 py-3 lg:px-6 lg:py-4">
       {/* Main Header Container with rounded background */}
       <div className="bg-white rounded-[30px] lg:rounded-[100px] px-3 py-3 lg:px-6 lg:py-0 relative z-10">
         <div className="flex justify-between items-center gap-2 lg:h-16">
@@ -51,36 +80,17 @@ export default function Header() {
           {/* Desktop: Navigation Menu + Year Selector */}
           <div className="hidden lg:flex items-center gap-10">
             <nav className="flex items-center gap-6">
-              <Link
-                href="/#cash-flow"
-                className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap"
-              >
-                収支の流れ
-              </Link>
-              <Link
-                href="/#monthly-trends"
-                className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap"
-              >
-                1年間の推移
-              </Link>
-              <Link
-                href="/#donation-summary"
-                className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap"
-              >
-                寄付金額
-              </Link>
-              <Link
-                href="/#transactions"
-                className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap"
-              >
-                すべての出入金
-              </Link>
-              <Link
-                href="/#explanation"
-                className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap"
-              >
-                データについて
-              </Link>
+              {navigationItems
+                .filter((item) => item.desktopLabel)
+                .map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap"
+                  >
+                    {item.desktopLabel}
+                  </Link>
+                ))}
             </nav>
 
             {/* Desktop Year Selector */}
@@ -126,135 +136,35 @@ export default function Header() {
       </div>
 
       {/* Mobile Navigation Menu */}
-      <nav
-        className={`lg:hidden -mt-14 pt-[92px] bg-gradient-to-br from-[#BCECDB] to-[#64D8C6] rounded-[30px] px-9 pb-15 transition-all duration-300 ease-in-out ${
-          isMobileMenuOpen
-            ? "opacity-100 translate-y-0 scale-100"
-            : "opacity-0 translate-y-4 scale-95 pointer-events-none"
-        }`}
-      >
-        <div className="flex flex-col">
-          {/* トップ */}
-          <Link
-            href="/"
-            className="flex items-center justify-between py-3 px-1 hover:opacity-80 transition-opacity"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            <span className="text-sm font-bold text-black">トップ</span>
-            <Image
-              src="/icons/icon-chevron-right.svg"
-              alt="右向き矢印"
-              width={24}
-              height={24}
-              className="text-black"
-            />
-          </Link>
-
-          {/* 区切り線 */}
-          <div className="h-px bg-white mx-1" />
-
-          {/* チームみらいの収支の流れ */}
-          <Link
-            href="/#cash-flow"
-            className="flex items-center justify-between py-3 px-1 hover:opacity-80 transition-opacity"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            <span className="text-sm font-bold text-black">
-              チームみらいの収支の流れ
-            </span>
-            <Image
-              src="/icons/icon-chevron-right.svg"
-              alt="右向き矢印"
-              width={24}
-              height={24}
-              className="text-black"
-            />
-          </Link>
-
-          {/* 区切り線 */}
-          <div className="h-px bg-white mx-1" />
-
-          {/* １年間の収支推移 */}
-          <Link
-            href="/#monthly-trends"
-            className="flex items-center justify-between py-3 px-1 hover:opacity-80 transition-opacity"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            <span className="text-sm font-bold text-black">
-              １年間の収支推移
-            </span>
-            <Image
-              src="/icons/icon-chevron-right.svg"
-              alt="右向き矢印"
-              width={24}
-              height={24}
-              className="text-black"
-            />
-          </Link>
-
-          {/* 区切り線 */}
-          <div className="h-px bg-white mx-1" />
-
-          {/* これまでの寄付金額 */}
-          <Link
-            href="/#donation-summary"
-            className="flex items-center justify-between py-3 px-1 hover:opacity-80 transition-opacity"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            <span className="text-sm font-bold text-black">
-              これまでの寄付金額
-            </span>
-            <Image
-              src="/icons/icon-chevron-right.svg"
-              alt="右向き矢印"
-              width={24}
-              height={24}
-              className="text-black"
-            />
-          </Link>
-
-          {/* 区切り線 */}
-          <div className="h-px bg-white mx-1" />
-
-          {/* すべての出入金 */}
-          <Link
-            href="/#transactions"
-            className="flex items-center justify-between py-3 px-1 hover:opacity-80 transition-opacity"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            <span className="text-sm font-bold text-black">すべての出入金</span>
-            <Image
-              src="/icons/icon-chevron-right.svg"
-              alt="右向き矢印"
-              width={24}
-              height={24}
-              className="text-black"
-            />
-          </Link>
-
-          {/* 区切り線 */}
-          <div className="h-px bg-white mx-1" />
-
-          {/* データについて */}
-          <Link
-            href="/#explanation"
-            className="flex items-center justify-between py-3 px-1 hover:opacity-80 transition-opacity"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            <span className="text-sm font-bold text-black">データについて</span>
-            <Image
-              src="/icons/icon-chevron-right.svg"
-              alt="右向き矢印"
-              width={24}
-              height={24}
-              className="text-black"
-            />
-          </Link>
-
-          {/* 区切り線 */}
-          <div className="h-px bg-white mx-1" />
-        </div>
-      </nav>
+      {isMobileMenuOpen && (
+        <nav className="lg:hidden -mt-14 pt-[92px] bg-gradient-to-br from-[#BCECDB] to-[#64D8C6] rounded-[30px] px-9 pb-15 transition-all duration-300 ease-in-out animate-in fade-in-0 slide-in-from-top-1 zoom-in-95">
+          <div className="flex flex-col">
+            {navigationItems.map((item, index) => (
+              <div key={item.href}>
+                <Link
+                  href={item.href}
+                  className="flex items-center justify-between py-3 px-1 hover:opacity-80 transition-opacity"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <span className="text-sm font-bold text-black">
+                    {item.label}
+                  </span>
+                  <Image
+                    src="/icons/icon-chevron-right.svg"
+                    alt="右向き矢印"
+                    width={24}
+                    height={24}
+                    className="text-black"
+                  />
+                </Link>
+                {index < navigationItems.length - 1 && (
+                  <div className="h-px bg-white mx-1" />
+                )}
+              </div>
+            ))}
+          </div>
+        </nav>
+      )}
     </header>
   );
 }
