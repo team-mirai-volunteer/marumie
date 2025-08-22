@@ -4,6 +4,7 @@ import { PrismaClient } from "@prisma/client";
 import { PrismaPoliticalOrganizationRepository } from "@/server/repositories/prisma-political-organization.repository";
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
 import { GetDailyDonationUsecase } from "@/server/usecases/get-daily-donation-usecase";
+import { GetMockTransactionPageDataUsecase } from "@/server/usecases/get-mock-transaction-page-data-usecase";
 import { GetMonthlyTransactionAggregationUsecase } from "@/server/usecases/get-monthly-transaction-aggregation-usecase";
 import { GetSankeyAggregationUsecase } from "@/server/usecases/get-sankey-aggregation-usecase";
 import {
@@ -21,11 +22,18 @@ export interface GetTransactionPageDataParams
 export async function getTransactionPageDataAction(
   params: GetTransactionPageDataParams,
 ) {
+  // モックデータを使用する場合
+  if (process.env.USE_MOCK_DATA === "true") {
+    const mockUsecase = new GetMockTransactionPageDataUsecase();
+    return await mockUsecase.execute(params);
+  }
+
+  // 実データを取得する場合
   const transactionRepository = new PrismaTransactionRepository(prisma);
   const politicalOrganizationRepository =
     new PrismaPoliticalOrganizationRepository(prisma);
 
-  // 3つのUsecaseを初期化
+  // 4つのUsecaseを初期化
   const transactionUsecase = new GetTransactionsBySlugUsecase(
     transactionRepository,
     politicalOrganizationRepository,
