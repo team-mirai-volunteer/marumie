@@ -4,6 +4,7 @@ import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 import MainButton from "@/client/components/ui/MainButton";
 import type { DonationSummaryData } from "@/server/usecases/get-daily-donation-usecase";
+import DonationChart from "./DonationChart";
 import DonationSummaryCards from "./DonationSummaryCards";
 
 interface DonationSummarySectionProps {
@@ -61,28 +62,12 @@ export default function DonationSummarySection({
         donationCountChange={donationCountChange}
       />
 
-      {/* 寄付データ詳細表示 */}
-      {dailyDonationData.length > 0 ? (
-        <div className="space-y-4">
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h4 className="font-medium mb-2">Data</h4>
-            <pre className="text-xs bg-white p-3 rounded border overflow-auto max-h-32">
-              {JSON.stringify(dailyDonationData, null, 2)}
-            </pre>
-          </div>
-        </div>
-      ) : (
-        <div className="h-[287px] bg-gray-50 rounded-lg flex items-center justify-center">
-          <div className="text-center text-gray-500">
-            <div className="text-lg font-medium mb-2">寄付データ</div>
-            <div className="text-sm">データがありません</div>
-          </div>
-        </div>
-      )}
+      {/* 寄付推移グラフ */}
+      <DonationChart data={dailyDonationData} />
 
       {/* 寄付メッセージとボタン */}
-      <div className="bg-white rounded-lg p-8 text-center">
-        <p className="text-[#1F2937] font-bold text-base mb-6">
+      <div className="bg-white rounded-lg px-8 text-center">
+        <p className="text-[#1F2937] font-bold text-base leading-7 mb-6">
           チームみらいは、皆さまのご支援・ご寄付のおかげで活動を続けられております。
         </p>
         <MainButton>ご寄付はこちら</MainButton>
