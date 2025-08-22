@@ -226,8 +226,10 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg" style={{ height: 462 }}>
-      <Chart options={options} series={series} type="line" height={462} />
+    <div className="overflow-x-auto overflow-y-hidden rounded-lg bg-white">
+      <div className="min-w-[600px]" style={{ height: 462 }}>
+        <Chart options={options} series={series} type="line" height={462} />
+      </div>
     </div>
   );
 }
