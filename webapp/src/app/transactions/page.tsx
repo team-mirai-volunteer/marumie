@@ -2,6 +2,8 @@ import "server-only";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import ExplanationSection from "@/client/components/common/ExplanationSection";
+import TransparencySection from "@/client/components/common/TransparencySection";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumn from "@/client/components/layout/MainColumn";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
@@ -114,6 +116,10 @@ export default async function TransactionsPage({
             totalPages={data.totalPages}
           />
         </MainColumnCard>
+
+        <TransparencySection title="党内の機密データの流出事故ではありません☺️" />
+
+        <ExplanationSection />
       </MainColumn>
     );
   } catch (error) {
