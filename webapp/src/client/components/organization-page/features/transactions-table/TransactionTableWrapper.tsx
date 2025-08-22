@@ -6,23 +6,21 @@ import { useRouter, useSearchParams } from "next/navigation";
 import type { DisplayTransaction } from "@/types/display-transaction";
 import TransactionTable from "./TransactionTable";
 
-interface TransactionTableWrapperProps {
+interface InteractiveTransactionTableProps {
   transactions: DisplayTransaction[];
   total: number;
   page: number;
   perPage: number;
   totalPages: number;
-  allowControl?: boolean;
 }
 
-export default function TransactionTableWrapper({
+export default function InteractiveTransactionTable({
   transactions,
   total,
   page,
   perPage,
   totalPages,
-  allowControl = true,
-}: TransactionTableWrapperProps) {
+}: InteractiveTransactionTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -60,7 +58,7 @@ export default function TransactionTableWrapper({
     <>
       <TransactionTable
         transactions={transactions}
-        allowControl={allowControl}
+        allowControl={true}
         onSort={handleSort}
         currentSort={currentSort}
         currentOrder={currentOrder}
