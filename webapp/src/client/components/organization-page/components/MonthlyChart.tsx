@@ -123,10 +123,11 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
           formatter: (val: number) => {
             if (val === 0) return "0万円";
             const absVal = Math.abs(val);
-            if (absVal >= 10000) {
-              return `${(absVal / 10000).toFixed(0)}億円`;
+            const manEn = absVal / 10000; // 円を万円に変換
+            if (manEn >= 10000) {
+              return `${(manEn / 10000).toFixed(0)}億円`;
             }
-            return `${absVal.toFixed(0)}万円`;
+            return `${manEn.toFixed(0)}万円`;
           },
           style: {
             colors: "#4B5563",
@@ -190,11 +191,13 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
       y: {
         formatter: (val: number, { seriesIndex }) => {
           const absVal = Math.abs(val);
+          const manEn = absVal / 10000; // 円を万円に変換
           if (seriesIndex === 2) {
             // 収支の場合
-            return `${val >= 0 ? "+" : ""}${val}万円`;
+            const manEnWithSign = val / 10000;
+            return `${manEnWithSign >= 0 ? "+" : ""}${manEnWithSign.toFixed(0)}万円`;
           }
-          return `${absVal}万円`;
+          return `${manEn.toFixed(0)}万円`;
         },
       },
     },
