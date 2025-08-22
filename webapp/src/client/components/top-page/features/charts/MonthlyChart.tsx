@@ -85,6 +85,12 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
         show: false,
       },
       background: "transparent",
+      zoom: {
+        enabled: false,
+      },
+      selection: {
+        enabled: false,
+      },
     },
     colors: ["#2AA693", "#DC2626", "#4B5563"],
     plotOptions: {
