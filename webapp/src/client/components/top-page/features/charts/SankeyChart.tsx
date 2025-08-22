@@ -39,7 +39,7 @@ const CustomNodesLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
             />
           );
         }
-        // その他のノードはラベルで色分け
+        // その他のノードはラベルで色分けし、横幅を1.5倍に
         let color = "#EF4444"; // デフォルトは赤
 
         if (node.label?.startsWith("income-")) {
@@ -53,12 +53,17 @@ const CustomNodesLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
         ) {
           color = "#2AA693"; // 従来の緑ノード
         }
+
+        // 通常ノードの横幅を1.5倍（18px）に
+        const width = 18; // 12 * 1.5
+        const x = node.x - (width - 12) / 2; // 中央に配置
+
         return (
           <rect
             key={node.id}
-            x={node.x}
+            x={x}
             y={node.y}
-            width={node.width}
+            width={width}
             height={node.height}
             fill={color}
             opacity={1}
@@ -192,6 +197,26 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
 
         // プライマリラベル（ノード名）- 合計ノードは除外
         if (node.id !== "合計") {
+          // サブカテゴリ判定（詳細項目）
+          // メインカテゴリ以外はすべてサブカテゴリとして扱う
+          const mainCategories = [
+            "寄付",
+            "機関紙誌+その他事業収入",
+            "借入金",
+            "交付金",
+            "その他",
+            "政治活動費",
+            "組織活動費",
+            "選挙関係費",
+            "調査研究費",
+            "寄付・交付金",
+            "現残高",
+            "合計",
+          ];
+          const isSubcategory = !mainCategories.includes(node.id);
+
+          const fontSize = isSubcategory ? "6px" : "8px"; // サブカテゴリは2px小さく
+
           if (label.length <= maxCharsPerLine) {
             elements.push(
               <text
@@ -201,7 +226,7 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
                 textAnchor={textAnchor}
                 dominantBaseline="central"
                 fill="#1F2937"
-                fontSize="8px"
+                fontSize={fontSize}
                 fontWeight="bold"
               >
                 {label}
@@ -221,7 +246,7 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
                 y={node.y + node.height / 2 - (lines.length - 1) * 6}
                 textAnchor={textAnchor}
                 fill="#1F2937"
-                fontSize="8px"
+                fontSize={fontSize}
                 fontWeight="bold"
               >
                 {lines.map((line, index) => (
