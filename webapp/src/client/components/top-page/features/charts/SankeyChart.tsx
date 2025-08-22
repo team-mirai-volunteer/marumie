@@ -6,6 +6,7 @@ import type { SankeyData } from "@/types/sankey";
 
 interface SankeyNode {
   id: string;
+  label?: string;
   x: number;
   y: number;
   width: number;
@@ -37,8 +38,20 @@ const CustomNodesLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
             />
           );
         }
-        // その他のノードは位置で色分け
-        const color = node.x < 150 ? "#2AA693" : "#EF4444"; // 左側は緑、右側は赤
+        // その他のノードはラベルで色分け
+        let color = "#EF4444"; // デフォルトは赤
+
+        if (node.label?.startsWith("income-")) {
+          color = "#2AA693"; // 収入ノード（緑）
+        } else if (node.label?.startsWith("expense-")) {
+          color = "#EF4444"; // 支出ノード（赤）
+        } else if (
+          node.id === "寄付" ||
+          node.id === "個人からの寄付" ||
+          node.id === "その他"
+        ) {
+          color = "#2AA693"; // 従来の緑ノード
+        }
         return (
           <rect
             key={node.id}
@@ -62,9 +75,20 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
   return (
     <g>
       {nodes.map((node: SankeyNode) => {
-        const label = node.id;
-        // 左側の2列（収入側）は左寄せ、右側（支出側）は右寄せ
-        const isLeft = node.x < 150; // 閾値を調整して左側2列を判定
+        const label = node.id; // HACK: 表示にはnode.idを使用（本来はnode.labelを使うべき）
+        // ラベルで収入・支出を判定、フォールバックでx座標を使用
+        let isLeft = false;
+        if (node.label?.startsWith("income-")) {
+          isLeft = true;
+        } else if (node.label?.startsWith("expense-")) {
+          isLeft = false;
+        } else if (
+          node.id === "寄付" ||
+          node.id === "個人からの寄付" ||
+          node.id === "その他"
+        ) {
+          isLeft = true;
+        }
         const x = isLeft ? node.x - 5 : node.x + node.width + 5;
         const textAnchor = isLeft ? "end" : "start";
 
@@ -118,26 +142,37 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
 };
 
 export default function SankeyChart({ data }: SankeyChartProps) {
-  // カスタム色設定関数（位置ベース）
-  const getNodeColor = (node: { id: string; x?: number }) => {
+  // HACK: リンクの色制御のための回避策
+  // Nivoはリンクの色をソースノードの色に依存させるため、
+  // getNodeColor()では薄い色を返してリンクを薄く表示し、
+  // CustomNodesLayerでは濃い色でノードを描画している
+  // 理想的にはlabelに接頭辞（income-, expense-）を付けて判定するが、
+  // 現在は表示用のidと内部処理用のlabelが逆転している状態
+  const getNodeColor = (node: { id: string; label?: string; x?: number }) => {
     if (node.id === "合計") {
-      return "#FBE2E7"; // 中央のbox（薄い赤）
+      return "#FBE2E7"; // 中央のbox（薄い赤、リンク色用）
     }
 
+    // node.labelに接頭辞がある場合は接頭辞で判定
+    if (node.label?.startsWith("income-")) {
+      return "#E5F7F4"; // 収入ノード（薄い緑、リンク色用）
+    }
+
+    if (node.label?.startsWith("expense-")) {
+      return "#FBE2E7"; // 支出ノード（薄い赤、リンク色用）
+    }
+
+    // 接頭辞がない場合は従来の判定を維持
     if (
       node.id === "寄付" ||
       node.id === "個人からの寄付" ||
       node.id === "その他"
     ) {
-      return "#E5F7F4"; // 寄付・個人からの寄付・その他ノード（薄い緑）
+      return "#E5F7F4"; // 寄付・個人からの寄付・その他ノード（薄い緑、リンク色用）
     }
 
-    // 位置で判定：左側（x < 150）は緑、右側は赤
-    if (node.x && node.x < 150) {
-      return "#E5F7F4"; // 左側のbox（薄い緑）
-    } else {
-      return "#FBE2E7"; // 右側のbox（薄い赤）
-    }
+    // デフォルトは薄い赤
+    return "#FBE2E7";
   };
 
   return (
