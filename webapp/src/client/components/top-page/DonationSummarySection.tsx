@@ -67,7 +67,7 @@ export default function DonationSummarySection({
 
       {/* 寄付メッセージとボタン */}
       <div className="bg-white rounded-lg px-8 text-center">
-        <p className="text-[#1F2937] font-bold text-base leading-7 mb-6">
+        <p className="text-gray-800 font-bold text-base leading-7 mb-6">
           チームみらいは、皆さまのご支援・ご寄付のおかげで活動を続けられております。
         </p>
         <MainButton>ご寄付はこちら</MainButton>

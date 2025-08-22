@@ -86,7 +86,7 @@ export default function TransactionTableRow({
         {/* Title and Amount section */}
         <div className="flex items-center justify-between gap-4">
           <span
-            className="text-sm font-bold text-[#1F2937] flex-1"
+            className="text-sm font-bold text-gray-800 flex-1"
             style={{
               fontFamily: "Noto Sans JP",
               lineHeight: "1.43em",
@@ -138,7 +138,7 @@ export default function TransactionTableRow({
           style={{ width: "140px" }}
         >
           <span
-            className="leading-4 font-bold text-base text-[#1F2937]"
+            className="leading-4 font-bold text-base text-gray-800"
             style={{}}
           >
             {formatDate(transaction.date)}
@@ -148,7 +148,7 @@ export default function TransactionTableRow({
         {/* Title section - flexible width */}
         <div className="flex items-center h-full flex-1">
           <span
-            className="leading-7 font-bold text-base text-[#1F2937]"
+            className="leading-7 font-bold text-base text-gray-800"
             style={{}}
           >
             {transaction.tags || transaction.category}
