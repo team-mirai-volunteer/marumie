@@ -8,6 +8,8 @@ import TransactionsSection from "@/client/components/organization-page/Transacti
 import WhySection from "@/client/components/organization-page/WhySection";
 import { getTransactionPageDataAction } from "@/server/actions/get-transaction-page-data";
 
+export const revalidate = 300; // 5 minutes
+
 export default async function Home() {
   const slug = "team-mirai";
 
