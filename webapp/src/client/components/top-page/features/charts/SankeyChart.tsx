@@ -16,6 +16,57 @@ interface SankeyChartProps {
   data: SankeyData;
 }
 
+// カスタムノードレイヤー（合計ボックスを太くする）
+const CustomNodesLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
+  return (
+    <g>
+      {nodes.map((node: SankeyNode) => {
+        if (node.id === "合計") {
+          // 合計ノードは横幅を倍に
+          const width = 24; // 元の2倍
+          const x = node.x - (width - 12) / 2; // 中央に配置
+          return (
+            <rect
+              key={node.id}
+              x={x}
+              y={node.y}
+              width={width}
+              height={node.height}
+              fill="#4F566B"
+              opacity={1}
+            />
+          );
+        }
+        // その他のノードは通常通り
+        return (
+          <rect
+            key={node.id}
+            x={node.x}
+            y={node.y}
+            width={node.width}
+            height={node.height}
+            fill={
+              node.id.includes("寄付") ||
+              node.id.includes("収入") ||
+              node.id.includes("交付金") ||
+              node.id.includes("借入金") ||
+              node.id.includes("その他") ||
+              node.id.includes("個人からの寄付") ||
+              node.id.includes("法人その他の団体からの寄附") ||
+              node.id.includes("政治団体からの寄附") ||
+              node.id.includes("政党匿名寄付") ||
+              node.id.includes("党費・会費")
+                ? "#2AA693"
+                : "#EF4444"
+            }
+            opacity={1}
+          />
+        );
+      })}
+    </g>
+  );
+};
+
 // カスタムラベルレイヤー
 const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
   const maxCharsPerLine = 5;
@@ -26,7 +77,7 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
         const label = node.id;
         // 左側の2列（収入側）は左寄せ、右側（支出側）は右寄せ
         const isLeft = node.x < 150; // 閾値を調整して左側2列を判定
-        const x = isLeft ? node.x - 10 : node.x + node.width + 10;
+        const x = isLeft ? node.x - 5 : node.x + node.width + 5;
         const textAnchor = isLeft ? "end" : "start";
 
         if (label.length <= maxCharsPerLine) {
@@ -141,7 +192,7 @@ export default function SankeyChart({ data }: SankeyChartProps) {
         linkHoverOpacity={0.8}
         enableLinkGradient={false}
         enableLabels={false}
-        layers={["links", "nodes", CustomLabelsLayer]}
+        layers={["links", CustomNodesLayer, CustomLabelsLayer]}
         theme={{
           labels: {
             text: {
