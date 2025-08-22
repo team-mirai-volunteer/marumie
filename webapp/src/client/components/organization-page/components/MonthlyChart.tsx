@@ -170,6 +170,9 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
     dataLabels: {
       enabled: true,
       enabledOnSeries: [0, 1], // 収入・支出バーのみ
+      background: {
+        enabled: false,
+      },
       style: {
         fontSize: "14px",
         fontFamily: "Inter, sans-serif",
@@ -181,7 +184,7 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
         if (absVal === 0) return "";
         return `${absVal}万`;
       },
-      offsetY: -5,
+      offsetY: -12,
     },
     tooltip: {
       shared: true,
