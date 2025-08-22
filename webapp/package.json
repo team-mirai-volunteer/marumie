@@ -5,6 +5,7 @@
   "dependencies": {
     "@prisma/client": "^6.14.0",
     "apexcharts": "^5.3.3",
+    "@vercel/speed-insights": "^1.2.0",
     "next": "15.4.6",
     "react": "19.1.0",
     "react-apexcharts": "^1.7.0",
