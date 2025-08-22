@@ -14,7 +14,7 @@ export default function TransactionTableHeader({
   currentOrder,
 }: TransactionTableHeaderProps) {
   return (
-    <thead className="hidden sm:table-header-group bg-white">
+    <thead className="hidden md:table-header-group bg-white">
       <tr className="h-12 border-b border-[#D5DBE1]">
         {/* 日付 - 140px width to match row */}
         <th

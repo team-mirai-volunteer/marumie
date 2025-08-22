@@ -5,6 +5,9 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { DisplayTransaction } from "@/types/display-transaction";
 import TransactionTable from "./TransactionTable";
+import TransactionTableMobileHeader, {
+  type SortOption,
+} from "./TransactionTableMobileHeader";
 
 interface InteractiveTransactionTableProps {
   transactions: DisplayTransaction[];
@@ -48,6 +51,25 @@ export default function InteractiveTransactionTable({
     router.push(`?${params.toString()}`);
   };
 
+  const handleMobileSortChange = (sortOption: SortOption) => {
+    const params = new URLSearchParams(searchParams.toString());
+    const [field, order] = sortOption.split("-") as [
+      "date" | "amount",
+      "asc" | "desc",
+    ];
+
+    params.set("sort", field);
+    params.set("order", order);
+    params.set("page", "1");
+    router.push(`?${params.toString()}`);
+  };
+
+  const getCurrentSortOption = (): SortOption => {
+    const sort = currentSort || "date";
+    const order = currentOrder || "desc";
+    return `${sort}-${order}` as SortOption;
+  };
+
   const startItem = (page - 1) * perPage + 1;
   const endItem = Math.min(page * perPage, total);
 
@@ -56,6 +78,14 @@ export default function InteractiveTransactionTable({
 
   return (
     <>
+      {/* Mobile Header - 768px未満で表示 */}
+      <div className="block md:hidden">
+        <TransactionTableMobileHeader
+          onSortChange={handleMobileSortChange}
+          currentSort={getCurrentSortOption()}
+        />
+      </div>
+
       <TransactionTable
         transactions={transactions}
         allowControl={true}
