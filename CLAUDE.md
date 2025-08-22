@@ -21,7 +21,6 @@ webapp 内のページおよびコンポーネントファイルには、必ず�
 
 - `webapp/src/app/**/page.tsx` - サーバーコンポーネントページ
 - `webapp/src/client/components/**/*.tsx` - クライアントコンポーネント
-- `webapp/src/server/components/**/*.tsx` - サーバーコンポーネント（もしある場合）
 
 ### 例
 
@@ -35,7 +34,7 @@ export default async function Page() {
 }
 
 // クライアントコンポーネントの場合
-"use client";
+("use client");
 import "client-only";
 
 export default function ClientComponent() {
@@ -44,3 +43,28 @@ export default function ClientComponent() {
 ```
 
 見た目の定義のみを行うコンポーネントなど、サーバー・クライアントどちらで呼ばれても問題ないものには追加不要。
+
+## webapp のデータ取得アーキテクチャルール
+
+データ取得は、基本的には以下の設計パターンに従うこと。
+（ごく軽い処理については別のパターンを利用してもよい。）
+
+### 基本フロー
+
+```
+初回読み込み: Browser → Action → Usecase
+動的更新: Browser → API Route → Action → Usecase
+```
+
+### 実装ルール
+
+1. **初回読み込み**: SSR で Server Action を直接呼び出す
+2. **動的更新**: ユーザーインタラクションによるデータ更新は API Route を作成し、**SSR 用と同一の Action** を呼び出す
+3. **ビジネスロジック集約**: 全てのデータ処理は Usecase 層で実装する
+
+### 理由
+
+- **統一性**: データ取得ロジックが Action に集約され、重複を回避
+- **保守性**: ビジネスロジック変更時の影響範囲を最小化
+- **柔軟性**: SSR/SPA の選択を実装後でも変更可能
+- **キャッシュ効率**: Next.js のキャッシュ機能を最大限活用
