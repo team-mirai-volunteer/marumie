@@ -2,7 +2,7 @@ import "server-only";
 import Image from "next/image";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
-import MonthlyChart from "./components/MonthlyChart";
+import MonthlyChart from "./features/charts/MonthlyChart";
 
 interface MonthlyData {
   yearMonth: string;

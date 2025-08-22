@@ -4,8 +4,8 @@ import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 import MainButton from "@/client/components/ui/MainButton";
 import type { DonationSummaryData } from "@/server/usecases/get-daily-donation-usecase";
-import DonationChart from "./DonationChart";
-import DonationSummaryCards from "./DonationSummaryCards";
+import DonationChart from "./features/charts/DonationChart";
+import DonationSummaryCards from "./features/donation-summary/DonationSummaryCards";
 
 interface DonationSummarySectionProps {
   donationSummary?: DonationSummaryData;
