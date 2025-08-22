@@ -22,7 +22,7 @@ const CustomNodesLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
     <g>
       {nodes.map((node: SankeyNode) => {
         if (node.id === "合計") {
-          // 合計ノードは横幅を倍に
+          // 合計ノードは横幅を倍に、色はグレー（表示用）
           const width = 24; // 元の2倍
           const x = node.x - (width - 12) / 2; // 中央に配置
           return (
@@ -37,7 +37,8 @@ const CustomNodesLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
             />
           );
         }
-        // その他のノードは通常通り
+        // その他のノードは位置で色分け
+        const color = node.x < 150 ? "#2AA693" : "#EF4444"; // 左側は緑、右側は赤
         return (
           <rect
             key={node.id}
@@ -45,20 +46,7 @@ const CustomNodesLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
             y={node.y}
             width={node.width}
             height={node.height}
-            fill={
-              node.id.includes("寄付") ||
-              node.id.includes("収入") ||
-              node.id.includes("交付金") ||
-              node.id.includes("借入金") ||
-              node.id.includes("その他") ||
-              node.id.includes("個人からの寄付") ||
-              node.id.includes("法人その他の団体からの寄附") ||
-              node.id.includes("政治団体からの寄附") ||
-              node.id.includes("政党匿名寄付") ||
-              node.id.includes("党費・会費")
-                ? "#2AA693"
-                : "#EF4444"
-            }
+            fill={color}
             opacity={1}
           />
         );
@@ -130,45 +118,31 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
 };
 
 export default function SankeyChart({ data }: SankeyChartProps) {
-  // カスタム色設定関数
-  const getNodeColor = (node: { id: string }) => {
+  // カスタム色設定関数（位置ベース）
+  const getNodeColor = (node: { id: string; x?: number }) => {
     if (node.id === "合計") {
-      return "#4F566B"; // 中央のbox
+      return "#FBE2E7"; // 中央のbox（薄い赤）
     }
 
-    // 収入関連のカテゴリとサブカテゴリを定義
-    const incomeCategories = new Set([
-      "寄付",
-      "機関紙誌+その他事業収入",
-      "借入金",
-      "交付金",
-      "その他",
-    ]);
-
-    const incomeSubcategories = new Set([
-      "個人からの寄付",
-      "法人その他の団体からの寄附",
-      "政治団体からの寄附",
-      "政党匿名寄付",
-      "党費・会費",
-    ]);
-
-    // ノードIDが収入カテゴリまたはサブカテゴリに含まれるかチェック
-    if (incomeCategories.has(node.id) || incomeSubcategories.has(node.id)) {
-      return "#2AA693"; // 収入のbox
+    if (
+      node.id === "寄付" ||
+      node.id === "個人からの寄付" ||
+      node.id === "その他"
+    ) {
+      return "#E5F7F4"; // 寄付・個人からの寄付・その他ノード（薄い緑）
     }
 
-    // それ以外は支出とみなす
-    return "#EF4444"; // 支出のbox
+    // 位置で判定：左側（x < 150）は緑、右側は赤
+    if (node.x && node.x < 150) {
+      return "#E5F7F4"; // 左側のbox（薄い緑）
+    } else {
+      return "#FBE2E7"; // 右側のbox（薄い赤）
+    }
   };
 
   return (
     <div style={{ height: 300 }} className="sankey-container">
       <style jsx global>{`
-        .sankey-container svg path {
-          fill: #d1d5db !important;
-          opacity: 0.8 !important;
-        }
         .sankey-container svg path:hover {
           opacity: 0.9 !important;
         }
