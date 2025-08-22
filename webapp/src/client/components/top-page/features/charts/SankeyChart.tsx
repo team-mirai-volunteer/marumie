@@ -143,7 +143,7 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
             <text
               key={`${node.id}-top`}
               x={node.x + node.width / 2}
-              y={percentageY - 10}
+              y={percentageY - (window.innerWidth >= 768 ? 18 : 12)}
               textAnchor="middle"
               dominantBaseline="bottom"
               fill={boxColor}
@@ -153,7 +153,10 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
               <tspan x={node.x + node.width / 2} dy="0">
                 収入支出
               </tspan>
-              <tspan x={node.x + node.width / 2} dy="10">
+              <tspan
+                x={node.x + node.width / 2}
+                dy={window.innerWidth >= 768 ? "16" : "10"}
+              >
                 100%
               </tspan>
             </text>,
@@ -353,7 +356,7 @@ export default function SankeyChart({ data }: SankeyChartProps) {
       <ResponsiveSankey
         data={sortedData}
         margin={{
-          top: 12,
+          top: window.innerWidth >= 768 ? 40 : 20,
           right: window.innerWidth >= 768 ? 100 : 60,
           bottom: 0,
           left: window.innerWidth >= 768 ? 100 : 60,
