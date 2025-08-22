@@ -271,7 +271,9 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
 
 export default function SankeyChart({ data }: SankeyChartProps) {
   // ノードを金額順にソートする関数
-  const sortNodesByValue = (nodes: any[]) => {
+  const sortNodesByValue = (
+    nodes: Array<{ id: string; label?: string; value?: number }>,
+  ) => {
     return [...nodes].sort((a, b) => {
       // 合計ノードは中央に配置されるので除外
       if (a.id === "合計" || b.id === "合計") return 0;
@@ -305,7 +307,7 @@ export default function SankeyChart({ data }: SankeyChartProps) {
   // CustomNodesLayerでは濃い色でノードを描画している
   // 理想的にはlabelに接頭辞（income-, expense-）を付けて判定するが、
   // 現在は表示用のidと内部処理用のlabelが逆転している状態
-  const getNodeColor = (node: { id: string; label?: string; x?: number }) => {
+  const getNodeColor = (node: { id: string; label?: string }) => {
     if (node.id === "合計") {
       return "#FBE2E7"; // 中央のbox（薄い赤、リンク色用）
     }
