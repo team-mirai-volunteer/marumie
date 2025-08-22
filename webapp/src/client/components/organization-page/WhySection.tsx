@@ -3,7 +3,7 @@ import MainColumnCard from "@/client/components/layout/MainColumnCard";
 
 export default function WhySection() {
   return (
-    <MainColumnCard className="rounded-2xl sm:rounded-[21.68px] !px-[18px] sm:!px-6 !py-6 sm:!py-6">
+    <MainColumnCard>
       <div className="flex items-center self-stretch">
         <div className="flex flex-col justify-center gap-2 sm:gap-[10.84px]">
           <div className="flex">
