@@ -85,6 +85,12 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
         show: false,
       },
       background: "transparent",
+      zoom: {
+        enabled: false,
+      },
+      selection: {
+        enabled: false,
+      },
     },
     colors: ["#2AA693", "#DC2626", "#4B5563"],
     plotOptions: {
@@ -220,8 +226,10 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg" style={{ height: 462 }}>
-      <Chart options={options} series={series} type="line" height={462} />
+    <div className="overflow-x-auto overflow-y-hidden rounded-lg bg-white">
+      <div className="min-w-[600px]" style={{ height: 462 }}>
+        <Chart options={options} series={series} type="line" height={462} />
+      </div>
     </div>
   );
 }

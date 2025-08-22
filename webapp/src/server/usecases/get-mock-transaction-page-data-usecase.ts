@@ -7,23 +7,22 @@ import type { SankeyData } from "@/types/sankey";
 
 // モックデータ定義
 const MOCK_MONTHLY_DATA: MonthlyAggregation[] = [
-  { yearMonth: "2025-01", income: 200, expense: 150 },
-  { yearMonth: "2025-02", income: 180, expense: 220 },
-  { yearMonth: "2025-03", income: 250, expense: 190 },
-  { yearMonth: "2025-04", income: 300, expense: 280 },
-  { yearMonth: "2025-05", income: 220, expense: 160 },
-  { yearMonth: "2025-06", income: 280, expense: 200 },
-  { yearMonth: "2025-07", income: 320, expense: 240 },
-  { yearMonth: "2025-08", income: 290, expense: 210 },
-  { yearMonth: "2025-09", income: 260, expense: 230 },
-  { yearMonth: "2025-10", income: 310, expense: 190 },
-  { yearMonth: "2025-11", income: 270, expense: 250 },
-  { yearMonth: "2025-12", income: 340, expense: 200 },
+  { yearMonth: "2025-01", income: 2000000, expense: 1500000 },
+  { yearMonth: "2025-02", income: 1800000, expense: 2200000 },
+  { yearMonth: "2025-03", income: 2500000, expense: 1900000 },
+  { yearMonth: "2025-04", income: 3000000, expense: 2800000 },
+  { yearMonth: "2025-05", income: 2200000, expense: 1600000 },
+  { yearMonth: "2025-06", income: 2800000, expense: 2000000 },
+  { yearMonth: "2025-07", income: 3200000, expense: 2400000 },
+  { yearMonth: "2025-08", income: 2900000, expense: 2100000 },
+  { yearMonth: "2025-09", income: 2600000, expense: 2300000 },
+  { yearMonth: "2025-10", income: 3100000, expense: 1900000 },
+  { yearMonth: "2025-11", income: 2700000, expense: 2500000 },
+  { yearMonth: "2025-12", income: 3400000, expense: 2000000 },
 ];
 
 const MOCK_SANKEY_DATA: SankeyData = {
   nodes: [
-    { id: "寄付" },
     { id: "個人からの寄付" },
     { id: "法人その他の団体からの寄附" },
     { id: "合計" },
@@ -32,11 +31,11 @@ const MOCK_SANKEY_DATA: SankeyData = {
     { id: "その他経費" },
   ],
   links: [
-    { source: "個人からの寄付", target: "合計", value: 1800 },
-    { source: "法人その他の団体からの寄附", target: "合計", value: 500 },
-    { source: "合計", target: "人件費", value: 1200 },
-    { source: "合計", target: "事務所費", value: 600 },
-    { source: "合計", target: "その他経費", value: 500 },
+    { source: "個人からの寄付", target: "合計", value: 18000000 },
+    { source: "法人その他の団体からの寄附", target: "合計", value: 5000000 },
+    { source: "合計", target: "人件費", value: 12000000 },
+    { source: "合計", target: "事務所費", value: 6000000 },
+    { source: "合計", target: "その他経費", value: 5000000 },
   ],
 };
 
@@ -73,9 +72,9 @@ const MOCK_TRANSACTION_DATA = {
     updatedAt: new Date(),
   },
   summary: {
-    totalIncome: 3180,
-    totalExpense: 2530,
-    netAmount: 650,
+    totalIncome: 31800000,
+    totalExpense: 25300000,
+    netAmount: 6500000,
     transactionCount: 0,
   },
 };

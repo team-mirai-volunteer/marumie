@@ -33,8 +33,10 @@ export default function MonthlyTrendsSection({
         subtitle="今年の年始から月ごとの収入と支出"
       />
 
-      {/* 月次チャート表示 */}
-      <MonthlyChart data={monthlyData || []} />
+      {/* 月次チャート表示 - モバイルのみ右端まで拡張 */}
+      <div className="-mr-[18px] sm:mr-0">
+        <MonthlyChart data={monthlyData || []} />
+      </div>
     </MainColumnCard>
   );
 }
