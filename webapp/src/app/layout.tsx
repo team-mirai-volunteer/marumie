@@ -7,6 +7,7 @@ import {
   Noto_Sans_JP,
 } from "next/font/google";
 import "./globals.css";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import Footer from "@/client/components/layout/Footer";
 import Header from "@/client/components/layout/Header";
 
