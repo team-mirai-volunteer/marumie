@@ -90,7 +90,7 @@ export default function Header() {
             >
               <span className="text-sm font-medium text-gray-800">2025年</span>
               <Image
-                src="/icons/icon_chevron-down.svg"
+                src="/icons/icon-chevron-down.svg"
                 alt="下向き矢印"
                 width={12}
                 height={12}
@@ -108,7 +108,7 @@ export default function Header() {
             >
               <span className="text-sm font-medium text-gray-800">2025年</span>
               <Image
-                src="/icons/icon_chevron-down.svg"
+                src="/icons/icon-chevron-down.svg"
                 alt="下向き矢印"
                 width={12}
                 height={12}
@@ -142,7 +142,7 @@ export default function Header() {
           >
             <span className="text-sm font-bold text-black">トップ</span>
             <Image
-              src="/icons/icon_chevron-right.svg"
+              src="/icons/icon-chevron-right.svg"
               alt="右向き矢印"
               width={24}
               height={24}
@@ -163,7 +163,7 @@ export default function Header() {
               チームみらいの収支の流れ
             </span>
             <Image
-              src="/icons/icon_chevron-right.svg"
+              src="/icons/icon-chevron-right.svg"
               alt="右向き矢印"
               width={24}
               height={24}
@@ -184,7 +184,7 @@ export default function Header() {
               １年間の収支推移
             </span>
             <Image
-              src="/icons/icon_chevron-right.svg"
+              src="/icons/icon-chevron-right.svg"
               alt="右向き矢印"
               width={24}
               height={24}
@@ -205,7 +205,7 @@ export default function Header() {
               これまでの寄付金額
             </span>
             <Image
-              src="/icons/icon_chevron-right.svg"
+              src="/icons/icon-chevron-right.svg"
               alt="右向き矢印"
               width={24}
               height={24}
@@ -224,7 +224,7 @@ export default function Header() {
           >
             <span className="text-sm font-bold text-black">すべての出入金</span>
             <Image
-              src="/icons/icon_chevron-right.svg"
+              src="/icons/icon-chevron-right.svg"
               alt="右向き矢印"
               width={24}
               height={24}
@@ -243,7 +243,7 @@ export default function Header() {
           >
             <span className="text-sm font-bold text-black">データについて</span>
             <Image
-              src="/icons/icon_chevron-right.svg"
+              src="/icons/icon-chevron-right.svg"
               alt="右向き矢印"
               width={24}
               height={24}
