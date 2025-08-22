@@ -14,12 +14,13 @@ export default function TransactionTableHeader({
   currentOrder,
 }: TransactionTableHeaderProps) {
   return (
-    <div className="bg-white">
-      <div className="flex items-center h-12 border-b border-[#D5DBE1] px-0 pr-4">
+    <thead className="hidden sm:table-header-group bg-white">
+      <tr className="h-12 border-b border-[#D5DBE1]">
         {/* 日付 - 140px width to match row */}
-        <div
-          className="flex items-center justify-start px-4 h-full"
+        <th
+          className="text-left px-4 h-12 font-normal"
           style={{ width: "140px" }}
+          scope="col"
         >
           {allowControl && onSort ? (
             <button
@@ -32,7 +33,7 @@ export default function TransactionTableHeader({
               </span>
               <div className="w-5 h-5 flex items-center justify-center">
                 <Image
-                  src="/icons/icon_chevron-down.svg"
+                  src="/icons/icon-chevron-down.svg"
                   alt="Sort by date"
                   width={20}
                   height={20}
@@ -56,34 +57,35 @@ export default function TransactionTableHeader({
               </span>
             </div>
           )}
-        </div>
+        </th>
 
         {/* 項目項目 - flexible width to match row */}
-        <div className="flex items-center h-full flex-1">
+        <th className="text-left h-12 font-normal" scope="col">
           <div className="flex items-center h-5">
             <span className="text-gray-800 text-sm font-bold leading-[1.286] tracking-[0.071em]">
               項目項目
             </span>
           </div>
-        </div>
+        </th>
 
         {/* 金額 - 180px width to match row (combined plus/minus + amount) */}
-        <div
-          className="flex items-center justify-end h-full pr-6"
+        <th
+          className="text-right pr-6 h-12 font-normal"
           style={{ width: "180px" }}
+          scope="col"
         >
           {allowControl && onSort ? (
             <button
               type="button"
               onClick={() => onSort("amount")}
-              className="flex items-center gap-1 h-5 hover:opacity-70 transition-opacity"
+              className="flex items-center gap-1 h-5 hover:opacity-70 transition-opacity ml-auto"
             >
               <span className="text-gray-800 text-sm font-bold leading-[1.5]">
                 金額
               </span>
               <div className="w-5 h-5 flex items-center justify-center">
                 <Image
-                  src="/icons/icon_chevron-down.svg"
+                  src="/icons/icon-chevron-down.svg"
                   alt="Sort by amount"
                   width={20}
                   height={20}
@@ -101,18 +103,19 @@ export default function TransactionTableHeader({
               </div>
             </button>
           ) : (
-            <div className="flex items-center gap-1 h-5">
+            <div className="flex items-center justify-end gap-1 h-5">
               <span className="text-gray-800 text-sm font-bold leading-[1.5]">
                 金額
               </span>
             </div>
           )}
-        </div>
+        </th>
 
         {/* カテゴリー - 160px width to match row */}
-        <div
-          className="flex items-center h-full pl-4"
+        <th
+          className="text-left pl-4 h-12 font-normal"
           style={{ width: "160px" }}
+          scope="col"
         >
           <div className="flex items-center gap-1 h-12">
             <span className="text-gray-800 text-sm font-bold leading-[1.5]">
@@ -121,7 +124,7 @@ export default function TransactionTableHeader({
             {allowControl && (
               <div className="w-3 h-2 flex items-center justify-center">
                 <Image
-                  src="/icons/icon_filter.svg"
+                  src="/icons/icon-filter.svg"
                   alt="Filter category"
                   width={12}
                   height={8}
@@ -130,8 +133,8 @@ export default function TransactionTableHeader({
               </div>
             )}
           </div>
-        </div>
-      </div>
-    </div>
+        </th>
+      </tr>
+    </thead>
   );
 }

@@ -9,10 +9,10 @@ export default function TransactionTableBody({
   transactions,
 }: TransactionTableBodyProps) {
   return (
-    <div className="bg-white">
+    <tbody className="bg-white">
       {transactions.map((transaction) => (
         <TransactionTableRow key={transaction.id} transaction={transaction} />
       ))}
-    </div>
+    </tbody>
   );
 }
