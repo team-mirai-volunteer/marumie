@@ -50,6 +50,12 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
   const expenseData = data.map((item) => -item.expense); // 負の値で表現
   const balanceData = data.map((item) => item.income - item.expense);
 
+  // データの最大絶対値を取得してY軸の範囲を動的に設定
+  const allValues = [...incomeData, ...expenseData, ...balanceData];
+  const maxAbsValue = Math.max(...allValues.map((val) => Math.abs(val)));
+  const yAxisMax = Math.ceil(maxAbsValue * 1.2); // 20%のマージンを追加
+  const yAxisMin = -yAxisMax;
+
   // ApexChartsのseries設定
   const series = [
     {
@@ -128,8 +134,8 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
             fontWeight: 500,
           },
         },
-        min: -500,
-        max: 500,
+        min: yAxisMin,
+        max: yAxisMax,
         tickAmount: 4,
       },
     ],
@@ -158,7 +164,7 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
         colors: "#4B5563",
       },
       markers: {
-        size: 12,
+        size: 6,
         strokeWidth: 0,
         shape: "square" as const,
       },
@@ -168,23 +174,7 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
       },
     },
     dataLabels: {
-      enabled: true,
-      enabledOnSeries: [0, 1], // 収入・支出バーのみ
-      background: {
-        enabled: false,
-      },
-      style: {
-        fontSize: "14px",
-        fontFamily: "Inter, sans-serif",
-        fontWeight: 500,
-        colors: ["#6B7280"],
-      },
-      formatter: (val: number) => {
-        const absVal = Math.abs(val);
-        if (absVal === 0) return "";
-        return `${absVal}万`;
-      },
-      offsetY: -12,
+      enabled: false,
     },
     tooltip: {
       shared: true,
