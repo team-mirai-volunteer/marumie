@@ -39,7 +39,7 @@ export default function DonationChart({
 
   // X軸ラベル用日付フォーマット (M/d形式)
   function formatXAxisLabel(dateStr: string): string {
-    const [year, month, day] = dateStr.split("-");
+    const [, month, day] = dateStr.split("-");
     return `${parseInt(month, 10)}/${parseInt(day, 10)}`;
   }
 
@@ -93,11 +93,12 @@ export default function DonationChart({
             }}
           >
             <XAxis
-              dataKey="displayDate"
+              dataKey="date"
               axisLine={false}
               tickLine={false}
               tick={{ fontSize: 12, fill: "#6B7280" }}
               interval="preserveStartEnd"
+              tickFormatter={formatXAxisLabel}
             />
             <YAxis
               tickFormatter={formatYAxisLabel}
