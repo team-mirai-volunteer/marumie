@@ -24,8 +24,8 @@ const CustomNodesLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
     <g>
       {nodes.map((node: SankeyNode) => {
         if (node.id === "合計") {
-          // 合計ノードは横幅を倍に、色はグレー（表示用）
-          const width = 24; // 元の2倍
+          // 合計ノードは横幅を4倍に、色はグレー（表示用）- デスクトップのみ
+          const width = window.innerWidth >= 768 ? 48 : 24; // デスクトップ: 12 * 4, モバイル: 12 * 2
           const x = node.x - (width - 12) / 2; // 中央に配置
           return (
             <rect
@@ -39,7 +39,7 @@ const CustomNodesLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
             />
           );
         }
-        // その他のノードはラベルで色分けし、横幅を1.5倍に
+        // その他のノードはラベルで色分けし、横幅を2倍に（デスクトップのみ）
         let color = "#EF4444"; // デフォルトは赤
 
         if (node.label?.startsWith("income-")) {
@@ -54,8 +54,8 @@ const CustomNodesLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
           color = "#2AA693"; // 従来の緑ノード
         }
 
-        // 通常ノードの横幅を1.5倍（18px）に
-        const width = 18; // 12 * 1.5
+        // 通常ノードの横幅をデスクトップは25px、モバイルは1.5倍（18px）に
+        const width = window.innerWidth >= 768 ? 25 : 18; // デスクトップ: 25px, モバイル: 12 * 1.5
         const x = node.x - (width - 12) / 2; // 中央に配置
 
         return (
@@ -98,7 +98,9 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
         ) {
           isLeft = true;
         }
-        const x = isLeft ? node.x - 5 : node.x + node.width + 5;
+        const x = isLeft
+          ? node.x - (window.innerWidth >= 768 ? 12 : 5)
+          : node.x + node.width + (window.innerWidth >= 768 ? 12 : 5);
         const textAnchor = isLeft ? "end" : "start";
 
         // セカンダリラベル（パーセンテージ）の位置と色
@@ -145,7 +147,7 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
               textAnchor="middle"
               dominantBaseline="bottom"
               fill={boxColor}
-              fontSize="8px"
+              fontSize={window.innerWidth >= 768 ? "14.5px" : "8px"}
               fontWeight="bold"
             >
               <tspan x={node.x + node.width / 2} dy="0">
@@ -170,7 +172,7 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
                 textAnchor="middle"
                 dominantBaseline="top"
                 fill={boxColor}
-                fontSize="8px"
+                fontSize={window.innerWidth >= 768 ? "14.5px" : "8px"}
                 fontWeight="bold"
               >
                 {amountText}
@@ -187,7 +189,7 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
               textAnchor="middle"
               dominantBaseline="bottom"
               fill={boxColor}
-              fontSize="8px"
+              fontSize={window.innerWidth >= 768 ? "14.5px" : "8px"}
               fontWeight="bold"
             >
               {percentageText}
@@ -206,16 +208,20 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
             "交付金",
             "その他",
             "政治活動費",
-            "組織活動費",
-            "選挙関係費",
-            "調査研究費",
-            "寄付・交付金",
+            "経常経費",
             "現残高",
             "合計",
           ];
           const isSubcategory = !mainCategories.includes(node.id);
 
-          const fontSize = isSubcategory ? "6px" : "8px"; // サブカテゴリは2px小さく
+          const fontSize =
+            window.innerWidth >= 768
+              ? isSubcategory
+                ? "11px"
+                : "14.5px" // デスクトップ: サブカテゴリは11px
+              : isSubcategory
+                ? "6px"
+                : "8px"; // モバイル: 従来通り
 
           if (label.length <= maxCharsPerLine) {
             elements.push(
@@ -346,7 +352,12 @@ export default function SankeyChart({ data }: SankeyChartProps) {
       `}</style>
       <ResponsiveSankey
         data={sortedData}
-        margin={{ top: 12, right: 60, bottom: 0, left: 60 }}
+        margin={{
+          top: 12,
+          right: window.innerWidth >= 768 ? 100 : 60,
+          bottom: 0,
+          left: window.innerWidth >= 768 ? 100 : 60,
+        }}
         align="justify"
         colors={getNodeColor}
         valueFormat={(v) =>
@@ -365,7 +376,7 @@ export default function SankeyChart({ data }: SankeyChartProps) {
         theme={{
           labels: {
             text: {
-              fontSize: "8px",
+              fontSize: window.innerWidth >= 768 ? "14.5px" : "8px",
               fontWeight: "bold",
             },
           },
