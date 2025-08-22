@@ -79,7 +79,7 @@ export default function InteractiveTransactionTable({
             aria-label="前のページ"
           >
             <Image
-              src="/icons/icon_chevron-down.svg"
+              src="/icons/icon-chevron-down.svg"
               alt="前のページ"
               width={20}
               height={20}
@@ -95,7 +95,7 @@ export default function InteractiveTransactionTable({
             aria-label="次のページ"
           >
             <Image
-              src="/icons/icon_chevron-down.svg"
+              src="/icons/icon-chevron-down.svg"
               alt="次のページ"
               width={20}
               height={20}
