@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
-import TransactionTable from "@/client/components/organization-page/features/transactions-table/TransactionTable";
+import TransactionTable from "@/client/components/top-page/features/transactions-table/TransactionTable";
 import MainButton from "@/client/components/ui/MainButton";
 
 import type { DisplayTransaction } from "@/types/display-transaction";
