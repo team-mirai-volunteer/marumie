@@ -3,6 +3,7 @@ import "client-only";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import HamburgerMenuButton from "../ui/HamburgerMenuButton";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -130,30 +131,10 @@ export default function Header() {
             </button>
 
             {/* Mobile Menu Button */}
-            <button
-              type="button"
-              className="p-1 hover:bg-gray-100 transition-colors"
+            <HamburgerMenuButton
+              isOpen={isMobileMenuOpen}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              aria-label="メニューを開く"
-            >
-              <div className="w-6 h-6 flex flex-col justify-center items-center">
-                <span
-                  className={`block w-4 h-0.5 bg-gray-800 transition-all duration-300 ${
-                    isMobileMenuOpen ? "rotate-45 translate-y-1" : ""
-                  }`}
-                ></span>
-                <span
-                  className={`block w-4 h-0.5 bg-gray-800 mt-1.5 transition-all duration-300 ${
-                    isMobileMenuOpen ? "opacity-0" : ""
-                  }`}
-                ></span>
-                <span
-                  className={`block w-4 h-0.5 bg-gray-800 mt-1.5 transition-all duration-300 ${
-                    isMobileMenuOpen ? "-rotate-45 -translate-y-1.5" : ""
-                  }`}
-                ></span>
-              </div>
-            </button>
+            />
           </div>
         </div>
       </div>
