@@ -15,25 +15,49 @@ export default function Footer() {
           />
         </div>
 
-        {/* Legal Links */}
-        <div className="flex flex-col items-center gap-0 w-[168px] h-[56px]">
-          <Link
-            href="/privacy-policy"
-            className="text-black text-sm font-semibold leading-[2em] text-center hover:opacity-80 transition-opacity"
-          >
-            プライバシーポリシー
-          </Link>
-          <Link
-            href="/terms"
-            className="text-black text-sm font-semibold leading-[2em] text-center hover:opacity-80 transition-opacity"
-          >
-            特定商取引法に基づく表記
-          </Link>
+        {/* Navigation Links */}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-[275px] md:max-w-none">
+          {/* Mobile: First row with 3 links */}
+          <div className="flex flex-row justify-center gap-8 md:contents">
+            <Link
+              href="/#cash-flow"
+              className="text-[#1F2937] text-sm font-bold leading-[1.36em] hover:opacity-80 transition-opacity"
+            >
+              収支の流れ
+            </Link>
+            <Link
+              href="/#monthly-trends"
+              className="text-[#1F2937] text-sm font-bold leading-[1.36em] hover:opacity-80 transition-opacity"
+            >
+              1年の推移
+            </Link>
+            <Link
+              href="/#donation-summary"
+              className="text-[#1F2937] text-sm font-bold leading-[1.36em] hover:opacity-80 transition-opacity"
+            >
+              寄付金額
+            </Link>
+          </div>
+          {/* Mobile: Second row with 2 links */}
+          <div className="flex flex-row justify-center gap-8 md:contents">
+            <Link
+              href="/#transactions"
+              className="text-[#1F2937] text-sm font-bold leading-[1.36em] hover:opacity-80 transition-opacity"
+            >
+              すべての出入金
+            </Link>
+            <Link
+              href="/#explanation"
+              className="text-[#1F2937] text-sm font-bold leading-[1.36em] hover:opacity-80 transition-opacity"
+            >
+              データについて
+            </Link>
+          </div>
         </div>
 
         {/* Copyright */}
         <div className="w-full text-center">
-          <p className="text-black text-sm leading-[1.193359375em]">
+          <p className="text-[#1F2937] text-sm leading-[1.193359375em]">
             © 2025 Team Mirai
           </p>
         </div>
