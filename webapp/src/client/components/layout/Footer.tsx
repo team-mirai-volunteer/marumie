@@ -21,19 +21,19 @@ export default function Footer() {
           <div className="flex flex-row justify-center gap-8 md:contents">
             <Link
               href="/#cash-flow"
-              className="text-[#1F2937] text-sm font-bold leading-[1.36em] hover:opacity-80 transition-opacity"
+              className="text-gray-800 text-sm font-bold leading-[1.36em] hover:opacity-80 transition-opacity"
             >
               収支の流れ
             </Link>
             <Link
               href="/#monthly-trends"
-              className="text-[#1F2937] text-sm font-bold leading-[1.36em] hover:opacity-80 transition-opacity"
+              className="text-gray-800 text-sm font-bold leading-[1.36em] hover:opacity-80 transition-opacity"
             >
               1年の推移
             </Link>
             <Link
               href="/#donation-summary"
-              className="text-[#1F2937] text-sm font-bold leading-[1.36em] hover:opacity-80 transition-opacity"
+              className="text-gray-800 text-sm font-bold leading-[1.36em] hover:opacity-80 transition-opacity"
             >
               寄付金額
             </Link>
@@ -42,13 +42,13 @@ export default function Footer() {
           <div className="flex flex-row justify-center gap-8 md:contents">
             <Link
               href="/#transactions"
-              className="text-[#1F2937] text-sm font-bold leading-[1.36em] hover:opacity-80 transition-opacity"
+              className="text-gray-800 text-sm font-bold leading-[1.36em] hover:opacity-80 transition-opacity"
             >
               すべての出入金
             </Link>
             <Link
               href="/#explanation"
-              className="text-[#1F2937] text-sm font-bold leading-[1.36em] hover:opacity-80 transition-opacity"
+              className="text-gray-800 text-sm font-bold leading-[1.36em] hover:opacity-80 transition-opacity"
             >
               データについて
             </Link>
@@ -57,7 +57,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="w-full text-center">
-          <p className="text-[#1F2937] text-sm leading-[1.193359375em]">
+          <p className="text-gray-800 text-sm leading-[1.193359375em]">
             © 2025 Team Mirai
           </p>
         </div>

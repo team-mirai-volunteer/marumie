@@ -32,7 +32,7 @@ export default function DonationSummaryCards({
               <div className="flex items-baseline gap-[2px]">
                 {totalOku > 0 && (
                   <>
-                    <span className="font-bold text-2xl leading-5 text-[#1F2937]">
+                    <span className="font-bold text-2xl leading-5 text-gray-800">
                       {totalOku}
                     </span>
                     <span className="font-bold text-xs text-[#6B7280]">億</span>
@@ -40,13 +40,13 @@ export default function DonationSummaryCards({
                 )}
                 {totalMan > 0 && (
                   <>
-                    <span className="font-bold text-2xl leading-5 text-[#1F2937]">
+                    <span className="font-bold text-2xl leading-5 text-gray-800">
                       {totalMan}
                     </span>
                     <span className="font-bold text-xs text-[#6B7280]">万</span>
                   </>
                 )}
-                <span className="font-bold text-2xl leading-5 text-[#1F2937]">
+                <span className="font-bold text-2xl leading-5 text-gray-800">
                   {totalEn}
                 </span>
                 <span className="font-bold text-xs text-[#6B7280]">円</span>
@@ -80,7 +80,7 @@ export default function DonationSummaryCards({
               <div className="text-[#4B5563] font-bold text-sm">寄付件数</div>
               <div className="flex flex-col items-end gap-2">
                 <div className="flex items-baseline gap-[2px]">
-                  <span className="font-bold text-2xl leading-5 text-[#1F2937]">
+                  <span className="font-bold text-2xl leading-5 text-gray-800">
                     {totalDonationDays}
                   </span>
                   <span className="font-bold text-xs text-[#4B5563]">件</span>
@@ -116,7 +116,7 @@ export default function DonationSummaryCards({
                 {"企業\n団体献金"}
               </div>
               <div className="flex items-baseline gap-[2px]">
-                <span className="font-bold text-2xl leading-5 text-[#1F2937]">
+                <span className="font-bold text-2xl leading-5 text-gray-800">
                   0
                 </span>
                 <span className="font-bold text-xs text-[#4B5563]">件</span>
@@ -132,7 +132,7 @@ export default function DonationSummaryCards({
         <BaseCard className="flex-1">
           <div className="flex flex-col">
             <div className="flex justify-between items-start mb-4">
-              <div className="text-[#1F2937] font-bold text-base">
+              <div className="text-gray-800 font-bold text-base">
                 累計寄付金額
               </div>
               <div className="flex items-center gap-[2px]">
@@ -157,28 +157,28 @@ export default function DonationSummaryCards({
             <div className="flex items-baseline gap-1">
               {totalOku > 0 && (
                 <>
-                  <span className="font-bold text-[40px] leading-[30px] text-[#1F2937]">
+                  <span className="font-bold text-[40px] leading-[30px] text-gray-800">
                     {totalOku}
                   </span>
-                  <span className="font-bold text-base leading-[30px] text-[#1F2937]">
+                  <span className="font-bold text-base leading-[30px] text-gray-800">
                     億
                   </span>
                 </>
               )}
               {totalMan > 0 && (
                 <>
-                  <span className="font-bold text-[40px] leading-[30px] text-[#1F2937]">
+                  <span className="font-bold text-[40px] leading-[30px] text-gray-800">
                     {totalMan}
                   </span>
-                  <span className="font-bold text-base leading-[30px] text-[#1F2937]">
+                  <span className="font-bold text-base leading-[30px] text-gray-800">
                     万
                   </span>
                 </>
               )}
-              <span className="font-bold text-[40px] leading-[30px] text-[#1F2937]">
+              <span className="font-bold text-[40px] leading-[30px] text-gray-800">
                 {totalEn}
               </span>
-              <span className="font-bold text-base leading-[30px] text-[#1F2937]">
+              <span className="font-bold text-base leading-[30px] text-gray-800">
                 円
               </span>
             </div>
@@ -189,7 +189,7 @@ export default function DonationSummaryCards({
         <BaseCard className="w-60">
           <div className="flex flex-col gap-4">
             <div className="flex flex-row items-center gap-6">
-              <div className="text-[#1F2937] font-bold text-base">寄付件数</div>
+              <div className="text-gray-800 font-bold text-base">寄付件数</div>
               <div className="flex items-center gap-[2px]">
                 <span className="text-[#238778] font-bold text-[13px]">
                   前日比
@@ -209,10 +209,10 @@ export default function DonationSummaryCards({
             </div>
 
             <div className="flex items-baseline gap-1">
-              <span className="font-bold text-[36px] leading-[30px] text-[#1F2937]">
+              <span className="font-bold text-[36px] leading-[30px] text-gray-800">
                 {totalDonationDays}
               </span>
-              <span className="font-bold text-base text-[#1F2937]">件</span>
+              <span className="font-bold text-base text-gray-800">件</span>
             </div>
           </div>
         </BaseCard>
@@ -220,14 +220,14 @@ export default function DonationSummaryCards({
         {/* 企業団体献金カード */}
         <BaseCard className="w-60">
           <div className="flex flex-col gap-4">
-            <div className="text-[#1F2937] font-bold text-base">
+            <div className="text-gray-800 font-bold text-base">
               企業団体献金
             </div>
             <div className="flex items-baseline gap-1">
-              <span className="font-bold text-[36px] leading-[30px] text-[#1F2937]">
+              <span className="font-bold text-[36px] leading-[30px] text-gray-800">
                 0
               </span>
-              <span className="font-bold text-base text-[#1F2937]">件</span>
+              <span className="font-bold text-base text-gray-800">件</span>
             </div>
           </div>
         </BaseCard>
