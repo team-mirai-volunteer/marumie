@@ -120,10 +120,7 @@ export default function DonationChart({
                 const oku = Math.floor(value / 100000000);
                 const man = Math.floor((value % 100000000) / 10000);
                 const en = value % 10000;
-                let amountStr = "";
-                if (oku > 0) amountStr += `${oku}億`;
-                if (man > 0) amountStr += `${man}万`;
-                if (en > 0 || amountStr === "") amountStr += `${en}円`;
+                const amountStr = `${oku > 0 ? `${oku}億` : ""}${man > 0 ? `${man}万` : ""}${en > 0 ? `${en}` : ""}円`;
                 return [amountStr, "累計寄付金額"];
               }}
               labelFormatter={(label: string) => {
