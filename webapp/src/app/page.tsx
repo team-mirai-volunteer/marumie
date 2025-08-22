@@ -1,11 +1,11 @@
 import "server-only";
+import ExplanationSection from "@/client/components/common/ExplanationSection";
+import TransparencySection from "@/client/components/common/TransparencySection";
 import MainColumn from "@/client/components/layout/MainColumn";
 import CashFlowSection from "@/client/components/top-page/CashFlowSection";
 import DonationSummarySection from "@/client/components/top-page/DonationSummarySection";
-import ExplanationSection from "@/client/components/top-page/ExplanationSection";
 import MonthlyTrendsSection from "@/client/components/top-page/MonthlyTrendsSection";
 import TransactionsSection from "@/client/components/top-page/TransactionsSection";
-import WhySection from "@/client/components/top-page/WhySection";
 import { getTransactionPageDataAction } from "@/server/actions/get-transaction-page-data";
 
 export const revalidate = 300; // 5 minutes
@@ -26,7 +26,7 @@ export default async function Home() {
       <CashFlowSection sankeyData={data?.sankeyData ?? null} />
       <MonthlyTrendsSection monthlyData={data?.monthlyData} />
       <DonationSummarySection donationSummary={data?.donationSummary} />
-      <WhySection />
+      <TransparencySection title="党首も毎日これを見て、お金をやりくりしています🤔" />
       <TransactionsSection transactionData={data?.transactionData ?? null} />
       <ExplanationSection />
     </MainColumn>
