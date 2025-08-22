@@ -2,6 +2,7 @@ import "server-only";
 import Image from "next/image";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
+import MonthlyChart from "./components/MonthlyChart";
 
 interface MonthlyData {
   yearMonth: string;
@@ -32,24 +33,8 @@ export default function MonthlyTrendsSection({
         subtitle="今年の年始から月ごとの収入と支出"
       />
 
-      {/* 月次データ表示 */}
-      {monthlyData && monthlyData.length > 0 ? (
-        <div className="space-y-4">
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h4 className="font-medium mb-2">Data</h4>
-            <pre className="text-xs bg-white p-3 rounded border overflow-auto max-h-32">
-              {JSON.stringify(monthlyData, null, 2)}
-            </pre>
-          </div>
-        </div>
-      ) : (
-        <div className="h-[462px] bg-gray-50 rounded-lg flex items-center justify-center">
-          <div className="text-center text-gray-500">
-            <div className="text-lg font-medium mb-2">月次収支推移グラフ</div>
-            <div className="text-sm">データがありません</div>
-          </div>
-        </div>
-      )}
+      {/* 月次チャート表示 */}
+      <MonthlyChart data={monthlyData || []} />
     </MainColumnCard>
   );
 }
