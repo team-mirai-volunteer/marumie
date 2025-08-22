@@ -38,8 +38,6 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export const revalidate = 300; // 5 minutes
-
 export default async function TransactionsPage({
   searchParams,
 }: TransactionsPageProps) {
