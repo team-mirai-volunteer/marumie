@@ -1,11 +1,11 @@
 import "server-only";
 import MainColumn from "@/client/components/layout/MainColumn";
-import CashFlowSection from "@/client/components/organization-page/CashFlowSection";
-import DonationSummarySection from "@/client/components/organization-page/DonationSummarySection";
-import ExplanationSection from "@/client/components/organization-page/ExplanationSection";
-import MonthlyTrendsSection from "@/client/components/organization-page/MonthlyTrendsSection";
-import TransactionsSection from "@/client/components/organization-page/TransactionsSection";
-import WhySection from "@/client/components/organization-page/WhySection";
+import CashFlowSection from "@/client/components/top-page/CashFlowSection";
+import DonationSummarySection from "@/client/components/top-page/DonationSummarySection";
+import ExplanationSection from "@/client/components/top-page/ExplanationSection";
+import MonthlyTrendsSection from "@/client/components/top-page/MonthlyTrendsSection";
+import TransactionsSection from "@/client/components/top-page/TransactionsSection";
+import WhySection from "@/client/components/top-page/WhySection";
 import { getTransactionPageDataAction } from "@/server/actions/get-transaction-page-data";
 
 export const revalidate = 300; // 5 minutes

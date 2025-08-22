@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumn from "@/client/components/layout/MainColumn";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
-import TransactionTableWrapper from "@/client/components/organization-page/components/TransactionTableWrapper";
+import InteractiveTransactionTable from "@/client/components/top-page/features/transactions-table/TransactionTableWrapper";
 import { getTransactionsBySlugAction } from "@/server/actions/get-transactions-by-slug";
 
 interface TransactionsPageProps {
@@ -106,7 +106,7 @@ export default async function TransactionsPage({
             subtitle="どこから政治資金を得て、何に使っているのか"
           />
 
-          <TransactionTableWrapper
+          <InteractiveTransactionTable
             transactions={data.transactions}
             total={data.total}
             page={data.page}

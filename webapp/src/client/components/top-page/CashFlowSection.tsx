@@ -3,8 +3,8 @@ import "client-only";
 import Image from "next/image";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
-import FinancialSummarySection from "@/client/components/organization-page/components/FinancialSummarySection";
-import SankeyChart from "@/client/components/organization-page/components/SankeyChart";
+import SankeyChart from "@/client/components/top-page/features/charts/SankeyChart";
+import FinancialSummarySection from "@/client/components/top-page/features/financial-summary/FinancialSummarySection";
 
 import type { SankeyData } from "@/types/sankey";
 
