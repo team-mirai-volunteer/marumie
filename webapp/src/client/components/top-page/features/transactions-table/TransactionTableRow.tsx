@@ -86,20 +86,13 @@ export default function TransactionTableRow({
 
           {/* Title and Amount section */}
           <div className="flex items-center justify-between gap-4">
-            <span
-              className="text-sm font-bold text-gray-800 flex-1"
-              style={{
-                fontFamily: "Noto Sans JP",
-                lineHeight: "1.43em",
-              }}
-            >
+            <span className="text-sm font-bold text-gray-800 flex-1 leading-[1.43em]">
               {transaction.tags || transaction.category}
             </span>
             <span
-              className="text-base font-bold text-right"
-              style={{
-                color: isIncome ? "#238778" : "#DC2626",
-              }}
+              className={`text-base font-bold text-right ${
+                isIncome ? "text-[#238778]" : "text-[#DC2626]"
+              }`}
             >
               {isIncome ? "+" : "-"}
               {formatCurrency(Math.abs(transaction.amount))}
@@ -109,19 +102,15 @@ export default function TransactionTableRow({
           {/* Category label section */}
           <div className="flex items-center">
             <div
-              className="flex items-center gap-2 px-2 py-0.5 rounded-full border"
+              className="flex items-center gap-2 px-2 py-0.5 rounded-full border h-[18px]"
               style={{
                 backgroundColor: categoryColors.bgColor,
                 borderColor: categoryColors.borderColor,
-                borderWidth: "1px",
-                height: "18px",
               }}
             >
               <span
-                className="text-xs font-medium text-center"
+                className="text-xs font-medium text-center leading-[1em]"
                 style={{
-                  fontFamily: "Noto Sans JP",
-                  lineHeight: "1em",
                   color: categoryColors.fontColor,
                 }}
               >
@@ -134,7 +123,7 @@ export default function TransactionTableRow({
 
       {/* Desktop Layout - Table row layout */}
       {/* Date column - 140px width */}
-      <td className="hidden sm:table-cell px-4 h-16" style={{ width: "140px" }}>
+      <td className="hidden sm:table-cell px-4 h-16 w-[140px]">
         <span className="leading-4 font-bold text-base text-gray-800">
           {formatDate(transaction.date)}
         </span>
@@ -148,17 +137,11 @@ export default function TransactionTableRow({
       </td>
 
       {/* Amount column - 180px width */}
-      <td
-        className="hidden sm:table-cell text-right pr-6 h-16"
-        style={{ width: "180px" }}
-      >
+      <td className="hidden sm:table-cell text-right pr-6 h-16 w-[180px]">
         <span
-          className="leading-4 font-bold text-xl"
-          style={{
-            lineHeight: "1em",
-            color: isIncome ? "#238778" : "#DC2626",
-            letterSpacing: "1%",
-          }}
+          className={`leading-[1em] font-bold text-xl tracking-[0.01em] ${
+            isIncome ? "text-[#238778]" : "text-[#DC2626]"
+          }`}
         >
           {isIncome ? "+" : "-"}
           {formatCurrency(Math.abs(transaction.amount))}
@@ -166,20 +149,18 @@ export default function TransactionTableRow({
       </td>
 
       {/* Category column - 160px width */}
-      <td className="hidden sm:table-cell pl-4 h-16" style={{ width: "160px" }}>
+      <td className="hidden sm:table-cell pl-4 h-16 w-[160px]">
         <div className="flex justify-center items-center h-11">
           <div
             className="flex flex-col justify-center items-center gap-2 px-3 rounded-full border"
             style={{
               backgroundColor: categoryColors.bgColor,
               borderColor: categoryColors.borderColor,
-              borderWidth: "1px",
             }}
           >
             <span
-              className="font-medium text-xs leading-5 text-center"
+              className="font-medium text-xs leading-[1.67em] text-center"
               style={{
-                lineHeight: "1.67em",
                 color: categoryColors.fontColor,
               }}
             >
