@@ -13,7 +13,7 @@ export default function HamburgerMenuButton({
   return (
     <button
       type="button"
-      className="p-1 hover:bg-gray-100 transition-colors"
+      className="p-1 hover:bg-gray-100 transition-colors cursor-pointer"
       onClick={onClick}
       aria-label="メニューを開く"
     >

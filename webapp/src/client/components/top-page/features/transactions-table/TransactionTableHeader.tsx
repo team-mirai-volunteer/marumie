@@ -26,7 +26,7 @@ export default function TransactionTableHeader({
             <button
               type="button"
               onClick={() => onSort("date")}
-              className="flex items-center gap-1 h-5 hover:opacity-70 transition-opacity"
+              className="flex items-center gap-1 h-5 hover:opacity-70 transition-opacity cursor-pointer"
             >
               <span className="text-gray-800 text-sm font-bold leading-[1.5]">
                 日付
@@ -78,7 +78,7 @@ export default function TransactionTableHeader({
             <button
               type="button"
               onClick={() => onSort("amount")}
-              className="flex items-center gap-1 h-5 hover:opacity-70 transition-opacity ml-auto"
+              className="flex items-center gap-1 h-5 hover:opacity-70 transition-opacity ml-auto cursor-pointer"
             >
               <span className="text-gray-800 text-sm font-bold leading-[1.5]">
                 金額

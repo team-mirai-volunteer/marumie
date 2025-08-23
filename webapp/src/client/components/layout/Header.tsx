@@ -45,7 +45,7 @@ export default function Header() {
           {/* Logo and Title Section */}
           <Link
             href="/"
-            className="flex items-center gap-2 lg:gap-4 hover:opacity-80 transition-opacity"
+            className="flex items-center gap-2 lg:gap-4 hover:opacity-80 transition-opacity cursor-pointer"
           >
             {/* Logo */}
             <div className="flex items-center">
@@ -86,7 +86,7 @@ export default function Header() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap"
+                    className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap cursor-pointer"
                   >
                     {item.desktopLabel}
                   </Link>
@@ -96,7 +96,7 @@ export default function Header() {
             {/* Desktop Year Selector */}
             <button
               type="button"
-              className="flex items-center gap-1 px-4 py-1.5 bg-gradient-to-r from-teal-200 to-green-200 rounded-full border border-gray-800 border-opacity-50"
+              className="flex items-center gap-1 px-4 py-1.5 bg-gradient-to-r from-teal-200 to-green-200 rounded-full border border-gray-800 border-opacity-50 cursor-pointer"
             >
               <span className="text-sm font-medium text-gray-800">2025年</span>
               <Image
@@ -114,7 +114,7 @@ export default function Header() {
             {/* Year Selector */}
             <button
               type="button"
-              className="flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-teal-200 to-green-200 rounded-full border border-gray-800 border-opacity-50"
+              className="flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-teal-200 to-green-200 rounded-full border border-gray-800 border-opacity-50 cursor-pointer"
             >
               <span className="text-sm font-medium text-gray-800">2025年</span>
               <Image
@@ -143,7 +143,7 @@ export default function Header() {
               <div key={item.href}>
                 <Link
                   href={item.href}
-                  className="flex items-center justify-between py-3 px-1 hover:opacity-80 transition-opacity"
+                  className="flex items-center justify-between py-3 px-1 hover:opacity-80 transition-opacity cursor-pointer"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <span className="text-sm font-bold text-black">
