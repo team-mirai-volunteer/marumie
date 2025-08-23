@@ -20,6 +20,45 @@ interface SankeyChartProps {
   data: SankeyData;
 }
 
+const renderTotalNode = (node: SankeyNodeWithPosition, isMobile: boolean) => {
+  const width = !isMobile ? 48 : 24; // デスクトップ: 12 * 4, モバイル: 12 * 2
+  const x = node.x - (width - 12) / 2; // 中央に配置
+  return (
+    <rect
+      key={node.id}
+      x={x}
+      y={node.y}
+      width={width}
+      height={node.height}
+      fill="#4F566B"
+      opacity={1}
+    />
+  );
+};
+
+const renderRegularNode = (node: SankeyNodeWithPosition, isMobile: boolean) => {
+  let color = "#EF4444"; // デフォルトは赤（支出）
+
+  if (node.nodeType === "income" || node.nodeType === "income-sub") {
+    color = "#2AA693"; // 収入ノード（緑）
+  }
+
+  const width = !isMobile ? 25 : 18; // デスクトップ: 25px, モバイル: 12 * 1.5
+  const x = node.x - (width - 12) / 2; // 中央に配置
+
+  return (
+    <rect
+      key={node.id}
+      x={x}
+      y={node.y}
+      width={width}
+      height={node.height}
+      fill={color}
+      opacity={1}
+    />
+  );
+};
+
 // カスタムノードレイヤー（合計ボックスを太くする）
 const CustomNodesLayer = ({
   nodes,
@@ -36,52 +75,184 @@ const CustomNodesLayer = ({
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
   return (
     <g>
       {nodes.map((node: SankeyNodeWithPosition) => {
         console.log(
           `Node: id=${node.id}, label=${node.label}, nodeType=${node.nodeType}`,
         );
+
         if (node.nodeType === "total") {
-          // 合計ノードは横幅を4倍に、色はグレー（表示用）- デスクトップのみ
-          const width = !isMobile ? 48 : 24; // デスクトップ: 12 * 4, モバイル: 12 * 2
-          const x = node.x - (width - 12) / 2; // 中央に配置
-          return (
-            <rect
-              key={node.id}
-              x={x}
-              y={node.y}
-              width={width}
-              height={node.height}
-              fill="#4F566B"
-              opacity={1}
-            />
-          );
-        }
-        // その他のノードはラベルで色分けし、横幅を2倍に（デスクトップのみ）
-        let color = "#EF4444"; // デフォルトは赤（支出）
-
-        if (node.nodeType === "income" || node.nodeType === "income-sub") {
-          color = "#2AA693"; // 収入ノード（緑）
+          return renderTotalNode(node, isMobile);
         }
 
-        // 通常ノードの横幅をデスクトップは25px、モバイルは1.5倍（18px）に
-        const width = !isMobile ? 25 : 18; // デスクトップ: 25px, モバイル: 12 * 1.5
-        const x = node.x - (width - 12) / 2; // 中央に配置
-
-        return (
-          <rect
-            key={node.id}
-            x={x}
-            y={node.y}
-            width={width}
-            height={node.height}
-            fill={color}
-            opacity={1}
-          />
-        );
+        return renderRegularNode(node, isMobile);
       })}
     </g>
+  );
+};
+
+// カスタムラベルレイヤー（プライマリ + セカンダリ）
+const calculatePercentageText = (nodeValue?: number, totalValue?: number) => {
+  if (!nodeValue || !totalValue || totalValue === 0) {
+    return "";
+  }
+
+  const percentage = (nodeValue / totalValue) * 100;
+  return percentage < 1 ? ">1%" : `${Math.round(percentage)}%`;
+};
+
+const getBoxColor = (nodeType?: string) => {
+  if (nodeType === "total") {
+    return "#4F566B"; // グレー
+  }
+  if (nodeType === "income" || nodeType === "income-sub") {
+    return "#2AA693"; // 緑（収入）
+  }
+  return "#EF4444"; // デフォルトは赤（支出）
+};
+
+const renderTotalNodeLabels = (
+  node: SankeyNodeWithPosition,
+  boxColor: string,
+  percentageY: number,
+  isMobile: boolean,
+) => {
+  const elements = [];
+
+  // 上のラベル：「収入支出\n100%」
+  elements.push(
+    <text
+      key={`${node.id}-top`}
+      x={node.x + node.width / 2}
+      y={percentageY - (!isMobile ? 18 : 12)}
+      textAnchor="middle"
+      dominantBaseline="bottom"
+      fill={boxColor}
+      fontSize={!isMobile ? "14.5px" : "8px"}
+      fontWeight="bold"
+    >
+      <tspan x={node.x + node.width / 2} dy="0">
+        収入支出
+      </tspan>
+      <tspan x={node.x + node.width / 2} dy={!isMobile ? "16" : "10"}>
+        100%
+      </tspan>
+    </text>,
+  );
+
+  // 下のラベル：金額
+  const amountText = node.value
+    ? `${Math.round(node.value / 10000).toLocaleString("ja-JP")}万円`
+    : "";
+  if (amountText) {
+    elements.push(
+      <text
+        key={`${node.id}-bottom`}
+        x={node.x + node.width / 2}
+        y={node.y + node.height + 15}
+        textAnchor="middle"
+        dominantBaseline="top"
+        fill={boxColor}
+        fontSize={!isMobile ? "14.5px" : "8px"}
+        fontWeight="bold"
+      >
+        {amountText}
+      </text>,
+    );
+  }
+
+  return elements;
+};
+
+const renderPercentageLabel = (
+  node: SankeyNodeWithPosition,
+  percentageText: string,
+  boxColor: string,
+  percentageY: number,
+  isMobile: boolean,
+) => {
+  if (!percentageText) {
+    return null;
+  }
+
+  return (
+    <text
+      key={`${node.id}-percentage`}
+      x={node.x + node.width / 2}
+      y={percentageY}
+      textAnchor="middle"
+      dominantBaseline="bottom"
+      fill={boxColor}
+      fontSize={!isMobile ? "14.5px" : "8px"}
+      fontWeight="bold"
+    >
+      {percentageText}
+    </text>
+  );
+};
+
+const renderPrimaryLabel = (
+  node: SankeyNodeWithPosition,
+  x: number,
+  textAnchor: string,
+  isMobile: boolean,
+) => {
+  const maxCharsPerLine = 5;
+  const label = node.id; // HACK: 表示にはnode.idを使用（本来はnode.labelを使うべき）
+
+  // サブカテゴリ判定
+  const isSubcategory =
+    node.nodeType === "income-sub" || node.nodeType === "expense-sub";
+
+  const fontSize = !isMobile
+    ? isSubcategory
+      ? "11px"
+      : "14.5px" // デスクトップ: サブカテゴリは11px
+    : isSubcategory
+      ? "6px"
+      : "8px"; // モバイル: 従来通り
+
+  if (label.length <= maxCharsPerLine) {
+    return (
+      <text
+        key={`${node.id}-primary`}
+        x={x}
+        y={node.y + node.height / 2}
+        textAnchor={textAnchor}
+        dominantBaseline="central"
+        fill="#1F2937"
+        fontSize={fontSize}
+        fontWeight="bold"
+      >
+        {label}
+      </text>
+    );
+  }
+
+  // 複数行に分割
+  const lines = [];
+  for (let i = 0; i < label.length; i += maxCharsPerLine) {
+    lines.push(label.substring(i, i + maxCharsPerLine));
+  }
+
+  return (
+    <text
+      key={`${node.id}-primary`}
+      x={x}
+      y={node.y + node.height / 2 - (lines.length - 1) * 6}
+      textAnchor={textAnchor}
+      fill="#1F2937"
+      fontSize={fontSize}
+      fontWeight="bold"
+    >
+      {lines.map((line, index) => (
+        <tspan key={`${node.id}-${index}`} x={x} dy={index === 0 ? 0 : 12}>
+          {line}
+        </tspan>
+      ))}
+    </text>
   );
 };
 
@@ -102,169 +273,43 @@ const CustomLabelsLayer = ({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const maxCharsPerLine = 5;
-
   // 全体の合計値を計算（合計ノードの値を使用）
   const totalValue = nodes.find((node) => node.id === "合計")?.value || 0;
 
   return (
     <g>
       {nodes.map((node: SankeyNodeWithPosition) => {
-        const label = node.id; // HACK: 表示にはnode.idを使用（本来はnode.labelを使うべき）
-        // ラベルで収入・支出を判定
-        const isLeft = node.label === "income" || node.label === "income-sub";
+        // ノードタイプで収入・支出を判定
+        const isLeft =
+          node.nodeType === "income" || node.nodeType === "income-sub";
         const x = isLeft
           ? node.x - (!isMobile ? 12 : 5)
           : node.x + node.width + (!isMobile ? 12 : 5);
         const textAnchor = isLeft ? "end" : "start";
-
-        // セカンダリラベル（パーセンテージ）の位置と色
         const percentageY = node.y - 5; // ノードの上
-
-        // パーセンテージを計算
-        let percentageText = "";
-        if (node.value && totalValue > 0) {
-          const percentage = (node.value / totalValue) * 100;
-          if (percentage < 1) {
-            percentageText = ">1%";
-          } else {
-            percentageText = `${Math.round(percentage)}%`;
-          }
-        }
-
-        // ボックスと同じ色を取得
-        let boxColor = "#EF4444"; // デフォルトは赤（支出）
-        if (node.nodeType === "total") {
-          boxColor = "#4F566B"; // グレー
-        } else if (
-          node.nodeType === "income" ||
-          node.nodeType === "income-sub"
-        ) {
-          boxColor = "#2AA693"; // 緑（収入）
-        }
-
+        const percentageText = calculatePercentageText(node.value, totalValue);
+        const boxColor = getBoxColor(node.nodeType);
         const elements = [];
 
-        // セカンダリラベル（パーセンテージ）- 値がある場合のみ表示
         if (node.nodeType === "total") {
-          // 合計ノードの特別処理
-          // 上のラベル：「収入支出\n100%」
           elements.push(
-            <text
-              key={`${node.id}-top`}
-              x={node.x + node.width / 2}
-              y={percentageY - (!isMobile ? 18 : 12)}
-              textAnchor="middle"
-              dominantBaseline="bottom"
-              fill={boxColor}
-              fontSize={!isMobile ? "14.5px" : "8px"}
-              fontWeight="bold"
-            >
-              <tspan x={node.x + node.width / 2} dy="0">
-                収入支出
-              </tspan>
-              <tspan x={node.x + node.width / 2} dy={!isMobile ? "16" : "10"}>
-                100%
-              </tspan>
-            </text>,
+            ...renderTotalNodeLabels(node, boxColor, percentageY, isMobile),
           );
-
-          // 下のラベル：金額
-          const amountText = node.value
-            ? `${Math.round(node.value / 10000).toLocaleString("ja-JP")}万円`
-            : "";
-          if (amountText) {
-            elements.push(
-              <text
-                key={`${node.id}-bottom`}
-                x={node.x + node.width / 2}
-                y={node.y + node.height + 15}
-                textAnchor="middle"
-                dominantBaseline="top"
-                fill={boxColor}
-                fontSize={!isMobile ? "14.5px" : "8px"}
-                fontWeight="bold"
-              >
-                {amountText}
-              </text>,
-            );
-          }
         } else if (percentageText) {
-          // 通常のノードのパーセンテージ表示
-          elements.push(
-            <text
-              key={`${node.id}-percentage`}
-              x={node.x + node.width / 2}
-              y={percentageY}
-              textAnchor="middle"
-              dominantBaseline="bottom"
-              fill={boxColor}
-              fontSize={!isMobile ? "14.5px" : "8px"}
-              fontWeight="bold"
-            >
-              {percentageText}
-            </text>,
+          const percentageLabel = renderPercentageLabel(
+            node,
+            percentageText,
+            boxColor,
+            percentageY,
+            isMobile,
           );
+          if (percentageLabel) {
+            elements.push(percentageLabel);
+          }
         }
 
-        // プライマリラベル（ノード名）- 合計ノードは除外
         if (node.nodeType !== "total") {
-          // サブカテゴリ判定
-          const isSubcategory =
-            node.nodeType === "income-sub" || node.nodeType === "expense-sub";
-
-          const fontSize = !isMobile
-            ? isSubcategory
-              ? "11px"
-              : "14.5px" // デスクトップ: サブカテゴリは11px
-            : isSubcategory
-              ? "6px"
-              : "8px"; // モバイル: 従来通り
-
-          if (label.length <= maxCharsPerLine) {
-            elements.push(
-              <text
-                key={`${node.id}-primary`}
-                x={x}
-                y={node.y + node.height / 2}
-                textAnchor={textAnchor}
-                dominantBaseline="central"
-                fill="#1F2937"
-                fontSize={fontSize}
-                fontWeight="bold"
-              >
-                {label}
-              </text>,
-            );
-          } else {
-            // 複数行に分割
-            const lines = [];
-            for (let i = 0; i < label.length; i += maxCharsPerLine) {
-              lines.push(label.substring(i, i + maxCharsPerLine));
-            }
-
-            elements.push(
-              <text
-                key={`${node.id}-primary`}
-                x={x}
-                y={node.y + node.height / 2 - (lines.length - 1) * 6}
-                textAnchor={textAnchor}
-                fill="#1F2937"
-                fontSize={fontSize}
-                fontWeight="bold"
-              >
-                {lines.map((line, index) => (
-                  <tspan
-                    key={`${node.id}-${index}`}
-                    x={x}
-                    dy={index === 0 ? 0 : 12}
-                  >
-                    {line}
-                  </tspan>
-                ))}
-              </text>,
-            );
-          }
+          elements.push(renderPrimaryLabel(node, x, textAnchor, isMobile));
         }
 
         return elements;
@@ -324,13 +369,11 @@ export default function SankeyChart({ data }: SankeyChartProps) {
       return "#FBE2E7"; // 中央のbox（薄い赤、リンク色用）
     }
 
-    // 収入ノードの判定
     if (node.nodeType === "income" || node.nodeType === "income-sub") {
       return "#E5F7F4"; // 収入ノード（薄い緑、リンク色用）
     }
 
-    // デフォルトは薄い赤（支出）
-    return "#FBE2E7";
+    return "#FBE2E7"; // デフォルトは薄い赤（支出）
   };
 
   return (
