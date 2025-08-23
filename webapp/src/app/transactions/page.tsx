@@ -29,12 +29,12 @@ export async function generateMetadata(): Promise<Metadata> {
     });
 
     return {
-      title: `取引一覧 - ${result.politicalOrganization.name}`,
+      title: `みらいオープンデータ - すべての入出金（${result.politicalOrganization.name}）`,
       description: `${result.politicalOrganization.name}の政治資金取引一覧を表示しています。`,
     };
   } catch {
     return {
-      title: "取引一覧",
+      title: "みらいオープンデータ - すべての入出金",
       description: "政治資金取引一覧を表示しています。",
     };
   }
