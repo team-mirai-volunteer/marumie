@@ -5,9 +5,10 @@ import { ResponsiveSankey } from "@nivo/sankey";
 import React from "react";
 import type { SankeyData } from "@/types/sankey";
 
-interface SankeyNode {
+interface SankeyNodeWithPosition {
   id: string;
   label?: string;
+  nodeType?: "income" | "income-sub" | "total" | "expense" | "expense-sub";
   value?: number;
   x: number;
   y: number;
@@ -20,7 +21,11 @@ interface SankeyChartProps {
 }
 
 // カスタムノードレイヤー（合計ボックスを太くする）
-const CustomNodesLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
+const CustomNodesLayer = ({
+  nodes,
+}: {
+  nodes: readonly SankeyNodeWithPosition[];
+}) => {
   const [isMobile, setIsMobile] = React.useState(false);
 
   React.useEffect(() => {
@@ -33,8 +38,11 @@ const CustomNodesLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
   }, []);
   return (
     <g>
-      {nodes.map((node: SankeyNode) => {
-        if (node.id === "合計") {
+      {nodes.map((node: SankeyNodeWithPosition) => {
+        console.log(
+          `Node: id=${node.id}, label=${node.label}, nodeType=${node.nodeType}`,
+        );
+        if (node.nodeType === "total") {
           // 合計ノードは横幅を4倍に、色はグレー（表示用）- デスクトップのみ
           const width = !isMobile ? 48 : 24; // デスクトップ: 12 * 4, モバイル: 12 * 2
           const x = node.x - (width - 12) / 2; // 中央に配置
@@ -51,18 +59,10 @@ const CustomNodesLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
           );
         }
         // その他のノードはラベルで色分けし、横幅を2倍に（デスクトップのみ）
-        let color = "#EF4444"; // デフォルトは赤
+        let color = "#EF4444"; // デフォルトは赤（支出）
 
-        if (node.label?.startsWith("income-")) {
+        if (node.nodeType === "income" || node.nodeType === "income-sub") {
           color = "#2AA693"; // 収入ノード（緑）
-        } else if (node.label?.startsWith("expense-")) {
-          color = "#EF4444"; // 支出ノード（赤）
-        } else if (
-          node.id === "寄付" ||
-          node.id === "個人からの寄付" ||
-          node.id === "その他"
-        ) {
-          color = "#2AA693"; // 従来の緑ノード
         }
 
         // 通常ノードの横幅をデスクトップは25px、モバイルは1.5倍（18px）に
@@ -86,7 +86,11 @@ const CustomNodesLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
 };
 
 // カスタムラベルレイヤー（プライマリ + セカンダリ）
-const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
+const CustomLabelsLayer = ({
+  nodes,
+}: {
+  nodes: readonly SankeyNodeWithPosition[];
+}) => {
   const [isMobile, setIsMobile] = React.useState(false);
 
   React.useEffect(() => {
@@ -105,21 +109,10 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
 
   return (
     <g>
-      {nodes.map((node: SankeyNode) => {
+      {nodes.map((node: SankeyNodeWithPosition) => {
         const label = node.id; // HACK: 表示にはnode.idを使用（本来はnode.labelを使うべき）
         // ラベルで収入・支出を判定
-        let isLeft = false;
-        if (node.label?.startsWith("income-")) {
-          isLeft = true;
-        } else if (node.label?.startsWith("expense-")) {
-          isLeft = false;
-        } else if (
-          node.id === "寄付" ||
-          node.id === "個人からの寄付" ||
-          node.id === "その他"
-        ) {
-          isLeft = true;
-        }
+        const isLeft = node.label === "income" || node.label === "income-sub";
         const x = isLeft
           ? node.x - (!isMobile ? 12 : 5)
           : node.x + node.width + (!isMobile ? 12 : 5);
@@ -140,25 +133,20 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
         }
 
         // ボックスと同じ色を取得
-        let boxColor = "#EF4444"; // デフォルトは赤
-        if (node.id === "合計") {
+        let boxColor = "#EF4444"; // デフォルトは赤（支出）
+        if (node.nodeType === "total") {
           boxColor = "#4F566B"; // グレー
-        } else if (node.label?.startsWith("income-")) {
-          boxColor = "#2AA693"; // 緑
-        } else if (node.label?.startsWith("expense-")) {
-          boxColor = "#EF4444"; // 赤
         } else if (
-          node.id === "寄付" ||
-          node.id === "個人からの寄付" ||
-          node.id === "その他"
+          node.nodeType === "income" ||
+          node.nodeType === "income-sub"
         ) {
-          boxColor = "#2AA693"; // 緑
+          boxColor = "#2AA693"; // 緑（収入）
         }
 
         const elements = [];
 
         // セカンダリラベル（パーセンテージ）- 値がある場合のみ表示
-        if (node.id === "合計") {
+        if (node.nodeType === "total") {
           // 合計ノードの特別処理
           // 上のラベル：「収入支出\n100%」
           elements.push(
@@ -220,21 +208,10 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
         }
 
         // プライマリラベル（ノード名）- 合計ノードは除外
-        if (node.id !== "合計") {
-          // サブカテゴリ判定（詳細項目）
-          // メインカテゴリ以外はすべてサブカテゴリとして扱う
-          const mainCategories = [
-            "寄付",
-            "機関紙誌+その他事業収入",
-            "借入金",
-            "交付金",
-            "その他",
-            "政治活動費",
-            "経常経費",
-            "現残高",
-            "合計",
-          ];
-          const isSubcategory = !mainCategories.includes(node.id);
+        if (node.nodeType !== "total") {
+          // サブカテゴリ判定
+          const isSubcategory =
+            node.nodeType === "income-sub" || node.nodeType === "expense-sub";
 
           const fontSize = !isMobile
             ? isSubcategory
@@ -316,12 +293,8 @@ export default function SankeyChart({ data }: SankeyChartProps) {
       if (a.id === "合計" || b.id === "合計") return 0;
 
       // 収入・支出の判定
-      const isAIncome =
-        a.label?.startsWith("income-") ||
-        ["寄付", "個人からの寄付", "その他"].includes(a.id);
-      const isBIncome =
-        b.label?.startsWith("income-") ||
-        ["寄付", "個人からの寄付", "その他"].includes(b.id);
+      const isAIncome = a.label?.startsWith("income-") || false;
+      const isBIncome = b.label?.startsWith("income-") || false;
 
       // 同じカテゴリ内でのみソート（金額の多い順）
       if (isAIncome === isBIncome) {
@@ -344,30 +317,19 @@ export default function SankeyChart({ data }: SankeyChartProps) {
   // CustomNodesLayerでは濃い色でノードを描画している
   // 理想的にはlabelに接頭辞（income-, expense-）を付けて判定するが、
   // 現在は表示用のidと内部処理用のlabelが逆転している状態
-  const getNodeColor = (node: { id: string; label?: string }) => {
-    if (node.id === "合計") {
+  const getNodeColor = (node: { id: string; nodeType?: string }) => {
+    console.log(`getNodeColor: id=${node.id}, nodeType=${node.nodeType}`);
+
+    if (node.nodeType === "total") {
       return "#FBE2E7"; // 中央のbox（薄い赤、リンク色用）
     }
 
-    // node.labelに接頭辞がある場合は接頭辞で判定
-    if (node.label?.startsWith("income-")) {
+    // 収入ノードの判定
+    if (node.nodeType === "income" || node.nodeType === "income-sub") {
       return "#E5F7F4"; // 収入ノード（薄い緑、リンク色用）
     }
 
-    if (node.label?.startsWith("expense-")) {
-      return "#FBE2E7"; // 支出ノード（薄い赤、リンク色用）
-    }
-
-    // 接頭辞がない場合は従来の判定を維持
-    if (
-      node.id === "寄付" ||
-      node.id === "個人からの寄付" ||
-      node.id === "その他"
-    ) {
-      return "#E5F7F4"; // 寄付・個人からの寄付・その他ノード（薄い緑、リンク色用）
-    }
-
-    // デフォルトは薄い赤
+    // デフォルトは薄い赤（支出）
     return "#FBE2E7";
   };
 

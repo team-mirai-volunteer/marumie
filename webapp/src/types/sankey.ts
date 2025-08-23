@@ -1,6 +1,7 @@
 export interface SankeyNode {
   id: string;
   label?: string;
+  nodeType?: "income" | "income-sub" | "total" | "expense" | "expense-sub";
 }
 
 export interface SankeyLink {
