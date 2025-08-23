@@ -2,6 +2,7 @@
 import "client-only";
 
 import { ResponsiveSankey } from "@nivo/sankey";
+import React from "react";
 import type { SankeyData } from "@/types/sankey";
 
 interface SankeyNode {
@@ -20,12 +21,22 @@ interface SankeyChartProps {
 
 // カスタムノードレイヤー（合計ボックスを太くする）
 const CustomNodesLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
   return (
     <g>
       {nodes.map((node: SankeyNode) => {
         if (node.id === "合計") {
           // 合計ノードは横幅を4倍に、色はグレー（表示用）- デスクトップのみ
-          const width = window.innerWidth >= 768 ? 48 : 24; // デスクトップ: 12 * 4, モバイル: 12 * 2
+          const width = !isMobile ? 48 : 24; // デスクトップ: 12 * 4, モバイル: 12 * 2
           const x = node.x - (width - 12) / 2; // 中央に配置
           return (
             <rect
@@ -55,7 +66,7 @@ const CustomNodesLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
         }
 
         // 通常ノードの横幅をデスクトップは25px、モバイルは1.5倍（18px）に
-        const width = window.innerWidth >= 768 ? 25 : 18; // デスクトップ: 25px, モバイル: 12 * 1.5
+        const width = !isMobile ? 25 : 18; // デスクトップ: 25px, モバイル: 12 * 1.5
         const x = node.x - (width - 12) / 2; // 中央に配置
 
         return (
@@ -76,6 +87,17 @@ const CustomNodesLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
 
 // カスタムラベルレイヤー（プライマリ + セカンダリ）
 const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   const maxCharsPerLine = 5;
 
   // 全体の合計値を計算（合計ノードの値を使用）
@@ -99,8 +121,8 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
           isLeft = true;
         }
         const x = isLeft
-          ? node.x - (window.innerWidth >= 768 ? 12 : 5)
-          : node.x + node.width + (window.innerWidth >= 768 ? 12 : 5);
+          ? node.x - (!isMobile ? 12 : 5)
+          : node.x + node.width + (!isMobile ? 12 : 5);
         const textAnchor = isLeft ? "end" : "start";
 
         // セカンダリラベル（パーセンテージ）の位置と色
@@ -143,20 +165,17 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
             <text
               key={`${node.id}-top`}
               x={node.x + node.width / 2}
-              y={percentageY - (window.innerWidth >= 768 ? 18 : 12)}
+              y={percentageY - (!isMobile ? 18 : 12)}
               textAnchor="middle"
               dominantBaseline="bottom"
               fill={boxColor}
-              fontSize={window.innerWidth >= 768 ? "14.5px" : "8px"}
+              fontSize={!isMobile ? "14.5px" : "8px"}
               fontWeight="bold"
             >
               <tspan x={node.x + node.width / 2} dy="0">
                 収入支出
               </tspan>
-              <tspan
-                x={node.x + node.width / 2}
-                dy={window.innerWidth >= 768 ? "16" : "10"}
-              >
+              <tspan x={node.x + node.width / 2} dy={!isMobile ? "16" : "10"}>
                 100%
               </tspan>
             </text>,
@@ -175,7 +194,7 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
                 textAnchor="middle"
                 dominantBaseline="top"
                 fill={boxColor}
-                fontSize={window.innerWidth >= 768 ? "14.5px" : "8px"}
+                fontSize={!isMobile ? "14.5px" : "8px"}
                 fontWeight="bold"
               >
                 {amountText}
@@ -192,7 +211,7 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
               textAnchor="middle"
               dominantBaseline="bottom"
               fill={boxColor}
-              fontSize={window.innerWidth >= 768 ? "14.5px" : "8px"}
+              fontSize={!isMobile ? "14.5px" : "8px"}
               fontWeight="bold"
             >
               {percentageText}
@@ -217,14 +236,13 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
           ];
           const isSubcategory = !mainCategories.includes(node.id);
 
-          const fontSize =
-            window.innerWidth >= 768
-              ? isSubcategory
-                ? "11px"
-                : "14.5px" // デスクトップ: サブカテゴリは11px
-              : isSubcategory
-                ? "6px"
-                : "8px"; // モバイル: 従来通り
+          const fontSize = !isMobile
+            ? isSubcategory
+              ? "11px"
+              : "14.5px" // デスクトップ: サブカテゴリは11px
+            : isSubcategory
+              ? "6px"
+              : "8px"; // モバイル: 従来通り
 
           if (label.length <= maxCharsPerLine) {
             elements.push(
@@ -279,6 +297,16 @@ const CustomLabelsLayer = ({ nodes }: { nodes: readonly SankeyNode[] }) => {
 };
 
 export default function SankeyChart({ data }: SankeyChartProps) {
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
   // ノードを金額順にソートする関数
   const sortNodesByValue = (
     nodes: Array<{ id: string; label?: string; value?: number }>,
@@ -356,10 +384,10 @@ export default function SankeyChart({ data }: SankeyChartProps) {
       <ResponsiveSankey
         data={sortedData}
         margin={{
-          top: window.innerWidth >= 768 ? 40 : 20,
-          right: window.innerWidth >= 768 ? 100 : 60,
+          top: !isMobile ? 40 : 20,
+          right: !isMobile ? 100 : 60,
           bottom: 0,
-          left: window.innerWidth >= 768 ? 100 : 60,
+          left: !isMobile ? 100 : 60,
         }}
         align="justify"
         colors={getNodeColor}
@@ -379,7 +407,7 @@ export default function SankeyChart({ data }: SankeyChartProps) {
         theme={{
           labels: {
             text: {
-              fontSize: window.innerWidth >= 768 ? "14.5px" : "8px",
+              fontSize: !isMobile ? "14.5px" : "8px",
               fontWeight: "bold",
             },
           },
