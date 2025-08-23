@@ -78,7 +78,7 @@ const CHART_CONFIG = {
 interface SankeyNodeWithPosition {
   id: string;
   label?: string;
-  nodeType?: "income" | "income-sub" | "total" | "expense" | "expense-sub";
+  nodeType?: string;
   value?: number;
   x: number;
   y: number;
@@ -418,24 +418,53 @@ export default function SankeyChart({ data }: SankeyChartProps) {
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+  // ノードの金額を計算する関数（リンクから合計値を算出）
+  const calculateNodeValue = (
+    nodeId: string,
+    links: { source: string; target: string; value: number }[],
+  ) => {
+    const incomingLinks = links.filter((link) => link.target === nodeId);
+    const outgoingLinks = links.filter((link) => link.source === nodeId);
+
+    // 入力リンクがある場合はその合計、なければ出力リンクの合計
+    const totalValue =
+      incomingLinks.length > 0
+        ? incomingLinks.reduce((sum, link) => sum + (link.value || 0), 0)
+        : outgoingLinks.reduce((sum, link) => sum + (link.value || 0), 0);
+
+    return totalValue;
+  };
+
   // ノードを金額順にソートする関数
   const sortNodesByValue = (
-    nodes: Array<{ id: string; label?: string; value?: number }>,
+    nodes: Array<{ id: string; label?: string; nodeType?: string }>,
   ) => {
     return [...nodes].sort((a, b) => {
       // 合計ノードは中央に配置されるので除外
-      if (a.id === TEXT.TOTAL_NODE_ID || b.id === TEXT.TOTAL_NODE_ID) return 0;
-
-      // 収入・支出の判定
-      const isAIncome = a.label?.startsWith("income-") || false;
-      const isBIncome = b.label?.startsWith("income-") || false;
-
-      // 同じカテゴリ内でのみソート（金額の多い順）
-      if (isAIncome === isBIncome) {
-        return (b.value || 0) - (a.value || 0);
+      if (a.id === TEXT.TOTAL_NODE_ID || b.id === TEXT.TOTAL_NODE_ID) {
+        return 0;
       }
 
-      return 0; // 異なるカテゴリはソートしない
+      // ノードタイプによる優先順位
+      const typeOrder = {
+        income: 1,
+        "income-sub": 2,
+        expense: 3,
+        "expense-sub": 4,
+      } as const;
+
+      const aOrder = typeOrder[a.nodeType as keyof typeof typeOrder] || 99;
+      const bOrder = typeOrder[b.nodeType as keyof typeof typeOrder] || 99;
+
+      if (aOrder !== bOrder) {
+        return aOrder - bOrder; // タイプ順
+      }
+
+      // 同じタイプ内では金額の絶対値順（降順）
+      const aValue = Math.abs(calculateNodeValue(a.id, data.links));
+      const bValue = Math.abs(calculateNodeValue(b.id, data.links));
+
+      return bValue - aValue;
     });
   };
 
