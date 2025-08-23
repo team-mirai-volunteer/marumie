@@ -81,7 +81,10 @@ export default function DonationChart({
           直近1ヶ月の寄付金額の推移
         </h4>
       </div>
-      <div style={{ height: height }}>
+      <div
+        style={{ height: height }}
+        className="[&_.recharts-line]:outline-none [&_.recharts-area]:outline-none [&_.recharts-cartesian-grid]:outline-none [&_*]:outline-none"
+      >
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
