@@ -48,7 +48,8 @@ const DIMENSIONS = {
   // その他
   TSPAN_DY_DESKTOP: "16",
   TSPAN_DY_MOBILE: "10",
-  CHART_HEIGHT: 300,
+  CHART_HEIGHT_DESKTOP: 450, // 300 * 1.5
+  CHART_HEIGHT_MOBILE: 300,
 } as const;
 
 const TEXT = {
@@ -67,9 +68,9 @@ const CHART_CONFIG = {
   MARGIN_TOP_MOBILE: 20,
   MARGIN_HORIZONTAL_DESKTOP: 100,
   MARGIN_HORIZONTAL_MOBILE: 60,
-  MARGIN_BOTTOM: 0,
+  MARGIN_BOTTOM: 30, // 0 -> 30 に増加して下部の文字用スペースを確保
   NODE_THICKNESS: 12,
-  NODE_SPACING: 16,
+  NODE_SPACING: 24, // 16 -> 24 に増加してノード間の間隔を広げる
   LINK_OPACITY: 0.5,
   LINK_HOVER_OPACITY: 0.8,
   HOVER_OPACITY: 0.9,
@@ -492,7 +493,11 @@ export default function SankeyChart({ data }: SankeyChartProps) {
 
   return (
     <div
-      style={{ height: DIMENSIONS.CHART_HEIGHT }}
+      style={{
+        height: !isMobile
+          ? DIMENSIONS.CHART_HEIGHT_DESKTOP
+          : DIMENSIONS.CHART_HEIGHT_MOBILE,
+      }}
       className="sankey-container"
     >
       <style jsx global>{`
