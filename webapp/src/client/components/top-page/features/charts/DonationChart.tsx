@@ -81,7 +81,7 @@ export default function DonationChart({
           直近1ヶ月の寄付金額の推移
         </h4>
       </div>
-      <div style={{ height: height }}>
+      <div style={{ height: height, pointerEvents: "none" }}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
