@@ -10,6 +10,7 @@ import {
 } from "@/server/usecases/get-transactions-by-slug-usecase";
 
 const prisma = new PrismaClient();
+const CACHE_REVALIDATE_SECONDS = 60;
 
 export const getTransactionsBySlugAction = unstable_cache(
   async (params: GetTransactionsBySlugParams) => {
@@ -24,5 +25,5 @@ export const getTransactionsBySlugAction = unstable_cache(
     return await usecase.execute(params);
   },
   ["transactions-by-slug"],
-  { revalidate: 60 },
+  { revalidate: CACHE_REVALIDATE_SECONDS },
 );

@@ -14,6 +14,7 @@ import {
 } from "@/server/usecases/get-transactions-by-slug-usecase";
 
 const prisma = new PrismaClient();
+const CACHE_REVALIDATE_SECONDS = 60;
 
 export interface GetTransactionPageDataParams
   extends Omit<GetTransactionsBySlugParams, "financialYear"> {
@@ -81,5 +82,5 @@ export const getTransactionPageDataAction = unstable_cache(
     };
   },
   ["transaction-page-data"],
-  { revalidate: 60 },
+  { revalidate: CACHE_REVALIDATE_SECONDS },
 );
