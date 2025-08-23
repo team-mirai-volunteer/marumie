@@ -1,6 +1,7 @@
 "use server";
 
 import { PrismaClient } from "@prisma/client";
+import { unstable_cache } from "next/cache";
 import { PrismaPoliticalOrganizationRepository } from "@/server/repositories/prisma-political-organization.repository";
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
 import {
@@ -10,16 +11,18 @@ import {
 
 const prisma = new PrismaClient();
 
-export async function getTransactionsBySlugAction(
-  params: GetTransactionsBySlugParams,
-) {
-  const transactionRepository = new PrismaTransactionRepository(prisma);
-  const politicalOrganizationRepository =
-    new PrismaPoliticalOrganizationRepository(prisma);
-  const usecase = new GetTransactionsBySlugUsecase(
-    transactionRepository,
-    politicalOrganizationRepository,
-  );
+export const getTransactionsBySlugAction = unstable_cache(
+  async (params: GetTransactionsBySlugParams) => {
+    const transactionRepository = new PrismaTransactionRepository(prisma);
+    const politicalOrganizationRepository =
+      new PrismaPoliticalOrganizationRepository(prisma);
+    const usecase = new GetTransactionsBySlugUsecase(
+      transactionRepository,
+      politicalOrganizationRepository,
+    );
 
-  return await usecase.execute(params);
-}
+    return await usecase.execute(params);
+  },
+  ["transactions-by-slug"],
+  { revalidate: 60 },
+);
