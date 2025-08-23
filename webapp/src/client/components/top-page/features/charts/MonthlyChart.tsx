@@ -92,7 +92,7 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
         enabled: false,
       },
       events: {
-        beforeMount: (chartContext: any) => {
+        beforeMount: (chartContext: { el: HTMLElement }) => {
           // チャートコンテナのタッチイベントを親要素に委譲
           if (typeof window !== "undefined" && "ontouchstart" in window) {
             const chartEl = chartContext.el;
