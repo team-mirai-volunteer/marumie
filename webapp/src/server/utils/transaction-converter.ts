@@ -60,6 +60,7 @@ export function convertToDisplayTransaction(
     transactionType: transaction.transaction_type,
     category,
     subcategory,
+    label: account,
     tags: transaction.tags,
     absAmount,
     amount,

@@ -1,6 +1,7 @@
 "use client";
 import "client-only";
 
+import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 import type { DisplayTransaction } from "@/types/display-transaction";
 
 interface TransactionTableRowProps {
@@ -30,47 +31,41 @@ export default function TransactionTableRow({
     return transaction.subcategory || transaction.category;
   };
 
-  const getCategoryColors = (category: string, subcategory?: string) => {
-    // Special colors for donation category based on Figma design
-    if (category === "寄付") {
-      return {
-        fontColor: "#1F2937",
-        borderColor: "#E0F6C9",
-        bgColor: "#E0F6C9",
-      };
+  const getCategoryColors = (transaction: DisplayTransaction) => {
+    const isIncome = transaction.amount > 0;
+
+    // Find mapping based on label (original account name)
+    const mapping = ACCOUNT_CATEGORY_MAPPING[transaction.label];
+    const color = mapping?.color;
+
+    if (color) {
+      if (isIncome) {
+        // 収入: 色で塗りつぶして文字色は固定
+        return {
+          fontColor: "#47474C",
+          borderColor: color,
+          bgColor: color,
+        };
+      } else {
+        // 支出: 白抜きで文字と線が色
+        return {
+          fontColor: color,
+          borderColor: color,
+          bgColor: "#FFFFFF",
+        };
+      }
     }
 
-    // Special colors for advertising expenses subcategory based on Figma design
-    if (subcategory === "宣伝費") {
-      return {
-        fontColor: "#0369A1",
-        borderColor: "#0369A1",
-        bgColor: "#FFFFFF",
-      };
-    }
-
-    // Special colors for election-related expenses subcategory based on Figma design
-    if (subcategory === "選挙関係費") {
-      return {
-        fontColor: "#1F2937",
-        borderColor: "#F5D0FE",
-        bgColor: "#F5D0FE",
-      };
-    }
-
-    // Return the same colors for all other categories initially
+    // フォールバック: マッピングが見つからない場合
     return {
-      fontColor: "#1F2937",
+      fontColor: "#47474C",
       borderColor: "#99F6E4",
-      bgColor: "#99F6E4",
+      bgColor: isIncome ? "#99F6E4" : "#FFFFFF",
     };
   };
 
   const isIncome = transaction.transactionType === "income";
-  const categoryColors = getCategoryColors(
-    transaction.category,
-    transaction.subcategory,
-  );
+  const categoryColors = getCategoryColors(transaction);
 
   return (
     <tr className="w-full border-b border-[#D5DBE1]">
