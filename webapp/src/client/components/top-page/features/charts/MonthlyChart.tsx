@@ -214,7 +214,7 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
         shape: "square" as const,
       },
       itemMargin: {
-        horizontal: 24,
+        horizontal: 6,
         vertical: 0,
       },
     },
