@@ -9,22 +9,26 @@ interface CsvPreviewProps {
 }
 
 export default function CsvPreview({ file, onParseComplete }: CsvPreviewProps) {
-  const [records, setRecords] = useState<MfCsvRecord[]>([]);
+  const [allRecords, setAllRecords] = useState<MfCsvRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [totalRows, setTotalRows] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const perPage = 10;
 
   useEffect(() => {
     if (!file) {
-      setRecords([]);
+      setAllRecords([]);
       setError(null);
       setTotalRows(0);
+      setCurrentPage(1);
       return;
     }
 
     const parseFile = async () => {
       setLoading(true);
       setError(null);
+      setCurrentPage(1);
 
       try {
         const text = await file.text();
@@ -61,13 +65,12 @@ export default function CsvPreview({ file, onParseComplete }: CsvPreviewProps) {
         const dataLines = lines.slice(1).filter(line => line.trim());
         setTotalRows(dataLines.length);
 
-        const previewLines = dataLines.slice(0, 10);
-        const parsedRecords = previewLines.map(line => {
+        const parsedRecords = dataLines.map(line => {
           const values = parseCSVLine(line);
           return createRecord(headers, values, columnMapping);
         });
 
-        setRecords(parsedRecords);
+        setAllRecords(parsedRecords);
         onParseComplete?.(parsedRecords, true);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : "CSVの解析に失敗しました";
@@ -143,6 +146,21 @@ export default function CsvPreview({ file, onParseComplete }: CsvPreviewProps) {
     return { ...defaultRecord, ...record };
   };
 
+  const handlePageChange = (page: number) => {
+    const totalPages = Math.ceil(totalRows / perPage);
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const getCurrentPageRecords = () => {
+    const startIndex = (currentPage - 1) * perPage;
+    const endIndex = startIndex + perPage;
+    return allRecords.slice(startIndex, endIndex);
+  };
+
+  const totalPages = Math.ceil(totalRows / perPage);
+
   if (!file) return null;
 
   if (loading) {
@@ -165,13 +183,15 @@ export default function CsvPreview({ file, onParseComplete }: CsvPreviewProps) {
     );
   }
 
-  if (records.length === 0) return null;
+  if (allRecords.length === 0) return null;
+
+  const currentRecords = getCurrentPageRecords();
 
   return (
     <div className="card" style={{ marginTop: "16px" }}>
       <h3>CSVプレビュー</h3>
       <p className="muted" style={{ marginBottom: "16px" }}>
-        全 {totalRows} 件中 最初の {Math.min(10, records.length)} 件を表示
+        全 {totalRows} 件中 {(currentPage - 1) * perPage + 1} - {Math.min(currentPage * perPage, totalRows)} 件を表示
       </p>
       
       <div style={{ overflowX: "auto" }}>
@@ -199,7 +219,7 @@ export default function CsvPreview({ file, onParseComplete }: CsvPreviewProps) {
             </tr>
           </thead>
           <tbody>
-            {records.map((record, index) => (
+            {currentRecords.map((record, index) => (
               <tr key={index} style={{ borderBottom: "1px solid #374151" }}>
                 <td style={{ padding: "12px 8px", fontSize: "14px" }}>
                   {record.transaction_date}
@@ -234,6 +254,87 @@ export default function CsvPreview({ file, onParseComplete }: CsvPreviewProps) {
           </tbody>
         </table>
       </div>
+
+      {totalPages > 1 && (
+        <div
+          style={{
+            marginTop: "24px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage <= 1}
+            className="button"
+            style={{
+              padding: "8px 12px",
+              fontSize: "14px",
+              opacity: currentPage <= 1 ? 0.5 : 1,
+              cursor: currentPage <= 1 ? "not-allowed" : "pointer",
+            }}
+          >
+            前へ
+          </button>
+
+          <div style={{ display: "flex", gap: "4px" }}>
+            {Array.from(
+              { length: Math.min(5, totalPages) },
+              (_, i) => {
+                let pageNum: number;
+                if (totalPages <= 5) {
+                  pageNum = i + 1;
+                } else if (currentPage <= 3) {
+                  pageNum = i + 1;
+                } else if (currentPage >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i;
+                } else {
+                  pageNum = currentPage - 2 + i;
+                }
+
+                return (
+                  <button
+                    type="button"
+                    key={pageNum}
+                    onClick={() => handlePageChange(pageNum)}
+                    className="button"
+                    style={{
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      backgroundColor:
+                        pageNum === currentPage ? "#3b82f6" : "#374151",
+                      color: "white",
+                    }}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              },
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage >= totalPages}
+            className="button"
+            style={{
+              padding: "8px 12px",
+              fontSize: "14px",
+              opacity: currentPage >= totalPages ? 0.5 : 1,
+              cursor:
+                currentPage >= totalPages
+                  ? "not-allowed"
+                  : "pointer",
+            }}
+          >
+            次へ
+          </button>
+        </div>
+      )}
     </div>
   );
 }
