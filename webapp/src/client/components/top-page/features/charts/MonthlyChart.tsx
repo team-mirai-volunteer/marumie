@@ -53,8 +53,27 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
   // データの最大絶対値を取得してY軸の範囲を動的に設定
   const allValues = [...incomeData, ...expenseData, ...balanceData];
   const maxAbsValue = Math.max(...allValues.map((val) => Math.abs(val)));
-  const yAxisMax = Math.ceil(maxAbsValue * 1.2); // 20%のマージンを追加
+  const maxWithMargin = maxAbsValue * 1.2; // 20%のマージンを追加
+
+  // maxAbsValueに応じて刻み幅を決定し、四捨五入
+  let yAxisMax: number;
+  let tickInterval: number;
+  if (maxAbsValue > 100000000) {
+    // 1億円より大きい場合は1000万円刻み
+    tickInterval = 10000000;
+    yAxisMax = Math.round(maxWithMargin / tickInterval) * tickInterval;
+  } else {
+    // 1億円以下の場合は100万円刻み
+    tickInterval = 1000000;
+    yAxisMax = Math.round(maxWithMargin / tickInterval) * tickInterval;
+  }
   const yAxisMin = -yAxisMax;
+
+  // 明示的な目盛り位置を生成
+  const tickValues: number[] = [];
+  for (let i = yAxisMin; i <= yAxisMax; i += tickInterval) {
+    tickValues.push(i);
+  }
 
   // ApexChartsのseries設定
   const series = [
@@ -137,9 +156,9 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
         labels: {
           formatter: (val: number) => {
             if (val === 0) return "0万円";
-            const absVal = Math.abs(val);
-            const manEn = absVal / 10000; // 円を万円に変換
-            if (manEn >= 10000) {
+            const manEn = val / 10000; // 円を万円に変換
+            const absManEn = Math.abs(manEn);
+            if (absManEn >= 10000) {
               return `${(manEn / 10000).toFixed(0)}億円`;
             }
             return `${manEn.toFixed(0)}万円`;
@@ -154,6 +173,8 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
         min: yAxisMin,
         max: yAxisMax,
         tickAmount: 4,
+        forceNiceScale: false,
+        // ApexChartsのY軸設定では、tickAmountで目盛り数を制御
         axisBorder: {
           show: true,
           color: "#E2E8F0",
@@ -193,7 +214,7 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
         shape: "square" as const,
       },
       itemMargin: {
-        horizontal: 24,
+        horizontal: 6,
         vertical: 0,
       },
     },
@@ -238,6 +259,14 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
     <div className="overflow-x-auto overflow-y-hidden rounded-lg bg-white">
       <div className="min-w-[600px]" style={{ height: 462 }}>
         <Chart options={options} series={series} type="line" height={462} />
+        <style jsx global>{`
+          .apexcharts-tooltip-title {
+            display: none !important;
+          }
+          .apexcharts-xaxistooltip {
+            display: none !important;
+          }
+        `}</style>
       </div>
     </div>
   );
