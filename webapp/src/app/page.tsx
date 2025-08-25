@@ -26,7 +26,7 @@ export default async function Home() {
       <CashFlowSection sankeyData={data?.sankeyData ?? null} />
       <MonthlyTrendsSection monthlyData={data?.monthlyData} />
       <DonationSummarySection donationSummary={data?.donationSummary} />
-      <TransparencySection title="党首も毎日これを見て、お金をやりくりしています🤔" />
+      <TransparencySection title="党首も毎日これを見て、お金をやりくりしています👀" />
       <TransactionsSection transactionData={data?.transactionData ?? null} />
       <ExplanationSection />
     </MainColumn>

@@ -7,7 +7,7 @@ import TransparencySection from "@/client/components/common/TransparencySection"
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumn from "@/client/components/layout/MainColumn";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
-import InteractiveTransactionTable from "@/client/components/top-page/features/transactions-table/TransactionTableWrapper";
+import InteractiveTransactionTable from "@/client/components/top-page/features/transactions-table/InteractiveTransactionTable";
 import { getTransactionsBySlugAction } from "@/server/actions/get-transactions-by-slug";
 
 interface TransactionsPageProps {
