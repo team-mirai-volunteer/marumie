@@ -92,21 +92,6 @@ export default function Header() {
                   </Link>
                 ))}
             </nav>
-
-            {/* Desktop Year Selector */}
-            <button
-              type="button"
-              className="flex items-center gap-1 px-4 py-1.5 bg-gradient-to-r from-teal-200 to-green-200 rounded-full border border-gray-800 border-opacity-50 cursor-pointer"
-            >
-              <span className="text-sm font-medium text-gray-800">2025年</span>
-              <Image
-                src="/icons/icon-chevron-down.svg"
-                alt="下向き矢印"
-                width={12}
-                height={12}
-                className="text-gray-800"
-              />
-            </button>
           </div>
 
           {/* Mobile Menu */}
