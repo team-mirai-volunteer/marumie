@@ -60,6 +60,14 @@ export default function UploadCsvPage() {
         result.message ||
           `Successfully processed ${result.processedCount} records and saved ${result.savedCount} transactions`,
       );
+      
+      setFile(null);
+      setPreviewValid(false);
+      
+      const fileInput = document.getElementById(csvFileInputId) as HTMLInputElement;
+      if (fileInput) {
+        fileInput.value = '';
+      }
     } catch (err) {
       setMessage(`Error: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
