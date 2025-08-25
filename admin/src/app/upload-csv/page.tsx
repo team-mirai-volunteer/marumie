@@ -3,6 +3,8 @@
 import { useEffect, useId, useState } from "react";
 import { apiClient } from "@/client/clients/api-client";
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
+import CsvPreview from "@/client/components/CsvPreview";
+import type { MfCsvRecord } from "@/server/lib/mf-csv-loader";
 
 export default function UploadCsvPage() {
   const politicalOrgSelectId = useId();
@@ -12,6 +14,7 @@ export default function UploadCsvPage() {
     useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [uploading, setUploading] = useState(false);
+  const [previewValid, setPreviewValid] = useState(false);
   const [organizations, setOrganizations] = useState<PoliticalOrganization[]>(
     [],
   );
@@ -37,6 +40,10 @@ export default function UploadCsvPage() {
     fetchOrganizations();
   }, []);
 
+  const handlePreviewComplete = (records: MfCsvRecord[], isValid: boolean) => {
+    setPreviewValid(isValid);
+  };
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!file || !politicalOrganizationId) return;
@@ -53,6 +60,14 @@ export default function UploadCsvPage() {
         result.message ||
           `Successfully processed ${result.processedCount} records and saved ${result.savedCount} transactions`,
       );
+      
+      setFile(null);
+      setPreviewValid(false);
+      
+      const fileInput = document.getElementById(csvFileInputId) as HTMLInputElement;
+      if (fileInput) {
+        fileInput.value = '';
+      }
     } catch (err) {
       setMessage(`Error: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
@@ -104,11 +119,15 @@ export default function UploadCsvPage() {
             required
           />
         </div>
+        
+        <CsvPreview file={file} onParseComplete={handlePreviewComplete} />
+        
         <button
           className="button"
           disabled={
             !file ||
             !politicalOrganizationId ||
+            !previewValid ||
             uploading ||
             loadingOrganizations
           }
