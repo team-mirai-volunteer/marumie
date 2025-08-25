@@ -9,6 +9,21 @@ import TransactionTableMobileHeader, {
   type SortOption,
 } from "./TransactionTableMobileHeader";
 
+interface SortConfig {
+  sort: "date" | "amount";
+  order: "asc" | "desc";
+  filterType?: "income" | "expense";
+}
+
+const SORT_CONFIGS: Record<SortOption, SortConfig> = {
+  "date-desc": { sort: "date", order: "desc" },
+  "date-asc": { sort: "date", order: "asc" },
+  "amount-desc": { sort: "amount", order: "desc" },
+  "amount-asc": { sort: "amount", order: "asc" },
+  "income-desc": { sort: "amount", order: "desc", filterType: "income" },
+  "expense-asc": { sort: "amount", order: "asc", filterType: "expense" },
+};
+
 interface InteractiveTransactionTableProps {
   transactions: DisplayTransaction[];
   total: number;
@@ -53,13 +68,17 @@ export default function InteractiveTransactionTable({
 
   const handleMobileSortChange = (sortOption: SortOption) => {
     const params = new URLSearchParams(searchParams.toString());
-    const [field, order] = sortOption.split("-") as [
-      "date" | "amount",
-      "asc" | "desc",
-    ];
+    const config = SORT_CONFIGS[sortOption];
 
-    params.set("sort", field);
-    params.set("order", order);
+    params.set("sort", config.sort);
+    params.set("order", config.order);
+
+    if (config.filterType) {
+      params.set("filterType", config.filterType);
+    } else {
+      params.delete("filterType");
+    }
+
     params.set("page", "1");
     router.push(`?${params.toString()}`);
   };
@@ -67,6 +86,19 @@ export default function InteractiveTransactionTable({
   const getCurrentSortOption = (): SortOption => {
     const sort = currentSort || "date";
     const order = currentOrder || "desc";
+
+    // Find matching sort option from configuration
+    for (const [sortOption, config] of Object.entries(SORT_CONFIGS)) {
+      if (
+        config.sort === sort &&
+        config.order === order &&
+        config.filterType === filterType
+      ) {
+        return sortOption as SortOption;
+      }
+    }
+
+    // Fallback to basic sort-order pattern
     return `${sort}-${order}` as SortOption;
   };
 
@@ -75,6 +107,10 @@ export default function InteractiveTransactionTable({
 
   const currentSort = searchParams.get("sort") as "date" | "amount" | null;
   const currentOrder = searchParams.get("order") as "asc" | "desc" | null;
+  const filterType = searchParams.get("filterType") as
+    | "income"
+    | "expense"
+    | null;
 
   return (
     <>
