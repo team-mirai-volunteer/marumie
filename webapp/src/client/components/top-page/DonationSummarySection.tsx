@@ -1,5 +1,6 @@
 import "server-only";
 import Image from "next/image";
+import Link from "next/link";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 import MainButton from "@/client/components/ui/MainButton";
@@ -70,7 +71,13 @@ export default function DonationSummarySection({
         <p className="text-gray-800 font-bold text-base leading-7 mb-6">
           チームみらいは、皆さまのご支援・ご寄付のおかげで活動を続けられております。
         </p>
-        <MainButton>ご寄付はこちら</MainButton>
+        <Link
+          href="https://team-mir.ai/support/donation"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <MainButton>ご寄付はこちら</MainButton>
+        </Link>
       </div>
     </MainColumnCard>
   );
