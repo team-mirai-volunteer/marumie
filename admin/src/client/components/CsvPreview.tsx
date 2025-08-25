@@ -280,39 +280,149 @@ export default function CsvPreview({ file, onParseComplete }: CsvPreviewProps) {
             前へ
           </button>
 
-          <div style={{ display: "flex", gap: "4px" }}>
-            {Array.from(
-              { length: Math.min(5, totalPages) },
-              (_, i) => {
-                let pageNum: number;
-                if (totalPages <= 5) {
-                  pageNum = i + 1;
-                } else if (currentPage <= 3) {
-                  pageNum = i + 1;
-                } else if (currentPage >= totalPages - 2) {
-                  pageNum = totalPages - 4 + i;
-                } else {
-                  pageNum = currentPage - 2 + i;
-                }
-
-                return (
-                  <button
-                    type="button"
-                    key={pageNum}
-                    onClick={() => handlePageChange(pageNum)}
-                    className="button"
-                    style={{
-                      padding: "8px 12px",
-                      fontSize: "14px",
-                      backgroundColor:
-                        pageNum === currentPage ? "#3b82f6" : "#374151",
-                      color: "white",
-                    }}
-                  >
-                    {pageNum}
-                  </button>
-                );
-              },
+          <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+            {totalPages <= 7 ? (
+              Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                <button
+                  type="button"
+                  key={pageNum}
+                  onClick={() => handlePageChange(pageNum)}
+                  className="button"
+                  style={{
+                    padding: "8px 12px",
+                    fontSize: "14px",
+                    backgroundColor:
+                      pageNum === currentPage ? "#3b82f6" : "#374151",
+                    color: "white",
+                  }}
+                >
+                  {pageNum}
+                </button>
+              ))
+            ) : (
+              <>
+                {currentPage <= 4 ? (
+                  <>
+                    {[1, 2, 3, 4, 5].map((pageNum) => (
+                      <button
+                        type="button"
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className="button"
+                        style={{
+                          padding: "8px 12px",
+                          fontSize: "14px",
+                          backgroundColor:
+                            pageNum === currentPage ? "#3b82f6" : "#374151",
+                          color: "white",
+                        }}
+                      >
+                        {pageNum}
+                      </button>
+                    ))}
+                    <span style={{ padding: "8px 4px", color: "#9ca3af" }}>...</span>
+                    <button
+                      type="button"
+                      onClick={() => handlePageChange(totalPages)}
+                      className="button"
+                      style={{
+                        padding: "8px 12px",
+                        fontSize: "14px",
+                        backgroundColor:
+                          totalPages === currentPage ? "#3b82f6" : "#374151",
+                        color: "white",
+                      }}
+                    >
+                      {totalPages}
+                    </button>
+                  </>
+                ) : currentPage >= totalPages - 3 ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => handlePageChange(1)}
+                      className="button"
+                      style={{
+                        padding: "8px 12px",
+                        fontSize: "14px",
+                        backgroundColor:
+                          1 === currentPage ? "#3b82f6" : "#374151",
+                        color: "white",
+                      }}
+                    >
+                      1
+                    </button>
+                    <span style={{ padding: "8px 4px", color: "#9ca3af" }}>...</span>
+                    {[totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages].map((pageNum) => (
+                      <button
+                        type="button"
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className="button"
+                        style={{
+                          padding: "8px 12px",
+                          fontSize: "14px",
+                          backgroundColor:
+                            pageNum === currentPage ? "#3b82f6" : "#374151",
+                          color: "white",
+                        }}
+                      >
+                        {pageNum}
+                      </button>
+                    ))}
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => handlePageChange(1)}
+                      className="button"
+                      style={{
+                        padding: "8px 12px",
+                        fontSize: "14px",
+                        backgroundColor:
+                          1 === currentPage ? "#3b82f6" : "#374151",
+                        color: "white",
+                      }}
+                    >
+                      1
+                    </button>
+                    <span style={{ padding: "8px 4px", color: "#9ca3af" }}>...</span>
+                    {[currentPage - 1, currentPage, currentPage + 1].map((pageNum) => (
+                      <button
+                        type="button"
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className="button"
+                        style={{
+                          padding: "8px 12px",
+                          fontSize: "14px",
+                          backgroundColor:
+                            pageNum === currentPage ? "#3b82f6" : "#374151",
+                          color: "white",
+                        }}
+                      >
+                        {pageNum}
+                      </button>
+                    ))}
+                    <span style={{ padding: "8px 4px", color: "#9ca3af" }}>...</span>
+                    <button
+                      type="button"
+                      onClick={() => handlePageChange(totalPages)}
+                      className="button"
+                      style={{
+                        padding: "8px 12px",
+                        fontSize: "14px",
+                        backgroundColor:
+                          totalPages === currentPage ? "#3b82f6" : "#374151",
+                        color: "white",
+                      }}
+                    >
+                      {totalPages}
+                    </button>
+                  </>
+                )}
+              </>
             )}
           </div>
 
