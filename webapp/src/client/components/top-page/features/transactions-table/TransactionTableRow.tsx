@@ -27,8 +27,8 @@ export default function TransactionTableRow({
   };
 
   const getCategoryLabel = (transaction: DisplayTransaction) => {
-    // Use subcategory if available, otherwise use category
-    return transaction.subcategory || transaction.category;
+    // Use shortLabel from Figma design
+    return transaction.shortLabel;
   };
 
   const getCategoryColors = (transaction: DisplayTransaction) => {
@@ -104,7 +104,7 @@ export default function TransactionTableRow({
               }}
             >
               <span
-                className="text-xs font-medium text-center leading-[1em]"
+                className="text-xs font-medium text-left leading-[1em]"
                 style={{
                   color: categoryColors.fontColor,
                 }}
@@ -145,7 +145,7 @@ export default function TransactionTableRow({
 
       {/* Category column - 160px width */}
       <td className="hidden md:table-cell pl-4 h-16 w-[160px]">
-        <div className="flex justify-center items-center h-11">
+        <div className="flex justify-start items-center h-11">
           <div
             className="flex flex-col justify-center items-center gap-2 px-3 rounded-full border"
             style={{
@@ -154,7 +154,7 @@ export default function TransactionTableRow({
             }}
           >
             <span
-              className="font-medium text-xs leading-[1.67em] text-center"
+              className="font-medium text-xs leading-[1.67em] text-left"
               style={{
                 color: categoryColors.fontColor,
               }}

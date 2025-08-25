@@ -14,6 +14,8 @@ export function getCategoryMapping(account: string): CategoryMapping {
     ACCOUNT_CATEGORY_MAPPING[account] || {
       category: "unknown",
       subcategory: "unknown",
+      color: "#99F6E4",
+      shortLabel: "不明",
     }
   );
 }
