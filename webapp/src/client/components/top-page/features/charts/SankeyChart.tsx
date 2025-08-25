@@ -3,7 +3,9 @@ import "client-only";
 
 import { ResponsiveSankey } from "@nivo/sankey";
 import React from "react";
+import { createPortal } from "react-dom";
 import type { SankeyData } from "@/types/sankey";
+import InteractiveRect from "./InteractiveRect";
 
 // 定数定義
 const BREAKPOINT = {
@@ -112,24 +114,6 @@ const getNodeFillColor = (nodeType: string | undefined) => {
   return COLORS.EXPENSE;
 };
 
-const renderNode = (node: SankeyNodeWithPosition, isMobile: boolean) => {
-  const width = getNodeWidth(node.nodeType, isMobile);
-  const x = node.x - (width - DIMENSIONS.NODE_BASE_WIDTH) / 2;
-  const color = getNodeFillColor(node.nodeType);
-
-  return (
-    <rect
-      key={node.id}
-      x={x}
-      y={node.y}
-      width={width}
-      height={node.height}
-      fill={color}
-      opacity={1}
-    />
-  );
-};
-
 // カスタムノードレイヤー（合計ボックスを太くする）
 const CustomNodesLayer = ({
   nodes,
@@ -137,6 +121,12 @@ const CustomNodesLayer = ({
   nodes: readonly SankeyNodeWithPosition[];
 }) => {
   const [isMobile, setIsMobile] = React.useState(false);
+  const [tooltip, setTooltip] = React.useState<{
+    visible: boolean;
+    x: number;
+    y: number;
+    node: SankeyNodeWithPosition | null;
+  }>({ visible: false, x: 0, y: 0, node: null });
 
   React.useEffect(() => {
     const checkMobile = () => {
@@ -147,12 +137,87 @@ const CustomNodesLayer = ({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  const handleMouseEnter = (
+    event: React.MouseEvent,
+    nodeData: { id: string; value?: number },
+  ) => {
+    // 元のnode情報を再構築（必要な場合）
+    const originalNode = nodes.find((n) => n.id === nodeData.id);
+    setTooltip({
+      visible: true,
+      x: event.clientX + 10,
+      y: event.clientY - 10,
+      node:
+        originalNode ||
+        ({ id: nodeData.id, value: nodeData.value } as SankeyNodeWithPosition),
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setTooltip((prev) => ({ ...prev, visible: false }));
+  };
+
+  const handleMouseMove = (event: React.MouseEvent) => {
+    if (tooltip.visible) {
+      setTooltip((prev) => ({
+        ...prev,
+        x: event.clientX + 10,
+        y: event.clientY - 10,
+      }));
+    }
+  };
+
   return (
-    <g>
-      {nodes.map((node: SankeyNodeWithPosition) => {
-        return renderNode(node, isMobile);
-      })}
-    </g>
+    <>
+      <g>
+        {nodes.map((node: SankeyNodeWithPosition) => {
+          const width = getNodeWidth(node.nodeType, isMobile);
+          const x = node.x - (width - DIMENSIONS.NODE_BASE_WIDTH) / 2;
+          const color = getNodeFillColor(node.nodeType);
+
+          return (
+            <InteractiveRect
+              key={node.id}
+              id={node.id}
+              x={x}
+              y={node.y}
+              width={width}
+              height={node.height}
+              fill={color}
+              value={node.value}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              onMouseMove={handleMouseMove}
+            />
+          );
+        })}
+      </g>
+      {tooltip.visible &&
+        tooltip.node &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            style={{
+              position: "fixed",
+              left: tooltip.x,
+              top: tooltip.y,
+              background: "white",
+              padding: "8px 12px",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+              fontSize: "12px",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+              zIndex: 9999,
+              pointerEvents: "none",
+            }}
+          >
+            <strong>{tooltip.node.id}</strong>
+            <br />
+            {`¥${Math.round(tooltip.node.value || 0).toLocaleString("ja-JP")}`}
+          </div>,
+          document.body,
+        )}
+    </>
   );
 };
 
@@ -533,9 +598,10 @@ export default function SankeyChart({ data }: SankeyChartProps) {
         nodeSpacing={CHART_CONFIG.NODE_SPACING}
         sort="auto"
         linkOpacity={CHART_CONFIG.LINK_OPACITY}
-        linkHoverOpacity={CHART_CONFIG.LINK_HOVER_OPACITY}
+        linkHoverOpacity={CHART_CONFIG.LINK_OPACITY}
         enableLinkGradient={false}
         enableLabels={false}
+        isInteractive={false}
         layers={["links", CustomNodesLayer, CustomLabelsLayer]}
         theme={{
           labels: {
