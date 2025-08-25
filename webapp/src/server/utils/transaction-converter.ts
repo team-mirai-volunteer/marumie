@@ -61,6 +61,7 @@ export function convertToDisplayTransaction(
     category,
     subcategory,
     label: account,
+    shortLabel: categoryMapping.shortLabel,
     tags: transaction.tags,
     absAmount,
     amount,
