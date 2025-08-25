@@ -53,13 +53,26 @@ export default function InteractiveTransactionTable({
 
   const handleMobileSortChange = (sortOption: SortOption) => {
     const params = new URLSearchParams(searchParams.toString());
-    const [field, order] = sortOption.split("-") as [
-      "date" | "amount",
-      "asc" | "desc",
-    ];
 
-    params.set("sort", field);
-    params.set("order", order);
+    if (sortOption === "income-desc" || sortOption === "expense-asc") {
+      params.set("sort", "amount");
+      params.set("order", sortOption === "income-desc" ? "desc" : "asc");
+      params.set(
+        "filterType",
+        sortOption === "income-desc" ? "income" : "expense",
+      );
+    } else {
+      const [field, order] = sortOption.split("-") as [
+        "date" | "amount",
+        "asc" | "desc",
+      ];
+      params.set("sort", field);
+      params.set("order", order);
+      if (field === "date") {
+        params.delete("filterType");
+      }
+    }
+
     params.set("page", "1");
     router.push(`?${params.toString()}`);
   };
@@ -67,6 +80,16 @@ export default function InteractiveTransactionTable({
   const getCurrentSortOption = (): SortOption => {
     const sort = currentSort || "date";
     const order = currentOrder || "desc";
+
+    if (sort === "amount" && filterType) {
+      if (filterType === "income" && order === "desc") {
+        return "income-desc";
+      }
+      if (filterType === "expense" && order === "asc") {
+        return "expense-asc";
+      }
+    }
+
     return `${sort}-${order}` as SortOption;
   };
 
@@ -75,6 +98,10 @@ export default function InteractiveTransactionTable({
 
   const currentSort = searchParams.get("sort") as "date" | "amount" | null;
   const currentOrder = searchParams.get("order") as "asc" | "desc" | null;
+  const filterType = searchParams.get("filterType") as
+    | "income"
+    | "expense"
+    | null;
 
   return (
     <>

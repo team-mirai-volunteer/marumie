@@ -54,9 +54,11 @@ export default async function TransactionsPage({
   );
   const perPage = 20; // Fixed value
 
-  const transactionType = Array.isArray(searchParamsResolved.transactionType)
-    ? searchParamsResolved.transactionType[0]
-    : searchParamsResolved.transactionType;
+  const filterType = Array.isArray(searchParamsResolved.filterType)
+    ? searchParamsResolved.filterType[0]
+    : searchParamsResolved.filterType;
+
+  const transactionType = filterType as "income" | "expense" | undefined;
 
   // sortBy: 'date' | 'amount' (read from 'sort' URL parameter)
   const sortBy = Array.isArray(searchParamsResolved.sort)
@@ -80,11 +82,7 @@ export default async function TransactionsPage({
       slug,
       page,
       perPage,
-      transactionType: transactionType as
-        | "income"
-        | "expense"
-        | "other"
-        | undefined,
+      transactionType,
       financialYear,
       sortBy: sortBy as "date" | "amount" | undefined,
       order: order as "asc" | "desc" | undefined,
