@@ -259,6 +259,14 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
     <div className="overflow-x-auto overflow-y-hidden rounded-lg bg-white">
       <div className="min-w-[600px]" style={{ height: 462 }}>
         <Chart options={options} series={series} type="line" height={462} />
+        <style jsx global>{`
+          .apexcharts-tooltip-title {
+            display: none !important;
+          }
+          .apexcharts-xaxistooltip {
+            display: none !important;
+          }
+        `}</style>
       </div>
     </div>
   );
