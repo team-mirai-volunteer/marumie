@@ -14,6 +14,8 @@ export function getCategoryMapping(account: string): CategoryMapping {
     ACCOUNT_CATEGORY_MAPPING[account] || {
       category: "unknown",
       subcategory: "unknown",
+      color: "#99F6E4",
+      shortLabel: "不明",
     }
   );
 }
@@ -60,6 +62,8 @@ export function convertToDisplayTransaction(
     transactionType: transaction.transaction_type,
     category,
     subcategory,
+    label: account,
+    shortLabel: categoryMapping.shortLabel,
     tags: transaction.tags,
     absAmount,
     amount,
