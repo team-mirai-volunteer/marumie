@@ -2,8 +2,9 @@ import 'server-only';
 import { loginWithPassword } from '@/server/actions/auth';
 import InviteProcessor from './processor';
 
-export default function LoginPage({ searchParams }: { searchParams?: { error?: string } }) {
-  const error = searchParams?.error ?? '';
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  const params = await searchParams;
+  const error = params?.error ?? '';
 
   return (
     <div className="container" style={{ gridTemplateColumns: '1fr' }}>
