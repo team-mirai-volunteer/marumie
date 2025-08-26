@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Sidebar from "@/client/components/Sidebar";
-import { logout } from '@/server/actions/auth';
+import { logout } from '@/server/auth/login';
 import "./styles.css";
 
 export const metadata: Metadata = {

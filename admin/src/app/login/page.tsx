@@ -1,5 +1,5 @@
 import 'server-only';
-import { loginWithPassword } from '@/server/actions/auth';
+import { loginWithPassword } from '@/server/auth/login';
 import InviteProcessor from './processor';
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {

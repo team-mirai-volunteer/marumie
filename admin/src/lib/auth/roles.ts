@@ -1,4 +1,4 @@
-import { createClient } from "@/server/supabase/client";
+import { createClient } from "@/server/auth/client";
 import { PrismaClient, UserRole } from "@prisma/client";
 import { PrismaUserRepository } from "@/server/repositories/prisma-user.repository";
 

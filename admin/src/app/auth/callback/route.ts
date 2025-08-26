@@ -1,6 +1,6 @@
 import 'server-only';
 import { NextResponse } from 'next/server';
-import { createClient } from '@/server/supabase/client';
+import { createClient } from '@/server/auth/client';
 import { PrismaClient } from '@prisma/client';
 import { PrismaUserRepository } from '@/server/repositories/prisma-user.repository';
 

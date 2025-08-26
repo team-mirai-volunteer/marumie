@@ -1,7 +1,7 @@
 'use server';
 
 import { redirect } from 'next/navigation';
-import { createClient } from '@/server/supabase/client';
+import { createClient } from '@/server/auth/client';
 import { PrismaClient } from '@prisma/client';
 import { PrismaUserRepository } from '@/server/repositories/prisma-user.repository';
 
@@ -53,7 +53,6 @@ export async function completeInviteSession(accessToken: string, refreshToken: s
     return { ok: false, error: userError?.message || 'no_user' };
   }
 
-  // Ensure user exists in application database with default role
   const existing = await userRepository.findByAuthId(user.id);
   if (!existing && user.email) {
     await userRepository.create({ authId: user.id, email: user.email, role: 'user' });
