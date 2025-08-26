@@ -1,7 +1,7 @@
 import 'server-only';
 import { NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth/roles";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { requireRole } from "@/server/auth/roles";
+import { createAdminClient } from "@/server/auth/admin";
 
 export async function POST(request: Request) {
   try {
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
 
     // Send invitation using Supabase Admin API
     const { data, error } = await supabase.auth.admin.inviteUserByEmail(email, {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'}/auth/callback`
+      redirectTo: `${process.env.SITE_URL || 'http://localhost:3001'}/auth/callback`
     });
 
     if (error) {

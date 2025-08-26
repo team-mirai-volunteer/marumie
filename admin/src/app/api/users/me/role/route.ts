@@ -1,6 +1,6 @@
 import 'server-only';
 import { NextResponse } from "next/server";
-import { getCurrentUserRole } from "@/lib/auth/roles";
+import { getCurrentUserRole } from "@/server/auth/roles";
 
 export async function GET() {
   try {

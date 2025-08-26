@@ -1,4 +1,4 @@
-import { createClient } from "@/server/supabase/client";
+import { createClient } from "@/server/auth/client";
 import { PrismaClient, UserRole } from "@prisma/client";
 import { PrismaUserRepository } from "@/server/repositories/prisma-user.repository";
 
@@ -15,13 +15,11 @@ export async function getCurrentUserRole(): Promise<UserRole | null> {
 
   if (!user) return null;
 
-  // First check database for role
   const dbUser = await userRepository.findByAuthId(user.id);
   if (dbUser) {
     return dbUser.role;
   }
 
-  // Fallback to user_metadata if not in database
   return user.user_metadata?.role || "user";
 }
 
@@ -33,11 +31,9 @@ export async function getCurrentUser() {
 
   if (!user) return null;
 
-  // Get or create user in database
   let dbUser = await userRepository.findByAuthId(user.id);
   
   if (!dbUser && user.email) {
-    // Auto-create user with default role
     dbUser = await userRepository.create({
       authId: user.id,
       email: user.email,
@@ -50,12 +46,11 @@ export async function getCurrentUser() {
 
 export async function requireRole(requiredRole: UserRole): Promise<boolean> {
   const currentRole = await getCurrentUserRole();
-
   if (!currentRole) return false;
-
   if (requiredRole === "admin") {
     return currentRole === "admin";
   }
-
-  return true; // user role can access user-level features
+  return true;
 }
+
+

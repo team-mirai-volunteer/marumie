@@ -1,4 +1,4 @@
-import { createClient } from "@/server/supabase/client";
+import { createClient } from "@/server/auth/client";
 
 export const runtime = "nodejs";
 
