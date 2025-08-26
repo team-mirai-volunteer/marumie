@@ -65,26 +65,42 @@ body {
   /* font-family: sans-serif; */
 }
 
-/* フォーカスインジケーター */
+/* フォーカスインジケーター - キーボードナビゲーション用のみ */
 *:focus {
+  outline: none; /* デフォルトのアウトラインを無効化 */
+}
+
+*:focus-visible {
   outline: 2px solid #2aa693;
   outline-offset: 2px;
 }
 
-/* フォーカス時のボタンスタイル */
+/* ボタンのフォーカス - キーボードのみ */
+button:focus {
+  outline: none;
+}
+
 button:focus-visible {
   outline: 2px solid #2aa693;
   outline-offset: 2px;
 }
 
-/* リンクのフォーカス */
+/* リンクのフォーカス - キーボードのみ */
+a:focus {
+  outline: none;
+}
+
 a:focus-visible {
   outline: 2px solid #2aa693;
   outline-offset: 2px;
 }
 
-/* テーブルのフォーカス */
+/* テーブルのフォーカス - キーボードのみ */
 table:focus {
+  outline: none;
+}
+
+table:focus-visible {
   outline: 2px solid #2aa693;
   outline-offset: 2px;
 }
