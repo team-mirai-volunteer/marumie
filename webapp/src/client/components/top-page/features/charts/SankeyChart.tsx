@@ -564,7 +564,13 @@ export default function SankeyChart({ data }: SankeyChartProps) {
           : DIMENSIONS.CHART_HEIGHT_MOBILE,
       }}
       className="sankey-container"
+      role="img"
+      aria-label="政治資金の収支フロー図"
+      aria-describedby="sankey-chart-description"
     >
+      <div id="sankey-chart-description" className="sr-only">
+        政治資金の収入から支出へのお金の流れを示すサンキーダイアグラムです。
+      </div>
       <style jsx global>{`
         .sankey-container svg path:hover {
           opacity: ${CHART_CONFIG.HOVER_OPACITY} !important;

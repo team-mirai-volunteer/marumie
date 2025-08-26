@@ -23,7 +23,7 @@ export default function TransactionTable({
   return (
     <div className="space-y-6">
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white">
+        <table className="min-w-full bg-white" aria-label="政治資金取引一覧表">
           {/* Show header only on desktop */}
           <TransactionTableHeader
             allowControl={allowControl}

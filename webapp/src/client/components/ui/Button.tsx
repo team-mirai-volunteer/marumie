@@ -5,6 +5,8 @@ interface ButtonProps {
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
   style?: React.CSSProperties;
+  "aria-label"?: string;
+  "aria-describedby"?: string;
 }
 
 export default function Button({
@@ -14,6 +16,8 @@ export default function Button({
   type = "button",
   disabled = false,
   style,
+  "aria-label": ariaLabel,
+  "aria-describedby": ariaDescribedby,
 }: ButtonProps) {
   return (
     <button
@@ -21,6 +25,8 @@ export default function Button({
       onClick={onClick}
       disabled={disabled}
       style={style}
+      aria-label={ariaLabel}
+      aria-describedby={ariaDescribedby}
       className={`
         inline-flex
         items-center

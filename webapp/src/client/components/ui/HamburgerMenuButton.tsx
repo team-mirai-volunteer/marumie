@@ -15,7 +15,8 @@ export default function HamburgerMenuButton({
       type="button"
       className="p-1 hover:bg-gray-100 transition-colors cursor-pointer"
       onClick={onClick}
-      aria-label="メニューを開く"
+      aria-label={isOpen ? "メニューを閉じる" : "メニューを開く"}
+      aria-expanded={isOpen}
     >
       <div className="w-6 h-6 flex flex-col justify-center items-center">
         <span
