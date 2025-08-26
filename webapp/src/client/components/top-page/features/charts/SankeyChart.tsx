@@ -593,7 +593,7 @@ export default function SankeyChart({ data }: SankeyChartProps) {
             ? CHART_CONFIG.MARGIN_HORIZONTAL_DESKTOP
             : CHART_CONFIG.MARGIN_HORIZONTAL_MOBILE,
         }}
-        align="justify"
+        align="center"
         colors={getNodeColor}
         valueFormat={(v) =>
           `¥${Math.round(v as number).toLocaleString("ja-JP")}`
