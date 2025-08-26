@@ -115,7 +115,7 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
           // チャートコンテナのタッチイベントを親要素に委譲
           if (typeof window !== "undefined" && "ontouchstart" in window) {
             const chartEl = chartContext.el;
-            chartEl.style.touchAction = "pan-x";
+            chartEl.style.touchAction = "pan-x pan-y";
           }
         },
       },

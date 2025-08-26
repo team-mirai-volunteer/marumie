@@ -60,7 +60,7 @@ const TEXT = {
   TOTAL_LABEL_TOP: "収入支出",
   TOTAL_LABEL_PERCENTAGE: "100%",
   PERCENTAGE_THRESHOLD: 1,
-  PERCENTAGE_UNDER_ONE: ">1%",
+  PERCENTAGE_UNDER_ONE: "<1%",
   CURRENCY_DIVIDER: 10000,
   CURRENCY_UNIT: "万円",
 } as const;
@@ -69,10 +69,10 @@ const CHART_CONFIG = {
   MARGIN_TOP_DESKTOP: 40,
   MARGIN_TOP_MOBILE: 20,
   MARGIN_HORIZONTAL_DESKTOP: 100,
-  MARGIN_HORIZONTAL_MOBILE: 60,
-  MARGIN_BOTTOM: 30, // 0 -> 30 に増加して下部の文字用スペースを確保
+  MARGIN_HORIZONTAL_MOBILE: 40,
+  MARGIN_BOTTOM: 30,
   NODE_THICKNESS: 12,
-  NODE_SPACING: 24, // 16 -> 24 に増加してノード間の間隔を広げる
+  NODE_SPACING: 24,
   LINK_OPACITY: 0.5,
   LINK_HOVER_OPACITY: 0.8,
   HOVER_OPACITY: 0.9,
@@ -145,8 +145,8 @@ const CustomNodesLayer = ({
     const originalNode = nodes.find((n) => n.id === nodeData.id);
     setTooltip({
       visible: true,
-      x: event.clientX + 10,
-      y: event.clientY - 10,
+      x: event.pageX + 10, // clientX → pageX でスクロール位置を含む
+      y: event.pageY - 10, // clientY → pageY でスクロール位置を含む
       node:
         originalNode ||
         ({ id: nodeData.id, value: nodeData.value } as SankeyNodeWithPosition),
@@ -161,8 +161,8 @@ const CustomNodesLayer = ({
     if (tooltip.visible) {
       setTooltip((prev) => ({
         ...prev,
-        x: event.clientX + 10,
-        y: event.clientY - 10,
+        x: event.pageX + 10, // clientX → pageX でスクロール位置を含む
+        y: event.pageY - 10, // clientY → pageY でスクロール位置を含む
       }));
     }
   };
@@ -198,7 +198,7 @@ const CustomNodesLayer = ({
         createPortal(
           <div
             style={{
-              position: "fixed",
+              position: "absolute",
               left: tooltip.x,
               top: tooltip.y,
               background: "white",
@@ -207,7 +207,7 @@ const CustomNodesLayer = ({
               borderRadius: "4px",
               fontSize: "12px",
               boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-              zIndex: 9999,
+              zIndex: 30, // headerのz-40(4000)より低く設定
               pointerEvents: "none",
             }}
           >
