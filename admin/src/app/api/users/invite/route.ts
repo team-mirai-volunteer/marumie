@@ -1,7 +1,7 @@
 import 'server-only';
 import { NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth/roles";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { requireRole } from "@/server/auth/roles";
+import { createAdminClient } from "@/server/auth/admin";
 
 export async function POST(request: Request) {
   try {
