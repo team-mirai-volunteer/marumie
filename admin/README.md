@@ -17,7 +17,7 @@ pnpm db:seed
 
 **環境変数を設定する**
    - `./admin/.env.example` を `./admin/.env.local` にコピー
-   - `NEXT_PUBLIC_SUPABASE_URL` と `NEXT_PUBLIC_SUPABASE_ANON_KEY` を設定
+   - `SUPABASE_URL` と `SUPABASE_ANON_KEY` を設定（クライアント側には公開しません）
    - 値は Supabase ダッシュボード → Settings → API から取得できます（Project URL と anon key）
 
 ```bash
@@ -29,7 +29,7 @@ cp ./admin/.env.example ./admin/.env.local
 #### よくあるエラー
 
 - 「Your project's URL and Key are required to create a Supabase client!」
-  - `NEXT_PUBLIC_SUPABASE_URL` または `NEXT_PUBLIC_SUPABASE_ANON_KEY` が設定されていません。
+  - `SUPABASE_URL` または `SUPABASE_ANON_KEY` が設定されていません。
   - `./admin/.env.local` を見直し、開発サーバーを再起動してください。
 
 #### オプション

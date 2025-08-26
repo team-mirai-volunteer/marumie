@@ -27,7 +27,7 @@ export async function POST(request: Request) {
 
     // Send invitation using Supabase Admin API
     const { data, error } = await supabase.auth.admin.inviteUserByEmail(email, {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'}/auth/callback`
+      redirectTo: `${process.env.SITE_URL || 'http://localhost:3001'}/auth/callback`
     });
 
     if (error) {

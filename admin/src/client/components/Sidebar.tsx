@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { UserRole } from "@prisma/client";
 
-export default function Sidebar() {
+export default function Sidebar({ logoutAction }: { logoutAction: (formData: FormData) => Promise<void> }) {
   const pathname = usePathname();
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
@@ -46,18 +46,7 @@ export default function Sidebar() {
     return pathname.startsWith(path);
   };
 
-  const handleLogout = async () => {
-    try {
-      const response = await fetch("/api/logout", {
-        method: "POST",
-      });
-      if (response.ok) {
-        router.push("/login");
-      }
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
+  // logout handled via server action form below
 
   return (
     <aside className="sidebar">
@@ -97,13 +86,15 @@ export default function Sidebar() {
         )}
       </nav>
       <div style={{ marginTop: "auto", padding: "16px 0" }}>
-        <button
-          onClick={handleLogout}
-          className="button"
-          style={{ width: "100%", background: "#ef4444", color: "white" }}
-        >
-          ログアウト
-        </button>
+        <form action={logoutAction}>
+          <button
+            type="submit"
+            className="button"
+            style={{ width: "100%", background: "#ef4444", color: "white" }}
+          >
+            ログアウト
+          </button>
+        </form>
       </div>
     </aside>
   );
