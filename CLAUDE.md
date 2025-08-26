@@ -68,3 +68,30 @@ export default function ClientComponent() {
 - **保守性**: ビジネスロジック変更時の影響範囲を最小化
 - **柔軟性**: SSR/SPA の選択を実装後でも変更可能
 - **キャッシュ効率**: Next.js のキャッシュ機能を最大限活用
+
+## admin code structure
+
+similar to the webapp, we will go with a code structure like below
+
+- app
+- client
+- server
+
+### responsiblities
+
+under each directory will be like the below
+
+- app
+  - app router, follows url directory of the website
+  - api, getting data, may refactor later
+- client
+  - client components
+- server
+  - lib
+    - data wrangling
+  - repositories
+    - prisma stuff
+  - usecases
+    - top level functions to be called by app
+  - auth
+    - auth related stuff

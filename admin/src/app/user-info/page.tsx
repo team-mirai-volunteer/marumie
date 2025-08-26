@@ -1,9 +1,9 @@
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@/server/supabase/client";
 
 export const runtime = "nodejs";
 
 export default async function UserInfoPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

@@ -1,6 +1,6 @@
 import 'server-only';
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/server/supabase/client';
 
 export async function POST(request: Request) {
   try {
@@ -14,7 +14,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Password must be at least 6 characters long' }, { status: 400 });
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Get the current user
     const { data: { user }, error: userError } = await supabase.auth.getUser();

@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@/server/supabase/client";
 import { PrismaClient, UserRole } from "@prisma/client";
 import { PrismaUserRepository } from "@/server/repositories/prisma-user.repository";
 
@@ -8,7 +8,7 @@ const userRepository = new PrismaUserRepository(prisma);
 export type { UserRole } from "@prisma/client";
 
 export async function getCurrentUserRole(): Promise<UserRole | null> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -26,7 +26,7 @@ export async function getCurrentUserRole(): Promise<UserRole | null> {
 }
 
 export async function getCurrentUser() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
