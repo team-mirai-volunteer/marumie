@@ -7,6 +7,19 @@
   .font-english {
     font-family: var(--font-noto-sans), "Noto Sans", sans-serif;
   }
+
+  /* Screen Reader Only - スクリーンリーダー専用コンテンツ */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 }
 
 :root {
@@ -49,8 +62,45 @@ body {
   background: var(--background);
   background-color: #e2f6f3; /* バウンスエフェクト時の背景色 */
   color: var(--foreground);
-  font-family:
-    var(--font-noto-sans-jp), "Noto Sans JP", var(--font-noto-sans), Arial,
-    Helvetica, sans-serif;
-  min-height: 100vh;
+  /* font-family: sans-serif; */
+}
+
+/* フォーカスインジケーター - キーボードナビゲーション用のみ */
+*:focus {
+  outline: none; /* デフォルトのアウトラインを無効化 */
+}
+
+*:focus-visible {
+  outline: 2px solid #2aa693;
+  outline-offset: 2px;
+}
+
+/* ボタンのフォーカス - キーボードのみ */
+button:focus {
+  outline: none;
+}
+
+button:focus-visible {
+  outline: 2px solid #2aa693;
+  outline-offset: 2px;
+}
+
+/* リンクのフォーカス - キーボードのみ */
+a:focus {
+  outline: none;
+}
+
+a:focus-visible {
+  outline: 2px solid #2aa693;
+  outline-offset: 2px;
+}
+
+/* テーブルのフォーカス - キーボードのみ */
+table:focus {
+  outline: none;
+}
+
+table:focus-visible {
+  outline: 2px solid #2aa693;
+  outline-offset: 2px;
 }

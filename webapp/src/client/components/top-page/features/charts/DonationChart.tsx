@@ -75,11 +75,20 @@ export default function DonationChart({
   }
 
   return (
-    <div className="bg-white rounded-lg " style={{ height }}>
+    <div
+      className="bg-white rounded-lg "
+      style={{ height }}
+      role="img"
+      aria-label="直近1ヶ月の寄付金額の推移グラフ"
+      aria-describedby="donation-chart-description"
+    >
       <div className="text-center">
         <h4 className="text-[13px] font-bold leading-[1.31] text-gray-600">
           直近1ヶ月の寄付金額の推移
         </h4>
+      </div>
+      <div id="donation-chart-description" className="sr-only">
+        直近30日間の累計寄付金額の推移を示す折れ線グラフです。
       </div>
       <div
         style={{ height: height }}

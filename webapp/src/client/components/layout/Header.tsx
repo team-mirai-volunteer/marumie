@@ -79,7 +79,10 @@ export default function Header() {
 
           {/* Desktop: Navigation Menu + Year Selector */}
           <div className="hidden lg:flex items-center gap-10">
-            <nav className="flex items-center gap-6">
+            <nav
+              className="flex items-center gap-6"
+              aria-label="メインナビゲーション"
+            >
               {navigationItems
                 .filter((item) => item.desktopLabel)
                 .map((item) => (
@@ -106,7 +109,10 @@ export default function Header() {
 
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
-        <nav className="lg:hidden -mt-14 pt-[92px] bg-gradient-to-br from-[#BCECDB] to-[#64D8C6] rounded-[30px] px-9 pb-15 transition-all duration-300 ease-in-out animate-in fade-in-0 slide-in-from-top-1 zoom-in-95">
+        <nav
+          className="lg:hidden -mt-14 pt-[92px] bg-gradient-to-br from-[#BCECDB] to-[#64D8C6] rounded-[30px] px-9 pb-15 transition-all duration-300 ease-in-out animate-in fade-in-0 slide-in-from-top-1 zoom-in-95"
+          aria-label="モバイルナビゲーションメニュー"
+        >
           <div className="flex flex-col">
             {navigationItems.map((item, index) => (
               <div key={item.href}>

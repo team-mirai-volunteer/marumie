@@ -256,7 +256,15 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
   };
 
   return (
-    <div className="overflow-x-auto overflow-y-hidden rounded-lg bg-white">
+    <div
+      className="overflow-x-auto overflow-y-hidden rounded-lg bg-white"
+      role="img"
+      aria-label="月次収支推移グラフ"
+      aria-describedby="monthly-chart-description"
+    >
+      <div id="monthly-chart-description" className="sr-only">
+        1年間の月別収入、支出、収支の推移を示す棒グラフです。
+      </div>
       <div className="min-w-[600px]" style={{ height: 462 }}>
         <Chart options={options} series={series} type="line" height={462} />
         <style jsx global>{`
