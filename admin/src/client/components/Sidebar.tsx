@@ -2,13 +2,12 @@
 import 'client-only';
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { UserRole } from "@prisma/client";
 
 export default function Sidebar({ logoutAction }: { logoutAction: (formData: FormData) => Promise<void> }) {
   const pathname = usePathname();
-  const router = useRouter();
   const [isClient, setIsClient] = useState(false);
   const [userRole, setUserRole] = useState<UserRole | null>(null);
 
