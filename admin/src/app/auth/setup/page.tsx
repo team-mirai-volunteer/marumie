@@ -1,5 +1,5 @@
 import 'server-only';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/server/supabase/client';
 import { redirect } from 'next/navigation';
 import SetupForm from '@/client/components/SetupForm';
 
@@ -8,7 +8,7 @@ interface SetupPageProps {
 }
 
 export default async function SetupPage({ searchParams }: SetupPageProps) {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   // Check if user is authenticated
   const { data: { user }, error } = await supabase.auth.getUser();
