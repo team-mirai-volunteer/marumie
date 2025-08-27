@@ -19,10 +19,12 @@ interface TransactionData {
 
 interface TransactionsSectionProps {
   transactionData: TransactionData | null;
+  updatedAt: string;
 }
 
 export default function TransactionsSection({
   transactionData,
+  updatedAt,
 }: TransactionsSectionProps) {
   return (
     <MainColumnCard id="transactions">
@@ -36,7 +38,7 @@ export default function TransactionsSection({
           />
         }
         title="すべての出入金"
-        updatedAt="2025.8.14時点"
+        updatedAt={updatedAt}
         subtitle="今年のすべての出入金のリスト"
       />
 

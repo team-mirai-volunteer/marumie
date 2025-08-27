@@ -10,10 +10,12 @@ import DonationSummaryCards from "./features/donation-summary/DonationSummaryCar
 
 interface DonationSummarySectionProps {
   donationSummary?: DonationSummaryData;
+  updatedAt: string;
 }
 
 export default function DonationSummarySection({
   donationSummary,
+  updatedAt,
 }: DonationSummarySectionProps) {
   // サーバーサイドで計算された統計情報を使用
   const totalDonationAmount = donationSummary?.totalAmount || 0;
@@ -49,7 +51,7 @@ export default function DonationSummarySection({
           />
         }
         title="これまでの累計寄付金額"
-        updatedAt="2025.8.14時点"
+        updatedAt={updatedAt}
         subtitle="いただいた寄付総額と直近1ヶ月の推移"
       />
 
