@@ -20,6 +20,7 @@ export interface PreviewCsvRequest {
 
 export interface UploadCsvRequest {
   validTransactions: PreviewTransaction[];
+  politicalOrganizationId: string;
 }
 
 export interface UploadCsvResponse {

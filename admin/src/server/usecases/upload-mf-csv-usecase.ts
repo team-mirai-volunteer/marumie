@@ -4,6 +4,7 @@ import type { PreviewTransaction } from "./preview-mf-csv-usecase";
 
 export interface UploadMfCsvInput {
   validTransactions: PreviewTransaction[];
+  politicalOrganizationId: string;
 }
 
 export interface UploadMfCsvResult {
@@ -41,7 +42,7 @@ export class UploadMfCsvUsecase {
       }
 
       const transactionInputs: CreateTransactionInput[] = validTransactions.map(
-        (transaction) => this.convertPreviewToCreateInput(transaction)
+        (transaction) => this.convertPreviewToCreateInput(transaction, input.politicalOrganizationId)
       );
 
       const createResult =
@@ -57,13 +58,14 @@ export class UploadMfCsvUsecase {
   }
 
   private convertPreviewToCreateInput(
-    previewTransaction: PreviewTransaction
+    previewTransaction: PreviewTransaction,
+    politicalOrganizationId: string
   ): CreateTransactionInput {
     return {
-      political_organization_id: previewTransaction.political_organization_id,
+      political_organization_id: politicalOrganizationId,
       transaction_no: previewTransaction.transaction_no,
-      transaction_date: previewTransaction.transaction_date,
-      financial_year: this.extractFinancialYear(previewTransaction.transaction_date),
+      transaction_date: new Date(previewTransaction.transaction_date),
+      financial_year: this.extractFinancialYear(new Date(previewTransaction.transaction_date)),
       transaction_type: this.determineTransactionType(
         previewTransaction.debit_account,
         previewTransaction.credit_account,

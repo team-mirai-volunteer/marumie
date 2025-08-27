@@ -51,7 +51,7 @@ export default function CsvPreview({ file, politicalOrganizationId, onPreviewCom
     };
 
     previewFile();
-  }, [file, politicalOrganizationId, onPreviewComplete]);
+  }, [file, politicalOrganizationId]);
 
 
   const handlePageChange = (page: number) => {

@@ -92,7 +92,7 @@ export class PreviewMfCsvUsecase {
         }
 
         return {
-          political_organization_id: transaction.political_organization_id,
+          political_organization_id: input.politicalOrganizationId,
           transaction_no: transaction.transaction_no || '',
           transaction_date: transaction.transaction_date,
           debit_account: transaction.debit_account,

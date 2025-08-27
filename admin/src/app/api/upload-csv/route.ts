@@ -11,7 +11,7 @@ const uploadUsecase = new UploadMfCsvUsecase(transactionRepository);
 
 export async function POST(request: Request) {
   try {
-    const { validTransactions } = await request.json();
+    const { validTransactions, politicalOrganizationId } = await request.json();
 
     if (!validTransactions || !Array.isArray(validTransactions)) {
       return NextResponse.json(
@@ -20,8 +20,16 @@ export async function POST(request: Request) {
       );
     }
 
+    if (!politicalOrganizationId) {
+      return NextResponse.json(
+        { error: "政治団体IDが指定されていません" },
+        { status: 400 },
+      );
+    }
+
     const result = await uploadUsecase.execute({
       validTransactions,
+      politicalOrganizationId,
     });
 
     if (result.errors.length > 0) {

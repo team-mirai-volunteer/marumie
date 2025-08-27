@@ -64,21 +64,23 @@ export default function UploadCsvPage() {
 
       const result = await apiClient.uploadCsv({
         validTransactions,
+        politicalOrganizationId,
       });
 
       setMessage(
         result.message ||
           `Successfully processed ${result.processedCount} records and saved ${result.savedCount} transactions`,
       );
-      
+
       setFile(null);
       setPreviewResult(null);
-      
+
       const fileInput = document.getElementById(csvFileInputId) as HTMLInputElement;
       if (fileInput) {
         fileInput.value = '';
       }
     } catch (err) {
+      console.error("Upload error:", err);
       setMessage(`Error: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setUploading(false);
@@ -129,13 +131,13 @@ export default function UploadCsvPage() {
             required
           />
         </div>
-        
-        <CsvPreview 
-          file={file} 
+
+        <CsvPreview
+          file={file}
           politicalOrganizationId={politicalOrganizationId}
-          onPreviewComplete={handlePreviewComplete} 
+          onPreviewComplete={handlePreviewComplete}
         />
-        
+
         <button
           className="button"
           disabled={
