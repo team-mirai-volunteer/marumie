@@ -17,7 +17,7 @@ describe("UploadMfCsvUsecase", () => {
   let mockRepository: jest.Mocked<Pick<ITransactionRepository, 'createMany' | 'findByTransactionNos'>>;
 
   beforeEach(() => {
-    mockRepository = { 
+    mockRepository = {
       createMany: jest.fn(),
       findByTransactionNos: jest.fn().mockResolvedValue([]),
     };
@@ -156,11 +156,11 @@ describe("UploadMfCsvUsecase", () => {
       mockRepository.createMany.mockResolvedValue(
         previewResult.transactions
           .filter(t => t.status === 'valid')
-          .map(t => ({ 
-            ...t, 
-            id: 'test-id', 
-            created_at: new Date(), 
-            updated_at: new Date() 
+          .map(t => ({
+            ...t,
+            id: 'test-id',
+            created_at: new Date(),
+            updated_at: new Date()
           }))
       );
 

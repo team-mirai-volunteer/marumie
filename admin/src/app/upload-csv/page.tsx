@@ -138,20 +138,28 @@ export default function UploadCsvPage() {
           onPreviewComplete={handlePreviewComplete}
         />
 
-        <button
-          className="button"
-          disabled={
-            !file ||
+        {(() => {
+          const isDisabled = !file ||
             !politicalOrganizationId ||
             !previewResult ||
             previewResult.summary.validCount === 0 ||
             uploading ||
-            loadingOrganizations
-          }
-          type="submit"
-        >
-          {uploading ? "Processing…" : "Upload and Process"}
-        </button>
+            loadingOrganizations;
+          
+          return (
+            <button
+              className="button"
+              disabled={isDisabled}
+              type="submit"
+              style={{
+                opacity: isDisabled ? 0.5 : 1,
+                cursor: isDisabled ? 'not-allowed' : 'pointer'
+              }}
+            >
+              {uploading ? "Processing…" : "このデータを保存する"}
+            </button>
+          );
+        })()}
       </form>
       {message && (
         <div
