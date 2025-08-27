@@ -63,4 +63,5 @@ export interface ITransactionRepository {
     politicalOrganizationId: string,
     financialYear: number,
   ): Promise<DailyDonationData[]>;
+  getLastUpdatedAt(): Promise<Date | null>;
 }

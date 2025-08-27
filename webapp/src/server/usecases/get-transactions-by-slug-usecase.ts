@@ -71,57 +71,22 @@ export class GetTransactionsBySlugUsecase {
       }
       filters.financial_year = params.financialYear;
 
-      let transactions: DisplayTransaction[];
-      let total: number;
+      const pagination: PaginationOptions = {
+        page,
+        perPage,
+        sortBy: params.sortBy,
+        order: params.order,
+      };
 
       const [transactionResult, lastUpdatedAt] = await Promise.all([
-        (async () => {
-          if (params.sortBy === "amount") {
-            // For amount sorting, get ALL data first, then sort and paginate
-            const allTransactions =
-              await this.transactionRepository.findAll(filters);
-            const allDisplayTransactions =
-              convertToDisplayTransactions(allTransactions);
-
-            // Sort all transactions by amount
-            allDisplayTransactions.sort((a, b) => {
-              const order = params.order === "asc" ? 1 : -1;
-              return (a.amount - b.amount) * order;
-            });
-
-            // Apply pagination after sorting
-            const totalCount = allDisplayTransactions.length;
-            const startIndex = (page - 1) * perPage;
-            const endIndex = startIndex + perPage;
-            return {
-              transactions: allDisplayTransactions.slice(startIndex, endIndex),
-              total: totalCount,
-            };
-          } else {
-            // For date sorting or no sorting, use database-level pagination
-            const pagination: PaginationOptions = {
-              page,
-              perPage,
-              sortBy: params.sortBy,
-              order: params.order,
-            };
-
-            const result = await this.transactionRepository.findWithPagination(
-              filters,
-              pagination,
-            );
-
-            return {
-              transactions: convertToDisplayTransactions(result.items),
-              total: result.total,
-            };
-          }
-        })(),
+        this.transactionRepository.findWithPagination(filters, pagination),
         this.transactionRepository.getLastUpdatedAt(),
       ]);
 
-      transactions = transactionResult.transactions;
-      total = transactionResult.total;
+      const transactions = convertToDisplayTransactions(
+        transactionResult.items,
+      );
+      const total = transactionResult.total;
       const totalPages = Math.ceil(total / perPage);
 
       return {
