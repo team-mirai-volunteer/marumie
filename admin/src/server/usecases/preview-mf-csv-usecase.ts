@@ -119,7 +119,7 @@ export class PreviewMfCsvUsecase {
         transactions: previewTransactions,
         summary,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         transactions: [],
         summary: {

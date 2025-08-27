@@ -51,6 +51,7 @@ export default function CsvPreview({ file, politicalOrganizationId, onPreviewCom
     };
 
     previewFile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file, politicalOrganizationId]);
 
 
