@@ -4,7 +4,7 @@ import { useEffect, useId, useState } from "react";
 import { apiClient } from "@/client/clients/api-client";
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
 import CsvPreview from "@/client/components/CsvPreview";
-import type { MfCsvRecord } from "@/server/lib/mf-csv-loader";
+import type { PreviewMfCsvResult } from "@/server/usecases/preview-mf-csv-usecase";
 
 export default function UploadCsvPage() {
   const politicalOrgSelectId = useId();
@@ -14,7 +14,7 @@ export default function UploadCsvPage() {
     useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [uploading, setUploading] = useState(false);
-  const [previewValid, setPreviewValid] = useState(false);
+  const [previewResult, setPreviewResult] = useState<PreviewMfCsvResult | null>(null);
   const [organizations, setOrganizations] = useState<PoliticalOrganization[]>(
     [],
   );
@@ -40,8 +40,8 @@ export default function UploadCsvPage() {
     fetchOrganizations();
   }, []);
 
-  const handlePreviewComplete = (records: MfCsvRecord[], isValid: boolean) => {
-    setPreviewValid(isValid);
+  const handlePreviewComplete = (result: PreviewMfCsvResult) => {
+    setPreviewResult(result);
   };
 
   async function onSubmit(e: React.FormEvent) {
@@ -51,8 +51,19 @@ export default function UploadCsvPage() {
     setMessage("");
 
     try {
+      if (!previewResult) {
+        setMessage("Error: Preview data not available");
+        return;
+      }
+
+      const validTransactions = previewResult.transactions.filter(t => t.status === 'valid');
+      if (validTransactions.length === 0) {
+        setMessage("有効なデータがありません");
+        return;
+      }
+
       const result = await apiClient.uploadCsv({
-        file,
+        validTransactions,
         politicalOrganizationId,
       });
 
@@ -60,15 +71,16 @@ export default function UploadCsvPage() {
         result.message ||
           `Successfully processed ${result.processedCount} records and saved ${result.savedCount} transactions`,
       );
-      
+
       setFile(null);
-      setPreviewValid(false);
-      
+      setPreviewResult(null);
+
       const fileInput = document.getElementById(csvFileInputId) as HTMLInputElement;
       if (fileInput) {
         fileInput.value = '';
       }
     } catch (err) {
+      console.error("Upload error:", err);
       setMessage(`Error: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setUploading(false);
@@ -119,22 +131,35 @@ export default function UploadCsvPage() {
             required
           />
         </div>
-        
-        <CsvPreview file={file} onParseComplete={handlePreviewComplete} />
-        
-        <button
-          className="button"
-          disabled={
-            !file ||
+
+        <CsvPreview
+          file={file}
+          politicalOrganizationId={politicalOrganizationId}
+          onPreviewComplete={handlePreviewComplete}
+        />
+
+        {(() => {
+          const isDisabled = !file ||
             !politicalOrganizationId ||
-            !previewValid ||
+            !previewResult ||
+            previewResult.summary.validCount === 0 ||
             uploading ||
-            loadingOrganizations
-          }
-          type="submit"
-        >
-          {uploading ? "Processing…" : "Upload and Process"}
-        </button>
+            loadingOrganizations;
+
+          return (
+            <button
+              className="button"
+              disabled={isDisabled}
+              type="submit"
+              style={{
+                opacity: isDisabled ? 0.5 : 1,
+                cursor: isDisabled ? 'not-allowed' : 'pointer'
+              }}
+            >
+              {uploading ? "Processing…" : "このデータを保存する"}
+            </button>
+          );
+        })()}
       </form>
       {message && (
         <div

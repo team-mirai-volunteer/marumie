@@ -4,16 +4,25 @@ import {
   UploadMfCsvUsecase,
   type UploadMfCsvInput,
 } from "@/server/usecases/upload-mf-csv-usecase";
+import {
+  PreviewMfCsvUsecase,
+  type PreviewMfCsvInput,
+} from "@/server/usecases/preview-mf-csv-usecase";
 import type { ITransactionRepository } from "@/server/repositories/interfaces/transaction-repository.interface";
 import type { CreateTransactionInput } from "@/shared/models/transaction";
 
 describe("UploadMfCsvUsecase", () => {
   let usecase: UploadMfCsvUsecase;
-  let mockRepository: jest.Mocked<Pick<ITransactionRepository, 'createManySkipDuplicates'>>;
+  let previewUsecase: PreviewMfCsvUsecase;
+  let mockRepository: jest.Mocked<Pick<ITransactionRepository, 'createMany' | 'findByTransactionNos'>>;
 
   beforeEach(() => {
-    mockRepository = { createManySkipDuplicates: jest.fn(), };
+    mockRepository = {
+      createMany: jest.fn(),
+      findByTransactionNos: jest.fn().mockResolvedValue([]),
+    };
     usecase = new UploadMfCsvUsecase(mockRepository as unknown as ITransactionRepository);
+    previewUsecase = new PreviewMfCsvUsecase(mockRepository as unknown as ITransactionRepository);
   });
 
   describe("execute with sample data", () => {
@@ -22,20 +31,24 @@ describe("UploadMfCsvUsecase", () => {
       const sampleCsvPath = join(__dirname, "../../data/sampledata.csv");
       const csvContent = readFileSync(sampleCsvPath, "utf-8");
 
+      // PreviewUsecaseでvalidTransactionsを取得
+      const previewInput: PreviewMfCsvInput = {
+        csvContent,
+        politicalOrganizationId: "test-org-id",
+      };
+      const previewResult = await previewUsecase.execute(previewInput);
+
       // Repositoryのモック設定
       const capturedTransactions: CreateTransactionInput[] = [];
-      mockRepository.createManySkipDuplicates.mockImplementation(
+      mockRepository.createMany.mockImplementation(
         async (transactions) => {
           capturedTransactions.push(...transactions);
-          return {
-            created: transactions.map(t => ({ ...t, id: 'test-id', created_at: new Date(), updated_at: new Date() })),
-            skipped: 0,
-          };
+          return transactions.map(t => ({ ...t, id: 'test-id', created_at: new Date(), updated_at: new Date() }));
         }
       );
 
       const input: UploadMfCsvInput = {
-        csvContent,
+        validTransactions: previewResult.transactions,
         politicalOrganizationId: "test-org-id",
       };
 
@@ -69,8 +82,8 @@ describe("UploadMfCsvUsecase", () => {
       expect(otherTotal).toBe(0);
 
       // Repository呼び出し検証
-      expect(mockRepository.createManySkipDuplicates).toHaveBeenCalledTimes(1);
-      expect(mockRepository.createManySkipDuplicates).toHaveBeenCalledWith(
+      expect(mockRepository.createMany).toHaveBeenCalledTimes(1);
+      expect(mockRepository.createMany).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({
             political_organization_id: "test-org-id",
@@ -82,7 +95,7 @@ describe("UploadMfCsvUsecase", () => {
 
     it("should handle empty CSV content", async () => {
       const input: UploadMfCsvInput = {
-        csvContent: "",
+        validTransactions: [],
         politicalOrganizationId: "test-org-id",
       };
 
@@ -92,19 +105,26 @@ describe("UploadMfCsvUsecase", () => {
       expect(result.savedCount).toBe(0);
       expect(result.skippedCount).toBe(0);
       expect(result.errors).toEqual([]);
-      expect(mockRepository.createManySkipDuplicates).not.toHaveBeenCalled();
+      expect(mockRepository.createMany).not.toHaveBeenCalled();
     });
 
     it("should handle repository errors gracefully", async () => {
       const sampleCsvPath = join(__dirname, "../../data/sampledata.csv");
       const csvContent = readFileSync(sampleCsvPath, "utf-8");
 
-      mockRepository.createManySkipDuplicates.mockRejectedValue(
+      // PreviewUsecaseでvalidTransactionsを取得
+      const previewInput: PreviewMfCsvInput = {
+        csvContent,
+        politicalOrganizationId: "test-org-id",
+      };
+      const previewResult = await previewUsecase.execute(previewInput);
+
+      mockRepository.createMany.mockRejectedValue(
         new Error("Database connection failed")
       );
 
       const input: UploadMfCsvInput = {
-        csvContent,
+        validTransactions: previewResult.transactions,
         politicalOrganizationId: "test-org-id",
       };
 
@@ -120,30 +140,43 @@ describe("UploadMfCsvUsecase", () => {
 1,2025/6/1,人件費,,,,,,1000,普通預金,,,,,,1000,給与支払,,
 2,2025/6/2,無効な科目,,,,,,2000,普通預金,,,,,,2000,無効な取引,,`;
 
-      const input: UploadMfCsvInput = {
+      // PreviewUsecaseでvalidTransactionsを取得（エラーを含む）
+      const previewInput: PreviewMfCsvInput = {
         csvContent,
         politicalOrganizationId: "test-org-id",
       };
+      const previewResult = await previewUsecase.execute(previewInput);
+
+      const input: UploadMfCsvInput = {
+        validTransactions: previewResult.transactions,
+        politicalOrganizationId: "test-org-id",
+      };
+
+      // createManyのモック設定を追加
+      mockRepository.createMany.mockResolvedValue(
+        previewResult.transactions
+          .filter(t => t.status === 'valid')
+          .map(t => ({
+            ...t,
+            id: 'test-id',
+            created_at: new Date(),
+            updated_at: new Date()
+          }))
+      );
 
       const result = await usecase.execute(input);
 
-      // バリデーションエラーが発生していることを確認
-      expect(result.errors.length).toBeGreaterThan(0);
-      expect(result.errors[0]).toContain("無効なアカウントラベルが見つかりました:");
-      expect(result.errors[0]).toContain("無効な科目");
+      // 無効な取引があるため有効な取引のみ処理される
+      const validTransactionCount = previewResult.transactions.filter(t => t.status === 'valid').length;
+      expect(result.processedCount).toBe(previewResult.transactions.length);
+      expect(result.savedCount).toBe(validTransactionCount);
 
-      // エラー詳細を確認
-      const errorDetailMessages = result.errors.filter(msg => msg.includes("取引番号:"));
-      expect(errorDetailMessages.length).toBeGreaterThan(0);
-      expect(errorDetailMessages.some(msg => msg.includes("無効な科目"))).toBe(true);
-
-      // Repositoryが呼び出されていないことを確認
-      expect(mockRepository.createManySkipDuplicates).not.toHaveBeenCalled();
-
-      // 処理したレコード数は2だが、保存されたレコード数は0
-      expect(result.processedCount).toBe(2);
-      expect(result.savedCount).toBe(0);
-      expect(result.skippedCount).toBe(0);
+      // Repositoryは有効な取引がある場合のみ呼び出される
+      if (validTransactionCount > 0) {
+        expect(mockRepository.createMany).toHaveBeenCalled();
+      } else {
+        expect(mockRepository.createMany).not.toHaveBeenCalled();
+      }
     });
   });
 });
