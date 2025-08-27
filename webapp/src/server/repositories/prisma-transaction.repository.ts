@@ -251,7 +251,8 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       },
     });
 
-    return result._max.updatedAt;
+    const updatedAt = result._max.updatedAt;
+    return updatedAt ? new Date(updatedAt) : null;
   }
 
   private aggregateByCategory(

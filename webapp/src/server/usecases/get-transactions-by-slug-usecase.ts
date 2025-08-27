@@ -28,7 +28,7 @@ export interface GetTransactionsBySlugResult {
   perPage: number;
   totalPages: number;
   politicalOrganization: PoliticalOrganization;
-  lastUpdatedAt: Date | null;
+  lastUpdatedAt: string | null;
 }
 
 export class GetTransactionsBySlugUsecase {
@@ -131,7 +131,7 @@ export class GetTransactionsBySlugUsecase {
         perPage,
         totalPages,
         politicalOrganization,
-        lastUpdatedAt,
+        lastUpdatedAt: lastUpdatedAt?.toISOString() ?? null,
       };
     } catch (error) {
       throw new Error(
