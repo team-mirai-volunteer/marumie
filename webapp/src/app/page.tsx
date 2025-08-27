@@ -21,13 +21,35 @@ export default async function Home() {
     financialYear: 2025, // デフォルト値
   }).catch(() => null);
 
+  // 日付フォーマッティング
+  const formatUpdatedAt = (date: Date | null) => {
+    if (!date) return "";
+    return `${date.toLocaleDateString("ja-JP", { year: "numeric", month: "numeric", day: "numeric" })}時点`;
+  };
+
+  const updatedAt = formatUpdatedAt(
+    data?.transactionData?.lastUpdatedAt ?? null,
+  );
+
   return (
     <MainColumn>
-      <CashFlowSection sankeyData={data?.sankeyData ?? null} />
-      <MonthlyTrendsSection monthlyData={data?.monthlyData} />
-      <DonationSummarySection donationSummary={data?.donationSummary} />
+      <CashFlowSection
+        sankeyData={data?.sankeyData ?? null}
+        updatedAt={updatedAt}
+      />
+      <MonthlyTrendsSection
+        monthlyData={data?.monthlyData}
+        updatedAt={updatedAt}
+      />
+      <DonationSummarySection
+        donationSummary={data?.donationSummary}
+        updatedAt={updatedAt}
+      />
       <TransparencySection title="党首も毎日これを見て、お金をやりくりしています👀" />
-      <TransactionsSection transactionData={data?.transactionData ?? null} />
+      <TransactionsSection
+        transactionData={data?.transactionData ?? null}
+        updatedAt={updatedAt}
+      />
       <ExplanationSection />
     </MainColumn>
   );

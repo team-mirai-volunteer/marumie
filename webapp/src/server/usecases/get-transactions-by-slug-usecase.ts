@@ -28,6 +28,7 @@ export interface GetTransactionsBySlugResult {
   perPage: number;
   totalPages: number;
   politicalOrganization: PoliticalOrganization;
+  lastUpdatedAt: Date | null;
 }
 
 export class GetTransactionsBySlugUsecase {
@@ -73,42 +74,54 @@ export class GetTransactionsBySlugUsecase {
       let transactions: DisplayTransaction[];
       let total: number;
 
-      if (params.sortBy === "amount") {
-        // For amount sorting, get ALL data first, then sort and paginate
-        const allTransactions =
-          await this.transactionRepository.findAll(filters);
-        const allDisplayTransactions =
-          convertToDisplayTransactions(allTransactions);
+      const [transactionResult, lastUpdatedAt] = await Promise.all([
+        (async () => {
+          if (params.sortBy === "amount") {
+            // For amount sorting, get ALL data first, then sort and paginate
+            const allTransactions =
+              await this.transactionRepository.findAll(filters);
+            const allDisplayTransactions =
+              convertToDisplayTransactions(allTransactions);
 
-        // Sort all transactions by amount
-        allDisplayTransactions.sort((a, b) => {
-          const order = params.order === "asc" ? 1 : -1;
-          return (a.amount - b.amount) * order;
-        });
+            // Sort all transactions by amount
+            allDisplayTransactions.sort((a, b) => {
+              const order = params.order === "asc" ? 1 : -1;
+              return (a.amount - b.amount) * order;
+            });
 
-        // Apply pagination after sorting
-        total = allDisplayTransactions.length;
-        const startIndex = (page - 1) * perPage;
-        const endIndex = startIndex + perPage;
-        transactions = allDisplayTransactions.slice(startIndex, endIndex);
-      } else {
-        // For date sorting or no sorting, use database-level pagination
-        const pagination: PaginationOptions = {
-          page,
-          perPage,
-          sortBy: params.sortBy,
-          order: params.order,
-        };
+            // Apply pagination after sorting
+            const totalCount = allDisplayTransactions.length;
+            const startIndex = (page - 1) * perPage;
+            const endIndex = startIndex + perPage;
+            return {
+              transactions: allDisplayTransactions.slice(startIndex, endIndex),
+              total: totalCount,
+            };
+          } else {
+            // For date sorting or no sorting, use database-level pagination
+            const pagination: PaginationOptions = {
+              page,
+              perPage,
+              sortBy: params.sortBy,
+              order: params.order,
+            };
 
-        const result = await this.transactionRepository.findWithPagination(
-          filters,
-          pagination,
-        );
+            const result = await this.transactionRepository.findWithPagination(
+              filters,
+              pagination,
+            );
 
-        transactions = convertToDisplayTransactions(result.items);
-        total = result.total;
-      }
+            return {
+              transactions: convertToDisplayTransactions(result.items),
+              total: result.total,
+            };
+          }
+        })(),
+        this.transactionRepository.getLastUpdatedAt(),
+      ]);
 
+      transactions = transactionResult.transactions;
+      total = transactionResult.total;
       const totalPages = Math.ceil(total / perPage);
 
       return {
@@ -118,6 +131,7 @@ export class GetTransactionsBySlugUsecase {
         perPage,
         totalPages,
         politicalOrganization,
+        lastUpdatedAt,
       };
     } catch (error) {
       throw new Error(

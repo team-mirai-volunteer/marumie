@@ -77,6 +77,7 @@ const MOCK_TRANSACTION_DATA = {
     netAmount: 6500000,
     transactionCount: 0,
   },
+  lastUpdatedAt: new Date(),
 };
 
 export class GetMockTransactionPageDataUsecase {
