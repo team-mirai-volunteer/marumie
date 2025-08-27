@@ -145,7 +145,7 @@ export default function UploadCsvPage() {
             previewResult.summary.validCount === 0 ||
             uploading ||
             loadingOrganizations;
-          
+
           return (
             <button
               className="button"

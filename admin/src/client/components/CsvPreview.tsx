@@ -63,14 +63,26 @@ export default function CsvPreview({ file, politicalOrganizationId, onPreviewCom
     }
   };
 
-  const getCurrentPageRecords = (): PreviewTransaction[] => {
+  const getSortedTransactions = (): PreviewTransaction[] => {
     if (!previewResult) return [];
-    const startIndex = (currentPage - 1) * perPage;
-    const endIndex = startIndex + perPage;
-    return previewResult.transactions.slice(startIndex, endIndex);
+    
+    // 有効・無効・スキップの順でソート
+    const statusOrder = { valid: 1, invalid: 2, skip: 3 };
+    return [...previewResult.transactions].sort((a, b) => {
+      const aOrder = statusOrder[a.status] || 4;
+      const bOrder = statusOrder[b.status] || 4;
+      return aOrder - bOrder;
+    });
   };
 
-  const totalPages = previewResult ? Math.ceil(previewResult.transactions.length / perPage) : 0;
+  const getCurrentPageRecords = (): PreviewTransaction[] => {
+    const sortedTransactions = getSortedTransactions();
+    const startIndex = (currentPage - 1) * perPage;
+    const endIndex = startIndex + perPage;
+    return sortedTransactions.slice(startIndex, endIndex);
+  };
+
+  const totalPages = previewResult ? Math.ceil(getSortedTransactions().length / perPage) : 0;
 
   const getStatusColor = (status: PreviewTransaction['status']) => {
     switch (status) {
