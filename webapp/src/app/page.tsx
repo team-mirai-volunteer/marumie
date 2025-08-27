@@ -7,6 +7,7 @@ import DonationSummarySection from "@/client/components/top-page/DonationSummary
 import MonthlyTrendsSection from "@/client/components/top-page/MonthlyTrendsSection";
 import TransactionsSection from "@/client/components/top-page/TransactionsSection";
 import { getTransactionPageDataAction } from "@/server/actions/get-transaction-page-data";
+import { formatUpdatedAt } from "@/server/utils/format-date";
 
 export const revalidate = 300; // 5 minutes
 
@@ -20,12 +21,6 @@ export default async function Home() {
     perPage: 6, // 表示用に7件のみ取得
     financialYear: 2025, // デフォルト値
   }).catch(() => null);
-
-  // 日付フォーマッティング
-  const formatUpdatedAt = (date: Date | null) => {
-    if (!date) return "";
-    return `${date.toLocaleDateString("ja-JP", { year: "numeric", month: "numeric", day: "numeric" })}時点`;
-  };
 
   const updatedAt = formatUpdatedAt(
     data?.transactionData?.lastUpdatedAt ?? null,
