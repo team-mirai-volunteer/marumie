@@ -1,165 +1,93 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { MfCsvRecord } from "@/server/lib/mf-csv-loader";
+import { apiClient } from "@/client/clients/api-client";
+import type { PreviewTransaction, PreviewMfCsvResult } from "@/server/usecases/preview-mf-csv-usecase";
 
 interface CsvPreviewProps {
   file: File | null;
-  onParseComplete?: (records: MfCsvRecord[], isValid: boolean) => void;
+  politicalOrganizationId: string;
+  onPreviewComplete?: (result: PreviewMfCsvResult) => void;
 }
 
-export default function CsvPreview({ file, onParseComplete }: CsvPreviewProps) {
-  const [allRecords, setAllRecords] = useState<MfCsvRecord[]>([]);
+export default function CsvPreview({ file, politicalOrganizationId, onPreviewComplete }: CsvPreviewProps) {
+  const [previewResult, setPreviewResult] = useState<PreviewMfCsvResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [totalRows, setTotalRows] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const perPage = 10;
 
   useEffect(() => {
-    if (!file) {
-      setAllRecords([]);
+    if (!file || !politicalOrganizationId) {
+      setPreviewResult(null);
       setError(null);
-      setTotalRows(0);
       setCurrentPage(1);
       return;
     }
 
-    const parseFile = async () => {
+    const previewFile = async () => {
       setLoading(true);
       setError(null);
       setCurrentPage(1);
 
       try {
-        const text = await file.text();
-        
-        const lines = text.trim().split("\n");
-        if (lines.length === 0) {
-          throw new Error("CSVファイルが空です");
-        }
-
-        const headerLine = lines[0];
-        const headers = parseCSVLine(headerLine);
-        
-        if (headers.length === 0) {
-          throw new Error("CSVヘッダーが見つかりません");
-        }
-
-        const columnMapping: Record<string, string> = {
-          "取引No": "transaction_no",
-          "取引日": "transaction_date",
-          "借方勘定科目": "debit_account",
-          "借方補助科目": "debit_sub_account",
-          "借方金額(円)": "debit_amount",
-          "貸方勘定科目": "credit_account",
-          "貸方補助科目": "credit_sub_account", 
-          "貸方金額(円)": "credit_amount",
-          "摘要": "description"
-        };
-
-        const hasValidHeaders = headers.some(header => header in columnMapping);
-        if (!hasValidHeaders) {
-          throw new Error("認識できるCSVヘッダーが見つかりません");
-        }
-
-        const dataLines = lines.slice(1).filter(line => line.trim());
-        setTotalRows(dataLines.length);
-
-        const parsedRecords = dataLines.map(line => {
-          const values = parseCSVLine(line);
-          return createRecord(headers, values, columnMapping);
+        const result = await apiClient.previewCsv({
+          file,
+          politicalOrganizationId,
         });
 
-        setAllRecords(parsedRecords);
-        onParseComplete?.(parsedRecords, true);
+        setPreviewResult(result);
+        onPreviewComplete?.(result);
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "CSVの解析に失敗しました";
+        const errorMessage = err instanceof Error ? err.message : "CSVのプレビューに失敗しました";
         setError(errorMessage);
-        onParseComplete?.([], false);
+        onPreviewComplete?.({
+          transactions: [],
+          summary: { totalCount: 0, validCount: 0, invalidCount: 0, skipCount: 0 }
+        });
       } finally {
         setLoading(false);
       }
     };
 
-    parseFile();
-  }, [file, onParseComplete]);
+    previewFile();
+  }, [file, politicalOrganizationId, onPreviewComplete]);
 
-  const parseCSVLine = (line: string): string[] => {
-    const chars = Array.from(line);
-    const { result, current } = chars.reduce(
-      (acc, char) => {
-        if (char === '"') {
-          return { ...acc, inQuotes: !acc.inQuotes };
-        } else if (char === "," && !acc.inQuotes) {
-          return {
-            result: [...acc.result, acc.current],
-            current: "",
-            inQuotes: acc.inQuotes,
-          };
-        } else {
-          return { ...acc, current: acc.current + char };
-        }
-      },
-      { result: [] as string[], current: "", inQuotes: false },
-    );
-    return [...result, current];
-  };
-
-  const createRecord = (headers: string[], values: string[], columnMapping: Record<string, string>): MfCsvRecord => {
-    const record = headers
-      .map((header, index) => ({
-        header,
-        value: values[index] || "",
-        mappedKey: columnMapping[header],
-      }))
-      .filter(({ mappedKey }) => mappedKey)
-      .reduce(
-        (acc, { mappedKey, value }) => ({
-          ...acc,
-          [mappedKey]: value,
-        }),
-        {} as Partial<MfCsvRecord>,
-      );
-
-    const defaultRecord: MfCsvRecord = {
-      transaction_no: "",
-      transaction_date: "",
-      debit_account: "",
-      debit_sub_account: "",
-      debit_department: "",
-      debit_partner: "",
-      debit_tax_category: "",
-      debit_invoice: "",
-      debit_amount: "",
-      credit_account: "",
-      credit_sub_account: "",
-      credit_department: "",
-      credit_partner: "",
-      credit_tax_category: "",
-      credit_invoice: "",
-      credit_amount: "",
-      description: "",
-      tags: "",
-      memo: "",
-    };
-
-    return { ...defaultRecord, ...record };
-  };
 
   const handlePageChange = (page: number) => {
-    const totalPages = Math.ceil(totalRows / perPage);
+    if (!previewResult) return;
+    const totalPages = Math.ceil(previewResult.transactions.length / perPage);
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
   };
 
-  const getCurrentPageRecords = () => {
+  const getCurrentPageRecords = (): PreviewTransaction[] => {
+    if (!previewResult) return [];
     const startIndex = (currentPage - 1) * perPage;
     const endIndex = startIndex + perPage;
-    return allRecords.slice(startIndex, endIndex);
+    return previewResult.transactions.slice(startIndex, endIndex);
   };
 
-  const totalPages = Math.ceil(totalRows / perPage);
+  const totalPages = previewResult ? Math.ceil(previewResult.transactions.length / perPage) : 0;
+
+  const getStatusColor = (status: PreviewTransaction['status']) => {
+    switch (status) {
+      case 'valid': return '#10b981';
+      case 'invalid': return '#ef4444';
+      case 'skip': return '#f59e0b';
+      default: return '#6b7280';
+    }
+  };
+
+  const getStatusText = (status: PreviewTransaction['status']) => {
+    switch (status) {
+      case 'valid': return '有効';
+      case 'invalid': return '無効';
+      case 'skip': return 'スキップ';
+      default: return '不明';
+    }
+  };
 
   if (!file) return null;
 
@@ -167,7 +95,7 @@ export default function CsvPreview({ file, onParseComplete }: CsvPreviewProps) {
     return (
       <div className="card" style={{ marginTop: "16px" }}>
         <h3>CSVプレビュー</h3>
-        <p className="muted">ファイルを解析中...</p>
+        <p className="muted">ファイルを処理中...</p>
       </div>
     );
   }
@@ -183,21 +111,31 @@ export default function CsvPreview({ file, onParseComplete }: CsvPreviewProps) {
     );
   }
 
-  if (allRecords.length === 0) return null;
+  if (!previewResult || previewResult.transactions.length === 0) return null;
 
   const currentRecords = getCurrentPageRecords();
 
   return (
     <div className="card" style={{ marginTop: "16px" }}>
       <h3>CSVプレビュー</h3>
-      <p className="muted" style={{ marginBottom: "16px" }}>
-        全 {totalRows} 件中 {(currentPage - 1) * perPage + 1} - {Math.min(currentPage * perPage, totalRows)} 件を表示
-      </p>
+      <div style={{ marginBottom: "16px" }}>
+        <p className="muted">
+          全 {previewResult.summary.totalCount} 件中 {(currentPage - 1) * perPage + 1} - {Math.min(currentPage * perPage, previewResult.summary.totalCount)} 件を表示
+        </p>
+        <div style={{ display: 'flex', gap: '16px', fontSize: '14px', marginTop: '8px' }}>
+          <span style={{ color: getStatusColor('valid') }}>有効: {previewResult.summary.validCount}件</span>
+          <span style={{ color: getStatusColor('invalid') }}>無効: {previewResult.summary.invalidCount}件</span>
+          <span style={{ color: getStatusColor('skip') }}>スキップ: {previewResult.summary.skipCount}件</span>
+        </div>
+      </div>
       
       <div style={{ overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ borderBottom: "1px solid #374151" }}>
+              <th style={{ padding: "12px 8px", textAlign: "left", fontSize: "14px", fontWeight: "600" }}>
+                状態
+              </th>
               <th style={{ padding: "12px 8px", textAlign: "left", fontSize: "14px", fontWeight: "600" }}>
                 取引日
               </th>
@@ -222,7 +160,31 @@ export default function CsvPreview({ file, onParseComplete }: CsvPreviewProps) {
             {currentRecords.map((record, index) => (
               <tr key={index} style={{ borderBottom: "1px solid #374151" }}>
                 <td style={{ padding: "12px 8px", fontSize: "14px" }}>
-                  {record.transaction_date}
+                  <span
+                    style={{
+                      padding: "4px 8px",
+                      borderRadius: "4px",
+                      color: "white",
+                      backgroundColor: getStatusColor(record.status),
+                      fontSize: "12px",
+                      fontWeight: "600"
+                    }}
+                  >
+                    {getStatusText(record.status)}
+                  </span>
+                  {record.errors.length > 0 && (
+                    <div style={{ fontSize: "11px", color: "#ef4444", marginTop: "4px" }}>
+                      {record.errors.join(", ")}
+                    </div>
+                  )}
+                  {record.skipReason && (
+                    <div style={{ fontSize: "11px", color: "#f59e0b", marginTop: "4px" }}>
+                      {record.skipReason}
+                    </div>
+                  )}
+                </td>
+                <td style={{ padding: "12px 8px", fontSize: "14px" }}>
+                  {new Date(record.transaction_date).toLocaleDateString('ja-JP')}
                 </td>
                 <td style={{ padding: "12px 8px", fontSize: "14px" }}>
                   {record.debit_account}
@@ -233,7 +195,7 @@ export default function CsvPreview({ file, onParseComplete }: CsvPreviewProps) {
                   )}
                 </td>
                 <td style={{ padding: "12px 8px", fontSize: "14px", textAlign: "right" }}>
-                  {record.debit_amount ? `¥${parseInt(record.debit_amount).toLocaleString()}` : "-"}
+                  {record.debit_amount ? `¥${record.debit_amount.toLocaleString()}` : "-"}
                 </td>
                 <td style={{ padding: "12px 8px", fontSize: "14px" }}>
                   {record.credit_account}
@@ -244,7 +206,7 @@ export default function CsvPreview({ file, onParseComplete }: CsvPreviewProps) {
                   )}
                 </td>
                 <td style={{ padding: "12px 8px", fontSize: "14px", textAlign: "right" }}>
-                  {record.credit_amount ? `¥${parseInt(record.credit_amount).toLocaleString()}` : "-"}
+                  {record.credit_amount ? `¥${record.credit_amount.toLocaleString()}` : "-"}
                 </td>
                 <td style={{ padding: "12px 8px", fontSize: "14px" }}>
                   {record.description || "-"}

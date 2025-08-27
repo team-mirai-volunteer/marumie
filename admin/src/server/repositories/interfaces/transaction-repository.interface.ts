@@ -34,4 +34,5 @@ export interface ITransactionRepository {
     created: Transaction[];
     skipped: number;
   }>;
+  findByTransactionNos(transactionNos: string[]): Promise<Transaction[]>;
 }

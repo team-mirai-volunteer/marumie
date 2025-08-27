@@ -4,7 +4,7 @@ import { useEffect, useId, useState } from "react";
 import { apiClient } from "@/client/clients/api-client";
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
 import CsvPreview from "@/client/components/CsvPreview";
-import type { MfCsvRecord } from "@/server/lib/mf-csv-loader";
+import type { PreviewMfCsvResult } from "@/server/usecases/preview-mf-csv-usecase";
 
 export default function UploadCsvPage() {
   const politicalOrgSelectId = useId();
@@ -14,7 +14,7 @@ export default function UploadCsvPage() {
     useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [uploading, setUploading] = useState(false);
-  const [previewValid, setPreviewValid] = useState(false);
+  const [previewResult, setPreviewResult] = useState<PreviewMfCsvResult | null>(null);
   const [organizations, setOrganizations] = useState<PoliticalOrganization[]>(
     [],
   );
@@ -40,8 +40,8 @@ export default function UploadCsvPage() {
     fetchOrganizations();
   }, []);
 
-  const handlePreviewComplete = (records: MfCsvRecord[], isValid: boolean) => {
-    setPreviewValid(isValid);
+  const handlePreviewComplete = (result: PreviewMfCsvResult) => {
+    setPreviewResult(result);
   };
 
   async function onSubmit(e: React.FormEvent) {
@@ -51,9 +51,19 @@ export default function UploadCsvPage() {
     setMessage("");
 
     try {
+      if (!previewResult) {
+        setMessage("Error: Preview data not available");
+        return;
+      }
+
+      const validTransactions = previewResult.transactions.filter(t => t.status === 'valid');
+      if (validTransactions.length === 0) {
+        setMessage("有効なデータがありません");
+        return;
+      }
+
       const result = await apiClient.uploadCsv({
-        file,
-        politicalOrganizationId,
+        validTransactions,
       });
 
       setMessage(
@@ -62,7 +72,7 @@ export default function UploadCsvPage() {
       );
       
       setFile(null);
-      setPreviewValid(false);
+      setPreviewResult(null);
       
       const fileInput = document.getElementById(csvFileInputId) as HTMLInputElement;
       if (fileInput) {
@@ -120,14 +130,19 @@ export default function UploadCsvPage() {
           />
         </div>
         
-        <CsvPreview file={file} onParseComplete={handlePreviewComplete} />
+        <CsvPreview 
+          file={file} 
+          politicalOrganizationId={politicalOrganizationId}
+          onPreviewComplete={handlePreviewComplete} 
+        />
         
         <button
           className="button"
           disabled={
             !file ||
             !politicalOrganizationId ||
-            !previewValid ||
+            !previewResult ||
+            previewResult.summary.validCount === 0 ||
             uploading ||
             loadingOrganizations
           }

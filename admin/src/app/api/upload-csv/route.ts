@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
-import { EncodingConverter } from "@/server/lib/encoding-converter";
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
 import { UploadMfCsvUsecase } from "@/server/usecases/upload-mf-csv-usecase";
 
@@ -12,33 +11,17 @@ const uploadUsecase = new UploadMfCsvUsecase(transactionRepository);
 
 export async function POST(request: Request) {
   try {
-    const formData = await request.formData();
-    const file = formData.get("file") as File | null;
-    const politicalOrganizationId = formData.get("politicalOrganizationId") as
-      | string
-      | null;
+    const { validTransactions } = await request.json();
 
-    if (!file) {
+    if (!validTransactions || !Array.isArray(validTransactions)) {
       return NextResponse.json(
-        { error: "ファイルが選択されていません" },
+        { error: "有効なトランザクションデータが指定されていません" },
         { status: 400 },
       );
     }
-
-    if (!politicalOrganizationId) {
-      return NextResponse.json(
-        { error: "政治団体IDが指定されていません" },
-        { status: 400 },
-      );
-    }
-
-    // Convert file to buffer and then to properly encoded string
-    const csvBuffer = Buffer.from(await file.arrayBuffer());
-    const csvContent = EncodingConverter.bufferToString(csvBuffer);
 
     const result = await uploadUsecase.execute({
-      csvContent,
-      politicalOrganizationId,
+      validTransactions,
     });
 
     if (result.errors.length > 0) {

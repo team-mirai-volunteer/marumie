@@ -1,12 +1,9 @@
 import type { CreateTransactionInput } from "@/shared/models/transaction";
-import { MfCsvLoader } from "../lib/mf-csv-loader";
-import { MfRecordConverter } from "../lib/mf-record-converter";
-import { TransactionValidator } from "../lib/transaction-validator";
 import type { ITransactionRepository } from "../repositories/interfaces/transaction-repository.interface";
+import type { PreviewTransaction } from "./preview-mf-csv-usecase";
 
 export interface UploadMfCsvInput {
-  csvContent: string;
-  politicalOrganizationId: string;
+  validTransactions: PreviewTransaction[];
 }
 
 export interface UploadMfCsvResult {
@@ -19,9 +16,6 @@ export interface UploadMfCsvResult {
 export class UploadMfCsvUsecase {
   constructor(
     private transactionRepository: ITransactionRepository,
-    private csvLoader: MfCsvLoader = new MfCsvLoader(),
-    private recordConverter: MfRecordConverter = new MfRecordConverter(),
-    private validator: TransactionValidator = new TransactionValidator(),
   ) {}
 
   async execute(input: UploadMfCsvInput): Promise<UploadMfCsvResult> {
@@ -33,42 +27,26 @@ export class UploadMfCsvUsecase {
     };
 
     try {
-      const csvRecords = await this.csvLoader.load(input.csvContent);
-      result.processedCount = csvRecords.length;
+      const validTransactions = input.validTransactions.filter(
+        t => t.status === 'valid'
+      );
 
-      if (csvRecords.length === 0) {
+      result.processedCount = input.validTransactions.length;
+      result.skippedCount = input.validTransactions.filter(
+        t => t.status === 'skip'
+      ).length;
+
+      if (validTransactions.length === 0) {
         return result;
       }
 
-      const validationResult = this.validator.validateRecords(csvRecords);
-
-      if (!validationResult.isValid) {
-        const errorMessages = [
-          `無効なアカウントラベルが見つかりました: ${validationResult.invalidAccountLabels.join(", ")}`,
-          `エラー詳細:`,
-          ...validationResult.errors.map(
-            (error) =>
-              `取引番号: ${error.record.transaction_no}, ${error.errors.join(", ")}`,
-          ),
-        ];
-        result.errors.push(...errorMessages);
-        return result;
-      }
-
-      const transactionInputs: CreateTransactionInput[] = csvRecords.map(
-        (record) =>
-          this.recordConverter.convertRow(
-            record,
-            input.politicalOrganizationId,
-          ),
+      const transactionInputs: CreateTransactionInput[] = validTransactions.map(
+        (transaction) => this.convertPreviewToCreateInput(transaction)
       );
 
       const createResult =
-        await this.transactionRepository.createManySkipDuplicates(
-          transactionInputs,
-        );
-      result.savedCount = createResult.created.length;
-      result.skippedCount = createResult.skipped;
+        await this.transactionRepository.createMany(transactionInputs);
+      result.savedCount = createResult.length;
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -76,5 +54,90 @@ export class UploadMfCsvUsecase {
     }
 
     return result;
+  }
+
+  private convertPreviewToCreateInput(
+    previewTransaction: PreviewTransaction
+  ): CreateTransactionInput {
+    return {
+      political_organization_id: previewTransaction.political_organization_id,
+      transaction_no: previewTransaction.transaction_no,
+      transaction_date: previewTransaction.transaction_date,
+      financial_year: this.extractFinancialYear(previewTransaction.transaction_date),
+      transaction_type: this.determineTransactionType(
+        previewTransaction.debit_account,
+        previewTransaction.credit_account,
+      ),
+      debit_account: previewTransaction.debit_account,
+      debit_sub_account: previewTransaction.debit_sub_account || "",
+      debit_department: "",
+      debit_partner: "",
+      debit_tax_category: "",
+      debit_amount: previewTransaction.debit_amount,
+      credit_account: previewTransaction.credit_account,
+      credit_sub_account: previewTransaction.credit_sub_account || "",
+      credit_department: "",
+      credit_partner: "",
+      credit_tax_category: "",
+      credit_amount: previewTransaction.credit_amount,
+      description: previewTransaction.description || "",
+      description_1: this.splitDescription(previewTransaction.description || "").description_1,
+      description_2: this.splitDescription(previewTransaction.description || "").description_2,
+      description_3: this.splitDescription(previewTransaction.description || "").description_3,
+      description_detail: undefined,
+      tags: "",
+      memo: "",
+    };
+  }
+
+  private extractFinancialYear(date: Date): number {
+    const startOfFinancialYear = 4;
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    return month >= startOfFinancialYear ? year : year - 1;
+  }
+
+  private determineTransactionType(
+    debitAccount: string,
+    creditAccount: string,
+  ): "income" | "expense" | "other" {
+    if (debitAccount === "普通預金") {
+      return "income";
+    } else if (creditAccount === "普通預金") {
+      return "expense";
+    } else {
+      return "other";
+    }
+  }
+
+  private splitDescription(description: string): {
+    description_1?: string;
+    description_2?: string;
+    description_3?: string;
+  } {
+    if (!description || description.trim() === "") {
+      return {};
+    }
+
+    const parts = description.trim().split(/\s+/);
+
+    switch (parts.length) {
+      case 1:
+        return { description_1: parts[0] };
+      case 2:
+        return { description_1: parts[0], description_3: parts[1] };
+      case 3:
+        return {
+          description_1: parts[0],
+          description_2: parts[1],
+          description_3: parts[2],
+        };
+      default:
+        return {
+          description_1: parts[0],
+          description_2: parts[1],
+          description_3: parts.slice(2).join(" "),
+        };
+    }
   }
 }

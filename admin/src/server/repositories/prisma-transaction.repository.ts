@@ -258,6 +258,18 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     };
   }
 
+  async findByTransactionNos(transactionNos: string[]): Promise<Transaction[]> {
+    const transactions = await this.prisma.transaction.findMany({
+      where: {
+        transactionNo: {
+          in: transactionNos,
+        },
+      },
+    });
+
+    return transactions.map(this.mapToTransaction);
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public mapToTransaction(prismaTransaction: any): Transaction {
     return {
