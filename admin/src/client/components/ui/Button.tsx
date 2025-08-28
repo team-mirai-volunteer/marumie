@@ -29,7 +29,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         "bg-primary-accent text-white hover:bg-blue-600 focus:ring-primary-accent",
       secondary:
         "bg-primary-panel text-white border border-primary-border hover:bg-primary-hover focus:ring-primary-muted",
-      danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
+      danger: "bg-red-500 text-white hover:bg-red-600 focus:ring-red-400",
     };
 
     const sizeClasses = {
