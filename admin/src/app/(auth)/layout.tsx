@@ -2,7 +2,7 @@ import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import Sidebar from "@/client/components/Sidebar";
+import Sidebar from "@/client/components/layout/Sidebar";
 import { logout } from "@/server/auth/login";
 
 export default async function AuthLayout({

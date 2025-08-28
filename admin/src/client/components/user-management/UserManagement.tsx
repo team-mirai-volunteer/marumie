@@ -2,7 +2,7 @@
 import "client-only";
 import { useState } from "react";
 import { UserRole } from "@prisma/client";
-import { Button, Input, Card } from "./ui";
+import { Button, Input, Card } from "../ui";
 
 interface User {
   id: string;

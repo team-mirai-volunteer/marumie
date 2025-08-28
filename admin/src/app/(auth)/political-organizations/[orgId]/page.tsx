@@ -6,7 +6,7 @@ import {
   apiClient,
   type UpdatePoliticalOrganizationRequest,
 } from "@/client/clients/api-client";
-import { PoliticalOrganizationForm } from "@/client/components/PoliticalOrganizationForm";
+import { PoliticalOrganizationForm } from "@/client/components/political-organizations/PoliticalOrganizationForm";
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
 
 interface EditPoliticalOrganizationPageProps {

@@ -1,8 +1,7 @@
 import "server-only";
 import { createServerClient } from "@supabase/ssr";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
-export async function createClient(): Promise<SupabaseClient> {
+export async function createClient() {
   const supabaseUrl = process.env.SUPABASE_URL;
   const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 

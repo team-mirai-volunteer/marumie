@@ -4,7 +4,7 @@ import "client-only";
 import { useEffect, useId, useState } from "react";
 import { apiClient } from "@/client/clients/api-client";
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
-import CsvPreview from "@/client/components/CsvPreview";
+import CsvPreview from "@/client/components/csv-import/CsvPreview";
 import type { PreviewMfCsvResult } from "@/server/usecases/preview-mf-csv-usecase";
 
 export default function UploadCsvPage() {

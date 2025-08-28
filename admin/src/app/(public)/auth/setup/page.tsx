@@ -1,7 +1,7 @@
 import "server-only";
 import { createClient } from "@/server/auth/client";
 import { redirect } from "next/navigation";
-import SetupForm from "@/client/components/SetupForm";
+import SetupForm from "@/client/components/auth/SetupForm";
 
 interface SetupPageProps {
   searchParams: Promise<{ from?: string }>;
