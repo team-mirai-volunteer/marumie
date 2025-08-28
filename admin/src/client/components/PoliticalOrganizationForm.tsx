@@ -1,4 +1,5 @@
 "use client";
+import "client-only";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -49,40 +50,28 @@ export function PoliticalOrganizationForm({
   };
 
   return (
-    <div className="card">
-      <div style={{ marginBottom: "20px" }}>
+    <div className="bg-primary-panel rounded-xl p-4">
+      <div className="mb-5">
         <Link
           href="/political-organizations"
-          className="muted"
-          style={{ textDecoration: "none" }}
+          className="text-primary-muted no-underline hover:text-white transition-colors"
         >
           ← 政治団体一覧に戻る
         </Link>
       </div>
 
-      <h1>{title}</h1>
+      <h1 className="text-2xl font-bold text-white mb-4">{title}</h1>
 
       {error && (
-        <div
-          style={{
-            color: "#ff6b6b",
-            marginBottom: "16px",
-            padding: "12px",
-            background: "#2d1b1b",
-            borderRadius: "8px",
-          }}
-        >
+        <div className="text-red-500 mb-4 p-3 bg-red-900/20 rounded-lg border border-red-900/30">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
-        <div style={{ marginBottom: "20px" }}>
-          <label
-            htmlFor="name"
-            style={{ display: "block", marginBottom: "8px", fontWeight: "500" }}
-          >
-            政治団体名 <span style={{ color: "#ff6b6b" }}>*</span>
+      <form onSubmit={handleSubmit} className="mt-5 space-y-5">
+        <div>
+          <label htmlFor="name" className="block mb-2 font-medium text-white">
+            政治団体名 <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -90,20 +79,16 @@ export function PoliticalOrganizationForm({
             name="name"
             value={formData.name}
             onChange={handleInputChange}
-            className="input"
-            style={{ width: "100%", maxWidth: "500px" }}
+            className="bg-primary-input text-white border border-primary-border rounded-lg px-3 py-2.5 w-full max-w-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-accent focus:border-primary-accent"
             placeholder="政治団体名を入力してください"
             disabled={isLoading}
             required
           />
         </div>
 
-        <div style={{ marginBottom: "20px" }}>
-          <label
-            htmlFor="slug"
-            style={{ display: "block", marginBottom: "8px", fontWeight: "500" }}
-          >
-            スラッグ <span style={{ color: "#ff6b6b" }}>*</span>
+        <div>
+          <label htmlFor="slug" className="block mb-2 font-medium text-white">
+            スラッグ <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -111,18 +96,17 @@ export function PoliticalOrganizationForm({
             name="slug"
             value={formData.slug}
             onChange={handleInputChange}
-            className="input"
-            style={{ width: "100%", maxWidth: "500px" }}
+            className="bg-primary-input text-white border border-primary-border rounded-lg px-3 py-2.5 w-full max-w-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-accent focus:border-primary-accent"
             placeholder="team-mirai"
             disabled={isLoading}
             required
           />
         </div>
 
-        <div style={{ marginBottom: "30px" }}>
+        <div>
           <label
             htmlFor="description"
-            style={{ display: "block", marginBottom: "8px", fontWeight: "500" }}
+            className="block mb-2 font-medium text-white"
           >
             説明（任意）
           </label>
@@ -131,47 +115,30 @@ export function PoliticalOrganizationForm({
             name="description"
             value={formData.description}
             onChange={handleInputChange}
-            className="input"
-            style={{
-              width: "100%",
-              maxWidth: "500px",
-              minHeight: "100px",
-              resize: "vertical",
-            }}
+            className="bg-primary-input text-white border border-primary-border rounded-lg px-3 py-2.5 w-full max-w-md min-h-24 resize-y transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-accent focus:border-primary-accent"
             placeholder="政治団体の説明を入力してください"
             disabled={isLoading}
           />
         </div>
 
-        <div style={{ display: "flex", gap: "12px" }}>
+        <div className="flex gap-3">
           <button
             type="submit"
-            className="button"
             disabled={
               isLoading || !formData.name.trim() || !formData.slug.trim()
             }
-            style={{
-              opacity:
-                isLoading || !formData.name.trim() || !formData.slug.trim()
-                  ? 0.6
-                  : 1,
-              cursor:
-                isLoading || !formData.name.trim() || !formData.slug.trim()
-                  ? "not-allowed"
-                  : "pointer",
-            }}
+            className={`bg-primary-accent text-white border-0 rounded-lg px-4 py-2.5 font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-accent ${
+              isLoading || !formData.name.trim() || !formData.slug.trim()
+                ? "opacity-60 cursor-not-allowed"
+                : "hover:bg-blue-600 cursor-pointer"
+            }`}
           >
             {isLoading ? "処理中..." : submitButtonText}
           </button>
 
           <Link
             href="/political-organizations"
-            className="button"
-            style={{
-              background: "#374151",
-              textDecoration: "none",
-              display: "inline-block",
-            }}
+            className="bg-primary-hover text-white border border-primary-border hover:bg-primary-border no-underline inline-block rounded-lg px-4 py-2.5 font-medium transition-colors duration-200"
           >
             キャンセル
           </Link>

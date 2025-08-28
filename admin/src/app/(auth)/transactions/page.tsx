@@ -1,4 +1,5 @@
 "use client";
+import "client-only";
 
 import { useEffect, useState } from "react";
 import {
@@ -104,123 +105,71 @@ export default function TransactionsPage() {
   };
 
   return (
-    <div className="card">
-      <div className="row">
-        <h1>取引一覧</h1>
+    <div className="bg-primary-panel rounded-xl p-4">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold text-white">取引一覧</h1>
         <button
           type="button"
           onClick={handleDeleteAll}
           disabled={deleting || loading || !data || data.total === 0}
-          className="button"
-          style={{
-            background: "#ef4444",
-            color: "white",
-            opacity: deleting || loading || !data || data.total === 0 ? 0.5 : 1,
-            cursor:
-              deleting || loading || !data || data.total === 0
-                ? "not-allowed"
-                : "pointer",
-          }}
+          className={`bg-red-600 text-white border-0 rounded-lg px-4 py-2.5 font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 ${
+            deleting || loading || !data || data.total === 0
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-red-700 cursor-pointer"
+          }`}
         >
           {deleting ? "削除中..." : "全件削除"}
         </button>
       </div>
 
-      {loading && <p className="muted">読み込み中...</p>}
+      {loading && <p className="text-primary-muted">読み込み中...</p>}
 
       {error && (
-        <div style={{ color: "#ff6b6b", marginTop: "16px" }}>
+        <div className="text-red-500 mt-4 p-3 bg-red-900/20 rounded-lg border border-red-900/30">
           エラー: {error}
         </div>
       )}
 
       {!loading && !error && data && (
         <>
-          <div style={{ marginTop: "20px", marginBottom: "16px" }}>
-            <p className="muted">
+          <div className="mt-5 mb-4">
+            <p className="text-primary-muted">
               全 {data.total} 件中 {(data.page - 1) * data.perPage + 1} -{" "}
               {Math.min(data.page * data.perPage, data.total)} 件を表示
             </p>
           </div>
 
           {data.transactions.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "40px 0" }}>
-              <p className="muted">トランザクションが登録されていません</p>
+            <div className="text-center py-10">
+              <p className="text-primary-muted">
+                トランザクションが登録されていません
+              </p>
             </div>
           ) : (
             <>
-              <div style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
                   <thead>
-                    <tr style={{ borderBottom: "1px solid #374151" }}>
-                      <th
-                        style={{
-                          padding: "12px 8px",
-                          textAlign: "left",
-                          fontSize: "14px",
-                          fontWeight: "600",
-                        }}
-                      >
+                    <tr className="border-b border-primary-border">
+                      <th className="px-2 py-3 text-left text-sm font-semibold text-white">
                         取引日
                       </th>
-                      <th
-                        style={{
-                          padding: "12px 8px",
-                          textAlign: "left",
-                          fontSize: "14px",
-                          fontWeight: "600",
-                        }}
-                      >
+                      <th className="px-2 py-3 text-left text-sm font-semibold text-white">
                         種別
                       </th>
-                      <th
-                        style={{
-                          padding: "12px 8px",
-                          textAlign: "left",
-                          fontSize: "14px",
-                          fontWeight: "600",
-                        }}
-                      >
+                      <th className="px-2 py-3 text-left text-sm font-semibold text-white">
                         借方
                       </th>
-                      <th
-                        style={{
-                          padding: "12px 8px",
-                          textAlign: "right",
-                          fontSize: "14px",
-                          fontWeight: "600",
-                        }}
-                      >
+                      <th className="px-2 py-3 text-right text-sm font-semibold text-white">
                         借方金額
                       </th>
-                      <th
-                        style={{
-                          padding: "12px 8px",
-                          textAlign: "left",
-                          fontSize: "14px",
-                          fontWeight: "600",
-                        }}
-                      >
+                      <th className="px-2 py-3 text-left text-sm font-semibold text-white">
                         貸方
                       </th>
-                      <th
-                        style={{
-                          padding: "12px 8px",
-                          textAlign: "right",
-                          fontSize: "14px",
-                          fontWeight: "600",
-                        }}
-                      >
+                      <th className="px-2 py-3 text-right text-sm font-semibold text-white">
                         貸方金額
                       </th>
-                      <th
-                        style={{
-                          padding: "12px 8px",
-                          textAlign: "left",
-                          fontSize: "14px",
-                          fontWeight: "600",
-                        }}
-                      >
+                      <th className="px-2 py-3 text-left text-sm font-semibold text-white">
                         摘要
                       </th>
                     </tr>
@@ -229,66 +178,49 @@ export default function TransactionsPage() {
                     {data.transactions.map((transaction) => (
                       <tr
                         key={transaction.id}
-                        style={{ borderBottom: "1px solid #374151" }}
+                        className="border-b border-primary-border"
                       >
-                        <td style={{ padding: "12px 8px", fontSize: "14px" }}>
+                        <td className="px-2 py-3 text-sm text-white">
                           {formatDate(transaction.transaction_date)}
                         </td>
-                        <td style={{ padding: "12px 8px", fontSize: "14px" }}>
+                        <td className="px-2 py-3 text-sm text-white">
                           <span
-                            style={{
-                              padding: "2px 8px",
-                              borderRadius: "4px",
-                              fontSize: "12px",
-                              backgroundColor:
-                                transaction.transaction_type === "income"
-                                  ? "#10b981"
-                                  : transaction.transaction_type === "expense"
-                                    ? "#ef4444"
-                                    : "#6b7280",
-                              color: "white",
-                            }}
+                            className={`px-2 py-1 rounded text-white text-xs font-medium ${
+                              transaction.transaction_type === "income"
+                                ? "bg-green-600"
+                                : transaction.transaction_type === "expense"
+                                  ? "bg-red-600"
+                                  : "bg-gray-600"
+                            }`}
                           >
                             {getTransactionTypeLabel(
                               transaction.transaction_type,
                             )}
                           </span>
                         </td>
-                        <td style={{ padding: "12px 8px", fontSize: "14px" }}>
+                        <td className="px-2 py-3 text-sm text-white">
                           {transaction.debit_account}
                           {transaction.debit_sub_account && (
-                            <div className="muted" style={{ fontSize: "12px" }}>
+                            <div className="text-primary-muted text-xs">
                               {transaction.debit_sub_account}
                             </div>
                           )}
                         </td>
-                        <td
-                          style={{
-                            padding: "12px 8px",
-                            fontSize: "14px",
-                            textAlign: "right",
-                          }}
-                        >
+                        <td className="px-2 py-3 text-sm text-right text-white">
                           {formatAmount(transaction.debit_amount)}
                         </td>
-                        <td style={{ padding: "12px 8px", fontSize: "14px" }}>
+                        <td className="px-2 py-3 text-sm text-white">
                           {transaction.credit_account}
                           {transaction.credit_sub_account && (
-                            <div className="muted" style={{ fontSize: "12px" }}>
+                            <div className="text-primary-muted text-xs">
                               {transaction.credit_sub_account}
                             </div>
                           )}
                         </td>
-                        <td
-                          style={{
-                            padding: "12px 8px",
-                            fontSize: "14px",
-                            textAlign: "right",
-                          }}
-                        >
+                        <td className="px-2 py-3 text-sm text-right text-white">
                           {formatAmount(transaction.credit_amount)}
                         </td>
-                        <td style={{ padding: "12px 8px", fontSize: "14px" }}>
+                        <td className="px-2 py-3 text-sm text-white">
                           {transaction.description || "-"}
                         </td>
                       </tr>
@@ -298,31 +230,21 @@ export default function TransactionsPage() {
               </div>
 
               {data.totalPages > 1 && (
-                <div
-                  style={{
-                    marginTop: "24px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: "8px",
-                  }}
-                >
+                <div className="mt-6 flex justify-center items-center gap-2">
                   <button
                     type="button"
                     onClick={() => handlePageChange(data.page - 1)}
                     disabled={data.page <= 1}
-                    className="button"
-                    style={{
-                      padding: "8px 12px",
-                      fontSize: "14px",
-                      opacity: data.page <= 1 ? 0.5 : 1,
-                      cursor: data.page <= 1 ? "not-allowed" : "pointer",
-                    }}
+                    className={`bg-primary-accent text-white border-0 rounded-lg px-3 py-2 text-sm cursor-pointer transition-colors duration-200 ${
+                      data.page <= 1
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-blue-600"
+                    }`}
                   >
                     前へ
                   </button>
 
-                  <div style={{ display: "flex", gap: "4px" }}>
+                  <div className="flex gap-1">
                     {Array.from(
                       { length: Math.min(5, data.totalPages) },
                       (_, i) => {
@@ -342,14 +264,11 @@ export default function TransactionsPage() {
                             type="button"
                             key={pageNum}
                             onClick={() => handlePageChange(pageNum)}
-                            className="button"
-                            style={{
-                              padding: "8px 12px",
-                              fontSize: "14px",
-                              backgroundColor:
-                                pageNum === data.page ? "#3b82f6" : "#374151",
-                              color: "white",
-                            }}
+                            className={`px-3 py-2 text-sm border-0 rounded-lg cursor-pointer transition-colors duration-200 text-white ${
+                              pageNum === data.page
+                                ? "bg-primary-accent"
+                                : "bg-primary-hover hover:bg-primary-border"
+                            }`}
                           >
                             {pageNum}
                           </button>
@@ -362,16 +281,11 @@ export default function TransactionsPage() {
                     type="button"
                     onClick={() => handlePageChange(data.page + 1)}
                     disabled={data.page >= data.totalPages}
-                    className="button"
-                    style={{
-                      padding: "8px 12px",
-                      fontSize: "14px",
-                      opacity: data.page >= data.totalPages ? 0.5 : 1,
-                      cursor:
-                        data.page >= data.totalPages
-                          ? "not-allowed"
-                          : "pointer",
-                    }}
+                    className={`bg-primary-accent text-white border-0 rounded-lg px-3 py-2 text-sm cursor-pointer transition-colors duration-200 ${
+                      data.page >= data.totalPages
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-blue-600"
+                    }`}
                   >
                     次へ
                   </button>
