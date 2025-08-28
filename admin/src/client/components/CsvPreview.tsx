@@ -1,12 +1,12 @@
 "use client";
 import "client-only";
 
-import { useState, useEffect } from "react";
-import { apiClient } from "@/client/clients/api-client";
+import { useEffect, useState } from "react";
 import type {
-  PreviewTransaction,
   PreviewMfCsvResult,
+  PreviewTransaction,
 } from "@/server/usecases/preview-mf-csv-usecase";
+import { apiClient } from "@/client/clients/api-client";
 
 interface CsvPreviewProps {
   file: File | null;
@@ -67,8 +67,7 @@ export default function CsvPreview({
     };
 
     previewFile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [file, politicalOrganizationId]);
+  }, [file, politicalOrganizationId, onPreviewComplete]);
 
   const handlePageChange = (page: number) => {
     if (!previewResult) return;
@@ -81,7 +80,6 @@ export default function CsvPreview({
   const getSortedTransactions = (): PreviewTransaction[] => {
     if (!previewResult) return [];
 
-    // 有効・無効・スキップの順でソート
     const statusOrder = { valid: 1, invalid: 2, skip: 3 };
     return [...previewResult.transactions].sort((a, b) => {
       const aOrder = statusOrder[a.status] || 4;
@@ -215,8 +213,11 @@ export default function CsvPreview({
             </tr>
           </thead>
           <tbody>
-            {currentRecords.map((record, index) => (
-              <tr key={index} className="border-b border-primary-border">
+            {currentRecords.map((record) => (
+              <tr
+                key={`${record.transaction_date}-${record.debit_account}-${record.credit_account}-${record.debit_amount || 0}`}
+                className="border-b border-primary-border"
+              >
                 <td className="px-2 py-3 text-sm">
                   <span
                     className={`px-2 py-1 rounded text-white text-xs font-semibold ${getStatusBgClass(record.status)}`}
@@ -290,144 +291,33 @@ export default function CsvPreview({
           </button>
 
           <div className="flex gap-1 items-center">
-            {totalPages <= 7 ? (
-              Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (pageNum) => (
-                  <button
-                    type="button"
-                    key={pageNum}
-                    onClick={() => handlePageChange(pageNum)}
-                    className={`px-3 py-2 text-sm border-0 rounded-lg cursor-pointer transition-colors duration-200 text-white ${
-                      pageNum === currentPage
-                        ? "bg-primary-accent"
-                        : "bg-primary-hover hover:bg-primary-border"
-                    }`}
-                  >
-                    {pageNum}
-                  </button>
-                ),
-              )
-            ) : (
-              <>
-                {currentPage <= 4 ? (
-                  <>
-                    {[1, 2, 3, 4, 5].map((pageNum) => (
-                      <button
-                        type="button"
-                        key={pageNum}
-                        onClick={() => handlePageChange(pageNum)}
-                        className={`px-3 py-2 text-sm border-0 rounded-lg cursor-pointer transition-colors duration-200 text-white ${
-                          pageNum === currentPage
-                            ? "bg-primary-accent"
-                            : "bg-primary-hover hover:bg-primary-border"
-                        }`}
-                      >
-                        {pageNum}
-                      </button>
-                    ))}
-                    <span className="px-1 py-2 text-primary-muted">...</span>
-                    <button
-                      type="button"
-                      onClick={() => handlePageChange(totalPages)}
-                      className={`px-3 py-2 text-sm border-0 rounded-lg cursor-pointer transition-colors duration-200 text-white ${
-                        totalPages === currentPage
-                          ? "bg-primary-accent"
-                          : "bg-primary-hover hover:bg-primary-border"
-                      }`}
-                    >
-                      {totalPages}
-                    </button>
-                  </>
-                ) : currentPage >= totalPages - 3 ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => handlePageChange(1)}
-                      className="button"
-                      style={{
-                        padding: "8px 12px",
-                        fontSize: "14px",
-                        backgroundColor:
-                          1 === currentPage ? "#3b82f6" : "#374151",
-                        color: "white",
-                      }}
-                    >
-                      1
-                    </button>
-                    <span className="px-1 py-2 text-primary-muted">...</span>
-                    {[
-                      totalPages - 4,
-                      totalPages - 3,
-                      totalPages - 2,
-                      totalPages - 1,
-                      totalPages,
-                    ].map((pageNum) => (
-                      <button
-                        type="button"
-                        key={pageNum}
-                        onClick={() => handlePageChange(pageNum)}
-                        className={`px-3 py-2 text-sm border-0 rounded-lg cursor-pointer transition-colors duration-200 text-white ${
-                          pageNum === currentPage
-                            ? "bg-primary-accent"
-                            : "bg-primary-hover hover:bg-primary-border"
-                        }`}
-                      >
-                        {pageNum}
-                      </button>
-                    ))}
-                  </>
-                ) : (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => handlePageChange(1)}
-                      className="button"
-                      style={{
-                        padding: "8px 12px",
-                        fontSize: "14px",
-                        backgroundColor:
-                          1 === currentPage ? "#3b82f6" : "#374151",
-                        color: "white",
-                      }}
-                    >
-                      1
-                    </button>
-                    <span className="px-1 py-2 text-primary-muted">...</span>
-                    {[currentPage - 1, currentPage, currentPage + 1].map(
-                      (pageNum) => (
-                        <button
-                          type="button"
-                          key={pageNum}
-                          onClick={() => handlePageChange(pageNum)}
-                          className="button"
-                          style={{
-                            padding: "8px 12px",
-                            fontSize: "14px",
-                            backgroundColor:
-                              pageNum === currentPage ? "#3b82f6" : "#374151",
-                            color: "white",
-                          }}
-                        >
-                          {pageNum}
-                        </button>
-                      ),
-                    )}
-                    <span className="px-1 py-2 text-primary-muted">...</span>
-                    <button
-                      type="button"
-                      onClick={() => handlePageChange(totalPages)}
-                      className={`px-3 py-2 text-sm border-0 rounded-lg cursor-pointer transition-colors duration-200 text-white ${
-                        totalPages === currentPage
-                          ? "bg-primary-accent"
-                          : "bg-primary-hover hover:bg-primary-border"
-                      }`}
-                    >
-                      {totalPages}
-                    </button>
-                  </>
-                )}
-              </>
-            )}
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              let pageNum: number;
+              if (totalPages <= 5) {
+                pageNum = i + 1;
+              } else if (currentPage <= 3) {
+                pageNum = i + 1;
+              } else if (currentPage >= totalPages - 2) {
+                pageNum = totalPages - 4 + i;
+              } else {
+                pageNum = currentPage - 2 + i;
+              }
+
+              return (
+                <button
+                  type="button"
+                  key={pageNum}
+                  onClick={() => handlePageChange(pageNum)}
+                  className={`px-3 py-2 text-sm border-0 rounded-lg cursor-pointer transition-colors duration-200 text-white ${
+                    pageNum === currentPage
+                      ? "bg-primary-accent"
+                      : "bg-primary-hover hover:bg-primary-border"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
           </div>
 
           <button
