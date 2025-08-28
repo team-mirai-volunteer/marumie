@@ -15,9 +15,7 @@ export interface UploadMfCsvResult {
 }
 
 export class UploadMfCsvUsecase {
-  constructor(
-    private transactionRepository: ITransactionRepository,
-  ) {}
+  constructor(private transactionRepository: ITransactionRepository) {}
 
   async execute(input: UploadMfCsvInput): Promise<UploadMfCsvResult> {
     const result: UploadMfCsvResult = {
@@ -29,12 +27,12 @@ export class UploadMfCsvUsecase {
 
     try {
       const validTransactions = input.validTransactions.filter(
-        t => t.status === 'valid'
+        (t) => t.status === "valid",
       );
 
       result.processedCount = input.validTransactions.length;
       result.skippedCount = input.validTransactions.filter(
-        t => t.status === 'skip'
+        (t) => t.status === "skip",
       ).length;
 
       if (validTransactions.length === 0) {
@@ -42,7 +40,11 @@ export class UploadMfCsvUsecase {
       }
 
       const transactionInputs: CreateTransactionInput[] = validTransactions.map(
-        (transaction) => this.convertPreviewToCreateInput(transaction, input.politicalOrganizationId)
+        (transaction) =>
+          this.convertPreviewToCreateInput(
+            transaction,
+            input.politicalOrganizationId,
+          ),
       );
 
       const createResult =
@@ -59,13 +61,15 @@ export class UploadMfCsvUsecase {
 
   private convertPreviewToCreateInput(
     previewTransaction: PreviewTransaction,
-    politicalOrganizationId: string
+    politicalOrganizationId: string,
   ): CreateTransactionInput {
     return {
       political_organization_id: politicalOrganizationId,
       transaction_no: previewTransaction.transaction_no,
       transaction_date: new Date(previewTransaction.transaction_date),
-      financial_year: this.extractFinancialYear(new Date(previewTransaction.transaction_date)),
+      financial_year: this.extractFinancialYear(
+        new Date(previewTransaction.transaction_date),
+      ),
       transaction_type: this.determineTransactionType(
         previewTransaction.debit_account,
         previewTransaction.credit_account,
@@ -83,9 +87,12 @@ export class UploadMfCsvUsecase {
       credit_tax_category: "",
       credit_amount: previewTransaction.credit_amount,
       description: previewTransaction.description || "",
-      description_1: this.splitDescription(previewTransaction.description || "").description_1,
-      description_2: this.splitDescription(previewTransaction.description || "").description_2,
-      description_3: this.splitDescription(previewTransaction.description || "").description_3,
+      description_1: this.splitDescription(previewTransaction.description || "")
+        .description_1,
+      description_2: this.splitDescription(previewTransaction.description || "")
+        .description_2,
+      description_3: this.splitDescription(previewTransaction.description || "")
+        .description_3,
       description_detail: undefined,
       tags: "",
       memo: "",

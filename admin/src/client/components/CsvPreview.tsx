@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { apiClient } from "@/client/clients/api-client";
-import type { PreviewTransaction, PreviewMfCsvResult } from "@/server/usecases/preview-mf-csv-usecase";
+import type {
+  PreviewTransaction,
+  PreviewMfCsvResult,
+} from "@/server/usecases/preview-mf-csv-usecase";
 
 interface CsvPreviewProps {
   file: File | null;
@@ -10,8 +13,14 @@ interface CsvPreviewProps {
   onPreviewComplete?: (result: PreviewMfCsvResult) => void;
 }
 
-export default function CsvPreview({ file, politicalOrganizationId, onPreviewComplete }: CsvPreviewProps) {
-  const [previewResult, setPreviewResult] = useState<PreviewMfCsvResult | null>(null);
+export default function CsvPreview({
+  file,
+  politicalOrganizationId,
+  onPreviewComplete,
+}: CsvPreviewProps) {
+  const [previewResult, setPreviewResult] = useState<PreviewMfCsvResult | null>(
+    null,
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -39,11 +48,17 @@ export default function CsvPreview({ file, politicalOrganizationId, onPreviewCom
         setPreviewResult(result);
         onPreviewComplete?.(result);
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "CSVのプレビューに失敗しました";
+        const errorMessage =
+          err instanceof Error ? err.message : "CSVのプレビューに失敗しました";
         setError(errorMessage);
         onPreviewComplete?.({
           transactions: [],
-          summary: { totalCount: 0, validCount: 0, invalidCount: 0, skipCount: 0 }
+          summary: {
+            totalCount: 0,
+            validCount: 0,
+            invalidCount: 0,
+            skipCount: 0,
+          },
         });
       } finally {
         setLoading(false);
@@ -53,7 +68,6 @@ export default function CsvPreview({ file, politicalOrganizationId, onPreviewCom
     previewFile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file, politicalOrganizationId]);
-
 
   const handlePageChange = (page: number) => {
     if (!previewResult) return;
@@ -65,7 +79,7 @@ export default function CsvPreview({ file, politicalOrganizationId, onPreviewCom
 
   const getSortedTransactions = (): PreviewTransaction[] => {
     if (!previewResult) return [];
-    
+
     // 有効・無効・スキップの順でソート
     const statusOrder = { valid: 1, invalid: 2, skip: 3 };
     return [...previewResult.transactions].sort((a, b) => {
@@ -82,23 +96,33 @@ export default function CsvPreview({ file, politicalOrganizationId, onPreviewCom
     return sortedTransactions.slice(startIndex, endIndex);
   };
 
-  const totalPages = previewResult ? Math.ceil(getSortedTransactions().length / perPage) : 0;
+  const totalPages = previewResult
+    ? Math.ceil(getSortedTransactions().length / perPage)
+    : 0;
 
-  const getStatusColor = (status: PreviewTransaction['status']) => {
+  const getStatusColor = (status: PreviewTransaction["status"]) => {
     switch (status) {
-      case 'valid': return '#10b981';
-      case 'invalid': return '#ef4444';
-      case 'skip': return '#f59e0b';
-      default: return '#6b7280';
+      case "valid":
+        return "#10b981";
+      case "invalid":
+        return "#ef4444";
+      case "skip":
+        return "#f59e0b";
+      default:
+        return "#6b7280";
     }
   };
 
-  const getStatusText = (status: PreviewTransaction['status']) => {
+  const getStatusText = (status: PreviewTransaction["status"]) => {
     switch (status) {
-      case 'valid': return '有効';
-      case 'invalid': return '無効';
-      case 'skip': return 'スキップ';
-      default: return '不明';
+      case "valid":
+        return "有効";
+      case "invalid":
+        return "無効";
+      case "skip":
+        return "スキップ";
+      default:
+        return "不明";
     }
   };
 
@@ -133,38 +157,103 @@ export default function CsvPreview({ file, politicalOrganizationId, onPreviewCom
       <h3>CSVプレビュー</h3>
       <div style={{ marginBottom: "16px" }}>
         <p className="muted">
-          全 {previewResult.summary.totalCount} 件中 {(currentPage - 1) * perPage + 1} - {Math.min(currentPage * perPage, previewResult.summary.totalCount)} 件を表示
+          全 {previewResult.summary.totalCount} 件中{" "}
+          {(currentPage - 1) * perPage + 1} -{" "}
+          {Math.min(currentPage * perPage, previewResult.summary.totalCount)}{" "}
+          件を表示
         </p>
-        <div style={{ display: 'flex', gap: '16px', fontSize: '14px', marginTop: '8px' }}>
-          <span style={{ color: getStatusColor('valid') }}>有効: {previewResult.summary.validCount}件</span>
-          <span style={{ color: getStatusColor('invalid') }}>無効: {previewResult.summary.invalidCount}件</span>
-          <span style={{ color: getStatusColor('skip') }}>スキップ: {previewResult.summary.skipCount}件</span>
+        <div
+          style={{
+            display: "flex",
+            gap: "16px",
+            fontSize: "14px",
+            marginTop: "8px",
+          }}
+        >
+          <span style={{ color: getStatusColor("valid") }}>
+            有効: {previewResult.summary.validCount}件
+          </span>
+          <span style={{ color: getStatusColor("invalid") }}>
+            無効: {previewResult.summary.invalidCount}件
+          </span>
+          <span style={{ color: getStatusColor("skip") }}>
+            スキップ: {previewResult.summary.skipCount}件
+          </span>
         </div>
       </div>
-      
+
       <div style={{ overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ borderBottom: "1px solid #374151" }}>
-              <th style={{ padding: "12px 8px", textAlign: "left", fontSize: "14px", fontWeight: "600" }}>
+              <th
+                style={{
+                  padding: "12px 8px",
+                  textAlign: "left",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                }}
+              >
                 状態
               </th>
-              <th style={{ padding: "12px 8px", textAlign: "left", fontSize: "14px", fontWeight: "600" }}>
+              <th
+                style={{
+                  padding: "12px 8px",
+                  textAlign: "left",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                }}
+              >
                 取引日
               </th>
-              <th style={{ padding: "12px 8px", textAlign: "left", fontSize: "14px", fontWeight: "600" }}>
+              <th
+                style={{
+                  padding: "12px 8px",
+                  textAlign: "left",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                }}
+              >
                 借方勘定科目
               </th>
-              <th style={{ padding: "12px 8px", textAlign: "right", fontSize: "14px", fontWeight: "600" }}>
+              <th
+                style={{
+                  padding: "12px 8px",
+                  textAlign: "right",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                }}
+              >
                 借方金額
               </th>
-              <th style={{ padding: "12px 8px", textAlign: "left", fontSize: "14px", fontWeight: "600" }}>
+              <th
+                style={{
+                  padding: "12px 8px",
+                  textAlign: "left",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                }}
+              >
                 貸方勘定科目
               </th>
-              <th style={{ padding: "12px 8px", textAlign: "right", fontSize: "14px", fontWeight: "600" }}>
+              <th
+                style={{
+                  padding: "12px 8px",
+                  textAlign: "right",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                }}
+              >
                 貸方金額
               </th>
-              <th style={{ padding: "12px 8px", textAlign: "left", fontSize: "14px", fontWeight: "600" }}>
+              <th
+                style={{
+                  padding: "12px 8px",
+                  textAlign: "left",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                }}
+              >
                 摘要
               </th>
             </tr>
@@ -180,24 +269,38 @@ export default function CsvPreview({ file, politicalOrganizationId, onPreviewCom
                       color: "white",
                       backgroundColor: getStatusColor(record.status),
                       fontSize: "12px",
-                      fontWeight: "600"
+                      fontWeight: "600",
                     }}
                   >
                     {getStatusText(record.status)}
                   </span>
                   {record.errors.length > 0 && (
-                    <div style={{ fontSize: "11px", color: "#ef4444", marginTop: "4px" }}>
+                    <div
+                      style={{
+                        fontSize: "11px",
+                        color: "#ef4444",
+                        marginTop: "4px",
+                      }}
+                    >
                       {record.errors.join(", ")}
                     </div>
                   )}
                   {record.skipReason && (
-                    <div style={{ fontSize: "11px", color: "#f59e0b", marginTop: "4px" }}>
+                    <div
+                      style={{
+                        fontSize: "11px",
+                        color: "#f59e0b",
+                        marginTop: "4px",
+                      }}
+                    >
                       {record.skipReason}
                     </div>
                   )}
                 </td>
                 <td style={{ padding: "12px 8px", fontSize: "14px" }}>
-                  {new Date(record.transaction_date).toLocaleDateString('ja-JP')}
+                  {new Date(record.transaction_date).toLocaleDateString(
+                    "ja-JP",
+                  )}
                 </td>
                 <td style={{ padding: "12px 8px", fontSize: "14px" }}>
                   {record.debit_account}
@@ -207,8 +310,16 @@ export default function CsvPreview({ file, politicalOrganizationId, onPreviewCom
                     </div>
                   )}
                 </td>
-                <td style={{ padding: "12px 8px", fontSize: "14px", textAlign: "right" }}>
-                  {record.debit_amount ? `¥${record.debit_amount.toLocaleString()}` : "-"}
+                <td
+                  style={{
+                    padding: "12px 8px",
+                    fontSize: "14px",
+                    textAlign: "right",
+                  }}
+                >
+                  {record.debit_amount
+                    ? `¥${record.debit_amount.toLocaleString()}`
+                    : "-"}
                 </td>
                 <td style={{ padding: "12px 8px", fontSize: "14px" }}>
                   {record.credit_account}
@@ -218,8 +329,16 @@ export default function CsvPreview({ file, politicalOrganizationId, onPreviewCom
                     </div>
                   )}
                 </td>
-                <td style={{ padding: "12px 8px", fontSize: "14px", textAlign: "right" }}>
-                  {record.credit_amount ? `¥${record.credit_amount.toLocaleString()}` : "-"}
+                <td
+                  style={{
+                    padding: "12px 8px",
+                    fontSize: "14px",
+                    textAlign: "right",
+                  }}
+                >
+                  {record.credit_amount
+                    ? `¥${record.credit_amount.toLocaleString()}`
+                    : "-"}
                 </td>
                 <td style={{ padding: "12px 8px", fontSize: "14px" }}>
                   {record.description || "-"}
@@ -257,23 +376,25 @@ export default function CsvPreview({ file, politicalOrganizationId, onPreviewCom
 
           <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
             {totalPages <= 7 ? (
-              Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                <button
-                  type="button"
-                  key={pageNum}
-                  onClick={() => handlePageChange(pageNum)}
-                  className="button"
-                  style={{
-                    padding: "8px 12px",
-                    fontSize: "14px",
-                    backgroundColor:
-                      pageNum === currentPage ? "#3b82f6" : "#374151",
-                    color: "white",
-                  }}
-                >
-                  {pageNum}
-                </button>
-              ))
+              Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (pageNum) => (
+                  <button
+                    type="button"
+                    key={pageNum}
+                    onClick={() => handlePageChange(pageNum)}
+                    className="button"
+                    style={{
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      backgroundColor:
+                        pageNum === currentPage ? "#3b82f6" : "#374151",
+                      color: "white",
+                    }}
+                  >
+                    {pageNum}
+                  </button>
+                ),
+              )
             ) : (
               <>
                 {currentPage <= 4 ? (
@@ -295,7 +416,9 @@ export default function CsvPreview({ file, politicalOrganizationId, onPreviewCom
                         {pageNum}
                       </button>
                     ))}
-                    <span style={{ padding: "8px 4px", color: "#9ca3af" }}>...</span>
+                    <span style={{ padding: "8px 4px", color: "#9ca3af" }}>
+                      ...
+                    </span>
                     <button
                       type="button"
                       onClick={() => handlePageChange(totalPages)}
@@ -327,8 +450,16 @@ export default function CsvPreview({ file, politicalOrganizationId, onPreviewCom
                     >
                       1
                     </button>
-                    <span style={{ padding: "8px 4px", color: "#9ca3af" }}>...</span>
-                    {[totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages].map((pageNum) => (
+                    <span style={{ padding: "8px 4px", color: "#9ca3af" }}>
+                      ...
+                    </span>
+                    {[
+                      totalPages - 4,
+                      totalPages - 3,
+                      totalPages - 2,
+                      totalPages - 1,
+                      totalPages,
+                    ].map((pageNum) => (
                       <button
                         type="button"
                         key={pageNum}
@@ -362,25 +493,31 @@ export default function CsvPreview({ file, politicalOrganizationId, onPreviewCom
                     >
                       1
                     </button>
-                    <span style={{ padding: "8px 4px", color: "#9ca3af" }}>...</span>
-                    {[currentPage - 1, currentPage, currentPage + 1].map((pageNum) => (
-                      <button
-                        type="button"
-                        key={pageNum}
-                        onClick={() => handlePageChange(pageNum)}
-                        className="button"
-                        style={{
-                          padding: "8px 12px",
-                          fontSize: "14px",
-                          backgroundColor:
-                            pageNum === currentPage ? "#3b82f6" : "#374151",
-                          color: "white",
-                        }}
-                      >
-                        {pageNum}
-                      </button>
-                    ))}
-                    <span style={{ padding: "8px 4px", color: "#9ca3af" }}>...</span>
+                    <span style={{ padding: "8px 4px", color: "#9ca3af" }}>
+                      ...
+                    </span>
+                    {[currentPage - 1, currentPage, currentPage + 1].map(
+                      (pageNum) => (
+                        <button
+                          type="button"
+                          key={pageNum}
+                          onClick={() => handlePageChange(pageNum)}
+                          className="button"
+                          style={{
+                            padding: "8px 12px",
+                            fontSize: "14px",
+                            backgroundColor:
+                              pageNum === currentPage ? "#3b82f6" : "#374151",
+                            color: "white",
+                          }}
+                        >
+                          {pageNum}
+                        </button>
+                      ),
+                    )}
+                    <span style={{ padding: "8px 4px", color: "#9ca3af" }}>
+                      ...
+                    </span>
                     <button
                       type="button"
                       onClick={() => handlePageChange(totalPages)}
@@ -410,10 +547,7 @@ export default function CsvPreview({ file, politicalOrganizationId, onPreviewCom
               padding: "8px 12px",
               fontSize: "14px",
               opacity: currentPage >= totalPages ? 0.5 : 1,
-              cursor:
-                currentPage >= totalPages
-                  ? "not-allowed"
-                  : "pointer",
+              cursor: currentPage >= totalPages ? "not-allowed" : "pointer",
             }}
           >
             次へ

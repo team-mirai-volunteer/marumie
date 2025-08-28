@@ -1,4 +1,4 @@
-import 'server-only';
+import "server-only";
 import { createClient } from "@supabase/supabase-js";
 
 export function createAdminClient() {
@@ -7,7 +7,7 @@ export function createAdminClient() {
 
   if (!supabaseUrl || !serviceRoleKey) {
     throw new Error(
-      "Missing required environment variables: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY"
+      "Missing required environment variables: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY",
     );
   }
 
@@ -18,5 +18,3 @@ export function createAdminClient() {
     },
   });
 }
-
-

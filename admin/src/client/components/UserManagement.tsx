@@ -41,8 +41,8 @@ export default function UserManagement({
           prev.map((user) =>
             user.id === userId
               ? { ...user, role: newRole, updatedAt: new Date() }
-              : user
-          )
+              : user,
+          ),
         );
       } else {
         alert("Failed to update user role");

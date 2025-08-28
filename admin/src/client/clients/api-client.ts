@@ -1,6 +1,9 @@
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
 import type { Transaction } from "@/shared/models/transaction";
-import type { PreviewMfCsvResult, PreviewTransaction } from "@/server/usecases/preview-mf-csv-usecase";
+import type {
+  PreviewMfCsvResult,
+  PreviewTransaction,
+} from "@/server/usecases/preview-mf-csv-usecase";
 
 export interface CreatePoliticalOrganizationRequest {
   name: string;
@@ -134,7 +137,10 @@ export class ApiClient {
     formData.append("file", data.file);
     formData.append("politicalOrganizationId", data.politicalOrganizationId);
 
-    return this.requestFormData<PreviewMfCsvResult>("/api/preview-csv", formData);
+    return this.requestFormData<PreviewMfCsvResult>(
+      "/api/preview-csv",
+      formData,
+    );
   }
 
   async uploadCsv(data: UploadCsvRequest): Promise<UploadCsvResponse> {

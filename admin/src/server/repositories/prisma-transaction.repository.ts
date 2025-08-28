@@ -192,7 +192,9 @@ export class PrismaTransactionRepository implements ITransactionRepository {
           memo: input.memo || null,
         };
       } catch (error) {
-        throw new Error(`Failed to convert transaction ${index}: ${error instanceof Error ? error.message : String(error)}`);
+        throw new Error(
+          `Failed to convert transaction ${index}: ${error instanceof Error ? error.message : String(error)}`,
+        );
       }
     });
 

@@ -14,7 +14,9 @@ export default function UploadCsvPage() {
     useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [uploading, setUploading] = useState(false);
-  const [previewResult, setPreviewResult] = useState<PreviewMfCsvResult | null>(null);
+  const [previewResult, setPreviewResult] = useState<PreviewMfCsvResult | null>(
+    null,
+  );
   const [organizations, setOrganizations] = useState<PoliticalOrganization[]>(
     [],
   );
@@ -56,7 +58,9 @@ export default function UploadCsvPage() {
         return;
       }
 
-      const validTransactions = previewResult.transactions.filter(t => t.status === 'valid');
+      const validTransactions = previewResult.transactions.filter(
+        (t) => t.status === "valid",
+      );
       if (validTransactions.length === 0) {
         setMessage("有効なデータがありません");
         return;
@@ -75,9 +79,11 @@ export default function UploadCsvPage() {
       setFile(null);
       setPreviewResult(null);
 
-      const fileInput = document.getElementById(csvFileInputId) as HTMLInputElement;
+      const fileInput = document.getElementById(
+        csvFileInputId,
+      ) as HTMLInputElement;
       if (fileInput) {
-        fileInput.value = '';
+        fileInput.value = "";
       }
     } catch (err) {
       console.error("Upload error:", err);
@@ -139,7 +145,8 @@ export default function UploadCsvPage() {
         />
 
         {(() => {
-          const isDisabled = !file ||
+          const isDisabled =
+            !file ||
             !politicalOrganizationId ||
             !previewResult ||
             previewResult.summary.validCount === 0 ||
@@ -153,7 +160,7 @@ export default function UploadCsvPage() {
               type="submit"
               style={{
                 opacity: isDisabled ? 0.5 : 1,
-                cursor: isDisabled ? 'not-allowed' : 'pointer'
+                cursor: isDisabled ? "not-allowed" : "pointer",
               }}
             >
               {uploading ? "Processing…" : "このデータを保存する"}

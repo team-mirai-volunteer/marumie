@@ -56,7 +56,7 @@ export async function POST(request: Request) {
       try {
         const webappUrl = process.env.WEBAPP_URL || "http://localhost:3000";
         const refreshToken = process.env.DATA_REFRESH_TOKEN;
-        
+
         if (refreshToken) {
           await fetch(`${webappUrl}/api/refresh`, {
             method: "POST",
