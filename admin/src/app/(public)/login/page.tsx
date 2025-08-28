@@ -11,11 +11,11 @@ export default async function LoginPage({
   const error = params?.error ?? "";
 
   return (
-    <div className="container" style={{ gridTemplateColumns: "1fr" }}>
-      <main className="content" style={{ maxWidth: 480, margin: "0 auto" }}>
+    <div className="container grid-cols-1">
+      <main className="content max-w-[480px] mx-auto">
         <div className="card">
           <h1>Login</h1>
-          <form action={loginWithPassword} style={{ display: "grid", gap: 12 }}>
+          <form action={loginWithPassword} className="grid gap-3">
             <label>
               <div className="muted">Email</div>
               <input className="input" name="email" type="email" required />

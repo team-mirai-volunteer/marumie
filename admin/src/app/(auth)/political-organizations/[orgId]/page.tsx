@@ -76,9 +76,7 @@ export default function EditPoliticalOrganizationPage({
   if (fetchLoading) {
     return (
       <div className="card">
-        <div style={{ textAlign: "center", padding: "40px" }}>
-          読み込み中...
-        </div>
+        <div className="text-center p-10">読み込み中...</div>
       </div>
     );
   }
@@ -86,9 +84,7 @@ export default function EditPoliticalOrganizationPage({
   if (error && !organization) {
     return (
       <div className="card">
-        <div style={{ color: "#ff6b6b", textAlign: "center", padding: "40px" }}>
-          {error}
-        </div>
+        <div className="text-red-500 text-center p-10">{error}</div>
       </div>
     );
   }
@@ -96,9 +92,7 @@ export default function EditPoliticalOrganizationPage({
   if (!organization) {
     return (
       <div className="card">
-        <div style={{ textAlign: "center", padding: "40px" }}>
-          政治団体が見つかりません
-        </div>
+        <div className="text-center p-10">政治団体が見つかりません</div>
       </div>
     );
   }
