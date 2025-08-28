@@ -3,7 +3,7 @@ import { requireRole } from "@/server/auth/roles";
 import { redirect } from "next/navigation";
 import { PrismaClient } from "@prisma/client";
 import { PrismaUserRepository } from "@/server/repositories/prisma-user.repository";
-import UserManagement from "@/client/components/UserManagement";
+import UserManagement from "@/client/components/user-management/UserManagement";
 
 const prisma = new PrismaClient();
 const userRepository = new PrismaUserRepository(prisma);

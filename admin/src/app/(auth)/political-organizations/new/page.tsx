@@ -6,7 +6,7 @@ import {
   apiClient,
   type CreatePoliticalOrganizationRequest,
 } from "@/client/clients/api-client";
-import { PoliticalOrganizationForm } from "@/client/components/PoliticalOrganizationForm";
+import { PoliticalOrganizationForm } from "@/client/components/political-organizations/PoliticalOrganizationForm";
 
 export default function NewPoliticalOrganizationPage() {
   const router = useRouter();

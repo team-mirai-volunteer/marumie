@@ -2,7 +2,7 @@ import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import Sidebar from "@/client/components/Sidebar";
+import Sidebar from "@/client/components/layout/Sidebar";
 import { logout } from "@/server/auth/login";
 
 export default async function AuthLayout({
@@ -43,9 +43,9 @@ export default async function AuthLayout({
   }
 
   return (
-    <div className="container">
+    <div className="grid grid-cols-[220px_1fr] h-screen">
       <Sidebar logoutAction={logout} />
-      <main className="content">{children}</main>
+      <main className="p-5 overflow-auto">{children}</main>
     </div>
   );
 }

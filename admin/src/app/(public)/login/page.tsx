@@ -1,5 +1,6 @@
 import "server-only";
 import { loginWithPassword } from "@/server/auth/login";
+import LoginForm from "@/client/components/auth/LoginForm";
 import InviteProcessor from "./processor";
 
 export default async function LoginPage({
@@ -11,33 +12,12 @@ export default async function LoginPage({
   const error = params?.error ?? "";
 
   return (
-    <div className="container" style={{ gridTemplateColumns: "1fr" }}>
-      <main className="content" style={{ maxWidth: 480, margin: "0 auto" }}>
-        <div className="card">
-          <h1>Login</h1>
-          <form action={loginWithPassword} style={{ display: "grid", gap: 12 }}>
-            <label>
-              <div className="muted">Email</div>
-              <input className="input" name="email" type="email" required />
-            </label>
-            <label>
-              <div className="muted">Password</div>
-              <input
-                className="input"
-                name="password"
-                type="password"
-                required
-              />
-            </label>
-            <button className="button" type="submit">
-              Sign in
-            </button>
-            {error && <div className="muted">{error}</div>}
-          </form>
-        </div>
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <LoginForm action={loginWithPassword} error={error} />
         {/* Client-only invite hash processor to set session via server action */}
         <InviteProcessor />
-      </main>
+      </div>
     </div>
   );
 }

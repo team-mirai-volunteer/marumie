@@ -1,9 +1,10 @@
 "use client";
+import "client-only";
 
 import { useEffect, useId, useState } from "react";
 import { apiClient } from "@/client/clients/api-client";
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
-import CsvPreview from "@/client/components/CsvPreview";
+import CsvPreview from "@/client/components/csv-import/CsvPreview";
 import type { PreviewMfCsvResult } from "@/server/usecases/preview-mf-csv-usecase";
 
 export default function UploadCsvPage() {
@@ -94,21 +95,24 @@ export default function UploadCsvPage() {
   }
 
   return (
-    <div className="card">
-      <h1>CSVアップロード</h1>
-      <form onSubmit={onSubmit} className="column" style={{ gap: 12 }}>
+    <div className="bg-primary-panel rounded-xl p-4">
+      <h1 className="text-2xl font-bold text-white mb-6">CSVアップロード</h1>
+      <form onSubmit={onSubmit} className="space-y-3">
         <div>
-          <label htmlFor={politicalOrgSelectId} className="label">
+          <label
+            htmlFor={politicalOrgSelectId}
+            className="block text-sm font-medium text-white mb-2"
+          >
             Political Organization:
           </label>
           {loadingOrganizations ? (
-            <div className="input" style={{ color: "#666" }}>
+            <div className="bg-primary-input text-primary-muted border border-primary-border rounded-lg px-3 py-2.5 w-full">
               Loading organizations...
             </div>
           ) : (
             <select
               id={politicalOrgSelectId}
-              className="input"
+              className="bg-primary-input text-white border border-primary-border rounded-lg px-3 py-2.5 w-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-accent focus:border-primary-accent"
               value={politicalOrganizationId}
               onChange={(e) => setPoliticalOrganizationId(e.target.value)}
               required
@@ -125,12 +129,15 @@ export default function UploadCsvPage() {
           )}
         </div>
         <div>
-          <label htmlFor={csvFileInputId} className="label">
+          <label
+            htmlFor={csvFileInputId}
+            className="block text-sm font-medium text-white mb-2"
+          >
             CSV File:
           </label>
           <input
             id={csvFileInputId}
-            className="input"
+            className="bg-primary-input text-white border border-primary-border rounded-lg px-3 py-2.5 w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-accent file:text-white hover:file:bg-blue-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-accent focus:border-primary-accent"
             type="file"
             accept=".csv,text/csv"
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
@@ -155,13 +162,13 @@ export default function UploadCsvPage() {
 
           return (
             <button
-              className="button"
               disabled={isDisabled}
               type="submit"
-              style={{
-                opacity: isDisabled ? 0.5 : 1,
-                cursor: isDisabled ? "not-allowed" : "pointer",
-              }}
+              className={`bg-primary-accent text-white border-0 rounded-lg px-4 py-2.5 font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-accent ${
+                isDisabled
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-blue-600 cursor-pointer"
+              }`}
             >
               {uploading ? "Processing…" : "このデータを保存する"}
             </button>
@@ -170,15 +177,11 @@ export default function UploadCsvPage() {
       </form>
       {message && (
         <div
-          className="muted"
-          style={{
-            marginTop: 12,
-            padding: 12,
-            backgroundColor: message.startsWith("Error:")
-              ? "#ffebee"
-              : "#e8f5e8",
-            borderRadius: 4,
-          }}
+          className={`mt-3 p-3 rounded border ${
+            message.startsWith("Error:")
+              ? "text-red-500 bg-red-900/20 border-red-900/30"
+              : "text-green-500 bg-green-900/20 border-green-900/30"
+          }`}
         >
           {message}
         </div>

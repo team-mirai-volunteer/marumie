@@ -2,6 +2,7 @@
 import "client-only";
 import { useState } from "react";
 import { UserRole } from "@prisma/client";
+import { Button, Input, Card } from "../ui";
 
 interface User {
   id: string;
@@ -90,68 +91,61 @@ export default function UserManagement({
   return (
     <div className="space-y-4">
       {/* Invite User Form */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-lg font-medium text-gray-900 mb-4">
-          Invite New User
-        </h2>
+      <Card>
+        <h2 className="text-lg font-medium text-white mb-4">Invite New User</h2>
         <form onSubmit={handleInviteUser} className="flex gap-4">
           <div className="flex-1">
-            <input
+            <Input
               type="email"
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
               placeholder="Enter email address"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={isInviting}
               required
             />
           </div>
-          <button
-            type="submit"
-            disabled={isInviting || !inviteEmail.trim()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
+          <Button type="submit" disabled={isInviting || !inviteEmail.trim()}>
             {isInviting ? "Sending..." : "Send Invitation"}
-          </button>
+          </Button>
         </form>
-      </div>
+      </Card>
 
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <Card className="overflow-hidden p-0">
+        <table className="min-w-full divide-y divide-primary-border">
+          <thead className="bg-primary-hover">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-primary-muted uppercase tracking-wider">
                 Email
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-primary-muted uppercase tracking-wider">
                 Role
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-primary-muted uppercase tracking-wider">
                 Created At
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-primary-muted uppercase tracking-wider">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-primary-panel divide-y divide-primary-border">
             {users.map((user) => (
               <tr key={user.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                   {user.email}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                   <span
                     className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                       user.role === "admin"
-                        ? "bg-red-100 text-red-800"
-                        : "bg-green-100 text-green-800"
+                        ? "bg-red-900 text-red-200"
+                        : "bg-green-900 text-green-200"
                     }`}
                   >
                     {user.role}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-primary-muted">
                   {new Date(user.createdAt).toLocaleDateString()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -161,7 +155,7 @@ export default function UserManagement({
                       handleRoleChange(user.id, e.target.value as UserRole)
                     }
                     disabled={isLoading}
-                    className="bg-white border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="bg-primary-input text-white border border-primary-border rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary-accent"
                   >
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
@@ -173,9 +167,11 @@ export default function UserManagement({
         </table>
 
         {users.length === 0 && (
-          <div className="text-center py-8 text-gray-500">No users found</div>
+          <div className="text-center py-8 text-primary-muted">
+            No users found
+          </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 }
