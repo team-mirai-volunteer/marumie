@@ -65,7 +65,7 @@ export default function TransactionTableHeader({
         <th className="text-left h-12 font-normal" scope="col">
           <div className="flex items-center h-5">
             <span className="text-gray-800 text-sm font-bold leading-[1.286] tracking-[0.071em]">
-              項目項目
+              項目
             </span>
           </div>
         </th>
