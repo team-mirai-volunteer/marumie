@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { UserRole } from "@prisma/client";
+import { Button } from "./ui";
 
 export default function Sidebar({
   logoutAction,
@@ -52,48 +53,67 @@ export default function Sidebar({
   // logout handled via server action form below
 
   return (
-    <aside className="sidebar">
-      <h2>管理画面</h2>
-      <nav className="nav">
+    <aside className="bg-primary-panel p-4 flex flex-col h-full">
+      <h2 className="text-primary-muted text-lg font-medium mb-3 mt-0">
+        管理画面
+      </h2>
+      <nav className="flex flex-col gap-2">
         <Link
           href="/user-info"
-          className={isActive("/user-info") ? "active" : ""}
+          className={`text-white no-underline px-2.5 py-2 rounded-lg transition-colors duration-200 ${
+            isActive("/user-info")
+              ? "bg-primary-hover"
+              : "hover:bg-primary-hover"
+          }`}
         >
           User Info
         </Link>
         <Link
           href="/political-organizations"
-          className={isActive("/political-organizations") ? "active" : ""}
+          className={`text-white no-underline px-2.5 py-2 rounded-lg transition-colors duration-200 ${
+            isActive("/political-organizations")
+              ? "bg-primary-hover"
+              : "hover:bg-primary-hover"
+          }`}
         >
           政治団体
         </Link>
         <Link
           href="/transactions"
-          className={isActive("/transactions") ? "active" : ""}
+          className={`text-white no-underline px-2.5 py-2 rounded-lg transition-colors duration-200 ${
+            isActive("/transactions")
+              ? "bg-primary-hover"
+              : "hover:bg-primary-hover"
+          }`}
         >
           トランザクション
         </Link>
         <Link
           href="/upload-csv"
-          className={isActive("/upload-csv") ? "active" : ""}
+          className={`text-white no-underline px-2.5 py-2 rounded-lg transition-colors duration-200 ${
+            isActive("/upload-csv")
+              ? "bg-primary-hover"
+              : "hover:bg-primary-hover"
+          }`}
         >
           CSVアップロード
         </Link>
         {userRole === "admin" && (
-          <Link href="/users" className={isActive("/users") ? "active" : ""}>
+          <Link
+            href="/users"
+            className={`text-white no-underline px-2.5 py-2 rounded-lg transition-colors duration-200 ${
+              isActive("/users") ? "bg-primary-hover" : "hover:bg-primary-hover"
+            }`}
+          >
             ユーザー管理
           </Link>
         )}
       </nav>
-      <div style={{ marginTop: "auto", padding: "16px 0" }}>
+      <div className="mt-auto pt-4">
         <form action={logoutAction}>
-          <button
-            type="submit"
-            className="button"
-            style={{ width: "100%", background: "#ef4444", color: "white" }}
-          >
+          <Button type="submit" variant="danger" fullWidth>
             ログアウト
-          </button>
+          </Button>
         </form>
       </div>
     </aside>

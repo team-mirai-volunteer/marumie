@@ -43,9 +43,9 @@ export default async function AuthLayout({
   }
 
   return (
-    <div className="container">
+    <div className="grid grid-cols-[220px_1fr] h-screen">
       <Sidebar logoutAction={logout} />
-      <main className="content">{children}</main>
+      <main className="p-5 overflow-auto">{children}</main>
     </div>
   );
 }
