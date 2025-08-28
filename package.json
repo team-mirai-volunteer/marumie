@@ -25,7 +25,7 @@
     "lint": "pnpm lint:webapp && pnpm lint:admin",
     "lint:webapp": "pnpm --filter webapp lint",
     "lint:admin": "pnpm --filter admin lint",
-    "format": "pnpm --filter webapp format && pnpm --filter admin format",
+    "format": "npx biome format --write .",
     "typecheck": "pnpm typecheck:webapp && pnpm typecheck:admin",
     "typecheck:webapp": "pnpm --filter webapp type-check",
     "typecheck:admin": "pnpm --filter admin type-check",
@@ -87,9 +87,6 @@
     "pre-commit": "npx lint-staged"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,css,md}": [
-      "npm run format",
-      "git add"
-    ]
+    "*.{js,jsx,ts,tsx}": "npm run format"
   }
 }

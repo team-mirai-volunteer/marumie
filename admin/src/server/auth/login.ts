@@ -1,41 +1,44 @@
-'use server';
+"use server";
 
-import { redirect } from 'next/navigation';
-import { createClient } from '@/server/auth/client';
-import { PrismaClient } from '@prisma/client';
-import { PrismaUserRepository } from '@/server/repositories/prisma-user.repository';
+import { redirect } from "next/navigation";
+import { createClient } from "@/server/auth/client";
+import { PrismaClient } from "@prisma/client";
+import { PrismaUserRepository } from "@/server/repositories/prisma-user.repository";
 
 const prisma = new PrismaClient();
 const userRepository = new PrismaUserRepository(prisma);
 
 export async function loginWithPassword(formData: FormData) {
-  const email = String(formData.get('email') || '');
-  const password = String(formData.get('password') || '');
+  const email = String(formData.get("email") || "");
+  const password = String(formData.get("password") || "");
 
   if (!email || !password) {
-    redirect('/login?error=missing_credentials');
+    redirect("/login?error=missing_credentials");
   }
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    const encoded = encodeURIComponent(error.message || 'auth_error');
+    const encoded = encodeURIComponent(error.message || "auth_error");
     redirect(`/login?error=${encoded}`);
   }
 
-  redirect('/');
+  redirect("/");
 }
 
 export async function logout() {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect('/login');
+  redirect("/login");
 }
 
-export async function completeInviteSession(accessToken: string, refreshToken: string) {
+export async function completeInviteSession(
+  accessToken: string,
+  refreshToken: string
+) {
   if (!accessToken || !refreshToken) {
-    return { ok: false, error: 'missing_tokens' };
+    return { ok: false, error: "missing_tokens" };
   }
 
   const supabase = await createClient();
@@ -48,17 +51,22 @@ export async function completeInviteSession(accessToken: string, refreshToken: s
     return { ok: false, error: setError.message };
   }
 
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
   if (userError || !user) {
-    return { ok: false, error: userError?.message || 'no_user' };
+    return { ok: false, error: userError?.message || "no_user" };
   }
 
   const existing = await userRepository.findByAuthId(user.id);
   if (!existing && user.email) {
-    await userRepository.create({ authId: user.id, email: user.email, role: 'user' });
+    await userRepository.create({
+      authId: user.id,
+      email: user.email,
+      role: "user",
+    });
   }
 
   return { ok: true };
 }
-
-

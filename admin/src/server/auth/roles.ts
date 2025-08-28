@@ -32,7 +32,7 @@ export async function getCurrentUser() {
   if (!user) return null;
 
   let dbUser = await userRepository.findByAuthId(user.id);
-  
+
   if (!dbUser && user.email) {
     dbUser = await userRepository.create({
       authId: user.id,
@@ -52,5 +52,3 @@ export async function requireRole(requiredRole: UserRole): Promise<boolean> {
   }
   return true;
 }
-
-

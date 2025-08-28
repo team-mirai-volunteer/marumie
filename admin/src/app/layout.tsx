@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import Sidebar from "@/client/components/Sidebar";
-import { logout } from '@/server/auth/login';
 import "./styles.css";
 
 export const metadata: Metadata = {
@@ -15,10 +13,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body>
-        <div className="container">
-          <Sidebar logoutAction={logout} />
-          <main className="content">{children}</main>
-        </div>
+        {children}
       </body>
     </html>
   );
