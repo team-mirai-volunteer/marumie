@@ -157,7 +157,7 @@ export default function DonationSummaryCards({
             <div className="flex items-baseline gap-1">
               {totalOku > 0 && (
                 <>
-                  <span className="font-bold text-[40px] leading-[30px] text-gray-800">
+                  <span className="font-bold text-[36px] leading-[30px] text-gray-800">
                     {totalOku}
                   </span>
                   <span className="font-bold text-base leading-[30px] text-gray-800">
@@ -167,7 +167,7 @@ export default function DonationSummaryCards({
               )}
               {totalMan > 0 && (
                 <>
-                  <span className="font-bold text-[40px] leading-[30px] text-gray-800">
+                  <span className="font-bold text-[36px] leading-[30px] text-gray-800">
                     {totalMan}
                   </span>
                   <span className="font-bold text-base leading-[30px] text-gray-800">
@@ -175,7 +175,7 @@ export default function DonationSummaryCards({
                   </span>
                 </>
               )}
-              <span className="font-bold text-[40px] leading-[30px] text-gray-800">
+              <span className="font-bold text-[36px] leading-[30px] text-gray-800">
                 {totalEn}
               </span>
               <span className="font-bold text-base leading-[30px] text-gray-800">
