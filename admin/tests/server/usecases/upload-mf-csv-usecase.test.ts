@@ -159,6 +159,8 @@ describe("UploadMfCsvUsecase", () => {
           .map(t => ({
             ...t,
             id: 'test-id',
+            financial_year: new Date(t.transaction_date).getFullYear(),
+            transaction_type: 'other' as const,
             created_at: new Date(),
             updated_at: new Date()
           }))
