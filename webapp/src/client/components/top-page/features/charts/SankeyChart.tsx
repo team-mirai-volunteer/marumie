@@ -336,7 +336,7 @@ const renderPercentageLabel = (
 const renderPrimaryLabel = (
   node: SankeyNodeWithPosition,
   x: number,
-  textAnchor: string,
+  textAnchor: "start" | "middle" | "end" | "inherit",
   isMobile: boolean,
 ) => {
   const label = node.id; // HACK: 表示にはnode.idを使用（本来はnode.labelを使うべき）
