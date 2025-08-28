@@ -3,6 +3,7 @@ export interface CategoryMapping {
   subcategory?: string;
   color: string;
   shortLabel: string;
+  type: "income" | "expense";
 }
 
 /**
@@ -14,57 +15,67 @@ export const ACCOUNT_CATEGORY_MAPPING: Record<string, CategoryMapping> = {
     category: "機関紙誌+その他事業収入",
     subcategory: "党費・会費",
     color: "#FED7AA",
-    shortLabel: "党費・会費"
+    shortLabel: "党費・会費",
+    type: "income"
   },
   "個人からの寄附": {
     category: "寄付",
     subcategory: "個人からの寄付",
     color: "#BBF7D0",
-    shortLabel: "個人寄付"
+    shortLabel: "個人寄付",
+    type: "income"
   },
   "個人からの寄附（特定寄付）": {
     category: "寄付",
     subcategory: "個人からの寄付",
     color: "#BBF7D0",
-    shortLabel: "個人寄付"
+    shortLabel: "個人寄付",
+    type: "income"
   },
   "法人その他の団体からの寄附": {
     category: "寄付",
     subcategory: "法人その他の団体からの寄附",
     color: "#FECACA",
-    shortLabel: "法人寄付"
+    shortLabel: "法人寄付",
+    type: "income"
   },
   "政治団体からの寄附": {
     category: "寄付",
     subcategory: "政治団体からの寄附",
     color: "#A5F3FC",
-    shortLabel: "政党寄付"
+    shortLabel: "政党寄付",
+    type: "income"
   },
   "政党匿名寄付": {
     category: "寄付",
     subcategory: "政党匿名寄付",
     color: "#E0F6C9",
-    shortLabel: "政党匿名寄付"
+    shortLabel: "政党匿名寄付",
+    type: "income"
   },
   "機関紙誌の発行その他の事業による収入": {
     category: "機関紙誌+その他事業収入",
     color: "#FDE68A",
-    shortLabel: "機関紙誌"
+    shortLabel: "機関紙誌",
+    type: "income"
   },
   "借入金": {
     category: "借入金",
     color: "#FECDD3",
-    shortLabel: "借入金"
+    shortLabel: "借入金",
+    type: "income"
   },
   "本部又は支部から供与された交付金に係る収入": {
     category: "交付金",
     color: "#99F6E4",
-    shortLabel: "交付金"
+    shortLabel: "交付金",
+    type: "income"
   },
   "その他の収入": {
     category: "その他",
     color: "#E2E8F0",
-    shortLabel: "その他"
+    shortLabel: "その他",
+    type: "income"
   },
 
   // 支出項目
@@ -72,78 +83,91 @@ export const ACCOUNT_CATEGORY_MAPPING: Record<string, CategoryMapping> = {
     category: "経常経費",
     subcategory: "人件費",
     color: "#0369A1",
-    shortLabel: "人件費"
+    shortLabel: "人件費",
+    type: "expense"
   },
   "光熱水費": {
     category: "経常経費",
     subcategory: "光熱水費",
     color: "#126C81",
-    shortLabel: "光熱水費"
+    shortLabel: "光熱水費",
+    type: "expense"
   },
   "備品・消耗品費": {
     category: "経常経費",
     subcategory: "備品・消耗品費",
     color: "#4D7C0F",
-    shortLabel: "備品消耗品費"
+    shortLabel: "備品消耗品費",
+    type: "expense"
   },
   "事務所費": {
     category: "経常経費",
     subcategory: "事務所費",
     color: "#047857",
-    shortLabel: "事務所費"
+    shortLabel: "事務所費",
+    type: "expense"
   },
   "組織活動費": {
     category: "政治活動費",
     subcategory: "組織活動費",
     color: "#C2410C",
-    shortLabel: "組織活動費"
+    shortLabel: "組織活動費",
+    type: "expense"
   },
   "選挙関係費": {
     category: "政治活動費",
     subcategory: "選挙関係費",
     color: "#DC2626",
-    shortLabel: "選挙関係費"
+    shortLabel: "選挙関係費",
+    type: "expense"
   },
   "機関紙誌の発行事業費": {
     category: "政治活動費",
     subcategory: "機関紙誌の発行事業費",
     color: "#A16207",
-    shortLabel: "機関紙誌費"
+    shortLabel: "機関紙誌費",
+    type: "expense"
   },
   "宣伝事業費": {
     category: "政治活動費",
     subcategory: "宣伝費",
     color: "#3856B1",
-    shortLabel: "宣伝事業費"
+    shortLabel: "宣伝事業費",
+    type: "expense"
   },
   "政治資金パーティー開催事業費": {
     category: "政治活動費",
     subcategory: "政治資金パーティー開催費",
     color: "#6D28D9",
-    shortLabel: "政治資金パーティ費"
+    shortLabel: "政治資金パーティ費",
+    type: "expense"
   },
   "その他の事業費": {
     category: "政治活動費",
     subcategory: "その他の事業費",
     color: "#334155",
-    shortLabel: "その他事業費"
+    shortLabel: "その他事業費",
+    type: "expense"
   },
   "調査研究費": {
     category: "政治活動費",
     subcategory: "調査研究費",
     color: "#047857",
-    shortLabel: "調査研究費"
+    shortLabel: "調査研究費",
+    type: "expense"
   },
   "寄附・交付金": {
     category: "政治活動費",
     subcategory: "寄附・交付金",
     color: "#BE185D",
-    shortLabel: "寄付・交付金"
+    shortLabel: "寄付・交付金",
+    type: "expense"
   },
   "その他の経費": {
     category: "政治活動費",
     subcategory: "その他の経費",
     color: "#334155",
-    shortLabel: "その他経費"
+    shortLabel: "その他経費",
+    type: "expense"
   }
 };
