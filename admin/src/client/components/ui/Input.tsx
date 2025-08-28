@@ -1,7 +1,7 @@
 "use client";
 import "client-only";
 
-import { InputHTMLAttributes, forwardRef } from "react";
+import { forwardRef, type InputHTMLAttributes } from "react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
