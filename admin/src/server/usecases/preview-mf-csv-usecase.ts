@@ -20,6 +20,7 @@ export interface PreviewTransaction {
   credit_sub_account: string | undefined;
   credit_amount: number;
   description: string | undefined;
+  tags: string | undefined;
   status: "valid" | "invalid" | "skip";
   errors: string[];
   skipReason?: string;
@@ -112,6 +113,7 @@ export class PreviewMfCsvUsecase {
             credit_sub_account: transaction.credit_sub_account,
             credit_amount: transaction.credit_amount,
             description: transaction.description,
+            tags: transaction.tags,
             status,
             errors,
             skipReason,

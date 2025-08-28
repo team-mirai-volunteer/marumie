@@ -94,7 +94,7 @@ export class UploadMfCsvUsecase {
       description_3: this.splitDescription(previewTransaction.description || "")
         .description_3,
       description_detail: undefined,
-      tags: "",
+      tags: previewTransaction.tags || "",
       memo: "",
     };
   }
