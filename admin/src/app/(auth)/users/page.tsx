@@ -1,4 +1,4 @@
-import 'server-only';
+import "server-only";
 import { requireRole } from "@/server/auth/roles";
 import { redirect } from "next/navigation";
 import { PrismaClient } from "@prisma/client";
@@ -10,7 +10,7 @@ const userRepository = new PrismaUserRepository(prisma);
 
 export default async function UsersPage() {
   const hasAccess = await requireRole("admin");
-  
+
   if (!hasAccess) {
     redirect("/login");
   }

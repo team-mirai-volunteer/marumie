@@ -20,7 +20,7 @@ export interface PreviewTransaction {
   credit_sub_account: string | undefined;
   credit_amount: number;
   description: string | undefined;
-  status: 'valid' | 'invalid' | 'skip';
+  status: "valid" | "invalid" | "skip";
   errors: string[];
   skipReason?: string;
 }
@@ -46,7 +46,7 @@ export class PreviewMfCsvUsecase {
   async execute(input: PreviewMfCsvInput): Promise<PreviewMfCsvResult> {
     try {
       const csvRecords = await this.csvLoader.load(input.csvContent);
-      
+
       if (csvRecords.length === 0) {
         return {
           transactions: [],
@@ -60,7 +60,7 @@ export class PreviewMfCsvUsecase {
       }
 
       const validationResult = this.validator.validateRecords(csvRecords);
-      
+
       const transactionInputs: CreateTransactionInput[] = csvRecords.map(
         (record) =>
           this.recordConverter.convertRow(
@@ -69,50 +69,64 @@ export class PreviewMfCsvUsecase {
           ),
       );
 
-      const transactionNos = transactionInputs.map(t => t.transaction_no).filter(Boolean) as string[];
-      const existingTransactions = await this.transactionRepository.findByTransactionNos(transactionNos);
-      const existingTransactionNosSet = new Set(existingTransactions.map(t => t.transaction_no));
+      const transactionNos = transactionInputs
+        .map((t) => t.transaction_no)
+        .filter(Boolean) as string[];
+      const existingTransactions =
+        await this.transactionRepository.findByTransactionNos(transactionNos);
+      const existingTransactionNosSet = new Set(
+        existingTransactions.map((t) => t.transaction_no),
+      );
 
-      const previewTransactions: PreviewTransaction[] = transactionInputs.map((transaction, index) => {
-        const csvRecord = csvRecords[index];
-        const validationError = validationResult.errors.find(e => e.record === csvRecord);
-        
-        let status: 'valid' | 'invalid' | 'skip';
-        let errors: string[] = [];
-        let skipReason: string | undefined;
+      const previewTransactions: PreviewTransaction[] = transactionInputs.map(
+        (transaction, index) => {
+          const csvRecord = csvRecords[index];
+          const validationError = validationResult.errors.find(
+            (e) => e.record === csvRecord,
+          );
 
-        if (validationError) {
-          status = 'invalid';
-          errors = validationError.errors;
-        } else if (existingTransactionNosSet.has(transaction.transaction_no || '')) {
-          status = 'skip';
-          skipReason = '重複データのためスキップされます';
-        } else {
-          status = 'valid';
-        }
+          let status: "valid" | "invalid" | "skip";
+          let errors: string[] = [];
+          let skipReason: string | undefined;
 
-        return {
-          political_organization_id: input.politicalOrganizationId,
-          transaction_no: transaction.transaction_no || '',
-          transaction_date: transaction.transaction_date,
-          debit_account: transaction.debit_account,
-          debit_sub_account: transaction.debit_sub_account,
-          debit_amount: transaction.debit_amount,
-          credit_account: transaction.credit_account,
-          credit_sub_account: transaction.credit_sub_account,
-          credit_amount: transaction.credit_amount,
-          description: transaction.description,
-          status,
-          errors,
-          skipReason,
-        };
-      });
+          if (validationError) {
+            status = "invalid";
+            errors = validationError.errors;
+          } else if (
+            existingTransactionNosSet.has(transaction.transaction_no || "")
+          ) {
+            status = "skip";
+            skipReason = "重複データのためスキップされます";
+          } else {
+            status = "valid";
+          }
+
+          return {
+            political_organization_id: input.politicalOrganizationId,
+            transaction_no: transaction.transaction_no || "",
+            transaction_date: transaction.transaction_date,
+            debit_account: transaction.debit_account,
+            debit_sub_account: transaction.debit_sub_account,
+            debit_amount: transaction.debit_amount,
+            credit_account: transaction.credit_account,
+            credit_sub_account: transaction.credit_sub_account,
+            credit_amount: transaction.credit_amount,
+            description: transaction.description,
+            status,
+            errors,
+            skipReason,
+          };
+        },
+      );
 
       const summary = {
         totalCount: previewTransactions.length,
-        validCount: previewTransactions.filter(t => t.status === 'valid').length,
-        invalidCount: previewTransactions.filter(t => t.status === 'invalid').length,
-        skipCount: previewTransactions.filter(t => t.status === 'skip').length,
+        validCount: previewTransactions.filter((t) => t.status === "valid")
+          .length,
+        invalidCount: previewTransactions.filter((t) => t.status === "invalid")
+          .length,
+        skipCount: previewTransactions.filter((t) => t.status === "skip")
+          .length,
       };
 
       return {

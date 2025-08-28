@@ -40,12 +40,14 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   });
 
   const publicPaths = ["/login", "/auth/callback", "/auth/setup"];
-  const isPublicPath = publicPaths.some((path) => 
-    request.nextUrl.pathname.startsWith(path)
+  const isPublicPath = publicPaths.some((path) =>
+    request.nextUrl.pathname.startsWith(path),
   );
 
   try {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     // 認証が必要なパス（publicパス以外）で未認証の場合はログインへリダイレクト
     if (!isPublicPath && !user) {

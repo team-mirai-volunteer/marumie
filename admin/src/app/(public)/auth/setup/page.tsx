@@ -1,7 +1,7 @@
-import 'server-only';
-import { createClient } from '@/server/auth/client';
-import { redirect } from 'next/navigation';
-import SetupForm from '@/client/components/SetupForm';
+import "server-only";
+import { createClient } from "@/server/auth/client";
+import { redirect } from "next/navigation";
+import SetupForm from "@/client/components/SetupForm";
 
 interface SetupPageProps {
   searchParams: Promise<{ from?: string }>;
@@ -9,18 +9,21 @@ interface SetupPageProps {
 
 export default async function SetupPage({ searchParams }: SetupPageProps) {
   const supabase = await createClient();
-  
+
   // Check if user is authenticated
-  const { data: { user }, error } = await supabase.auth.getUser();
-  
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
   if (error || !user) {
-    redirect('/login');
+    redirect("/login");
   }
 
   // Check if this is coming from an invitation flow
   const params = await searchParams;
-  const fromInvite = params.from === 'invite';
-  
+  const fromInvite = params.from === "invite";
+
   if (fromInvite) {
     // This is an invited user who needs to set up their password
     return (
@@ -31,7 +34,8 @@ export default async function SetupPage({ searchParams }: SetupPageProps) {
               Complete your account setup
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
-              You&apos;ve been invited to join Poli Money Alpha. Please set up your password to continue.
+              You&apos;ve been invited to join Poli Money Alpha. Please set up
+              your password to continue.
             </p>
           </div>
           <SetupForm userEmail={user.email!} />
@@ -41,5 +45,5 @@ export default async function SetupPage({ searchParams }: SetupPageProps) {
   }
 
   // User is already set up, redirect to main app
-  redirect('/');
+  redirect("/");
 }

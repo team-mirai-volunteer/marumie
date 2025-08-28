@@ -35,7 +35,7 @@ export async function logout() {
 
 export async function completeInviteSession(
   accessToken: string,
-  refreshToken: string
+  refreshToken: string,
 ) {
   if (!accessToken || !refreshToken) {
     return { ok: false, error: "missing_tokens" };
