@@ -81,13 +81,13 @@ export default function CategoryFilter({
   };
 
   return (
-    <div className="absolute top-full left-0 mt-1 bg-white rounded z-[9999] w-[268px] shadow-lg">
-      <div className="py-4">
+    <div className="absolute top-full left-0 mt-1 bg-white rounded z-[9999] w-[236px] shadow-lg p-4">
+      <div>
         <div className="flex flex-col items-center gap-6">
           {/* 収入カテゴリー */}
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2 px-3 pt-2 pb-0">
-              <span className="text-[#9CA3AF] text-sm font-medium leading-[1.67]">
+          <div className="flex flex-col w-full">
+            <div className="flex items-center gap-2 pt-2 pb-0">
+              <span className="text-gray-600 text-xs font-medium leading-[1.67]">
                 収入カテゴリー
               </span>
             </div>
@@ -103,7 +103,7 @@ export default function CategoryFilter({
                   key={category.id}
                   type="button"
                   onClick={() => handleIncomeToggle(category.id)}
-                  className="flex items-center gap-2 py-[6px] pl-4 pr-2 w-[236px] h-auto hover:bg-[#F1F5F9] transition-colors cursor-pointer"
+                  className="flex items-center gap-2 py-[6px] pl-2 pr-1 w-full h-auto hover:bg-[#F1F5F9] transition-colors cursor-pointer"
                 >
                   <div className="w-[18px] h-[18px] flex items-center justify-center">
                     {category.checked && (
@@ -138,14 +138,14 @@ export default function CategoryFilter({
           </div>
 
           {/* 支出カテゴリー */}
-          <div className="flex flex-col">
+          <div className="flex flex-col w-full">
             {/* 区切り線 */}
-            <div className="flex flex-col justify-center gap-2 px-3 h-6">
+            <div className="flex flex-col justify-center gap-2 h-6">
               <div className="w-full h-0 border-t border-[#E5E7EB]"></div>
             </div>
 
-            <div className="flex justify-stretch items-stretch px-3">
-              <span className="text-[#9CA3AF] text-sm font-medium leading-[1.67] tracking-[0.071em] flex-1">
+            <div className="flex justify-stretch items-stretch">
+              <span className="text-gray-600 text-xs font-medium leading-[1.67] tracking-[0.071em] flex-1">
                 支出カテゴリー
               </span>
             </div>
@@ -162,7 +162,7 @@ export default function CategoryFilter({
                   key={category.id}
                   type="button"
                   onClick={() => handleExpenseToggle(category.id)}
-                  className={`flex items-center gap-2 py-[6px] pl-4 pr-2 w-[236px] transition-colors cursor-pointer ${
+                  className={`flex items-center gap-2 py-[6px] pl-2 pr-1 w-full transition-colors cursor-pointer ${
                     index === 7
                       ? "bg-[#F1F5F9] rounded-[6px]"
                       : "hover:bg-[#F1F5F9]"
