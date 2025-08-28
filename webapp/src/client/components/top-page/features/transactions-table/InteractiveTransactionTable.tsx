@@ -21,7 +21,7 @@ const SORT_CONFIGS: Record<SortOption, SortConfig> = {
   "amount-desc": { sort: "amount", order: "desc" },
   "amount-asc": { sort: "amount", order: "asc" },
   "income-desc": { sort: "amount", order: "desc", filterType: "income" },
-  "expense-asc": { sort: "amount", order: "asc", filterType: "expense" },
+  "expense-desc": { sort: "amount", order: "desc", filterType: "expense" },
 };
 
 interface InteractiveTransactionTableProps {

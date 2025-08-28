@@ -7,7 +7,7 @@ export type SortOption =
   | "amount-desc"
   | "amount-asc"
   | "income-desc"
-  | "expense-asc";
+  | "expense-desc";
 
 interface TransactionTableMobileHeaderProps {
   onSortChange: (sortOption: SortOption) => void;
@@ -23,7 +23,7 @@ const TAB_ITEMS: TabItem[] = [
   { id: "date-desc", label: "新しい順" },
   { id: "date-asc", label: "古い順" },
   { id: "income-desc", label: "大きい収入順" },
-  { id: "expense-asc", label: "大きい支出順" },
+  { id: "expense-desc", label: "大きい支出順" },
 ];
 
 export default function TransactionTableMobileHeader({
