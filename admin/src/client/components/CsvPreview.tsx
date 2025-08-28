@@ -1,7 +1,7 @@
 "use client";
 import "client-only";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type {
   PreviewMfCsvResult,
   PreviewTransaction,
@@ -26,6 +26,10 @@ export default function CsvPreview({
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const perPage = 10;
+  const onPreviewCompleteRef = useRef(onPreviewComplete);
+
+  // Always update the ref to the latest callback
+  onPreviewCompleteRef.current = onPreviewComplete;
 
   useEffect(() => {
     if (!file || !politicalOrganizationId) {
@@ -47,12 +51,12 @@ export default function CsvPreview({
         });
 
         setPreviewResult(result);
-        onPreviewComplete?.(result);
+        onPreviewCompleteRef.current?.(result);
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : "CSVのプレビューに失敗しました";
         setError(errorMessage);
-        onPreviewComplete?.({
+        onPreviewCompleteRef.current?.({
           transactions: [],
           summary: {
             totalCount: 0,
@@ -67,7 +71,7 @@ export default function CsvPreview({
     };
 
     previewFile();
-  }, [file, politicalOrganizationId, onPreviewComplete]);
+  }, [file, politicalOrganizationId]);
 
   const handlePageChange = (page: number) => {
     if (!previewResult) return;
@@ -213,9 +217,9 @@ export default function CsvPreview({
             </tr>
           </thead>
           <tbody>
-            {currentRecords.map((record) => (
+            {currentRecords.map((record, index) => (
               <tr
-                key={`${record.transaction_date}-${record.debit_account}-${record.credit_account}-${record.debit_amount || 0}`}
+                key={`${(currentPage - 1) * perPage + index}-${record.transaction_date}-${record.debit_account}-${record.credit_account}-${record.debit_amount || 0}`}
                 className="border-b border-primary-border"
               >
                 <td className="px-2 py-3 text-sm">
