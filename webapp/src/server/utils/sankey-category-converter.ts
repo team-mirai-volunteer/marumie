@@ -23,6 +23,7 @@ export function convertCategoryAggregationToSankeyData(
       if (!nodeIds.has(item.subcategory)) {
         nodes.push({
           id: item.subcategory,
+          label: item.subcategory,
           nodeType: "income-sub",
         });
         nodeIds.add(item.subcategory);
@@ -39,6 +40,7 @@ export function convertCategoryAggregationToSankeyData(
     if (!nodeIds.has(category)) {
       nodes.push({
         id: category,
+        label: category,
         nodeType: "income",
       });
       nodeIds.add(category);
@@ -48,6 +50,7 @@ export function convertCategoryAggregationToSankeyData(
   // 3. 中央の合計ノード
   nodes.push({
     id: "合計",
+    label: "合計",
     nodeType: "total",
   });
 
@@ -87,6 +90,7 @@ export function convertCategoryAggregationToSankeyData(
     if (!nodeIds.has(category)) {
       nodes.push({
         id: category,
+        label: category,
         nodeType: "expense",
       });
       nodeIds.add(category);
@@ -99,6 +103,7 @@ export function convertCategoryAggregationToSankeyData(
       if (!nodeIds.has(item.subcategory)) {
         nodes.push({
           id: item.subcategory,
+          label: item.subcategory,
           nodeType: "expense-sub",
         });
         nodeIds.add(item.subcategory);
