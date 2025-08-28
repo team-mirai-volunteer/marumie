@@ -4,7 +4,7 @@ import "client-only";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { UserRole } from "@prisma/client";
+import { type UserRole } from "@prisma/client";
 import { Button } from "./ui";
 
 export default function Sidebar({
