@@ -64,11 +64,13 @@ export default function RootLayout({
     <html lang="ja">
       <head />
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${notoSans.variable} ${notoSansJP.variable} ${inter.variable} antialiased pt-24`}
+        className={`${geistSans.variable} ${geistMono.variable} ${notoSans.variable} ${notoSansJP.variable} ${inter.variable} antialiased pt-24 flex flex-col min-h-screen`}
       >
         <Header />
-        {children}
-        <Footer />
+        <div className="flex-grow">{children}</div>
+        <div className="mt-[120px]">
+          <Footer />
+        </div>
         <SpeedInsights />
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_TRACKING_ID || ""} />
       </body>
