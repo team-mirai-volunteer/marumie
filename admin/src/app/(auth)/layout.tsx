@@ -15,7 +15,7 @@ export default async function AuthLayout({
   const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    redirect('/login');
+    redirect("/login");
   }
 
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
@@ -30,14 +30,16 @@ export default async function AuthLayout({
   });
 
   try {
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
-      redirect('/login');
+      redirect("/login");
     }
   } catch (error) {
-    console.error('Authentication error:', error);
-    redirect('/login');
+    console.error("Authentication error:", error);
+    redirect("/login");
   }
 
   return (
