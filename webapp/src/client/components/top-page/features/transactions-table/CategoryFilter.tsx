@@ -3,6 +3,10 @@ import "client-only";
 
 import { useState } from "react";
 import Image from "next/image";
+import {
+  ACCOUNT_CATEGORY_MAPPING,
+  CategoryMapping,
+} from "@/shared/utils/category-mapping";
 
 interface CategoryItem {
   id: string;
@@ -10,35 +14,27 @@ interface CategoryItem {
   checked: boolean;
 }
 
-const INCOME_CATEGORIES: CategoryItem[] = [
-  { id: "party-fee", label: "党費・会費", checked: false },
-  { id: "individual-donation", label: "個人寄付", checked: false },
-  { id: "corporate-donation", label: "法人寄付", checked: true },
-  { id: "political-donation", label: "政党寄付", checked: false },
-  { id: "anonymous-donation", label: "政党匿名寄付", checked: false },
-  { id: "magazine", label: "機関紙誌", checked: true },
-  { id: "political-party", label: "政治資金パーティ", checked: false },
-  { id: "other-business", label: "その他事業", checked: false },
-  { id: "loan", label: "借入金", checked: false },
-  { id: "subsidy", label: "交付金", checked: false },
-  { id: "other-income", label: "その他", checked: false },
-];
+const INCOME_CATEGORIES: CategoryItem[] = Object.entries(
+  ACCOUNT_CATEGORY_MAPPING,
+)
+  .filter(([, mapping]: [string, CategoryMapping]) => mapping.type === "income")
+  .map(([key, mapping]: [string, CategoryMapping]) => ({
+    id: key,
+    label: mapping.shortLabel,
+    checked: false,
+  }));
 
-const EXPENSE_CATEGORIES: CategoryItem[] = [
-  { id: "personnel", label: "人件費", checked: false },
-  { id: "utilities", label: "光熱水費", checked: false },
-  { id: "supplies", label: "備品消耗品費", checked: true },
-  { id: "office", label: "事務所費", checked: false },
-  { id: "organization", label: "組織活動費", checked: true },
-  { id: "election", label: "選挙関係費", checked: false },
-  { id: "magazine-expense", label: "機関紙誌費", checked: false },
-  { id: "promotion", label: "宣伝事業費", checked: false },
-  { id: "party-expense", label: "政治資金パーティ費", checked: false },
-  { id: "other-business-expense", label: "その他事業費", checked: false },
-  { id: "research", label: "調査研究費", checked: false },
-  { id: "donation-grant", label: "寄付・交付金", checked: false },
-  { id: "other-expense", label: "その他経費", checked: false },
-];
+const EXPENSE_CATEGORIES: CategoryItem[] = Object.entries(
+  ACCOUNT_CATEGORY_MAPPING,
+)
+  .filter(
+    ([, mapping]: [string, CategoryMapping]) => mapping.type === "expense",
+  )
+  .map(([key, mapping]: [string, CategoryMapping]) => ({
+    id: key,
+    label: mapping.shortLabel,
+    checked: false,
+  }));
 
 interface CategoryFilterProps {
   isOpen: boolean;
