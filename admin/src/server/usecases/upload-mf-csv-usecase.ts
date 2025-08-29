@@ -1,6 +1,7 @@
 import type { CreateTransactionInput } from "@/shared/models/transaction";
 import type { ITransactionRepository } from "../repositories/interfaces/transaction-repository.interface";
 import type { PreviewTransaction } from "./preview-mf-csv-usecase";
+import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 
 export interface UploadMfCsvInput {
   validTransactions: PreviewTransaction[];
@@ -96,6 +97,10 @@ export class UploadMfCsvUsecase {
       description_detail: undefined,
       tags: previewTransaction.tags || "",
       memo: "",
+      category_key: this.determineCategoryKey(
+        previewTransaction.debit_account,
+        previewTransaction.credit_account,
+      ),
     };
   }
 
@@ -116,6 +121,26 @@ export class UploadMfCsvUsecase {
       return "expense";
     } else {
       return "other";
+    }
+  }
+
+  private determineCategoryKey(
+    debitAccount: string,
+    creditAccount: string,
+  ): string {
+    // incomeの場合：貸方（credit）のアカウントがカテゴリ
+    if (debitAccount === "普通預金") {
+      const mapping = ACCOUNT_CATEGORY_MAPPING[creditAccount];
+      return mapping ? mapping.key : "undefined";
+    }
+    // expenseの場合：借方（debit）のアカウントがカテゴリ
+    else if (creditAccount === "普通預金") {
+      const mapping = ACCOUNT_CATEGORY_MAPPING[debitAccount];
+      return mapping ? mapping.key : "undefined";
+    }
+    // その他の場合はデフォルト
+    else {
+      return "undefined";
     }
   }
 
