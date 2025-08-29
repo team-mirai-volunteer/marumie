@@ -41,6 +41,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
         descriptionDetail: input.description_detail || null,
         tags: input.tags || null,
         memo: input.memo || null,
+        categoryKey: input.category_key,
       },
     });
 
@@ -190,6 +191,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
           descriptionDetail: input.description_detail || null,
           tags: input.tags || null,
           memo: input.memo || null,
+          categoryKey: input.category_key,
         };
       } catch (error) {
         throw new Error(
@@ -307,6 +309,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       description_detail: prismaTransaction.descriptionDetail,
       tags: prismaTransaction.tags,
       memo: prismaTransaction.memo,
+      category_key: prismaTransaction.categoryKey,
       created_at: prismaTransaction.createdAt,
       updated_at: prismaTransaction.updatedAt,
     };

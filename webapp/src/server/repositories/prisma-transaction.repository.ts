@@ -399,6 +399,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       description_detail: prismaTransaction.descriptionDetail ?? undefined,
       tags: prismaTransaction.tags ?? undefined,
       memo: prismaTransaction.memo ?? undefined,
+      category_key: prismaTransaction.categoryKey,
       created_at: prismaTransaction.createdAt,
       updated_at: prismaTransaction.updatedAt,
     };

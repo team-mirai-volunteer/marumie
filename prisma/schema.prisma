@@ -72,6 +72,7 @@ model Transaction {
   descriptionDetail       String?              @map("description_detail") @db.Text
   tags                    String?              @db.Text
   memo                    String?              @db.Text
+  categoryKey             String               @map("category_key") @db.VarChar(255)
   createdAt               DateTime             @default(now()) @map("created_at")
   updatedAt               DateTime             @updatedAt @map("updated_at")
 

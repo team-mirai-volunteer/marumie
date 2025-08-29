@@ -3,6 +3,7 @@ import type {
   TransactionType,
 } from "@/shared/models/transaction";
 import type { MfCsvRecord } from "./mf-csv-loader";
+import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 
 export class MfRecordConverter {
   constructor() {}
@@ -46,6 +47,10 @@ export class MfRecordConverter {
       description_detail: undefined,
       tags: record.tags,
       memo: record.memo,
+      category_key: this.determineCategoryKey(
+        record.debit_account,
+        record.credit_account,
+      ),
     };
   }
 
@@ -107,6 +112,26 @@ export class MfRecordConverter {
           description_2: parts[1],
           description_3: parts.slice(2).join(" "),
         };
+    }
+  }
+
+  private determineCategoryKey(
+    debitAccount: string,
+    creditAccount: string,
+  ): string {
+    // incomeの場合：貸方（credit）のアカウントがカテゴリ
+    if (debitAccount === "普通預金") {
+      const mapping = ACCOUNT_CATEGORY_MAPPING[creditAccount];
+      return mapping ? mapping.key : "undefined";
+    }
+    // expenseの場合：借方（debit）のアカウントがカテゴリ
+    else if (creditAccount === "普通預金") {
+      const mapping = ACCOUNT_CATEGORY_MAPPING[debitAccount];
+      return mapping ? mapping.key : "undefined";
+    }
+    // その他の場合はデフォルト
+    else {
+      return "undefined";
     }
   }
 

@@ -26,6 +26,7 @@ export interface Transaction {
   description_detail?: string;
   tags?: string;
   memo?: string;
+  category_key: string;
   created_at: Date;
   updated_at: Date;
 }
@@ -55,6 +56,7 @@ export interface CreateTransactionInput {
   description_detail?: string;
   tags?: string;
   memo?: string;
+  category_key: string;
 }
 
 export interface UpdateTransactionInput extends Partial<CreateTransactionInput> {}
