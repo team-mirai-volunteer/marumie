@@ -76,6 +76,13 @@ export default async function TransactionsPage({
     ? searchParamsResolved.categoryName[0]
     : searchParamsResolved.categoryName;
 
+  // categories: multiple category keys for filtering
+  const categories = Array.isArray(searchParamsResolved.categories)
+    ? searchParamsResolved.categories
+    : searchParamsResolved.categories
+      ? [searchParamsResolved.categories]
+      : undefined;
+
   const financialYear = 2025; // 固定値
 
   try {
@@ -88,6 +95,7 @@ export default async function TransactionsPage({
       sortBy: sortBy as "date" | "amount" | undefined,
       order: order as "asc" | "desc" | undefined,
       categoryName: categoryName || undefined,
+      categories,
     });
 
     const updatedAt = formatUpdatedAt(data.lastUpdatedAt ?? null);

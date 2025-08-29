@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.2.2/schema.json",
   "files": {
     "includes": [
       "admin/src/**/*",
@@ -25,7 +25,12 @@
     "enabled": true,
     "rules": {
       "style": {
-        "useImportType": "error"
+        "useImportType": "error",
+        "useConsistentArrayType": "off",
+        "useNodejsImportProtocol": "off"
+      },
+      "suspicious": {
+        "noImplicitAnyLet": "off"
       },
       "nursery": {
         "useSortedClasses": "off"
@@ -38,6 +43,15 @@
   "javascript": {
     "formatter": {
       "quoteStyle": "double"
+    }
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": {
+          "level": "off"
+        }
+      }
     }
   }
 }

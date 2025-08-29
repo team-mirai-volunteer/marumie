@@ -83,6 +83,11 @@ export default function InteractiveTransactionTable({
     router.push(`?${params.toString()}`);
   };
 
+  const handleApplyFilter = (selectedKeys: string[]) => {
+    // アラートで選択されたカテゴリを表示する処理はCategoryFilter内で完結
+    // ここでは何もしない（将来的にはフィルタリングロジックを実装）
+  };
+
   const getCurrentSortOption = (): SortOption => {
     const sort = currentSort || "date";
     const order = currentOrder || "desc";
@@ -128,6 +133,7 @@ export default function InteractiveTransactionTable({
         onSort={handleSort}
         currentSort={currentSort}
         currentOrder={currentOrder}
+        onApplyFilter={handleApplyFilter}
       />
 
       {/* Figmaデザインに基づくページネーション */}

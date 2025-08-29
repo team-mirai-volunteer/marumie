@@ -1,10 +1,13 @@
 import Image from "next/image";
+import { useState } from "react";
+import CategoryFilter from "./CategoryFilter";
 
 interface TransactionTableHeaderProps {
   allowControl?: boolean;
   onSort?: (field: "date" | "amount") => void;
   currentSort?: "date" | "amount" | null;
   currentOrder?: "asc" | "desc" | null;
+  onApplyFilter?: (selectedKeys: string[]) => void;
 }
 
 export default function TransactionTableHeader({
@@ -12,16 +15,14 @@ export default function TransactionTableHeader({
   onSort,
   currentSort,
   currentOrder,
+  onApplyFilter,
 }: TransactionTableHeaderProps) {
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   return (
     <thead className="hidden md:table-header-group bg-white">
       <tr className="h-12 border-b border-[#D5DBE1]">
         {/* 日付 - 140px width to match row */}
-        <th
-          className="text-left px-4 h-12 font-normal"
-          style={{ width: "140px" }}
-          scope="col"
-        >
+        <th className="text-left px-4 h-12 font-normal w-[140px]" scope="col">
           {allowControl && onSort ? (
             <button
               type="button"
@@ -45,10 +46,7 @@ export default function TransactionTableHeader({
                         ? "rotate-180"
                         : ""
                       : ""
-                  }`}
-                  style={{
-                    opacity: currentSort === "date" ? 1 : 0.5,
-                  }}
+                  } ${currentSort === "date" ? "opacity-100" : "opacity-50"}`}
                 />
               </div>
             </button>
@@ -71,11 +69,7 @@ export default function TransactionTableHeader({
         </th>
 
         {/* 金額 - 180px width to match row (combined plus/minus + amount) */}
-        <th
-          className="text-right pr-6 h-12 font-normal"
-          style={{ width: "180px" }}
-          scope="col"
-        >
+        <th className="text-right pr-6 h-12 font-normal w-[180px]" scope="col">
           {allowControl && onSort ? (
             <button
               type="button"
@@ -99,10 +93,7 @@ export default function TransactionTableHeader({
                         ? "rotate-180"
                         : ""
                       : ""
-                  }`}
-                  style={{
-                    opacity: currentSort === "amount" ? 1 : 0.5,
-                  }}
+                  } ${currentSort === "amount" ? "opacity-100" : "opacity-50"}`}
                 />
               </div>
             </button>
@@ -117,15 +108,19 @@ export default function TransactionTableHeader({
 
         {/* カテゴリー - 160px width to match row */}
         <th
-          className="text-left pl-4 h-12 font-normal"
-          style={{ width: "160px" }}
+          className="text-left pl-4 h-12 font-normal w-[160px] relative overflow-visible"
           scope="col"
         >
-          <div className="flex items-center gap-1 h-12">
-            <span className="text-gray-800 text-sm font-bold leading-[1.5]">
-              カテゴリー
-            </span>
-            {allowControl && (
+          {allowControl ? (
+            <button
+              type="button"
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              className="flex items-center gap-1 h-12 hover:opacity-70 transition-opacity cursor-pointer"
+              aria-label="カテゴリーフィルター"
+            >
+              <span className="text-gray-800 text-sm font-bold leading-[1.5]">
+                カテゴリー
+              </span>
               <div className="w-3 h-2 flex items-center justify-center">
                 <Image
                   src="/icons/icon-filter.svg"
@@ -135,8 +130,19 @@ export default function TransactionTableHeader({
                   className="w-3 h-2"
                 />
               </div>
-            )}
-          </div>
+            </button>
+          ) : (
+            <div className="flex items-center gap-1 h-12">
+              <span className="text-gray-800 text-sm font-bold leading-[1.5]">
+                カテゴリー
+              </span>
+            </div>
+          )}
+          <CategoryFilter
+            isOpen={isFilterOpen}
+            onClose={() => setIsFilterOpen(false)}
+            onApplyFilter={onApplyFilter || (() => {})}
+          />
         </th>
       </tr>
     </thead>

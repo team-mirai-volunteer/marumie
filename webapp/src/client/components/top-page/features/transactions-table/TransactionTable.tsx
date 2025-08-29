@@ -11,6 +11,7 @@ interface TransactionTableProps {
   total?: number;
   page?: number;
   perPage?: number;
+  onApplyFilter?: (selectedKeys: string[]) => void;
 }
 
 export default function TransactionTable({
@@ -19,10 +20,11 @@ export default function TransactionTable({
   onSort,
   currentSort,
   currentOrder,
+  onApplyFilter,
 }: TransactionTableProps) {
   return (
     <div className="space-y-6">
-      <div className="overflow-x-auto">
+      <div className="overflow-visible">
         <table className="min-w-full bg-white" aria-label="政治資金取引一覧表">
           {/* Show header only on desktop */}
           <TransactionTableHeader
@@ -30,6 +32,7 @@ export default function TransactionTable({
             onSort={onSort}
             currentSort={currentSort}
             currentOrder={currentOrder}
+            onApplyFilter={onApplyFilter}
           />
           <TransactionTableBody transactions={transactions} />
         </table>
