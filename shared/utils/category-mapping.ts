@@ -33,7 +33,7 @@ export const ACCOUNT_CATEGORY_MAPPING: Record<string, CategoryMapping> = {
     category: "寄付",
     subcategory: "個人からの寄付",
     color: "#BBF7D0",
-    shortLabel: "個人寄付",
+    shortLabel: "個人寄付（特定）",
     type: "income"
   },
   "法人その他の団体からの寄附": {

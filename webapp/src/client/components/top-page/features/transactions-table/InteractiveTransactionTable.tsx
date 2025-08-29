@@ -83,6 +83,23 @@ export default function InteractiveTransactionTable({
     router.push(`?${params.toString()}`);
   };
 
+  const handleApplyFilter = (selectedKeys: string[]) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (selectedKeys.length > 0) {
+      params.delete("categories");
+      for (const key of selectedKeys) {
+        params.append("categories", key);
+      }
+    } else {
+      params.delete("categories");
+    }
+
+    // Reset to page 1 when filtering changes
+    params.set("page", "1");
+    router.push(`?${params.toString()}`);
+  };
+
   const getCurrentSortOption = (): SortOption => {
     const sort = currentSort || "date";
     const order = currentOrder || "desc";
@@ -128,6 +145,7 @@ export default function InteractiveTransactionTable({
         onSort={handleSort}
         currentSort={currentSort}
         currentOrder={currentOrder}
+        onApplyFilter={handleApplyFilter}
       />
 
       {/* Figmaデザインに基づくページネーション */}
