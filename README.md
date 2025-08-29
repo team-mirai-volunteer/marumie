@@ -91,6 +91,17 @@ pnpm run clean         # 全てのnode_modulesとSupabaseを停止
 pnpm run fresh         # クリーンインストール + セットアップ
 ```
 
+## データベースのマイグレーション
+
+### 本番環境・開発環境
+- Vercelで行われるwebappのbuild過程で自動的にマイグレーションが実行されます
+
+### ローカル開発環境
+- 以下のコマンドでマイグレーションを実行してください：
+```bash
+pnpm run db:migrate
+```
+
 ### ブラウザからの確認方法
 
 - **メインアプリ**: [http://localhost:3000](http://localhost:3000)
