@@ -5,7 +5,7 @@ import { useState } from "react";
 import Image from "next/image";
 import {
   ACCOUNT_CATEGORY_MAPPING,
-  CategoryMapping,
+  type CategoryMapping,
 } from "@/shared/utils/category-mapping";
 
 interface CategoryItem {
@@ -18,8 +18,8 @@ const INCOME_CATEGORIES: CategoryItem[] = Object.entries(
   ACCOUNT_CATEGORY_MAPPING,
 )
   .filter(([, mapping]: [string, CategoryMapping]) => mapping.type === "income")
-  .map(([key, mapping]: [string, CategoryMapping]) => ({
-    id: key,
+  .map(([, mapping]: [string, CategoryMapping]) => ({
+    id: mapping.key,
     label: mapping.shortLabel,
     checked: false,
   }));
@@ -30,8 +30,8 @@ const EXPENSE_CATEGORIES: CategoryItem[] = Object.entries(
   .filter(
     ([, mapping]: [string, CategoryMapping]) => mapping.type === "expense",
   )
-  .map(([key, mapping]: [string, CategoryMapping]) => ({
-    id: key,
+  .map(([, mapping]: [string, CategoryMapping]) => ({
+    id: mapping.key,
     label: mapping.shortLabel,
     checked: false,
   }));
@@ -39,11 +39,13 @@ const EXPENSE_CATEGORIES: CategoryItem[] = Object.entries(
 interface CategoryFilterProps {
   isOpen: boolean;
   onClose: () => void;
+  onApplyFilter: (selectedKeys: string[]) => void;
 }
 
 export default function CategoryFilter({
   isOpen,
   onClose,
+  onApplyFilter,
 }: CategoryFilterProps) {
   const [incomeCategories, setIncomeCategories] = useState(INCOME_CATEGORIES);
   const [expenseCategories, setExpenseCategories] =
@@ -72,7 +74,11 @@ export default function CategoryFilter({
   };
 
   const handleOk = () => {
-    // TODO: Apply filter logic
+    const selectedKeys = [
+      ...incomeCategories.filter((cat) => cat.checked).map((cat) => cat.id),
+      ...expenseCategories.filter((cat) => cat.checked).map((cat) => cat.id),
+    ];
+    onApplyFilter(selectedKeys);
     onClose();
   };
 

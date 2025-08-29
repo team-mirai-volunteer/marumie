@@ -19,6 +19,7 @@ export interface GetTransactionsBySlugParams {
   sortBy?: "date" | "amount";
   order?: "asc" | "desc";
   categoryName?: string;
+  categories?: string[];
 }
 
 export interface GetTransactionsBySlugResult {
@@ -68,6 +69,9 @@ export class GetTransactionsBySlugUsecase {
       }
       if (params.categoryName) {
         filters.category_name = params.categoryName;
+      }
+      if (params.categories && params.categories.length > 0) {
+        filters.category_keys = params.categories;
       }
       filters.financial_year = params.financialYear;
 

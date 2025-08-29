@@ -7,6 +7,7 @@ interface TransactionTableHeaderProps {
   onSort?: (field: "date" | "amount") => void;
   currentSort?: "date" | "amount" | null;
   currentOrder?: "asc" | "desc" | null;
+  onApplyFilter?: (selectedKeys: string[]) => void;
 }
 
 export default function TransactionTableHeader({
@@ -14,6 +15,7 @@ export default function TransactionTableHeader({
   onSort,
   currentSort,
   currentOrder,
+  onApplyFilter,
 }: TransactionTableHeaderProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   return (
@@ -139,6 +141,7 @@ export default function TransactionTableHeader({
           <CategoryFilter
             isOpen={isFilterOpen}
             onClose={() => setIsFilterOpen(false)}
+            onApplyFilter={onApplyFilter || (() => {})}
           />
         </th>
       </tr>

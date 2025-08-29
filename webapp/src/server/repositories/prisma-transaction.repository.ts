@@ -342,6 +342,20 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       }
     }
 
+    // Filter by category keys
+    if (filters?.category_keys && filters.category_keys.length > 0) {
+      const accountsForKeys = Object.entries(ACCOUNT_CATEGORY_MAPPING)
+        .filter(([, mapping]) => filters.category_keys?.includes(mapping.key))
+        .map(([account]) => account);
+
+      if (accountsForKeys.length > 0) {
+        where.OR = [
+          { debitAccount: { in: accountsForKeys } },
+          { creditAccount: { in: accountsForKeys } },
+        ];
+      }
+    }
+
     return where;
   }
 
