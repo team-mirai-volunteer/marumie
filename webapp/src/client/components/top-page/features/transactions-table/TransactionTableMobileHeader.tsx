@@ -5,7 +5,9 @@ export type SortOption =
   | "date-desc"
   | "date-asc"
   | "amount-desc"
-  | "amount-asc";
+  | "amount-asc"
+  | "income-desc"
+  | "expense-desc";
 
 interface TransactionTableMobileHeaderProps {
   onSortChange: (sortOption: SortOption) => void;
@@ -20,8 +22,8 @@ interface TabItem {
 const TAB_ITEMS: TabItem[] = [
   { id: "date-desc", label: "新しい順" },
   { id: "date-asc", label: "古い順" },
-  { id: "amount-desc", label: "価格が高い順" },
-  { id: "amount-asc", label: "価格が安い順" },
+  { id: "expense-desc", label: "支出が多い順" },
+  { id: "income-desc", label: "収入が多い順" },
 ];
 
 export default function TransactionTableMobileHeader({
@@ -29,14 +31,13 @@ export default function TransactionTableMobileHeader({
   currentSort,
 }: TransactionTableMobileHeaderProps) {
   const handleClick = (sortOption: SortOption) => {
-    console.log("Tab clicked:", sortOption); // デバッグ用
     onSortChange(sortOption);
   };
 
   return (
     <div className="w-full bg-white relative border-b-0">
       {/* Tab Items */}
-      <div className="flex gap-8 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <div className="flex gap-6 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {TAB_ITEMS.map((tab) => {
           const isActive = currentSort === tab.id;
 
@@ -45,7 +46,7 @@ export default function TransactionTableMobileHeader({
               key={tab.id}
               type="button"
               onClick={() => handleClick(tab.id)}
-              className="flex flex-col items-center justify-center relative whitespace-nowrap py-2 px-2 cursor-pointer touch-manipulation"
+              className="flex flex-col items-center justify-center relative whitespace-nowrap py-2 px-0 cursor-pointer touch-manipulation"
             >
               {/* Tab Label */}
               <span

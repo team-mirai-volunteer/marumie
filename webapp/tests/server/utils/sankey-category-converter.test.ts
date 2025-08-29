@@ -45,19 +45,19 @@ describe("convertCategoryAggregationToSankeyData", () => {
     expect(result.nodes).toEqual(
       expect.arrayContaining([
         // 収入サブカテゴリノード
-        { id: "個人からの寄付", label: "個人からの寄付" },
-        { id: "法人その他の団体からの寄附", label: "法人その他の団体からの寄附" },
+        { id: "個人からの寄付", label: "個人からの寄付", nodeType: "income-sub" },
+        { id: "法人その他の団体からの寄附", label: "法人その他の団体からの寄附", nodeType: "income-sub" },
         // 収入カテゴリノード
-        { id: "寄付", label: "寄付" },
-        { id: "その他", label: "その他" },
+        { id: "寄付", label: "寄付", nodeType: "income" },
+        { id: "その他", label: "その他", nodeType: "income" },
         // 中央の合計ノード
-        { id: "合計", label: "合計" },
+        { id: "合計", label: "合計", nodeType: "total" },
         // 支出カテゴリノード
-        { id: "政治活動費", label: "政治活動費" },
-        { id: "経常経費", label: "経常経費" },
+        { id: "政治活動費", label: "政治活動費", nodeType: "expense" },
+        { id: "経常経費", label: "経常経費", nodeType: "expense" },
         // 支出サブカテゴリノード
-        { id: "宣伝費", label: "宣伝費" },
-        { id: "人件費", label: "人件費" },
+        { id: "宣伝費", label: "宣伝費", nodeType: "expense-sub" },
+        { id: "人件費", label: "人件費", nodeType: "expense-sub" },
       ])
     );
 
@@ -107,9 +107,9 @@ describe("convertCategoryAggregationToSankeyData", () => {
     // ノードの検証（サブカテゴリなし、現残高なし）
     expect(result.nodes).toEqual(
       expect.arrayContaining([
-        { id: "寄付", label: "寄付" },
-        { id: "合計", label: "合計" },
-        { id: "政治活動費", label: "政治活動費" },
+        { id: "寄付", label: "寄付", nodeType: "income" },
+        { id: "合計", label: "合計", nodeType: "total" },
+        { id: "政治活動費", label: "政治活動費", nodeType: "expense" },
       ])
     );
 
@@ -135,7 +135,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
 
     // 合計ノードのみ
     expect(result.nodes).toEqual([
-      { id: "合計", label: "合計" },
+      { id: "合計", label: "合計", nodeType: "total" },
     ]);
 
     // リンクなし

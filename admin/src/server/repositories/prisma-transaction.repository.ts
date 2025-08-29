@@ -163,32 +163,40 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   }
 
   async createMany(inputs: CreateTransactionInput[]): Promise<Transaction[]> {
-    const data = inputs.map((input) => ({
-      politicalOrganizationId: BigInt(input.political_organization_id),
-      transactionNo: input.transaction_no,
-      transactionDate: input.transaction_date,
-      financialYear: input.financial_year,
-      transactionType: input.transaction_type,
-      debitAccount: input.debit_account,
-      debitSubAccount: input.debit_sub_account || null,
-      debitDepartment: input.debit_department || null,
-      debitPartner: input.debit_partner || null,
-      debitTaxCategory: input.debit_tax_category || null,
-      debitAmount: input.debit_amount,
-      creditAccount: input.credit_account,
-      creditSubAccount: input.credit_sub_account || null,
-      creditDepartment: input.credit_department || null,
-      creditPartner: input.credit_partner || null,
-      creditTaxCategory: input.credit_tax_category || null,
-      creditAmount: input.credit_amount,
-      description: input.description || null,
-      description1: input.description_1 || null,
-      description2: input.description_2 || null,
-      description3: input.description_3 || null,
-      descriptionDetail: input.description_detail || null,
-      tags: input.tags || null,
-      memo: input.memo || null,
-    }));
+    const data = inputs.map((input, index) => {
+      try {
+        return {
+          politicalOrganizationId: BigInt(input.political_organization_id),
+          transactionNo: input.transaction_no,
+          transactionDate: input.transaction_date,
+          financialYear: input.financial_year,
+          transactionType: input.transaction_type,
+          debitAccount: input.debit_account,
+          debitSubAccount: input.debit_sub_account || null,
+          debitDepartment: input.debit_department || null,
+          debitPartner: input.debit_partner || null,
+          debitTaxCategory: input.debit_tax_category || null,
+          debitAmount: input.debit_amount,
+          creditAccount: input.credit_account,
+          creditSubAccount: input.credit_sub_account || null,
+          creditDepartment: input.credit_department || null,
+          creditPartner: input.credit_partner || null,
+          creditTaxCategory: input.credit_tax_category || null,
+          creditAmount: input.credit_amount,
+          description: input.description || null,
+          description1: input.description_1 || null,
+          description2: input.description_2 || null,
+          description3: input.description_3 || null,
+          descriptionDetail: input.description_detail || null,
+          tags: input.tags || null,
+          memo: input.memo || null,
+        };
+      } catch (error) {
+        throw new Error(
+          `Failed to convert transaction ${index}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    });
 
     await this.prisma.transaction.createMany({
       data,
@@ -256,6 +264,18 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       created: createdTransactions,
       skipped: skippedCount,
     };
+  }
+
+  async findByTransactionNos(transactionNos: string[]): Promise<Transaction[]> {
+    const transactions = await this.prisma.transaction.findMany({
+      where: {
+        transactionNo: {
+          in: transactionNos,
+        },
+      },
+    });
+
+    return transactions.map(this.mapToTransaction);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

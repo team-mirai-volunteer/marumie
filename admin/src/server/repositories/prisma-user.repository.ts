@@ -1,11 +1,15 @@
-import 'server-only';
+import "server-only";
 import { PrismaClient, UserRole } from "@prisma/client";
 import { User, UserRepository } from "./interfaces/user-repository.interface";
 
 export class PrismaUserRepository implements UserRepository {
   constructor(private prisma: PrismaClient) {}
 
-  async create(data: { authId: string; email: string; role?: UserRole }): Promise<User> {
+  async create(data: {
+    authId: string;
+    email: string;
+    role?: UserRole;
+  }): Promise<User> {
     return await this.prisma.user.create({
       data: {
         authId: data.authId,

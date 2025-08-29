@@ -3,7 +3,9 @@ import "client-only";
 
 import { ResponsiveSankey } from "@nivo/sankey";
 import React from "react";
+import { createPortal } from "react-dom";
 import type { SankeyData } from "@/types/sankey";
+import InteractiveRect from "./InteractiveRect";
 
 // 定数定義
 const BREAKPOINT = {
@@ -58,7 +60,7 @@ const TEXT = {
   TOTAL_LABEL_TOP: "収入支出",
   TOTAL_LABEL_PERCENTAGE: "100%",
   PERCENTAGE_THRESHOLD: 1,
-  PERCENTAGE_UNDER_ONE: ">1%",
+  PERCENTAGE_UNDER_ONE: "<1%",
   CURRENCY_DIVIDER: 10000,
   CURRENCY_UNIT: "万円",
 } as const;
@@ -67,10 +69,10 @@ const CHART_CONFIG = {
   MARGIN_TOP_DESKTOP: 40,
   MARGIN_TOP_MOBILE: 20,
   MARGIN_HORIZONTAL_DESKTOP: 100,
-  MARGIN_HORIZONTAL_MOBILE: 60,
-  MARGIN_BOTTOM: 30, // 0 -> 30 に増加して下部の文字用スペースを確保
+  MARGIN_HORIZONTAL_MOBILE: 40,
+  MARGIN_BOTTOM: 30,
   NODE_THICKNESS: 12,
-  NODE_SPACING: 24, // 16 -> 24 に増加してノード間の間隔を広げる
+  NODE_SPACING: 24,
   LINK_OPACITY: 0.5,
   LINK_HOVER_OPACITY: 0.8,
   HOVER_OPACITY: 0.9,
@@ -112,24 +114,6 @@ const getNodeFillColor = (nodeType: string | undefined) => {
   return COLORS.EXPENSE;
 };
 
-const renderNode = (node: SankeyNodeWithPosition, isMobile: boolean) => {
-  const width = getNodeWidth(node.nodeType, isMobile);
-  const x = node.x - (width - DIMENSIONS.NODE_BASE_WIDTH) / 2;
-  const color = getNodeFillColor(node.nodeType);
-
-  return (
-    <rect
-      key={node.id}
-      x={x}
-      y={node.y}
-      width={width}
-      height={node.height}
-      fill={color}
-      opacity={1}
-    />
-  );
-};
-
 // カスタムノードレイヤー（合計ボックスを太くする）
 const CustomNodesLayer = ({
   nodes,
@@ -137,6 +121,12 @@ const CustomNodesLayer = ({
   nodes: readonly SankeyNodeWithPosition[];
 }) => {
   const [isMobile, setIsMobile] = React.useState(false);
+  const [tooltip, setTooltip] = React.useState<{
+    visible: boolean;
+    x: number;
+    y: number;
+    node: SankeyNodeWithPosition | null;
+  }>({ visible: false, x: 0, y: 0, node: null });
 
   React.useEffect(() => {
     const checkMobile = () => {
@@ -147,12 +137,87 @@ const CustomNodesLayer = ({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  const handleMouseEnter = (
+    event: React.MouseEvent,
+    nodeData: { id: string; value?: number },
+  ) => {
+    // 元のnode情報を再構築（必要な場合）
+    const originalNode = nodes.find((n) => n.id === nodeData.id);
+    setTooltip({
+      visible: true,
+      x: event.pageX + 10, // clientX → pageX でスクロール位置を含む
+      y: event.pageY - 10, // clientY → pageY でスクロール位置を含む
+      node:
+        originalNode ||
+        ({ id: nodeData.id, value: nodeData.value } as SankeyNodeWithPosition),
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setTooltip((prev) => ({ ...prev, visible: false }));
+  };
+
+  const handleMouseMove = (event: React.MouseEvent) => {
+    if (tooltip.visible) {
+      setTooltip((prev) => ({
+        ...prev,
+        x: event.pageX + 10, // clientX → pageX でスクロール位置を含む
+        y: event.pageY - 10, // clientY → pageY でスクロール位置を含む
+      }));
+    }
+  };
+
   return (
-    <g>
-      {nodes.map((node: SankeyNodeWithPosition) => {
-        return renderNode(node, isMobile);
-      })}
-    </g>
+    <>
+      <g>
+        {nodes.map((node: SankeyNodeWithPosition) => {
+          const width = getNodeWidth(node.nodeType, isMobile);
+          const x = node.x - (width - DIMENSIONS.NODE_BASE_WIDTH) / 2;
+          const color = getNodeFillColor(node.nodeType);
+
+          return (
+            <InteractiveRect
+              key={node.id}
+              id={node.id}
+              x={x}
+              y={node.y}
+              width={width}
+              height={node.height}
+              fill={color}
+              value={node.value}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              onMouseMove={handleMouseMove}
+            />
+          );
+        })}
+      </g>
+      {tooltip.visible &&
+        tooltip.node &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            style={{
+              position: "absolute",
+              left: tooltip.x,
+              top: tooltip.y,
+              background: "white",
+              padding: "8px 12px",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+              fontSize: "12px",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+              zIndex: 30, // headerのz-40(4000)より低く設定
+              pointerEvents: "none",
+            }}
+          >
+            <strong>{tooltip.node.id}</strong>
+            <br />
+            {`¥${Math.round(tooltip.node.value || 0).toLocaleString("ja-JP")}`}
+          </div>,
+          document.body,
+        )}
+    </>
   );
 };
 
@@ -198,7 +263,7 @@ const renderTotalNodeLabels = (
           : DIMENSIONS.TOTAL_LABEL_TOP_OFFSET_MOBILE)
       }
       textAnchor="middle"
-      dominantBaseline="bottom"
+      dominantBaseline="text-after-edge"
       fill={boxColor}
       fontSize={!isMobile ? "14.5px" : "8px"}
       fontWeight="bold"
@@ -228,7 +293,7 @@ const renderTotalNodeLabels = (
         x={node.x + node.width / 2}
         y={node.y + node.height + DIMENSIONS.AMOUNT_LABEL_OFFSET}
         textAnchor="middle"
-        dominantBaseline="top"
+        dominantBaseline="text-before-edge"
         fill={boxColor}
         fontSize={!isMobile ? "14.5px" : "8px"}
         fontWeight="bold"
@@ -258,7 +323,7 @@ const renderPercentageLabel = (
       x={node.x + node.width / 2}
       y={percentageY}
       textAnchor="middle"
-      dominantBaseline="bottom"
+      dominantBaseline="text-after-edge"
       fill={boxColor}
       fontSize={!isMobile ? "14.5px" : "8px"}
       fontWeight="bold"
@@ -271,7 +336,7 @@ const renderPercentageLabel = (
 const renderPrimaryLabel = (
   node: SankeyNodeWithPosition,
   x: number,
-  textAnchor: string,
+  textAnchor: "start" | "middle" | "end" | "inherit",
   isMobile: boolean,
 ) => {
   const label = node.id; // HACK: 表示にはnode.idを使用（本来はnode.labelを使うべき）
@@ -294,8 +359,8 @@ const renderPrimaryLabel = (
         key={`${node.id}-primary`}
         x={x}
         y={node.y + node.height / 2}
-        textAnchor={textAnchor}
-        dominantBaseline="central"
+        textAnchor={textAnchor as "start" | "middle" | "end"}
+        dominantBaseline="middle"
         fill={COLORS.TEXT}
         fontSize={fontSize}
         fontWeight="bold"
@@ -499,7 +564,13 @@ export default function SankeyChart({ data }: SankeyChartProps) {
           : DIMENSIONS.CHART_HEIGHT_MOBILE,
       }}
       className="sankey-container"
+      role="img"
+      aria-label="政治資金の収支フロー図"
+      aria-describedby="sankey-chart-description"
     >
+      <div id="sankey-chart-description" className="sr-only">
+        政治資金の収入から支出へのお金の流れを示すサンキーダイアグラムです。
+      </div>
       <style jsx global>{`
         .sankey-container svg path:hover {
           opacity: ${CHART_CONFIG.HOVER_OPACITY} !important;
@@ -522,7 +593,7 @@ export default function SankeyChart({ data }: SankeyChartProps) {
             ? CHART_CONFIG.MARGIN_HORIZONTAL_DESKTOP
             : CHART_CONFIG.MARGIN_HORIZONTAL_MOBILE,
         }}
-        align="justify"
+        align="center"
         colors={getNodeColor}
         valueFormat={(v) =>
           `¥${Math.round(v as number).toLocaleString("ja-JP")}`
@@ -533,9 +604,10 @@ export default function SankeyChart({ data }: SankeyChartProps) {
         nodeSpacing={CHART_CONFIG.NODE_SPACING}
         sort="auto"
         linkOpacity={CHART_CONFIG.LINK_OPACITY}
-        linkHoverOpacity={CHART_CONFIG.LINK_HOVER_OPACITY}
+        linkHoverOpacity={CHART_CONFIG.LINK_OPACITY}
         enableLinkGradient={false}
         enableLabels={false}
+        isInteractive={false}
         layers={["links", CustomNodesLayer, CustomLabelsLayer]}
         theme={{
           labels: {

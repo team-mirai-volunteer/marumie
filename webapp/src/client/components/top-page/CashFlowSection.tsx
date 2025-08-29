@@ -10,9 +10,13 @@ import type { SankeyData } from "@/types/sankey";
 
 interface CashFlowSectionProps {
   sankeyData: SankeyData | null;
+  updatedAt: string;
 }
 
-export default function CashFlowSection({ sankeyData }: CashFlowSectionProps) {
+export default function CashFlowSection({
+  sankeyData,
+  updatedAt,
+}: CashFlowSectionProps) {
   return (
     <MainColumnCard id="cash-flow">
       <CardHeader
@@ -25,7 +29,7 @@ export default function CashFlowSection({ sankeyData }: CashFlowSectionProps) {
           />
         }
         title="チームみらいの収支の流れ"
-        updatedAt="2025.8.14時点"
+        updatedAt={updatedAt}
         subtitle="どこからお金を得て、何に使っているか"
       />
 

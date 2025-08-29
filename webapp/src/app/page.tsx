@@ -7,6 +7,7 @@ import DonationSummarySection from "@/client/components/top-page/DonationSummary
 import MonthlyTrendsSection from "@/client/components/top-page/MonthlyTrendsSection";
 import TransactionsSection from "@/client/components/top-page/TransactionsSection";
 import { getTransactionPageDataAction } from "@/server/actions/get-transaction-page-data";
+import { formatUpdatedAt } from "@/server/utils/format-date";
 
 export const revalidate = 300; // 5 minutes
 
@@ -21,13 +22,29 @@ export default async function Home() {
     financialYear: 2025, // デフォルト値
   }).catch(() => null);
 
+  const updatedAt = formatUpdatedAt(
+    data?.transactionData?.lastUpdatedAt ?? null,
+  );
+
   return (
     <MainColumn>
-      <CashFlowSection sankeyData={data?.sankeyData ?? null} />
-      <MonthlyTrendsSection monthlyData={data?.monthlyData} />
-      <DonationSummarySection donationSummary={data?.donationSummary} />
-      <TransparencySection title="党首も毎日これを見て、お金をやりくりしています🤔" />
-      <TransactionsSection transactionData={data?.transactionData ?? null} />
+      <CashFlowSection
+        sankeyData={data?.sankeyData ?? null}
+        updatedAt={updatedAt}
+      />
+      <MonthlyTrendsSection
+        monthlyData={data?.monthlyData}
+        updatedAt={updatedAt}
+      />
+      <DonationSummarySection
+        donationSummary={data?.donationSummary}
+        updatedAt={updatedAt}
+      />
+      <TransparencySection title="党首も毎日これを見て、お金をやりくりしています👀" />
+      <TransactionsSection
+        transactionData={data?.transactionData ?? null}
+        updatedAt={updatedAt}
+      />
       <ExplanationSection />
     </MainColumn>
   );

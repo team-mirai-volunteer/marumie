@@ -12,10 +12,12 @@ interface MonthlyData {
 
 interface MonthlyTrendsSectionProps {
   monthlyData?: MonthlyData[];
+  updatedAt: string;
 }
 
 export default function MonthlyTrendsSection({
   monthlyData,
+  updatedAt,
 }: MonthlyTrendsSectionProps) {
   return (
     <MainColumnCard id="monthly-trends">
@@ -29,7 +31,7 @@ export default function MonthlyTrendsSection({
           />
         }
         title="１年間の収支の推移"
-        updatedAt="2025.8.14時点"
+        updatedAt={updatedAt}
         subtitle="今年の年始から月ごとの収入と支出"
       />
 

@@ -7,8 +7,9 @@ import TransparencySection from "@/client/components/common/TransparencySection"
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumn from "@/client/components/layout/MainColumn";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
-import InteractiveTransactionTable from "@/client/components/top-page/features/transactions-table/TransactionTableWrapper";
+import InteractiveTransactionTable from "@/client/components/top-page/features/transactions-table/InteractiveTransactionTable";
 import { getTransactionsBySlugAction } from "@/server/actions/get-transactions-by-slug";
+import { formatUpdatedAt } from "@/server/utils/format-date";
 
 interface TransactionsPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -54,9 +55,11 @@ export default async function TransactionsPage({
   );
   const perPage = 20; // Fixed value
 
-  const transactionType = Array.isArray(searchParamsResolved.transactionType)
-    ? searchParamsResolved.transactionType[0]
-    : searchParamsResolved.transactionType;
+  const filterType = Array.isArray(searchParamsResolved.filterType)
+    ? searchParamsResolved.filterType[0]
+    : searchParamsResolved.filterType;
+
+  const transactionType = filterType as "income" | "expense" | undefined;
 
   // sortBy: 'date' | 'amount' (read from 'sort' URL parameter)
   const sortBy = Array.isArray(searchParamsResolved.sort)
@@ -73,6 +76,13 @@ export default async function TransactionsPage({
     ? searchParamsResolved.categoryName[0]
     : searchParamsResolved.categoryName;
 
+  // categories: multiple category keys for filtering
+  const categories = Array.isArray(searchParamsResolved.categories)
+    ? searchParamsResolved.categories
+    : searchParamsResolved.categories
+      ? [searchParamsResolved.categories]
+      : undefined;
+
   const financialYear = 2025; // 固定値
 
   try {
@@ -80,16 +90,15 @@ export default async function TransactionsPage({
       slug,
       page,
       perPage,
-      transactionType: transactionType as
-        | "income"
-        | "expense"
-        | "other"
-        | undefined,
+      transactionType,
       financialYear,
       sortBy: sortBy as "date" | "amount" | undefined,
       order: order as "asc" | "desc" | undefined,
       categoryName: categoryName || undefined,
+      categories,
     });
+
+    const updatedAt = formatUpdatedAt(data.lastUpdatedAt ?? null);
 
     return (
       <MainColumn>
@@ -104,7 +113,7 @@ export default async function TransactionsPage({
               />
             }
             title="すべての出入金"
-            updatedAt="2025.8.19時点"
+            updatedAt={updatedAt}
             subtitle="どこから政治資金を得て、何に使っているのか"
           />
 

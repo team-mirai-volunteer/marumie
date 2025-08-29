@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import Sidebar from "@/client/components/Sidebar";
 import "./styles.css";
 
 export const metadata: Metadata = {
   title: "政治資金ダッシュボード管理画面",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function RootLayout({
@@ -13,12 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body>
-        <div className="container">
-          <Sidebar />
-          <main className="content">{children}</main>
-        </div>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

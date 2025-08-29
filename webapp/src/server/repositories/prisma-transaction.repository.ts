@@ -136,11 +136,11 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       this.prisma.$queryRaw<
         Array<{ year: bigint; month: bigint; total_amount: number }>
       >`
-        SELECT 
+        SELECT
           EXTRACT(YEAR FROM transaction_date) as year,
           EXTRACT(MONTH FROM transaction_date) as month,
           SUM(credit_amount) as total_amount
-        FROM transactions 
+        FROM transactions
         WHERE political_organization_id = ${BigInt(politicalOrganizationId)}
           AND financial_year = ${financialYear}
           AND transaction_type = 'income'
@@ -150,11 +150,11 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       this.prisma.$queryRaw<
         Array<{ year: bigint; month: bigint; total_amount: number }>
       >`
-        SELECT 
+        SELECT
           EXTRACT(YEAR FROM transaction_date) as year,
           EXTRACT(MONTH FROM transaction_date) as month,
           SUM(debit_amount) as total_amount
-        FROM transactions 
+        FROM transactions
         WHERE political_organization_id = ${BigInt(politicalOrganizationId)}
           AND financial_year = ${financialYear}
           AND transaction_type = 'expense'
@@ -216,10 +216,10 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     const dailyDonationResults = await this.prisma.$queryRaw<
       Array<{ transaction_date: Date; total_amount: number }>
     >`
-      SELECT 
+      SELECT
         transaction_date,
         SUM(credit_amount) as total_amount
-      FROM transactions 
+      FROM transactions
       WHERE political_organization_id = ${BigInt(politicalOrganizationId)}
         AND financial_year = ${financialYear}
         AND transaction_type = 'income'
@@ -242,6 +242,17 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     });
 
     return dailyData;
+  }
+
+  async getLastUpdatedAt(): Promise<Date | null> {
+    const result = await this.prisma.transaction.aggregate({
+      _max: {
+        updatedAt: true,
+      },
+    });
+
+    const updatedAt = result._max.updatedAt;
+    return updatedAt ? new Date(updatedAt) : null;
   }
 
   private aggregateByCategory(

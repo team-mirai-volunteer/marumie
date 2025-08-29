@@ -1,6 +1,6 @@
-import 'server-only';
+import "server-only";
 import { NextRequest, NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth/roles";
+import { requireRole } from "@/server/auth/roles";
 import { PrismaClient, UserRole } from "@prisma/client";
 import { PrismaUserRepository } from "@/server/repositories/prisma-user.repository";
 
@@ -10,7 +10,7 @@ const userRepository = new PrismaUserRepository(prisma);
 export async function PATCH(request: NextRequest) {
   try {
     const hasAccess = await requireRole("admin");
-    
+
     if (!hasAccess) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -19,7 +19,10 @@ export async function PATCH(request: NextRequest) {
     const { userId, role } = body;
 
     if (!userId || !role) {
-      return NextResponse.json({ error: "Missing userId or role" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing userId or role" },
+        { status: 400 },
+      );
     }
 
     if (!["admin", "user"].includes(role)) {
@@ -32,10 +35,16 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const updatedUser = await userRepository.updateRole(user.authId, role as UserRole);
+    const updatedUser = await userRepository.updateRole(
+      user.authId,
+      role as UserRole,
+    );
     return NextResponse.json(updatedUser);
   } catch (error) {
     console.error("Error updating user role:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

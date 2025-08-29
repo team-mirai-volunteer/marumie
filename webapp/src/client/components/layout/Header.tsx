@@ -79,7 +79,10 @@ export default function Header() {
 
           {/* Desktop: Navigation Menu + Year Selector */}
           <div className="hidden lg:flex items-center gap-10">
-            <nav className="flex items-center gap-6">
+            <nav
+              className="flex items-center gap-6"
+              aria-label="メインナビゲーション"
+            >
               {navigationItems
                 .filter((item) => item.desktopLabel)
                 .map((item) => (
@@ -92,41 +95,10 @@ export default function Header() {
                   </Link>
                 ))}
             </nav>
-
-            {/* Desktop Year Selector */}
-            <button
-              type="button"
-              className="flex items-center gap-1 px-4 py-1.5 bg-gradient-to-r from-teal-200 to-green-200 rounded-full border border-gray-800 border-opacity-50 cursor-pointer"
-            >
-              <span className="text-sm font-medium text-gray-800">2025年</span>
-              <Image
-                src="/icons/icon-chevron-down.svg"
-                alt="下向き矢印"
-                width={12}
-                height={12}
-                className="text-gray-800"
-              />
-            </button>
           </div>
 
-          {/* Mobile Year Selector and Menu */}
+          {/* Mobile Menu */}
           <div className="lg:hidden flex items-center gap-2">
-            {/* Year Selector */}
-            <button
-              type="button"
-              className="flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-teal-200 to-green-200 rounded-full border border-gray-800 border-opacity-50 cursor-pointer"
-            >
-              <span className="text-sm font-medium text-gray-800">2025年</span>
-              <Image
-                src="/icons/icon-chevron-down.svg"
-                alt="下向き矢印"
-                width={12}
-                height={12}
-                className="text-gray-800"
-              />
-            </button>
-
-            {/* Mobile Menu Button */}
             <HamburgerMenuButton
               isOpen={isMobileMenuOpen}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -137,7 +109,10 @@ export default function Header() {
 
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
-        <nav className="lg:hidden -mt-14 pt-[92px] bg-gradient-to-br from-[#BCECDB] to-[#64D8C6] rounded-[30px] px-9 pb-15 transition-all duration-300 ease-in-out animate-in fade-in-0 slide-in-from-top-1 zoom-in-95">
+        <nav
+          className="lg:hidden -mt-14 pt-[92px] bg-gradient-to-br from-[#BCECDB] to-[#64D8C6] rounded-[30px] px-9 pb-15 transition-all duration-300 ease-in-out animate-in fade-in-0 slide-in-from-top-1 zoom-in-95"
+          aria-label="モバイルナビゲーションメニュー"
+        >
           <div className="flex flex-col">
             {navigationItems.map((item, index) => (
               <div key={item.href}>

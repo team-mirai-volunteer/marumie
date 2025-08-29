@@ -1,19 +1,19 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
-export async function middleware(request: NextRequest) {
+// publicパス以外は全て認証を必須とする（セキュアデフォルト）
+export async function middleware(request: NextRequest): Promise<NextResponse> {
   let response = NextResponse.next({
     request: {
       headers: request.headers,
     },
   });
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.error("Missing Supabase environment variables");
-    return NextResponse.redirect(new URL("/login", request.url));
+    return response;
   }
 
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
@@ -22,46 +22,45 @@ export async function middleware(request: NextRequest) {
         return request.cookies.getAll();
       },
       setAll(cookiesToSet) {
-        for (const { name, value } of cookiesToSet) {
-          request.cookies.set(name, value);
-        }
-        response = NextResponse.next({ request });
+        response = NextResponse.next({
+          request: { headers: request.headers },
+        });
         for (const { name, value, options } of cookiesToSet) {
           response.cookies.set(name, value, {
             ...options,
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 60 * 60 * 24 * 7, // 7 days
-            path: '/',
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 60 * 60 * 24 * 7,
+            path: "/",
           });
         }
       },
     },
   });
 
+  const publicPaths = ["/login", "/auth/callback", "/auth/setup"];
+  const isPublicPath = publicPaths.some((path) =>
+    request.nextUrl.pathname.startsWith(path),
+  );
+
   try {
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    // Allow access to auth-related pages without authentication
-    const authPaths = ["/login", "/auth/callback", "/auth/setup"];
-    const isAuthPath = authPaths.some(path => request.nextUrl.pathname.startsWith(path));
-    
-    if (!user && !isAuthPath) {
+    // 認証が必要なパス（publicパス以外）で未認証の場合はログインへリダイレクト
+    if (!isPublicPath && !user) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
 
+    // ログイン済みでログイン用ページに来たらTopへリダイレクト
     if (user && request.nextUrl.pathname.startsWith("/login")) {
       return NextResponse.redirect(new URL("/", request.url));
     }
-  } catch (_error) {
-    // Allow access to auth-related pages even on errors
-    const authPaths = ["/login", "/auth/callback", "/auth/setup"];
-    const isAuthPath = authPaths.some(path => request.nextUrl.pathname.startsWith(path));
-    
-    if (!isAuthPath) {
+  } catch {
+    // 認証エラー時はpublicパス以外はログインへリダイレクト
+    if (!isPublicPath) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
   }

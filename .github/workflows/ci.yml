@@ -38,8 +38,14 @@ jobs:
       - name: Run tests for admin
         run: pnpm --filter admin run test
         
+      - name: Run type check for admin
+        run: pnpm --filter admin run type-check
+        
       - name: Run lint for webapp
         run: pnpm --filter webapp run lint
+        
+      - name: Run tests for webapp
+        run: pnpm --filter webapp run test
         
       - name: Run type check for webapp
         run: pnpm --filter webapp run type-check

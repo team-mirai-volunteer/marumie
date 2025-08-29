@@ -1,6 +1,6 @@
-import 'server-only';
+import "server-only";
 import { NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth/roles";
+import { requireRole } from "@/server/auth/roles";
 import { PrismaClient } from "@prisma/client";
 import { PrismaUserRepository } from "@/server/repositories/prisma-user.repository";
 
@@ -10,7 +10,7 @@ const userRepository = new PrismaUserRepository(prisma);
 export async function GET() {
   try {
     const hasAccess = await requireRole("admin");
-    
+
     if (!hasAccess) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -19,6 +19,9 @@ export async function GET() {
     return NextResponse.json(users);
   } catch (error) {
     console.error("Error fetching users:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

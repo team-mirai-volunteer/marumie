@@ -7,6 +7,7 @@ import type {
   PaginationOptions,
 } from "../repositories/interfaces/transaction-repository.interface";
 import { convertToDisplayTransactions } from "../utils/transaction-converter";
+import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 
 export interface GetTransactionsBySlugParams {
   slug: string;
@@ -19,6 +20,7 @@ export interface GetTransactionsBySlugParams {
   sortBy?: "date" | "amount";
   order?: "asc" | "desc";
   categoryName?: string;
+  categories?: string[];
 }
 
 export interface GetTransactionsBySlugResult {
@@ -28,6 +30,7 @@ export interface GetTransactionsBySlugResult {
   perPage: number;
   totalPages: number;
   politicalOrganization: PoliticalOrganization;
+  lastUpdatedAt: string | null;
 }
 
 export class GetTransactionsBySlugUsecase {
@@ -68,47 +71,41 @@ export class GetTransactionsBySlugUsecase {
       if (params.categoryName) {
         filters.category_name = params.categoryName;
       }
+      if (params.categories && params.categories.length > 0) {
+        // Convert English keys to Japanese category names
+        const categoryNames = params.categories
+          .map((key) => {
+            const mapping = Object.values(ACCOUNT_CATEGORY_MAPPING).find(
+              (m) => m.key === key,
+            );
+            return mapping?.category;
+          })
+          .filter((name): name is string => Boolean(name));
+
+        if (categoryNames.length > 0) {
+          // For multiple categories, use the first one for now
+          // TODO: Consider supporting multiple category filtering in the future
+          filters.category_name = categoryNames[0];
+        }
+      }
       filters.financial_year = params.financialYear;
 
-      let transactions: DisplayTransaction[];
-      let total: number;
+      const pagination: PaginationOptions = {
+        page,
+        perPage,
+        sortBy: params.sortBy,
+        order: params.order,
+      };
 
-      if (params.sortBy === "amount") {
-        // For amount sorting, get ALL data first, then sort and paginate
-        const allTransactions =
-          await this.transactionRepository.findAll(filters);
-        const allDisplayTransactions =
-          convertToDisplayTransactions(allTransactions);
+      const [transactionResult, lastUpdatedAt] = await Promise.all([
+        this.transactionRepository.findWithPagination(filters, pagination),
+        this.transactionRepository.getLastUpdatedAt(),
+      ]);
 
-        // Sort all transactions by amount
-        allDisplayTransactions.sort((a, b) => {
-          const order = params.order === "asc" ? 1 : -1;
-          return (a.amount - b.amount) * order;
-        });
-
-        // Apply pagination after sorting
-        total = allDisplayTransactions.length;
-        const startIndex = (page - 1) * perPage;
-        const endIndex = startIndex + perPage;
-        transactions = allDisplayTransactions.slice(startIndex, endIndex);
-      } else {
-        // For date sorting or no sorting, use database-level pagination
-        const pagination: PaginationOptions = {
-          page,
-          perPage,
-          sortBy: params.sortBy,
-          order: params.order,
-        };
-
-        const result = await this.transactionRepository.findWithPagination(
-          filters,
-          pagination,
-        );
-
-        transactions = convertToDisplayTransactions(result.items);
-        total = result.total;
-      }
-
+      const transactions = convertToDisplayTransactions(
+        transactionResult.items,
+      );
+      const total = transactionResult.total;
       const totalPages = Math.ceil(total / perPage);
 
       return {
@@ -118,6 +115,7 @@ export class GetTransactionsBySlugUsecase {
         perPage,
         totalPages,
         politicalOrganization,
+        lastUpdatedAt: lastUpdatedAt?.toISOString() ?? null,
       };
     } catch (error) {
       throw new Error(
