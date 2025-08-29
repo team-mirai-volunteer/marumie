@@ -40,16 +40,27 @@ interface CategoryFilterProps {
   isOpen: boolean;
   onClose: () => void;
   onApplyFilter: (selectedKeys: string[]) => void;
+  selectedCategories?: string[];
 }
 
 export default function CategoryFilter({
   isOpen,
   onClose,
   onApplyFilter,
+  selectedCategories = [],
 }: CategoryFilterProps) {
-  const [incomeCategories, setIncomeCategories] = useState(INCOME_CATEGORIES);
-  const [expenseCategories, setExpenseCategories] =
-    useState(EXPENSE_CATEGORIES);
+  const [incomeCategories, setIncomeCategories] = useState(() =>
+    INCOME_CATEGORIES.map((cat) => ({
+      ...cat,
+      checked: selectedCategories.includes(cat.id),
+    })),
+  );
+  const [expenseCategories, setExpenseCategories] = useState(() =>
+    EXPENSE_CATEGORIES.map((cat) => ({
+      ...cat,
+      checked: selectedCategories.includes(cat.id),
+    })),
+  );
 
   if (!isOpen) return null;
 
@@ -78,19 +89,6 @@ export default function CategoryFilter({
       ...incomeCategories.filter((cat) => cat.checked).map((cat) => cat.id),
       ...expenseCategories.filter((cat) => cat.checked).map((cat) => cat.id),
     ];
-
-    const selectedLabels = [
-      ...incomeCategories.filter((cat) => cat.checked).map((cat) => cat.label),
-      ...expenseCategories.filter((cat) => cat.checked).map((cat) => cat.label),
-    ];
-
-    if (selectedLabels.length > 0) {
-      alert(
-        `カテゴリフィルター機能はまだ実装されていません\n\n選択されたカテゴリ:\n${selectedLabels.join(", ")}`,
-      );
-    } else {
-      alert("カテゴリフィルター機能はまだ実装されていません");
-    }
 
     onApplyFilter(selectedKeys);
     onClose();

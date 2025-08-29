@@ -327,29 +327,9 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       }
     }
 
-    // Filter by category name
-    if (filters?.category_name) {
-      // This will need to filter by matching accounts that map to the category
-      const accountsForCategory = Object.entries(ACCOUNT_CATEGORY_MAPPING)
-        .filter(([, mapping]) => mapping.category === filters.category_name)
-        .map(([account]) => account);
-
-      if (accountsForCategory.length > 0) {
-        // In double-entry bookkeeping:
-        // - Income transactions: category is in creditAccount
-        // - Expense transactions: category is in debitAccount
-        if (filters.transaction_type === "income") {
-          where.creditAccount = { in: accountsForCategory };
-        } else if (filters.transaction_type === "expense") {
-          where.debitAccount = { in: accountsForCategory };
-        } else {
-          // If no transaction type filter, check both accounts
-          where.OR = [
-            { debitAccount: { in: accountsForCategory } },
-            { creditAccount: { in: accountsForCategory } },
-          ];
-        }
-      }
+    // Filter by category keys
+    if (filters?.category_keys && filters.category_keys.length > 0) {
+      where.categoryKey = { in: filters.category_keys };
     }
 
     return where;

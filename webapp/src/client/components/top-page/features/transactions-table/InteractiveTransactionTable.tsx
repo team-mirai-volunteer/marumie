@@ -30,6 +30,7 @@ interface InteractiveTransactionTableProps {
   page: number;
   perPage: number;
   totalPages: number;
+  selectedCategories?: string[];
 }
 
 export default function InteractiveTransactionTable({
@@ -38,9 +39,18 @@ export default function InteractiveTransactionTable({
   page,
   perPage,
   totalPages,
+  selectedCategories,
 }: InteractiveTransactionTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  // Parse URL params once
+  const currentSort = searchParams.get("sort") as "date" | "amount" | null;
+  const currentOrder = searchParams.get("order") as "asc" | "desc" | null;
+  const filterType = searchParams.get("filterType") as
+    | "income"
+    | "expense"
+    | null;
 
   const handlePageChange = (newPage: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -84,8 +94,17 @@ export default function InteractiveTransactionTable({
   };
 
   const handleApplyFilter = (selectedKeys: string[]) => {
-    // アラートで選択されたカテゴリを表示する処理はCategoryFilter内で完結
-    // ここでは何もしない（将来的にはフィルタリングロジックを実装）
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (selectedKeys.length > 0) {
+      params.set("categories", selectedKeys.join(","));
+    } else {
+      params.delete("categories");
+    }
+
+    // Reset to page 1 when filtering changes
+    params.set("page", "1");
+    router.push(`?${params.toString()}`);
   };
 
   const getCurrentSortOption = (): SortOption => {
@@ -110,13 +129,6 @@ export default function InteractiveTransactionTable({
   const startItem = (page - 1) * perPage + 1;
   const endItem = Math.min(page * perPage, total);
 
-  const currentSort = searchParams.get("sort") as "date" | "amount" | null;
-  const currentOrder = searchParams.get("order") as "asc" | "desc" | null;
-  const filterType = searchParams.get("filterType") as
-    | "income"
-    | "expense"
-    | null;
-
   return (
     <>
       {/* Mobile Header - 768px未満で表示 */}
@@ -134,6 +146,7 @@ export default function InteractiveTransactionTable({
         currentSort={currentSort}
         currentOrder={currentOrder}
         onApplyFilter={handleApplyFilter}
+        selectedCategories={selectedCategories}
       />
 
       {/* Figmaデザインに基づくページネーション */}

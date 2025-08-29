@@ -71,17 +71,12 @@ export default async function TransactionsPage({
     ? searchParamsResolved.order[0]
     : searchParamsResolved.order;
 
-  // filter: categoryName
-  const categoryName = Array.isArray(searchParamsResolved.categoryName)
-    ? searchParamsResolved.categoryName[0]
-    : searchParamsResolved.categoryName;
-
-  // categories: multiple category keys for filtering
-  const categories = Array.isArray(searchParamsResolved.categories)
-    ? searchParamsResolved.categories
-    : searchParamsResolved.categories
-      ? [searchParamsResolved.categories]
-      : undefined;
+  // categories: multiple category keys for filtering (comma-separated)
+  const categories = searchParamsResolved.categories
+    ? decodeURIComponent(String(searchParamsResolved.categories))
+        .split(",")
+        .filter(Boolean)
+    : undefined;
 
   const financialYear = 2025; // 固定値
 
@@ -94,7 +89,6 @@ export default async function TransactionsPage({
       financialYear,
       sortBy: sortBy as "date" | "amount" | undefined,
       order: order as "asc" | "desc" | undefined,
-      categoryName: categoryName || undefined,
       categories,
     });
 
@@ -123,6 +117,7 @@ export default async function TransactionsPage({
             page={data.page}
             perPage={data.perPage}
             totalPages={data.totalPages}
+            selectedCategories={categories}
           />
         </MainColumnCard>
 
