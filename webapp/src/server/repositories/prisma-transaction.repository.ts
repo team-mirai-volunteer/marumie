@@ -335,10 +335,20 @@ export class PrismaTransactionRepository implements ITransactionRepository {
         .map(([account]) => account);
 
       if (accountsForCategory.length > 0) {
-        where.OR = [
-          { debitAccount: { in: accountsForCategory } },
-          { creditAccount: { in: accountsForCategory } },
-        ];
+        // In double-entry bookkeeping:
+        // - Income transactions: category is in creditAccount
+        // - Expense transactions: category is in debitAccount
+        if (filters.transaction_type === "income") {
+          where.creditAccount = { in: accountsForCategory };
+        } else if (filters.transaction_type === "expense") {
+          where.debitAccount = { in: accountsForCategory };
+        } else {
+          // If no transaction type filter, check both accounts
+          where.OR = [
+            { debitAccount: { in: accountsForCategory } },
+            { creditAccount: { in: accountsForCategory } },
+          ];
+        }
       }
     }
 
