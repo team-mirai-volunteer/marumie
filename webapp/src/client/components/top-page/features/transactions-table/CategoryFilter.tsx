@@ -39,13 +39,11 @@ const EXPENSE_CATEGORIES: CategoryItem[] = Object.entries(
 interface CategoryFilterProps {
   isOpen: boolean;
   onClose: () => void;
-  onApplyFilter: (selectedKeys: string[]) => void;
 }
 
 export default function CategoryFilter({
   isOpen,
   onClose,
-  onApplyFilter,
 }: CategoryFilterProps) {
   const [incomeCategories, setIncomeCategories] = useState(INCOME_CATEGORIES);
   const [expenseCategories, setExpenseCategories] =
@@ -74,11 +72,7 @@ export default function CategoryFilter({
   };
 
   const handleOk = () => {
-    const selectedKeys = [
-      ...incomeCategories.filter((cat) => cat.checked).map((cat) => cat.id),
-      ...expenseCategories.filter((cat) => cat.checked).map((cat) => cat.id),
-    ];
-    onApplyFilter(selectedKeys);
+    alert("カテゴリフィルター機能はまだ実装されていません");
     onClose();
   };
 
@@ -152,27 +146,16 @@ export default function CategoryFilter({
                 scrollbarColor: "#9ca3af transparent",
               }}
             >
-              {expenseCategories.map((category, index) => (
+              {expenseCategories.map((category) => (
                 <button
                   key={category.id}
                   type="button"
                   onClick={() => handleExpenseToggle(category.id)}
-                  className={`flex items-center gap-2 py-[6px] pl-2 pr-1 w-full transition-colors cursor-pointer ${
-                    index === 7
-                      ? "bg-[#F1F5F9] rounded-[6px]"
-                      : "hover:bg-[#F1F5F9]"
-                  }`}
+                  className={`flex items-center gap-2 py-[6px] pl-2 pr-1 w-full transition-colors cursor-pointer `}
                 >
                   <div className="w-[18px] h-[18px] flex items-center justify-center">
                     {category.checked && (
                       <div className="w-[18px] h-[18px] relative">
-                        <Image
-                          src="/icons/icon-check.svg"
-                          alt="Checkbox background"
-                          width={18}
-                          height={18}
-                          className="w-[18px] h-[18px]"
-                        />
                         <Image
                           src="/icons/icon-checkmark.svg"
                           alt="Checkmark"
