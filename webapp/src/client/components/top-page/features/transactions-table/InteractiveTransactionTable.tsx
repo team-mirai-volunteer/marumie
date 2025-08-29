@@ -30,6 +30,7 @@ interface InteractiveTransactionTableProps {
   page: number;
   perPage: number;
   totalPages: number;
+  selectedCategories?: string[];
 }
 
 export default function InteractiveTransactionTable({
@@ -38,6 +39,7 @@ export default function InteractiveTransactionTable({
   page,
   perPage,
   totalPages,
+  selectedCategories,
 }: InteractiveTransactionTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -98,8 +100,12 @@ export default function InteractiveTransactionTable({
   };
 
   const getCurrentSortOption = (): SortOption => {
-    const sort = currentSort || "date";
-    const order = currentOrder || "desc";
+    const sort = (searchParams.get("sort") as "date" | "amount") || "date";
+    const order = (searchParams.get("order") as "asc" | "desc") || "desc";
+    const filterType = searchParams.get("filterType") as
+      | "income"
+      | "expense"
+      | null;
 
     // Find matching sort option from configuration
     for (const [sortOption, config] of Object.entries(SORT_CONFIGS)) {
@@ -119,13 +125,6 @@ export default function InteractiveTransactionTable({
   const startItem = (page - 1) * perPage + 1;
   const endItem = Math.min(page * perPage, total);
 
-  const currentSort = searchParams.get("sort") as "date" | "amount" | null;
-  const currentOrder = searchParams.get("order") as "asc" | "desc" | null;
-  const filterType = searchParams.get("filterType") as
-    | "income"
-    | "expense"
-    | null;
-
   return (
     <>
       {/* Mobile Header - 768px未満で表示 */}
@@ -140,9 +139,10 @@ export default function InteractiveTransactionTable({
         transactions={transactions}
         allowControl={true}
         onSort={handleSort}
-        currentSort={currentSort}
-        currentOrder={currentOrder}
+        currentSort={searchParams.get("sort") as "date" | "amount" | null}
+        currentOrder={searchParams.get("order") as "asc" | "desc" | null}
         onApplyFilter={handleApplyFilter}
+        selectedCategories={selectedCategories}
       />
 
       {/* Figmaデザインに基づくページネーション */}

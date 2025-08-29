@@ -117,6 +117,7 @@ export default async function TransactionsPage({
             page={data.page}
             perPage={data.perPage}
             totalPages={data.totalPages}
+            selectedCategories={categories}
           />
         </MainColumnCard>
 

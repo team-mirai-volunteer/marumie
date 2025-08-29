@@ -12,6 +12,7 @@ interface TransactionTableProps {
   page?: number;
   perPage?: number;
   onApplyFilter?: (selectedKeys: string[]) => void;
+  selectedCategories?: string[];
 }
 
 export default function TransactionTable({
@@ -21,6 +22,7 @@ export default function TransactionTable({
   currentSort,
   currentOrder,
   onApplyFilter,
+  selectedCategories,
 }: TransactionTableProps) {
   return (
     <div className="space-y-6">
@@ -33,6 +35,7 @@ export default function TransactionTable({
             currentSort={currentSort}
             currentOrder={currentOrder}
             onApplyFilter={onApplyFilter}
+            selectedCategories={selectedCategories}
           />
           <TransactionTableBody transactions={transactions} />
         </table>
