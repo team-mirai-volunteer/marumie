@@ -71,11 +71,6 @@ export default async function TransactionsPage({
     ? searchParamsResolved.order[0]
     : searchParamsResolved.order;
 
-  // filter: categoryName
-  const categoryName = Array.isArray(searchParamsResolved.categoryName)
-    ? searchParamsResolved.categoryName[0]
-    : searchParamsResolved.categoryName;
-
   // categories: multiple category keys for filtering
   const categories = Array.isArray(searchParamsResolved.categories)
     ? searchParamsResolved.categories
@@ -94,7 +89,6 @@ export default async function TransactionsPage({
       financialYear,
       sortBy: sortBy as "date" | "amount" | undefined,
       order: order as "asc" | "desc" | undefined,
-      categoryName: categoryName || undefined,
       categories,
     });
 

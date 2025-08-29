@@ -79,19 +79,6 @@ export default function CategoryFilter({
       ...expenseCategories.filter((cat) => cat.checked).map((cat) => cat.id),
     ];
 
-    const selectedLabels = [
-      ...incomeCategories.filter((cat) => cat.checked).map((cat) => cat.label),
-      ...expenseCategories.filter((cat) => cat.checked).map((cat) => cat.label),
-    ];
-
-    if (selectedLabels.length > 0) {
-      alert(
-        `カテゴリフィルター機能はまだ実装されていません\n\n選択されたカテゴリ:\n${selectedLabels.join(", ")}`,
-      );
-    } else {
-      alert("カテゴリフィルター機能はまだ実装されていません");
-    }
-
     onApplyFilter(selectedKeys);
     onClose();
   };

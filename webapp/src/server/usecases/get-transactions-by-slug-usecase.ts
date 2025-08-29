@@ -7,7 +7,6 @@ import type {
   PaginationOptions,
 } from "../repositories/interfaces/transaction-repository.interface";
 import { convertToDisplayTransactions } from "../utils/transaction-converter";
-import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 
 export interface GetTransactionsBySlugParams {
   slug: string;
@@ -19,7 +18,6 @@ export interface GetTransactionsBySlugParams {
   financialYear: number;
   sortBy?: "date" | "amount";
   order?: "asc" | "desc";
-  categoryName?: string;
   categories?: string[];
 }
 
@@ -68,25 +66,8 @@ export class GetTransactionsBySlugUsecase {
       if (params.dateTo) {
         filters.date_to = params.dateTo;
       }
-      if (params.categoryName) {
-        filters.category_name = params.categoryName;
-      }
       if (params.categories && params.categories.length > 0) {
-        // Convert English keys to Japanese category names
-        const categoryNames = params.categories
-          .map((key) => {
-            const mapping = Object.values(ACCOUNT_CATEGORY_MAPPING).find(
-              (m) => m.key === key,
-            );
-            return mapping?.category;
-          })
-          .filter((name): name is string => Boolean(name));
-
-        if (categoryNames.length > 0) {
-          // For multiple categories, use the first one for now
-          // TODO: Consider supporting multiple category filtering in the future
-          filters.category_name = categoryNames[0];
-        }
+        filters.category_keys = params.categories;
       }
       filters.financial_year = params.financialYear;
 

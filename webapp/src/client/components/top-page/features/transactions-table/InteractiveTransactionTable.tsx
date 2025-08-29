@@ -84,8 +84,18 @@ export default function InteractiveTransactionTable({
   };
 
   const handleApplyFilter = (selectedKeys: string[]) => {
-    // アラートで選択されたカテゴリを表示する処理はCategoryFilter内で完結
-    // ここでは何もしない（将来的にはフィルタリングロジックを実装）
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (selectedKeys.length > 0) {
+      params.delete("categories");
+      selectedKeys.forEach((key) => params.append("categories", key));
+    } else {
+      params.delete("categories");
+    }
+
+    // Reset to page 1 when filtering changes
+    params.set("page", "1");
+    router.push(`?${params.toString()}`);
   };
 
   const getCurrentSortOption = (): SortOption => {
