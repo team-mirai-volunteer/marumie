@@ -39,11 +39,13 @@ const EXPENSE_CATEGORIES: CategoryItem[] = Object.entries(
 interface CategoryFilterProps {
   isOpen: boolean;
   onClose: () => void;
+  onApplyFilter: (selectedKeys: string[]) => void;
 }
 
 export default function CategoryFilter({
   isOpen,
   onClose,
+  onApplyFilter,
 }: CategoryFilterProps) {
   const [incomeCategories, setIncomeCategories] = useState(INCOME_CATEGORIES);
   const [expenseCategories, setExpenseCategories] =
@@ -72,7 +74,25 @@ export default function CategoryFilter({
   };
 
   const handleOk = () => {
-    alert("カテゴリフィルター機能はまだ実装されていません");
+    const selectedKeys = [
+      ...incomeCategories.filter((cat) => cat.checked).map((cat) => cat.id),
+      ...expenseCategories.filter((cat) => cat.checked).map((cat) => cat.id),
+    ];
+
+    const selectedLabels = [
+      ...incomeCategories.filter((cat) => cat.checked).map((cat) => cat.label),
+      ...expenseCategories.filter((cat) => cat.checked).map((cat) => cat.label),
+    ];
+
+    if (selectedLabels.length > 0) {
+      alert(
+        `カテゴリフィルター機能はまだ実装されていません\n\n選択されたカテゴリ:\n${selectedLabels.join(", ")}`,
+      );
+    } else {
+      alert("カテゴリフィルター機能はまだ実装されていません");
+    }
+
+    onApplyFilter(selectedKeys);
     onClose();
   };
 

@@ -84,20 +84,8 @@ export default function InteractiveTransactionTable({
   };
 
   const handleApplyFilter = (selectedKeys: string[]) => {
-    const params = new URLSearchParams(searchParams.toString());
-
-    if (selectedKeys.length > 0) {
-      params.delete("categories");
-      for (const key of selectedKeys) {
-        params.append("categories", key);
-      }
-    } else {
-      params.delete("categories");
-    }
-
-    // Reset to page 1 when filtering changes
-    params.set("page", "1");
-    router.push(`?${params.toString()}`);
+    // アラートで選択されたカテゴリを表示する処理はCategoryFilter内で完結
+    // ここでは何もしない（将来的にはフィルタリングロジックを実装）
   };
 
   const getCurrentSortOption = (): SortOption => {
