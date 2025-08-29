@@ -71,12 +71,12 @@ export default async function TransactionsPage({
     ? searchParamsResolved.order[0]
     : searchParamsResolved.order;
 
-  // categories: multiple category keys for filtering
-  const categories = Array.isArray(searchParamsResolved.categories)
-    ? searchParamsResolved.categories
-    : searchParamsResolved.categories
-      ? [searchParamsResolved.categories]
-      : undefined;
+  // categories: multiple category keys for filtering (comma-separated)
+  const categories = searchParamsResolved.categories
+    ? decodeURIComponent(String(searchParamsResolved.categories))
+        .split(",")
+        .filter(Boolean)
+    : undefined;
 
   const financialYear = 2025; // 固定値
 

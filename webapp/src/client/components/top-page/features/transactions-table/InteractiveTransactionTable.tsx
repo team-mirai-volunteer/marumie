@@ -87,8 +87,7 @@ export default function InteractiveTransactionTable({
     const params = new URLSearchParams(searchParams.toString());
 
     if (selectedKeys.length > 0) {
-      params.delete("categories");
-      selectedKeys.forEach((key) => params.append("categories", key));
+      params.set("categories", selectedKeys.join(","));
     } else {
       params.delete("categories");
     }
