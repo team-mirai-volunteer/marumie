@@ -111,13 +111,6 @@ export default function CategoryFilter({
                     {category.checked && (
                       <div className="w-[18px] h-[18px] relative">
                         <Image
-                          src="/icons/icon-check.svg"
-                          alt="Checkbox background"
-                          width={18}
-                          height={18}
-                          className="w-[18px] h-[18px]"
-                        />
-                        <Image
                           src="/icons/icon-checkmark.svg"
                           alt="Checkmark"
                           width={13}
