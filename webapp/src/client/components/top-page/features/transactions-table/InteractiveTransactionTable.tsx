@@ -44,6 +44,14 @@ export default function InteractiveTransactionTable({
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // Parse URL params once
+  const currentSort = searchParams.get("sort") as "date" | "amount" | null;
+  const currentOrder = searchParams.get("order") as "asc" | "desc" | null;
+  const filterType = searchParams.get("filterType") as
+    | "income"
+    | "expense"
+    | null;
+
   const handlePageChange = (newPage: number) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", newPage.toString());
@@ -100,12 +108,8 @@ export default function InteractiveTransactionTable({
   };
 
   const getCurrentSortOption = (): SortOption => {
-    const sort = (searchParams.get("sort") as "date" | "amount") || "date";
-    const order = (searchParams.get("order") as "asc" | "desc") || "desc";
-    const filterType = searchParams.get("filterType") as
-      | "income"
-      | "expense"
-      | null;
+    const sort = currentSort || "date";
+    const order = currentOrder || "desc";
 
     // Find matching sort option from configuration
     for (const [sortOption, config] of Object.entries(SORT_CONFIGS)) {
@@ -139,8 +143,8 @@ export default function InteractiveTransactionTable({
         transactions={transactions}
         allowControl={true}
         onSort={handleSort}
-        currentSort={searchParams.get("sort") as "date" | "amount" | null}
-        currentOrder={searchParams.get("order") as "asc" | "desc" | null}
+        currentSort={currentSort}
+        currentOrder={currentOrder}
         onApplyFilter={handleApplyFilter}
         selectedCategories={selectedCategories}
       />
