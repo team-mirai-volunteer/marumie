@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Sidebar from "@/client/components/layout/Sidebar";
 import { logout } from "@/server/auth/login";
+import { getCurrentUserRole } from "@/server/auth/roles";
 
 export default async function AuthLayout({
   children,
@@ -42,9 +43,12 @@ export default async function AuthLayout({
     redirect("/login");
   }
 
+  // Get user role on server side
+  const userRole = await getCurrentUserRole();
+
   return (
     <div className="grid grid-cols-[220px_1fr] h-screen">
-      <Sidebar logoutAction={logout} />
+      <Sidebar logoutAction={logout} userRole={userRole} />
       <main className="p-5 overflow-auto">{children}</main>
     </div>
   );
