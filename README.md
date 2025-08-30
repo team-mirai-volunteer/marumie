@@ -1,3 +1,13 @@
+# 政治とカネダッシュボード (Poli-Money Alpha)
+
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
+
+> 政治資金の透明性向上を目指すオープンソースダッシュボード
+
+政治家・政治団体が会計データを透明に公開し、市民が政治資金の流れを理解しやすくするためのWebアプリケーションです。クラウド会計ソフト（MFクラウド・freee等）から取得したデータを可視化し、政治資金報告書の作成も支援します。
+
 ## プロジェクト構成
 
 このプロジェクトは以下のディレクトリ構成で構築されています：
@@ -29,7 +39,7 @@ open/
 ├── prisma/           # データベーススキーマ・マイグレーション
 │   ├── schema.prisma
 │   └── migrations/
-└── docs/             # 設計ドキュメント
+└── docs/             # 設計ドキュメント（その時点での設計メモなので必ずしも正確ではないです）
 ```
 
 ### 各ディレクトリの役割
@@ -41,6 +51,16 @@ open/
 - **supabase/**: Supabaseローカル開発環境の設定ファイル
 - **prisma/**: データベーススキーマ定義とマイグレーションファイル
 - **docs/**: プロジェクトの設計ドキュメント
+
+## 技術スタック
+
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Backend**: Prisma ORM, Supabase
+- **Styling**: Tailwind CSS v4
+- **Charts**: Recharts, ApexCharts, Nivo
+- **Database**: PostgreSQL (via Supabase)
+- **Development**: pnpm, Biome, ESLint
+- **Testing**: Jest
 
 ## ローカル開発手順
 
