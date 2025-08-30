@@ -5,7 +5,7 @@ import { use, useEffect, useState } from "react";
 import {
   apiClient,
   type UpdatePoliticalOrganizationRequest,
-} from "@/client/clients/api-client";
+} from "@/client/lib/api-client";
 import { PoliticalOrganizationForm } from "@/client/components/political-organizations/PoliticalOrganizationForm";
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
 

@@ -6,7 +6,7 @@ import type {
   PreviewMfCsvResult,
   PreviewTransaction,
 } from "@/server/usecases/preview-mf-csv-usecase";
-import { apiClient } from "@/client/clients/api-client";
+import { apiClient } from "@/client/lib/api-client";
 
 interface CsvPreviewProps {
   file: File | null;
