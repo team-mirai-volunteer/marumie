@@ -45,6 +45,19 @@ export interface DeleteAllTransactionsResponse {
   deletedCount: number;
 }
 
+export interface UpdateUserRoleRequest {
+  userId: string;
+  role: string;
+}
+
+export interface InviteUserRequest {
+  email: string;
+}
+
+export interface InviteUserResponse {
+  message: string;
+}
+
 export class ApiClient {
   private baseUrl: string;
 
@@ -204,6 +217,20 @@ export class ApiClient {
     const url = `/api/transactions?${searchParams.toString()}`;
     return this.request<DeleteAllTransactionsResponse>(url, {
       method: "DELETE",
+    });
+  }
+
+  async updateUserRole(data: UpdateUserRoleRequest): Promise<void> {
+    return this.request<void>("/api/users/role", {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async inviteUser(data: InviteUserRequest): Promise<InviteUserResponse> {
+    return this.request<InviteUserResponse>("/api/users/invite", {
+      method: "POST",
+      body: JSON.stringify(data),
     });
   }
 }

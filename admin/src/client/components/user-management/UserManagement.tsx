@@ -2,6 +2,7 @@
 import "client-only";
 import { useState } from "react";
 import { Button, Input, Card } from "../ui";
+import { apiClient } from "@/client/lib/api-client";
 
 type UserRole = "user" | "admin";
 
@@ -32,28 +33,19 @@ export default function UserManagement({
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/users/role", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId, role: newRole }),
-      });
-
-      if (response.ok) {
-        setUsers((prev) =>
-          prev.map((user) =>
-            user.id === userId
-              ? { ...user, role: newRole, updatedAt: new Date() }
-              : user,
-          ),
-        );
-      } else {
-        alert("Failed to update user role");
-      }
+      await apiClient.updateUserRole({ userId, role: newRole });
+      setUsers((prev) =>
+        prev.map((user) =>
+          user.id === userId
+            ? { ...user, role: newRole, updatedAt: new Date() }
+            : user,
+        ),
+      );
     } catch (error) {
       console.error("Error updating role:", error);
-      alert("Error updating user role");
+      alert(
+        `ロールの更新に失敗しました: ${error instanceof Error ? error.message : "不明なエラー"}`,
+      );
     } finally {
       setIsLoading(false);
     }
@@ -66,26 +58,16 @@ export default function UserManagement({
     setIsInviting(true);
 
     try {
-      const response = await fetch("/api/users/invite", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: inviteEmail.trim() }),
-      });
-
-      if (response.ok) {
-        alert(`Invitation sent to ${inviteEmail}`);
-        setInviteEmail("");
-        // Refresh the user list to show pending invitations
-        window.location.reload();
-      } else {
-        const error = await response.json();
-        alert(`Failed to send invitation: ${error.message || "Unknown error"}`);
-      }
+      await apiClient.inviteUser({ email: inviteEmail.trim() });
+      alert(`${inviteEmail}に招待を送信しました`);
+      setInviteEmail("");
+      // Refresh the user list to show pending invitations
+      window.location.reload();
     } catch (error) {
       console.error("Error sending invitation:", error);
-      alert("Error sending invitation");
+      alert(
+        `招待の送信に失敗しました: ${error instanceof Error ? error.message : "不明なエラー"}`,
+      );
     } finally {
       setIsInviting(false);
     }

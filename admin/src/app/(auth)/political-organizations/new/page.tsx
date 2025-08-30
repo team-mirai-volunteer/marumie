@@ -5,7 +5,7 @@ import { useState } from "react";
 import {
   apiClient,
   type CreatePoliticalOrganizationRequest,
-} from "@/client/clients/api-client";
+} from "@/client/lib/api-client";
 import { PoliticalOrganizationForm } from "@/client/components/political-organizations/PoliticalOrganizationForm";
 
 export default function NewPoliticalOrganizationPage() {

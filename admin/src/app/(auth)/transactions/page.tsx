@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import {
   apiClient,
   type TransactionListResponse,
-} from "@/client/clients/api-client";
+} from "@/client/lib/api-client";
 import { TransactionRow } from "@/client/components/transactions/TransactionRow";
 import { Pagination } from "@/client/components/ui/Pagination";
 
