@@ -5,20 +5,25 @@
 ### ディレクトリ構造
 
 ```
-poli-money-alpha/
+open/
 ├── webapp/           # フロントエンド（一般ユーザー向け）
 │   ├── src/
 │   │   ├── app/      # Next.js App Router
-│   │   └── components/
+│   │   ├── client/   # クライアントサイドコンポーネント
+│   │   ├── server/   # サーバーサイドロジック
+│   │   └── types/    # 型定義
 │   └── package.json
 ├── admin/            # 管理画面
 │   ├── src/
 │   │   ├── app/      # Next.js App Router
 │   │   ├── client/   # クライアントサイドコンポーネント
-│   │   └── server/   # サーバーサイドロジック
+│   │   ├── server/   # サーバーサイドロジック
+│   │   └── middleware.ts
 │   └── package.json
 ├── shared/           # 共通モデル・型定義
 │   └── model/
+├── data/             # サンプルデータ
+│   └── sampledata.csv
 ├── supabase/         # Supabaseローカル開発環境設定
 │   └── config.toml
 ├── prisma/           # データベーススキーマ・マイグレーション
@@ -32,6 +37,7 @@ poli-money-alpha/
 - **webapp/**: 一般ユーザー向けのフロントエンドアプリケーション（政治資金データの可視化）
 - **admin/**: 管理者向けの管理画面（データ登録・管理機能）
 - **shared/**: webapp と admin で共通して使用するモデルや型定義
+- **data/**: サンプルデータファイル
 - **supabase/**: Supabaseローカル開発環境の設定ファイル
 - **prisma/**: データベーススキーマ定義とマイグレーションファイル
 - **docs/**: プロジェクトの設計ドキュメント
@@ -108,7 +114,7 @@ USE_MOCK_DATA=true
 
 ## サンプルデータ
 
-`data/sampledata.csv` に政治資金の取引データのサンプルが含まれています。管理画面からCSVファイルをアップロードして確認できます。
+`data/sampledata.csv` に政治資金の取引データのサンプルが含まれています。管理画面（http://localhost:3001）の「CSVアップロード」機能からこのファイルをアップロードして確認できます。
 
 ## ライセンス
 
