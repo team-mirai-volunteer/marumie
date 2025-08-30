@@ -58,6 +58,15 @@ export interface InviteUserResponse {
   message: string;
 }
 
+export interface SetupPasswordRequest {
+  password: string;
+}
+
+export interface SetupPasswordResponse {
+  success: boolean;
+  message?: string;
+}
+
 export class ApiClient {
   private baseUrl: string;
 
@@ -229,6 +238,15 @@ export class ApiClient {
 
   async inviteUser(data: InviteUserRequest): Promise<InviteUserResponse> {
     return this.request<InviteUserResponse>("/api/users/invite", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async setupPassword(
+    data: SetupPasswordRequest,
+  ): Promise<SetupPasswordResponse> {
+    return this.request<SetupPasswordResponse>("/api/auth/setup-password", {
       method: "POST",
       body: JSON.stringify(data),
     });
