@@ -1,3 +1,15 @@
+# みらいオープンマネー
+
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
+
+> 政治資金の透明性向上を目指すオープンソースダッシュボード
+
+政治家・政治団体が会計データを透明に公開し、市民が政治資金の流れを理解しやすくするためのWebアプリケーションです。クラウド会計ソフト（MFクラウド・freee等）から取得したデータを可視化し、政治資金報告書の作成も支援します。
+
+チームみらい永田町エンジニアチームが開発しています。
+
 ## プロジェクト構成
 
 このプロジェクトは以下のディレクトリ構成で構築されています：
@@ -5,26 +17,31 @@
 ### ディレクトリ構造
 
 ```
-poli-money-alpha/
+open/
 ├── webapp/           # フロントエンド（一般ユーザー向け）
 │   ├── src/
 │   │   ├── app/      # Next.js App Router
-│   │   └── components/
+│   │   ├── client/   # クライアントサイドコンポーネント
+│   │   ├── server/   # サーバーサイドロジック
+│   │   └── types/    # 型定義
 │   └── package.json
 ├── admin/            # 管理画面
 │   ├── src/
 │   │   ├── app/      # Next.js App Router
 │   │   ├── client/   # クライアントサイドコンポーネント
-│   │   └── server/   # サーバーサイドロジック
+│   │   ├── server/   # サーバーサイドロジック
+│   │   └── middleware.ts
 │   └── package.json
 ├── shared/           # 共通モデル・型定義
 │   └── model/
+├── data/             # サンプルデータ
+│   └── sampledata.csv
 ├── supabase/         # Supabaseローカル開発環境設定
 │   └── config.toml
 ├── prisma/           # データベーススキーマ・マイグレーション
 │   ├── schema.prisma
 │   └── migrations/
-└── docs/             # 設計ドキュメント
+└── docs/             # 設計ドキュメント（その時点での設計メモなので必ずしも正確ではないです）
 ```
 
 ### 各ディレクトリの役割
@@ -32,9 +49,27 @@ poli-money-alpha/
 - **webapp/**: 一般ユーザー向けのフロントエンドアプリケーション（政治資金データの可視化）
 - **admin/**: 管理者向けの管理画面（データ登録・管理機能）
 - **shared/**: webapp と admin で共通して使用するモデルや型定義
+- **data/**: サンプルデータファイル
 - **supabase/**: Supabaseローカル開発環境の設定ファイル
 - **prisma/**: データベーススキーマ定義とマイグレーションファイル
 - **docs/**: プロジェクトの設計ドキュメント
+
+## 技術スタック
+
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Backend**: Prisma ORM, Supabase
+- **Styling**: Tailwind CSS v4
+- **Charts**: Recharts, ApexCharts, Nivo
+- **Database**: PostgreSQL (via Supabase)
+- **Development**: pnpm, Biome, ESLint
+- **Testing**: Jest
+
+## 画面イメージ
+
+![アプリケーションのスクリーンショット](docs/images/screenshot.png)
+
+※ 表示されている値は実際の値ではありません。
+
 
 ## ローカル開発手順
 
@@ -108,7 +143,7 @@ pnpm run db:migrate
 - **管理画面**: [http://localhost:3001](http://localhost:3001)
 - **Supabase Studio**: [http://127.0.0.1:54323](http://127.0.0.1:54323)
 
-## モックデータの使用
+### モックデータの使用
 
 `webapp/.env.local` に以下を追加してモックデータを有効化：
 ```
@@ -119,7 +154,7 @@ USE_MOCK_DATA=true
 
 ## サンプルデータ
 
-`data/sampledata.csv` に政治資金の取引データのサンプルが含まれています。管理画面からCSVファイルをアップロードして確認できます。
+`data/sampledata.csv` に政治資金の取引データのサンプルが含まれています。管理画面（http://localhost:3001）の「CSVアップロード」機能からこのファイルをアップロードして確認できます。
 
 ## ライセンス
 
