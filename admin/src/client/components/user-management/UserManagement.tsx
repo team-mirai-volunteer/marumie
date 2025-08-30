@@ -3,20 +3,20 @@ import "client-only";
 import { useState } from "react";
 import { Button, Input, Card } from "../ui";
 import { apiClient } from "@/client/lib/api-client";
-import type { UserRole as PrismaUserRole } from "@prisma/client";
+import type { UserRole } from "@prisma/client";
 
 interface User {
   id: string;
   authId: string;
   email: string;
-  role: PrismaUserRole;
+  role: UserRole;
   createdAt: Date;
   updatedAt: Date;
 }
 
 interface UserManagementProps {
   users: User[];
-  availableRoles: PrismaUserRole[];
+  availableRoles: UserRole[];
 }
 
 export default function UserManagement({
@@ -28,7 +28,7 @@ export default function UserManagement({
   const [inviteEmail, setInviteEmail] = useState("");
   const [isInviting, setIsInviting] = useState(false);
 
-  const handleRoleChange = async (userId: string, newRole: PrismaUserRole) => {
+  const handleRoleChange = async (userId: string, newRole: UserRole) => {
     setIsLoading(true);
 
     try {
@@ -138,10 +138,7 @@ export default function UserManagement({
                   <select
                     value={user.role}
                     onChange={(e) =>
-                      handleRoleChange(
-                        user.id,
-                        e.target.value as PrismaUserRole,
-                      )
+                      handleRoleChange(user.id, e.target.value as UserRole)
                     }
                     disabled={isLoading}
                     className="bg-primary-input text-white border border-primary-border rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary-accent"
