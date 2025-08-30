@@ -1,8 +1,9 @@
 "use client";
 import "client-only";
 import { useState } from "react";
-import { UserRole } from "@prisma/client";
 import { Button, Input, Card } from "../ui";
+
+type UserRole = "user" | "admin";
 
 interface User {
   id: string;
@@ -15,10 +16,12 @@ interface User {
 
 interface UserManagementProps {
   users: User[];
+  availableRoles: UserRole[];
 }
 
 export default function UserManagement({
   users: initialUsers,
+  availableRoles,
 }: UserManagementProps) {
   const [users, setUsers] = useState(initialUsers);
   const [isLoading, setIsLoading] = useState(false);
@@ -92,20 +95,22 @@ export default function UserManagement({
     <div className="space-y-4">
       {/* Invite User Form */}
       <Card>
-        <h2 className="text-lg font-medium text-white mb-4">Invite New User</h2>
+        <h2 className="text-lg font-medium text-white mb-4">
+          新規ユーザー招待
+        </h2>
         <form onSubmit={handleInviteUser} className="flex gap-4">
           <div className="flex-1">
             <Input
               type="email"
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
-              placeholder="Enter email address"
+              placeholder="メールアドレスを入力"
               disabled={isInviting}
               required
             />
           </div>
           <Button type="submit" disabled={isInviting || !inviteEmail.trim()}>
-            {isInviting ? "Sending..." : "Send Invitation"}
+            {isInviting ? "送信中..." : "招待を送信"}
           </Button>
         </form>
       </Card>
@@ -115,16 +120,16 @@ export default function UserManagement({
           <thead className="bg-primary-hover">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-primary-muted uppercase tracking-wider">
-                Email
+                メール
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-primary-muted uppercase tracking-wider">
-                Role
+                ロール
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-primary-muted uppercase tracking-wider">
-                Created At
+                作成日
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-primary-muted uppercase tracking-wider">
-                Actions
+                操作
               </th>
             </tr>
           </thead>
@@ -157,8 +162,11 @@ export default function UserManagement({
                     disabled={isLoading}
                     className="bg-primary-input text-white border border-primary-border rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary-accent"
                   >
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
+                    {availableRoles.map((role) => (
+                      <option key={role} value={role}>
+                        {role.charAt(0).toUpperCase() + role.slice(1)}
+                      </option>
+                    ))}
                   </select>
                 </td>
               </tr>
@@ -168,7 +176,7 @@ export default function UserManagement({
 
         {users.length === 0 && (
           <div className="text-center py-8 text-primary-muted">
-            No users found
+            ユーザーが見つかりません
           </div>
         )}
       </Card>
