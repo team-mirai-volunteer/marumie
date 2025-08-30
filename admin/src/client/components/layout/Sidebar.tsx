@@ -5,42 +5,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { type UserRole } from "@prisma/client";
-import { Button } from "../ui";
+import { Button } from "@/client/components/ui";
 
 export default function Sidebar({
   logoutAction,
+  userRole,
 }: {
   logoutAction: (formData: FormData) => Promise<void>;
+  userRole: UserRole | null;
 }) {
   const pathname = usePathname();
   const [isClient, setIsClient] = useState(false);
-  const [userRole, setUserRole] = useState<UserRole | null>(null);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
-
-  // Fetch user role when pathname changes (including after login)
-  useEffect(() => {
-    if (!isClient) return;
-
-    const fetchUserRole = async () => {
-      try {
-        const response = await fetch("/api/users/me/role");
-        if (response.ok) {
-          const { role } = await response.json();
-          setUserRole(role);
-        } else {
-          setUserRole(null);
-        }
-      } catch (error) {
-        console.error("Error fetching user role:", error);
-        setUserRole(null);
-      }
-    };
-
-    fetchUserRole();
-  }, [isClient, pathname]);
 
   const isActive = (path: string) => {
     if (!isClient) return false; // SSR時は常にfalse
