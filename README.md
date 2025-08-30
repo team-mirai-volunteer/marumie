@@ -64,6 +64,13 @@ open/
 - **Development**: pnpm, Biome, ESLint
 - **Testing**: Jest
 
+## 画面イメージ
+
+![アプリケーションのスクリーンショット](docs/images/screenshot.png)
+
+※ 表示されている値は実際の値ではありません。
+
+
 ## ローカル開発手順
 
 このプロジェクトはSupabaseローカル開発環境を使用してローカル開発を行います。
