@@ -18,9 +18,9 @@ export default async function UsersPage() {
   const users = await userRepository.findAll();
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">User Management</h1>
-      <UserManagement users={users} />
+    <div className="bg-primary-panel rounded-xl p-4">
+      <h1 className="text-2xl font-bold text-white mb-4">ユーザー管理</h1>
+      <UserManagement users={users} availableRoles={["user", "admin"]} />
     </div>
   );
 }
