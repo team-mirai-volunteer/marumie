@@ -3,8 +3,7 @@ import "client-only";
 import { useState } from "react";
 import { Button, Input, Card } from "../ui";
 import { apiClient } from "@/client/lib/api-client";
-
-type UserRole = "user" | "admin";
+import type { UserRole } from "@prisma/client";
 
 interface User {
   id: string;
