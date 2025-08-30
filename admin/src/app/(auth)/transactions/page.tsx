@@ -6,6 +6,8 @@ import {
   apiClient,
   type TransactionListResponse,
 } from "@/client/clients/api-client";
+import { TransactionRow } from "@/client/components/transactions/TransactionRow";
+import { Pagination } from "@/client/components/ui/Pagination";
 
 export default function TransactionsPage() {
   const [data, setData] = useState<TransactionListResponse | null>(null);
@@ -52,30 +54,6 @@ export default function TransactionsPage() {
   const handlePageChange = (page: number) => {
     if (page >= 1 && data && page <= data.totalPages) {
       setCurrentPage(page);
-    }
-  };
-
-  const formatDate = (date: Date | string) => {
-    return new Date(date).toLocaleDateString("ja-JP");
-  };
-
-  const formatAmount = (amount: number) => {
-    return new Intl.NumberFormat("ja-JP", {
-      style: "currency",
-      currency: "JPY",
-    }).format(amount);
-  };
-
-  const getTransactionTypeLabel = (type: string) => {
-    switch (type) {
-      case "income":
-        return "収入";
-      case "expense":
-        return "支出";
-      case "other":
-        return "その他";
-      default:
-        return type;
     }
   };
 
@@ -176,121 +154,20 @@ export default function TransactionsPage() {
                   </thead>
                   <tbody>
                     {data.transactions.map((transaction) => (
-                      <tr
+                      <TransactionRow
                         key={transaction.id}
-                        className="border-b border-primary-border"
-                      >
-                        <td className="px-2 py-3 text-sm text-white">
-                          {formatDate(transaction.transaction_date)}
-                        </td>
-                        <td className="px-2 py-3 text-sm text-white">
-                          <span
-                            className={`px-2 py-1 rounded text-white text-xs font-medium ${
-                              transaction.transaction_type === "income"
-                                ? "bg-green-600"
-                                : transaction.transaction_type === "expense"
-                                  ? "bg-red-600"
-                                  : "bg-gray-600"
-                            }`}
-                          >
-                            {getTransactionTypeLabel(
-                              transaction.transaction_type,
-                            )}
-                          </span>
-                        </td>
-                        <td className="px-2 py-3 text-sm text-white">
-                          {transaction.debit_account}
-                          {transaction.debit_sub_account && (
-                            <div className="text-primary-muted text-xs">
-                              {transaction.debit_sub_account}
-                            </div>
-                          )}
-                        </td>
-                        <td className="px-2 py-3 text-sm text-right text-white">
-                          {formatAmount(transaction.debit_amount)}
-                        </td>
-                        <td className="px-2 py-3 text-sm text-white">
-                          {transaction.credit_account}
-                          {transaction.credit_sub_account && (
-                            <div className="text-primary-muted text-xs">
-                              {transaction.credit_sub_account}
-                            </div>
-                          )}
-                        </td>
-                        <td className="px-2 py-3 text-sm text-right text-white">
-                          {formatAmount(transaction.credit_amount)}
-                        </td>
-                        <td className="px-2 py-3 text-sm text-white">
-                          {transaction.description || "-"}
-                        </td>
-                      </tr>
+                        transaction={transaction}
+                      />
                     ))}
                   </tbody>
                 </table>
               </div>
 
-              {data.totalPages > 1 && (
-                <div className="mt-6 flex justify-center items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handlePageChange(data.page - 1)}
-                    disabled={data.page <= 1}
-                    className={`bg-primary-accent text-white border-0 rounded-lg px-3 py-2 text-sm cursor-pointer transition-colors duration-200 ${
-                      data.page <= 1
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-blue-600"
-                    }`}
-                  >
-                    前へ
-                  </button>
-
-                  <div className="flex gap-1">
-                    {Array.from(
-                      { length: Math.min(5, data.totalPages) },
-                      (_, i) => {
-                        let pageNum: number;
-                        if (data.totalPages <= 5) {
-                          pageNum = i + 1;
-                        } else if (data.page <= 3) {
-                          pageNum = i + 1;
-                        } else if (data.page >= data.totalPages - 2) {
-                          pageNum = data.totalPages - 4 + i;
-                        } else {
-                          pageNum = data.page - 2 + i;
-                        }
-
-                        return (
-                          <button
-                            type="button"
-                            key={pageNum}
-                            onClick={() => handlePageChange(pageNum)}
-                            className={`px-3 py-2 text-sm border-0 rounded-lg cursor-pointer transition-colors duration-200 text-white ${
-                              pageNum === data.page
-                                ? "bg-primary-accent"
-                                : "bg-primary-hover hover:bg-primary-border"
-                            }`}
-                          >
-                            {pageNum}
-                          </button>
-                        );
-                      },
-                    )}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => handlePageChange(data.page + 1)}
-                    disabled={data.page >= data.totalPages}
-                    className={`bg-primary-accent text-white border-0 rounded-lg px-3 py-2 text-sm cursor-pointer transition-colors duration-200 ${
-                      data.page >= data.totalPages
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-blue-600"
-                    }`}
-                  >
-                    次へ
-                  </button>
-                </div>
-              )}
+              <Pagination
+                currentPage={data.page}
+                totalPages={data.totalPages}
+                onPageChange={handlePageChange}
+              />
             </>
           )}
         </>
