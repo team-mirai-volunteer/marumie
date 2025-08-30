@@ -5,8 +5,6 @@ import { Button, Input, Card } from "../ui";
 import { apiClient } from "@/client/lib/api-client";
 import type { UserRole as PrismaUserRole } from "@prisma/client";
 
-type UserRole = "user" | "admin";
-
 interface User {
   id: string;
   authId: string;
