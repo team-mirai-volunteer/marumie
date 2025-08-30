@@ -1,4 +1,4 @@
-# 政治とカネダッシュボード (Poli-Money Alpha)
+# みらいオープンマネー
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -7,6 +7,8 @@
 > 政治資金の透明性向上を目指すオープンソースダッシュボード
 
 政治家・政治団体が会計データを透明に公開し、市民が政治資金の流れを理解しやすくするためのWebアプリケーションです。クラウド会計ソフト（MFクラウド・freee等）から取得したデータを可視化し、政治資金報告書の作成も支援します。
+
+チームみらい永田町エンジニアチームが開発しています。
 
 ## プロジェクト構成
 
@@ -123,7 +125,7 @@ pnpm run fresh         # クリーンインストール + セットアップ
 - **管理画面**: [http://localhost:3001](http://localhost:3001)
 - **Supabase Studio**: [http://127.0.0.1:54323](http://127.0.0.1:54323)
 
-## モックデータの使用
+### モックデータの使用
 
 `webapp/.env.local` に以下を追加してモックデータを有効化：
 ```
