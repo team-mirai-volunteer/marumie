@@ -1,33 +1,10 @@
-"use client";
-import "client-only";
+import "server-only";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { apiClient } from "@/client/clients/api-client";
-import type { PoliticalOrganization } from "@/shared/models/political-organization";
+import { getPoliticalOrganizations } from "@/server/actions/get-political-organizations";
 
-export default function PoliticalOrganizationsPage() {
-  const [organizations, setOrganizations] = useState<PoliticalOrganization[]>(
-    [],
-  );
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchOrganizations = async () => {
-      try {
-        setLoading(true);
-        const data = await apiClient.listPoliticalOrganizations();
-        setOrganizations(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Unknown error");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchOrganizations();
-  }, []);
+export default async function PoliticalOrganizationsPage() {
+  const organizations = await getPoliticalOrganizations();
 
   return (
     <div className="bg-primary-panel rounded-xl p-4">
@@ -41,15 +18,7 @@ export default function PoliticalOrganizationsPage() {
         </Link>
       </div>
 
-      {loading && <p className="text-primary-muted">読み込み中...</p>}
-
-      {error && (
-        <div className="text-red-500 mt-4 p-3 bg-red-900/20 rounded-lg border border-red-900/30">
-          エラー: {error}
-        </div>
-      )}
-
-      {!loading && !error && organizations.length === 0 && (
+      {organizations.length === 0 && (
         <div className="text-center py-10">
           <p className="text-primary-muted">政治団体が登録されていません</p>
           <Link
@@ -61,7 +30,7 @@ export default function PoliticalOrganizationsPage() {
         </div>
       )}
 
-      {!loading && !error && organizations.length > 0 && (
+      {organizations.length > 0 && (
         <div className="mt-5">
           <div className="grid gap-3">
             {organizations.map((org) => (
