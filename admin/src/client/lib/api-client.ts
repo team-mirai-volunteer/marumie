@@ -1,9 +1,7 @@
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
 import type { Transaction } from "@/shared/models/transaction";
-import type {
-  PreviewMfCsvResult,
-  PreviewTransaction,
-} from "@/server/usecases/preview-mf-csv-usecase";
+import type { PreviewMfCsvResult } from "@/server/usecases/preview-mf-csv-usecase";
+import type { PreviewTransaction } from "@/server/lib/mf-record-converter";
 
 export interface CreatePoliticalOrganizationRequest {
   name: string;

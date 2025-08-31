@@ -104,7 +104,7 @@ describe("UploadMfCsvUsecase", () => {
       expect(result.processedCount).toBe(0);
       expect(result.savedCount).toBe(0);
       expect(result.skippedCount).toBe(0);
-      expect(result.errors).toEqual([]);
+      expect(result.errors).toEqual(["有効なトランザクションがありません"]);
       expect(mockRepository.createMany).not.toHaveBeenCalled();
     });
 
@@ -157,11 +157,32 @@ describe("UploadMfCsvUsecase", () => {
         previewResult.transactions
           .filter(t => t.status === 'valid')
           .map(t => ({
-            ...t,
             id: 'test-id',
+            political_organization_id: t.political_organization_id,
+            transaction_no: t.transaction_no,
+            transaction_date: new Date(t.transaction_date),
             financial_year: new Date(t.transaction_date).getFullYear(),
-            transaction_type: 'other' as const,
-            category_key: 'test-category',
+            transaction_type: t.transaction_type,
+            debit_account: t.debit_account,
+            debit_sub_account: t.debit_sub_account || '',
+            debit_department: '',
+            debit_partner: '',
+            debit_tax_category: '',
+            debit_amount: t.debit_amount,
+            credit_account: t.credit_account,
+            credit_sub_account: t.credit_sub_account || '',
+            credit_department: '',
+            credit_partner: '',
+            credit_tax_category: '',
+            credit_amount: t.credit_amount,
+            description: t.description || '',
+            description_1: t.description_1,
+            description_2: t.description_2,
+            description_3: t.description_3,
+            description_detail: undefined,
+            tags: t.tags || '',
+            memo: '',
+            category_key: t.category_key,
             created_at: new Date(),
             updated_at: new Date()
           }))
