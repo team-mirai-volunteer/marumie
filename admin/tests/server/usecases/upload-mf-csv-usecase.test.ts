@@ -70,7 +70,7 @@ describe("UploadMfCsvUsecase", () => {
         .reduce((sum, t) => sum + t.credit_amount, 0);
 
       const otherTotal = capturedTransactions
-        .filter((t) => t.transaction_type === "other")
+        .filter((t) => t.transaction_type === "offset_income" || t.transaction_type === "offset_expense")
         .reduce((sum, t) => sum + Math.max(t.debit_amount, t.credit_amount), 0);
 
       // サンプルデータから期待値を計算

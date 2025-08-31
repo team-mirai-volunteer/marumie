@@ -149,19 +149,6 @@ export default function CsvPreview({
     ? Math.ceil(getFilteredTransactions().length / perPage)
     : 0;
 
-  const getStatusColorClass = (status: PreviewTransaction["status"]) => {
-    switch (status) {
-      case "valid":
-        return "text-green-500";
-      case "invalid":
-        return "text-red-500";
-      case "skip":
-        return "text-yellow-500";
-      default:
-        return "text-gray-500";
-    }
-  };
-
   if (!file) return null;
 
   if (loading) {
@@ -223,6 +210,7 @@ export default function CsvPreview({
             },
           ].map(({ key, label, color }) => (
             <button
+              type="button"
               key={key}
               onClick={() => handleTabChange(key)}
               className={`px-3 py-2 text-sm font-medium rounded-md border transition-all duration-200 ${
@@ -272,7 +260,16 @@ export default function CsvPreview({
                 貸方金額
               </th>
               <th className="px-2 py-3 text-left text-sm font-semibold text-white">
-                摘要
+                種別
+              </th>
+              <th className="px-2 py-3 text-left text-sm font-semibold text-white">
+                カテゴリ
+              </th>
+              <th className="px-2 py-3 text-left text-sm font-semibold text-white">
+                摘要{" "}
+                <span className="text-xs font-normal">
+                  ※サービスには表示されません
+                </span>
               </th>
             </tr>
           </thead>
