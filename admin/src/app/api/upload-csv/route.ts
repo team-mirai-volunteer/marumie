@@ -1,13 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
-import { UploadMfCsvUsecase } from "@/server/usecases/upload-mf-csv-usecase";
+import { SavePreviewTransactionsUsecase } from "@/server/usecases/save-preview-transactions-usecase";
 
 export const runtime = "nodejs";
 
 const prisma = new PrismaClient();
 const transactionRepository = new PrismaTransactionRepository(prisma);
-const uploadUsecase = new UploadMfCsvUsecase(transactionRepository);
+const uploadUsecase = new SavePreviewTransactionsUsecase(transactionRepository);
 
 export async function POST(request: Request) {
   try {

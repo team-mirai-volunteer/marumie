@@ -55,6 +55,12 @@ function getTypeLabel(type: string): string {
       return "収入";
     case "expense":
       return "支出";
+    case "offset_income":
+      return "相殺収入";
+    case "offset_expense":
+      return "相殺支出";
+    case "invalid":
+      return "無効";
     default:
       return "不明";
   }
@@ -63,9 +69,13 @@ function getTypeLabel(type: string): string {
 function getTypeBadgeClass(type: string): string {
   switch (type) {
     case "income":
+    case "offset_income":
       return "bg-green-600";
     case "expense":
+    case "offset_expense":
       return "bg-red-600";
+    case "invalid":
+      return "bg-orange-600";
     default:
       return "bg-gray-600";
   }

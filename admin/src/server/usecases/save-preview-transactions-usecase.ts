@@ -5,26 +5,28 @@ import {
   MfRecordConverter,
 } from "../lib/mf-record-converter";
 
-export interface UploadMfCsvInput {
+export interface SavePreviewTransactionsInput {
   validTransactions: PreviewTransaction[];
   politicalOrganizationId: string;
 }
 
-export interface UploadMfCsvResult {
+export interface SavePreviewTransactionsResult {
   processedCount: number;
   savedCount: number;
   skippedCount: number;
   errors: string[];
 }
 
-export class UploadMfCsvUsecase {
+export class SavePreviewTransactionsUsecase {
   constructor(
     private transactionRepository: ITransactionRepository,
     private recordConverter: MfRecordConverter = new MfRecordConverter(),
   ) {}
 
-  async execute(input: UploadMfCsvInput): Promise<UploadMfCsvResult> {
-    const result: UploadMfCsvResult = {
+  async execute(
+    input: SavePreviewTransactionsInput,
+  ): Promise<SavePreviewTransactionsResult> {
+    const result: SavePreviewTransactionsResult = {
       processedCount: 0,
       savedCount: 0,
       skippedCount: 0,

@@ -44,7 +44,7 @@ describe("MfRecordConverter", () => {
 
       expect(result.debit_amount).toBe(1500000);
       expect(result.credit_amount).toBe(500000);
-      expect(result.transaction_type).toBe("other");
+      expect(result.transaction_type).toBe("invalid");
     });
 
     it("should handle amounts with commas", () => {
@@ -113,7 +113,7 @@ describe("MfRecordConverter", () => {
 
       const result = converter.convertRow(record, "test-org-id");
 
-      expect(result.transaction_type).toBe("other");
+      expect(result.transaction_type).toBe("invalid");
     });
 
 

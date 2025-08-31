@@ -41,31 +41,6 @@ export class MfRecordConverter {
       record.credit_account,
     );
 
-    if (transactionType === "invalid") {
-      return {
-        political_organization_id: politicalOrganizationId,
-        transaction_no: record.transaction_no,
-        transaction_date: new Date(record.transaction_date),
-        transaction_type: "income",
-        debit_account: record.debit_account,
-        debit_sub_account: record.debit_sub_account,
-        debit_amount: debitAmount,
-        credit_account: record.credit_account,
-        credit_sub_account: record.credit_sub_account,
-        credit_amount: creditAmount,
-        description: record.description,
-        description_1: descriptionParts.description_1,
-        description_2: descriptionParts.description_2,
-        description_3: descriptionParts.description_3,
-        tags: record.tags,
-        category_key: categoryKey,
-        status: "invalid",
-        errors: [
-          `Invalid account combination: debit=${record.debit_account}, credit=${record.credit_account}`,
-        ],
-      };
-    }
-
     return {
       political_organization_id: politicalOrganizationId,
       transaction_no: record.transaction_no,
@@ -83,8 +58,13 @@ export class MfRecordConverter {
       description_3: descriptionParts.description_3,
       tags: record.tags,
       category_key: categoryKey,
-      status: "valid",
-      errors: [],
+      status: transactionType === "invalid" ? "invalid" : "valid",
+      errors:
+        transactionType === "invalid"
+          ? [
+              `Invalid account combination: debit=${record.debit_account}, credit=${record.credit_account}`,
+            ]
+          : [],
     };
   }
 

@@ -54,6 +54,8 @@ function getTypeLabel(type: string): string {
       return "相殺収入";
     case "offset_expense":
       return "相殺支出";
+    case "invalid":
+      return "無効";
     default:
       return "不明";
   }
@@ -67,6 +69,8 @@ function getTypeBadgeClass(type: string): string {
     case "expense":
     case "offset_expense":
       return "bg-red-600";
+    case "invalid":
+      return "bg-orange-600";
     default:
       return "bg-gray-600";
   }

@@ -1,9 +1,9 @@
 import { readFileSync } from "fs";
 import { join } from "path";
 import {
-  UploadMfCsvUsecase,
-  type UploadMfCsvInput,
-} from "@/server/usecases/upload-mf-csv-usecase";
+  SavePreviewTransactionsUsecase,
+  type SavePreviewTransactionsInput,
+} from "@/server/usecases/save-preview-transactions-usecase";
 import {
   PreviewMfCsvUsecase,
   type PreviewMfCsvInput,
@@ -11,8 +11,8 @@ import {
 import type { ITransactionRepository } from "@/server/repositories/interfaces/transaction-repository.interface";
 import type { CreateTransactionInput } from "@/shared/models/transaction";
 
-describe("UploadMfCsvUsecase", () => {
-  let usecase: UploadMfCsvUsecase;
+describe("SavePreviewTransactionsUsecase", () => {
+  let usecase: SavePreviewTransactionsUsecase;
   let previewUsecase: PreviewMfCsvUsecase;
   let mockRepository: jest.Mocked<Pick<ITransactionRepository, 'createMany' | 'findByTransactionNos'>>;
 
@@ -21,7 +21,7 @@ describe("UploadMfCsvUsecase", () => {
       createMany: jest.fn(),
       findByTransactionNos: jest.fn().mockResolvedValue([]),
     };
-    usecase = new UploadMfCsvUsecase(mockRepository as unknown as ITransactionRepository);
+    usecase = new SavePreviewTransactionsUsecase(mockRepository as unknown as ITransactionRepository);
     previewUsecase = new PreviewMfCsvUsecase(mockRepository as unknown as ITransactionRepository);
   });
 
@@ -47,7 +47,7 @@ describe("UploadMfCsvUsecase", () => {
         }
       );
 
-      const input: UploadMfCsvInput = {
+      const input: SavePreviewTransactionsInput = {
         validTransactions: previewResult.transactions,
         politicalOrganizationId: "test-org-id",
       };
@@ -94,7 +94,7 @@ describe("UploadMfCsvUsecase", () => {
     });
 
     it("should handle empty CSV content", async () => {
-      const input: UploadMfCsvInput = {
+      const input: SavePreviewTransactionsInput = {
         validTransactions: [],
         politicalOrganizationId: "test-org-id",
       };
@@ -123,14 +123,14 @@ describe("UploadMfCsvUsecase", () => {
         new Error("Database connection failed")
       );
 
-      const input: UploadMfCsvInput = {
+      const input: SavePreviewTransactionsInput = {
         validTransactions: previewResult.transactions,
         politicalOrganizationId: "test-org-id",
       };
 
       const result = await usecase.execute(input);
 
-      expect(result.errors).toContain("Database connection failed");
+      expect(result.errors).toContain("データの保存中にエラーが発生しました");
       expect(result.savedCount).toBe(0);
     });
 
@@ -147,7 +147,7 @@ describe("UploadMfCsvUsecase", () => {
       };
       const previewResult = await previewUsecase.execute(previewInput);
 
-      const input: UploadMfCsvInput = {
+      const input: SavePreviewTransactionsInput = {
         validTransactions: previewResult.transactions,
         politicalOrganizationId: "test-org-id",
       };
