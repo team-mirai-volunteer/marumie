@@ -21,7 +21,7 @@ export default function CashFlowSection({
   updatedAt,
 }: CashFlowSectionProps) {
   const [activeTab, setActiveTab] = useState<"political" | "friendly">(
-    "political",
+    "friendly",
   );
 
   const currentData = activeTab === "political" ? political : friendly;
@@ -49,17 +49,6 @@ export default function CashFlowSection({
       <div className="flex gap-7 border-b border-gray-300 mb-4">
         <button
           type="button"
-          onClick={() => setActiveTab("political")}
-          className={`pb-2 font-bold text-base border-b-2 transition-colors leading-tight cursor-pointer ${
-            activeTab === "political"
-              ? "border-[#238778] text-[#238778]"
-              : "border-transparent text-[#9CA3AF] hover:text-gray-600"
-          }`}
-        >
-          法律上の区分
-        </button>
-        <button
-          type="button"
           onClick={() => setActiveTab("friendly")}
           className={`pb-2 font-bold text-base border-b-2 transition-colors leading-tight cursor-pointer ${
             activeTab === "friendly"
@@ -68,6 +57,17 @@ export default function CashFlowSection({
           }`}
         >
           独自の区分
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("political")}
+          className={`pb-2 font-bold text-base border-b-2 transition-colors leading-tight cursor-pointer ${
+            activeTab === "political"
+              ? "border-[#238778] text-[#238778]"
+              : "border-transparent text-[#9CA3AF] hover:text-gray-600"
+          }`}
+        >
+          法律上の区分
         </button>
       </div>
 
