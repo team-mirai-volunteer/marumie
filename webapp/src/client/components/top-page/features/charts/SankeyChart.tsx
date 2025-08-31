@@ -55,7 +55,7 @@ const DIMENSIONS = {
 } as const;
 
 const TEXT = {
-  MAX_CHARS_PER_LINE: 5,
+  MAX_CHARS_PER_LINE: 7,
   TOTAL_NODE_ID: "合計",
   TOTAL_LABEL_TOP: "収入支出",
   TOTAL_LABEL_PERCENTAGE: "100%",

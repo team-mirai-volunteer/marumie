@@ -26,44 +26,52 @@ function consolidateSmallItems(
   const incomeThreshold = totalIncome * 0.01;
   const expenseThreshold = totalExpense * 0.01;
 
-  // 収入の処理
+  // 収入の処理 - カテゴリ別に1%以下を集計
   const consolidatedIncome: typeof aggregation.income = [];
-  let smallIncomeTotal = 0;
+  const smallIncomeByCategory = new Map<string, number>();
 
   for (const item of aggregation.income) {
     if (item.subcategory && item.totalAmount < incomeThreshold) {
-      smallIncomeTotal += item.totalAmount;
+      const current = smallIncomeByCategory.get(item.category) || 0;
+      smallIncomeByCategory.set(item.category, current + item.totalAmount);
     } else {
       consolidatedIncome.push(item);
     }
   }
 
-  if (smallIncomeTotal > 0) {
-    consolidatedIncome.push({
-      category: "その他の収入",
-      subcategory: "1%以下の収入の合計",
-      totalAmount: smallIncomeTotal,
-    });
+  // カテゴリ別に1%以下の合計項目を追加
+  for (const [category, total] of smallIncomeByCategory) {
+    if (total > 0) {
+      consolidatedIncome.push({
+        category,
+        subcategory: `1%以下合計（${category}）`,
+        totalAmount: total,
+      });
+    }
   }
 
-  // 支出の処理
+  // 支出の処理 - カテゴリ別に1%以下を集計
   const consolidatedExpense: typeof aggregation.expense = [];
-  let smallExpenseTotal = 0;
+  const smallExpenseByCategory = new Map<string, number>();
 
   for (const item of aggregation.expense) {
     if (item.subcategory && item.totalAmount < expenseThreshold) {
-      smallExpenseTotal += item.totalAmount;
+      const current = smallExpenseByCategory.get(item.category) || 0;
+      smallExpenseByCategory.set(item.category, current + item.totalAmount);
     } else {
       consolidatedExpense.push(item);
     }
   }
 
-  if (smallExpenseTotal > 0) {
-    consolidatedExpense.push({
-      category: "その他の支出",
-      subcategory: "1%以下の支出の合計",
-      totalAmount: smallExpenseTotal,
-    });
+  // カテゴリ別に1%以下の合計項目を追加
+  for (const [category, total] of smallExpenseByCategory) {
+    if (total > 0) {
+      consolidatedExpense.push({
+        category,
+        subcategory: `1%以下合計（${category}）`,
+        totalAmount: total,
+      });
+    }
   }
 
   return {
