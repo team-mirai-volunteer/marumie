@@ -52,9 +52,6 @@ export interface ITransactionRepository {
     filters?: TransactionFilters,
     pagination?: PaginationOptions,
   ): Promise<PaginatedResult<Transaction>>;
-  findDisplayableTransactions(
-    filters?: TransactionFilters,
-  ): Promise<(Transaction & { transaction_type: DisplayTransactionType })[]>;
   getCategoryAggregationForSankey(
     politicalOrganizationId: string,
     financialYear: number,

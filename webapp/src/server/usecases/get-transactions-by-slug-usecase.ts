@@ -85,19 +85,14 @@ export class GetTransactionsBySlugUsecase {
       };
 
       const [transactionResult, lastUpdatedAt] = await Promise.all([
-        this.transactionRepository.findDisplayableTransactions(filters),
+        this.transactionRepository.findWithPagination(filters, pagination),
         this.transactionRepository.getLastUpdatedAt(),
       ]);
 
-      // ページネーションを手動で実装（findDisplayableTransactionsではページネーションが無効）
-      const skip = (page - 1) * perPage;
-      const paginatedTransactions = transactionResult.slice(
-        skip,
-        skip + perPage,
+      const transactions = convertToDisplayTransactions(
+        transactionResult.items,
       );
-
-      const transactions = convertToDisplayTransactions(paginatedTransactions);
-      const total = transactionResult.length;
+      const total = transactionResult.total;
       const totalPages = Math.ceil(total / perPage);
 
       return {
