@@ -121,6 +121,13 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
       },
     },
     colors: ["#2AA693", "#DC2626", "#4B5563"],
+    states: {
+      hover: {
+        filter: {
+          type: "none",
+        },
+      },
+    },
     plotOptions: {
       bar: {
         columnWidth: "35px",
@@ -224,17 +231,23 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
     tooltip: {
       shared: true,
       intersect: false,
-      y: {
-        formatter: (val: number, { seriesIndex }) => {
-          const absVal = Math.abs(val);
-          const manEn = absVal / 10000; // 円を万円に変換
-          if (seriesIndex === 2) {
-            // 収支の場合
-            const manEnWithSign = val / 10000;
-            return `${manEnWithSign >= 0 ? "+" : ""}${manEnWithSign.toFixed(0)}万円`;
-          }
-          return `${manEn.toFixed(0)}万円`;
-        },
+      custom: ({ series, dataPointIndex }) => {
+        const yearMonth = data[dataPointIndex].yearMonth;
+        const [, month] = yearMonth.split("-");
+        const monthNumber = parseInt(month, 10);
+        const balance = series[2][dataPointIndex];
+
+        const balanceManEn = (balance / 10000).toFixed(0);
+        const formattedBalance = parseInt(balanceManEn).toLocaleString();
+        const balanceSign = balance >= 0 ? "+" : "";
+        const balanceColor = balance >= 0 ? "#238778" : "#DC2626";
+
+        return `
+          <div class="custom-tooltip">
+            <div class="tooltip-title">${monthNumber}月収支</div>
+            <div class="tooltip-balance" style="color: ${balanceColor}">${balanceSign}${formattedBalance}万円</div>
+          </div>
+        `;
       },
     },
     annotations: {
@@ -273,6 +286,34 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
           }
           .apexcharts-xaxistooltip {
             display: none !important;
+          }
+          .custom-tooltip {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid #64748B;
+            border-radius: 6px;
+            padding: 8px 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            font-family: 'Noto Sans JP', sans-serif;
+            position: relative;
+          }
+          .tooltip-title {
+            font-weight: 700;
+            font-size: 13px;
+            line-height: 1.31;
+            color: #4B5563;
+            margin-bottom: 3px;
+          }
+          .tooltip-balance {
+            font-weight: 700;
+            font-size: 14px;
+            line-height: 1.5;
+          }
+          .apexcharts-canvas:hover {
+            cursor: pointer;
+          }
+          .apexcharts-series path,
+          .apexcharts-series rect {
+            cursor: pointer;
           }
         `}</style>
       </div>
