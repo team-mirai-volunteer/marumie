@@ -81,13 +81,28 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   async getCategoryAggregationForSankey(
     politicalOrganizationId: string,
     financialYear: number,
+    categoryType?: "political-category" | "friendly-category",
   ): Promise<SankeyCategoryAggregationResult> {
+    console.log(
+      `📊 getCategoryAggregationForSankey called with categoryType: ${categoryType}`,
+    );
+
+    if (categoryType === "friendly-category") {
+      return this.getCategoryAggregationWithTag(
+        politicalOrganizationId,
+        financialYear,
+      );
+    }
+
+    // デフォルト: politicalカテゴリーの場合は、従来通りmainCategory + subCategoryでグループ化
+    console.log(
+      "📘 Using political category grouping (mainCategory + subCategory)",
+    );
     const baseWhere = {
       politicalOrganizationId: BigInt(politicalOrganizationId),
       financialYear,
     };
 
-    // 収入の集計（account別）
     const incomeAggregation = await this.prisma.transaction.groupBy({
       by: ["creditAccount"],
       where: {
@@ -99,7 +114,6 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       },
     });
 
-    // 支出の集計（account別）
     const expenseAggregation = await this.prisma.transaction.groupBy({
       by: ["debitAccount"],
       where: {
@@ -125,6 +139,71 @@ export class PrismaTransactionRepository implements ITransactionRepository {
         amount: Number(item._sum.debitAmount || 0),
       })),
     );
+
+    return { income, expense };
+  }
+
+  async getCategoryAggregationWithTag(
+    politicalOrganizationId: string,
+    financialYear: number,
+  ): Promise<SankeyCategoryAggregationResult> {
+    console.log(
+      "🏷️ getCategoryAggregationWithTag called - Using tag-based grouping for friendly category",
+    );
+    const baseWhere = {
+      politicalOrganizationId: BigInt(politicalOrganizationId),
+      financialYear,
+    };
+
+    // friendlyカテゴリーの場合は、mainCategory + tagでグループ化
+    const incomeAggregation = await this.prisma.transaction.groupBy({
+      by: ["creditAccount", "tags"],
+      where: {
+        ...baseWhere,
+        transactionType: "income",
+      },
+      _sum: {
+        creditAmount: true,
+      },
+    });
+
+    const expenseAggregation = await this.prisma.transaction.groupBy({
+      by: ["debitAccount", "tags"],
+      where: {
+        ...baseWhere,
+        transactionType: "expense",
+      },
+      _sum: {
+        debitAmount: true,
+      },
+    });
+
+    // accountとtagでグループ化
+    console.log(
+      `🏷️ Income aggregation: ${incomeAggregation.length} groups found`,
+    );
+    console.log(
+      `🏷️ Expense aggregation: ${expenseAggregation.length} groups found`,
+    );
+
+    const income = this.aggregateByCategoryWithTag(
+      incomeAggregation.map((item) => ({
+        account: item.creditAccount || "",
+        tag: item.tags || "",
+        amount: Number(item._sum.creditAmount || 0),
+      })),
+    );
+
+    const expense = this.aggregateByCategoryWithTag(
+      expenseAggregation.map((item) => ({
+        account: item.debitAccount || "",
+        tag: item.tags || "",
+        amount: Number(item._sum.debitAmount || 0),
+      })),
+    );
+
+    console.log(`🏷️ Final income categories: ${income.length}`);
+    console.log(`🏷️ Final expense categories: ${expense.length}`);
 
     return { income, expense };
   }
@@ -279,6 +358,39 @@ export class PrismaTransactionRepository implements ITransactionRepository {
         categoryMap.set(key, {
           category: mapping.category,
           subcategory: mapping.subcategory,
+          totalAmount: item.amount,
+        });
+      }
+    }
+
+    return Array.from(categoryMap.values());
+  }
+
+  private aggregateByCategoryWithTag(
+    accountData: Array<{ account: string; tag: string; amount: number }>,
+  ): TransactionCategoryAggregation[] {
+    const categoryMap = new Map<
+      string,
+      { category: string; subcategory?: string; totalAmount: number }
+    >();
+
+    for (const item of accountData) {
+      const mapping = ACCOUNT_CATEGORY_MAPPING[item.account] || {
+        category: item.account,
+      };
+      // friendlyカテゴリーの場合は、subcategoryをtagに置き換える
+      const subcategory = item.tag || undefined;
+      const key = subcategory
+        ? `${mapping.category}|${subcategory}`
+        : mapping.category;
+
+      const existing = categoryMap.get(key);
+      if (existing) {
+        existing.totalAmount += item.amount;
+      } else {
+        categoryMap.set(key, {
+          category: mapping.category,
+          subcategory: subcategory,
           totalAmount: item.amount,
         });
       }

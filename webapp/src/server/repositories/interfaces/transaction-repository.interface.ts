@@ -55,6 +55,11 @@ export interface ITransactionRepository {
   getCategoryAggregationForSankey(
     politicalOrganizationId: string,
     financialYear: number,
+    categoryType?: "political-category" | "friendly-category",
+  ): Promise<SankeyCategoryAggregationResult>;
+  getCategoryAggregationWithTag(
+    politicalOrganizationId: string,
+    financialYear: number,
   ): Promise<SankeyCategoryAggregationResult>;
   getMonthlyAggregation(
     politicalOrganizationId: string,

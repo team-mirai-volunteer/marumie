@@ -38,10 +38,15 @@ export class GetSankeyAggregationUsecase {
         await this.transactionRepository.getCategoryAggregationForSankey(
           politicalOrganization.id,
           params.financialYear,
+          params.categoryType,
         );
 
       // Sankeyデータに変換
-      const sankeyData = convertCategoryAggregationToSankeyData(aggregation);
+      const isFriendlyCategory = params.categoryType === "friendly-category";
+      const sankeyData = convertCategoryAggregationToSankeyData(
+        aggregation,
+        isFriendlyCategory,
+      );
 
       return { sankeyData };
     } catch (error) {
