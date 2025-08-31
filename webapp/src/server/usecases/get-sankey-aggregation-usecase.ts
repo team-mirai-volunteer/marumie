@@ -6,6 +6,7 @@ import { convertCategoryAggregationToSankeyData } from "../utils/sankey-category
 export interface GetSankeyAggregationParams {
   slug: string;
   financialYear: number;
+  categoryType?: "political-category" | "friendly-category";
 }
 
 export interface GetSankeyAggregationResult {

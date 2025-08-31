@@ -9,7 +9,10 @@ import FinancialSummarySection from "@/client/components/top-page/features/finan
 import type { SankeyData } from "@/types/sankey";
 
 interface CashFlowSectionProps {
-  sankeyData: SankeyData | null;
+  sankeyData: {
+    politicalCategory: SankeyData;
+    friendlyCategory: SankeyData;
+  } | null;
   updatedAt: string;
 }
 
@@ -34,10 +37,23 @@ export default function CashFlowSection({
       />
 
       {/* 財務サマリー */}
-      <FinancialSummarySection sankeyData={sankeyData} />
+      <FinancialSummarySection
+        sankeyData={sankeyData?.politicalCategory ?? null}
+      />
 
       {sankeyData ? (
-        <SankeyChart data={sankeyData} />
+        <>
+          <div>
+            <h3 className="text-sm font-semibold mb-2">政治カテゴリー</h3>
+            <SankeyChart data={sankeyData.politicalCategory} />
+          </div>
+          <div className="mt-6">
+            <h3 className="text-sm font-semibold mb-2">
+              親しみやすいカテゴリー
+            </h3>
+            <SankeyChart data={sankeyData.friendlyCategory} />
+          </div>
+        </>
       ) : (
         <div className="text-gray-500">
           サンキー図データが取得できませんでした
