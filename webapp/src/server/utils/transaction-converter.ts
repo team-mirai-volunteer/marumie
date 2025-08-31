@@ -31,6 +31,16 @@ export function getCategoryMapping(account: string): CategoryMapping {
 export function convertToDisplayTransaction(
   transaction: Transaction,
 ): DisplayTransaction {
+  // offset系のトランザクションタイプが渡された場合は警告を出力
+  if (
+    transaction.transaction_type === "offset_income" ||
+    transaction.transaction_type === "offset_expense"
+  ) {
+    console.warn(
+      `offset（相殺取引）を表示することは想定されていません。データ取得方法が間違っていないか確認しましょう。transaction_type: ${transaction.transaction_type}, transaction ID: ${transaction.id}`,
+    );
+  }
+
   // 年月の生成 (例: "2025.08")
   const date = new Date(transaction.transaction_date);
   const year = date.getFullYear();
