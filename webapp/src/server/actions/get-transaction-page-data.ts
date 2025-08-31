@@ -88,10 +88,8 @@ export const getTransactionPageDataAction = unstable_cache(
     return {
       transactionData,
       monthlyData: monthlyData.monthlyData,
-      sankeyData: {
-        politicalCategory: sankeyPoliticalCategoryData.sankeyData,
-        friendlyCategory: sankeyFriendlyCategoryData.sankeyData,
-      },
+      political: sankeyPoliticalCategoryData.sankeyData,
+      friendly: sankeyFriendlyCategoryData.sankeyData,
       donationSummary: donationData.donationSummary,
     };
   },

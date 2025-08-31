@@ -93,10 +93,8 @@ export class GetMockTransactionPageDataUsecase {
         },
       },
       monthlyData: MOCK_MONTHLY_DATA,
-      sankeyData: {
-        politicalCategory: MOCK_SANKEY_DATA,
-        friendlyCategory: MOCK_SANKEY_DATA,
-      },
+      political: MOCK_SANKEY_DATA,
+      friendly: MOCK_SANKEY_DATA,
       donationSummary: MOCK_DONATION_SUMMARY,
     };
   }

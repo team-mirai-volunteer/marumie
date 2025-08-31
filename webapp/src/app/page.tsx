@@ -29,7 +29,8 @@ export default async function Home() {
   return (
     <MainColumn>
       <CashFlowSection
-        sankeyData={data?.sankeyData ?? null}
+        political={data?.political ?? null}
+        friendly={data?.friendly ?? null}
         updatedAt={updatedAt}
       />
       <MonthlyTrendsSection
