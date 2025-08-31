@@ -34,7 +34,7 @@ const DIMENSIONS = {
   // マージン・オフセット
   LABEL_OFFSET_DESKTOP: 16,
   LABEL_OFFSET_MOBILE: 5,
-  PERCENTAGE_OFFSET: 5,
+  PERCENTAGE_OFFSET: 2,
   AMOUNT_LABEL_OFFSET: 15,
   TOTAL_LABEL_TOP_OFFSET_DESKTOP: 18,
   TOTAL_LABEL_TOP_OFFSET_MOBILE: 12,
@@ -72,7 +72,8 @@ const CHART_CONFIG = {
   MARGIN_HORIZONTAL_MOBILE: 40,
   MARGIN_BOTTOM: 30,
   NODE_THICKNESS: 12,
-  NODE_SPACING: 24,
+  NODE_SPACING_DESKTOP: 24,
+  NODE_SPACING_MOBILE: 12,
   LINK_OPACITY: 0.5,
   LINK_HOVER_OPACITY: 0.8,
   HOVER_OPACITY: 0.9,
@@ -531,6 +532,14 @@ export default function SankeyChart({ data }: SankeyChartProps) {
         return aOrder - bOrder; // タイプ順
       }
 
+      // 「現残高」は末尾に配置
+      if (a.label === "現残高" && b.label !== "現残高") {
+        return 1; // aを後に
+      }
+      if (b.label === "現残高" && a.label !== "現残高") {
+        return -1; // bを後に
+      }
+
       // 同じタイプ内では金額の絶対値順（降順）
       const aValue = Math.abs(calculateNodeValue(a.id, data.links));
       const bValue = Math.abs(calculateNodeValue(b.id, data.links));
@@ -609,7 +618,11 @@ export default function SankeyChart({ data }: SankeyChartProps) {
         nodeOpacity={1}
         nodeBorderWidth={0}
         nodeThickness={CHART_CONFIG.NODE_THICKNESS}
-        nodeSpacing={CHART_CONFIG.NODE_SPACING}
+        nodeSpacing={
+          !isMobile
+            ? CHART_CONFIG.NODE_SPACING_DESKTOP
+            : CHART_CONFIG.NODE_SPACING_MOBILE
+        }
         sort="auto"
         linkOpacity={CHART_CONFIG.LINK_OPACITY}
         linkHoverOpacity={CHART_CONFIG.LINK_OPACITY}

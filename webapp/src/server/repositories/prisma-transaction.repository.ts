@@ -83,10 +83,6 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     financialYear: number,
     categoryType?: "political-category" | "friendly-category",
   ): Promise<SankeyCategoryAggregationResult> {
-    console.log(
-      `📊 getCategoryAggregationForSankey called with categoryType: ${categoryType}`,
-    );
-
     if (categoryType === "friendly-category") {
       return this.getCategoryAggregationWithTag(
         politicalOrganizationId,
@@ -95,9 +91,6 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     }
 
     // デフォルト: politicalカテゴリーの場合は、従来通りmainCategory + subCategoryでグループ化
-    console.log(
-      "📘 Using political category grouping (mainCategory + subCategory)",
-    );
     const baseWhere = {
       politicalOrganizationId: BigInt(politicalOrganizationId),
       financialYear,
@@ -147,9 +140,6 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     politicalOrganizationId: string,
     financialYear: number,
   ): Promise<SankeyCategoryAggregationResult> {
-    console.log(
-      "🏷️ getCategoryAggregationWithTag called - Using tag-based grouping for friendly category",
-    );
     const baseWhere = {
       politicalOrganizationId: BigInt(politicalOrganizationId),
       financialYear,
@@ -179,12 +169,6 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     });
 
     // accountとtagでグループ化
-    console.log(
-      `🏷️ Income aggregation: ${incomeAggregation.length} groups found`,
-    );
-    console.log(
-      `🏷️ Expense aggregation: ${expenseAggregation.length} groups found`,
-    );
 
     const income = this.aggregateByCategoryWithTag(
       incomeAggregation.map((item) => ({
@@ -201,9 +185,6 @@ export class PrismaTransactionRepository implements ITransactionRepository {
         amount: Number(item._sum.debitAmount || 0),
       })),
     );
-
-    console.log(`🏷️ Final income categories: ${income.length}`);
-    console.log(`🏷️ Final expense categories: ${expense.length}`);
 
     return { income, expense };
   }
