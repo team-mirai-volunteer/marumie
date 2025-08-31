@@ -2,7 +2,6 @@ import type {
   Transaction,
   TransactionFilters,
 } from "@/shared/models/transaction";
-import type { DisplayTransactionType } from "@/types/display-transaction";
 
 export interface PaginatedResult<T> {
   items: T[];
