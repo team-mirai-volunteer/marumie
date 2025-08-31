@@ -139,7 +139,7 @@ const CustomNodesLayer = ({
 
   const handleMouseEnter = (
     event: React.MouseEvent,
-    nodeData: { id: string; value?: number },
+    nodeData: { id: string; label?: string; value?: number },
   ) => {
     // 元のnode情報を再構築（必要な場合）
     const originalNode = nodes.find((n) => n.id === nodeData.id);
@@ -149,7 +149,11 @@ const CustomNodesLayer = ({
       y: event.pageY - 10, // clientY → pageY でスクロール位置を含む
       node:
         originalNode ||
-        ({ id: nodeData.id, value: nodeData.value } as SankeyNodeWithPosition),
+        ({
+          id: nodeData.id,
+          label: nodeData.label,
+          value: nodeData.value,
+        } as SankeyNodeWithPosition),
     });
   };
 
@@ -179,6 +183,7 @@ const CustomNodesLayer = ({
             <InteractiveRect
               key={node.id}
               id={node.id}
+              label={node.label}
               x={x}
               y={node.y}
               width={width}
@@ -211,7 +216,7 @@ const CustomNodesLayer = ({
               pointerEvents: "none",
             }}
           >
-            <strong>{tooltip.node.id}</strong>
+            <strong>{tooltip.node.label || tooltip.node.id}</strong>
             <br />
             {`¥${Math.round(tooltip.node.value || 0).toLocaleString("ja-JP")}`}
           </div>,
@@ -339,7 +344,7 @@ const renderPrimaryLabel = (
   textAnchor: "start" | "middle" | "end" | "inherit",
   isMobile: boolean,
 ) => {
-  const label = node.id; // HACK: 表示にはnode.idを使用（本来はnode.labelを使うべき）
+  const label = node.label || node.id; // 表示にはnode.labelを使用、fallbackでnode.idを使用
 
   // サブカテゴリ判定
   const isSubcategory =
@@ -581,6 +586,9 @@ export default function SankeyChart({ data }: SankeyChartProps) {
       `}</style>
       <ResponsiveSankey
         data={sortedData}
+        label={(node: any) => {
+          return node.label || node.id;
+        }}
         margin={{
           top: !isMobile
             ? CHART_CONFIG.MARGIN_TOP_DESKTOP

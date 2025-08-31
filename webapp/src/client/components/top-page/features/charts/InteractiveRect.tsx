@@ -5,6 +5,7 @@ import type React from "react";
 
 interface InteractiveRectProps {
   id: string;
+  label?: string;
   x: number;
   y: number;
   width: number;
@@ -13,7 +14,7 @@ interface InteractiveRectProps {
   value?: number;
   onMouseEnter: (
     event: React.MouseEvent,
-    nodeData: { id: string; value?: number },
+    nodeData: { id: string; label?: string; value?: number },
   ) => void;
   onMouseLeave: () => void;
   onMouseMove: (event: React.MouseEvent) => void;
@@ -21,6 +22,7 @@ interface InteractiveRectProps {
 
 export default function InteractiveRect({
   id,
+  label,
   x,
   y,
   width,
@@ -41,8 +43,8 @@ export default function InteractiveRect({
       height={height}
       fill={fill}
       opacity={1}
-      aria-label={`${id}: ¥${Math.round(value || 0).toLocaleString("ja-JP")}`}
-      onMouseEnter={(e) => onMouseEnter(e, { id, value })}
+      aria-label={`${label || id}: ¥${Math.round(value || 0).toLocaleString("ja-JP")}`}
+      onMouseEnter={(e) => onMouseEnter(e, { id, label, value })}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
       style={{ cursor: "pointer" }}

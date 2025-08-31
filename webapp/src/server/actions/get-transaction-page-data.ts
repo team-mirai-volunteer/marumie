@@ -84,14 +84,6 @@ export const getTransactionPageDataAction = unstable_cache(
         today: new Date(),
       }),
     ]);
-    console.log(
-      "sankeyPoliticalCategoryData",
-      JSON.stringify(sankeyPoliticalCategoryData, null, 2),
-    );
-    console.log(
-      "sankeyFriendlyCategoryData",
-      JSON.stringify(sankeyFriendlyCategoryData, null, 2),
-    );
 
     return {
       transactionData,

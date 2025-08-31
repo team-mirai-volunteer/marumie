@@ -120,7 +120,7 @@ export function convertCategoryAggregationToSankeyData(
   // 1. 収入サブカテゴリノード（subcategoryがあるもの）
   for (const item of processedAggregation.income) {
     if (item.subcategory) {
-      const nodeId = item.subcategory;
+      const nodeId = `income-sub-${item.subcategory}`;
       if (!nodeIds.has(nodeId)) {
         nodes.push({
           id: nodeId,
@@ -138,7 +138,7 @@ export function convertCategoryAggregationToSankeyData(
 
   // 2. 収入カテゴリノード
   for (const category of incomeByCategory.keys()) {
-    const nodeId = category;
+    const nodeId = `income-${category}`;
     if (!nodeIds.has(nodeId)) {
       nodes.push({
         id: nodeId,
@@ -189,7 +189,7 @@ export function convertCategoryAggregationToSankeyData(
   }
 
   for (const category of expenseByCategory.keys()) {
-    const nodeId = category;
+    const nodeId = `expense-${category}`;
     if (!nodeIds.has(nodeId)) {
       nodes.push({
         id: nodeId,
@@ -203,7 +203,7 @@ export function convertCategoryAggregationToSankeyData(
   // 5. 支出サブカテゴリノード（subcategoryがあるもの）
   for (const item of processedAggregation.expense) {
     if (item.subcategory) {
-      const nodeId = item.subcategory;
+      const nodeId = `expense-sub-${item.subcategory}`;
       if (!nodeIds.has(nodeId)) {
         nodes.push({
           id: nodeId,
@@ -221,8 +221,8 @@ export function convertCategoryAggregationToSankeyData(
   for (const item of processedAggregation.income) {
     if (item.subcategory) {
       links.push({
-        source: item.subcategory,
-        target: item.category,
+        source: `income-sub-${item.subcategory}`,
+        target: `income-${item.category}`,
         value: item.totalAmount,
       });
     }
@@ -231,7 +231,7 @@ export function convertCategoryAggregationToSankeyData(
   // 2. 収入カテゴリ → 合計
   for (const [category, amount] of incomeByCategory) {
     links.push({
-      source: category,
+      source: `income-${category}`,
       target: "合計",
       value: amount,
     });
@@ -241,7 +241,7 @@ export function convertCategoryAggregationToSankeyData(
   for (const [category, amount] of expenseByCategory) {
     links.push({
       source: "合計",
-      target: category,
+      target: `expense-${category}`,
       value: amount,
     });
   }
@@ -250,8 +250,8 @@ export function convertCategoryAggregationToSankeyData(
   for (const item of processedAggregation.expense) {
     if (item.subcategory) {
       links.push({
-        source: item.category,
-        target: item.subcategory,
+        source: `expense-${item.category}`,
+        target: `expense-sub-${item.subcategory}`,
         value: item.totalAmount,
       });
     }
