@@ -11,7 +11,7 @@ export interface GetTransactionsParams {
   page?: number;
   perPage?: number;
   politicalOrganizationId?: string;
-  transactionType?: "income" | "expense" | "other";
+  transactionType?: "income" | "expense";
   dateFrom?: Date;
   dateTo?: Date;
   financialYear?: number;

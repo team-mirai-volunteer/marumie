@@ -1,4 +1,5 @@
-export type TransactionType = 'income' | 'expense' | 'other';
+// DB保存用のTransactionType (invalidは含まない)
+export type TransactionType = 'income' | 'expense' | 'offset_income' | 'offset_expense';
 
 export interface Transaction {
   id: string;

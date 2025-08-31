@@ -1,12 +1,12 @@
 import type { MfCsvRecord } from "./mf-csv-loader";
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
-import type { TransactionType } from "@/shared/models/transaction";
+import type { PreviewTransactionType } from "@/types/preview-transaction";
 
 export interface PreviewTransaction {
   political_organization_id: string;
   transaction_no: string;
   transaction_date: Date | string;
-  transaction_type: TransactionType;
+  transaction_type: PreviewTransactionType;
   debit_account: string;
   debit_sub_account: string | undefined;
   debit_amount: number;
@@ -45,7 +45,7 @@ export class MfRecordConverter {
       political_organization_id: politicalOrganizationId,
       transaction_no: record.transaction_no,
       transaction_date: new Date(record.transaction_date),
-      transaction_type: transactionType,
+      transaction_type: transactionType as PreviewTransactionType,
       debit_account: record.debit_account,
       debit_sub_account: record.debit_sub_account,
       debit_amount: debitAmount,
@@ -58,8 +58,13 @@ export class MfRecordConverter {
       description_3: descriptionParts.description_3,
       tags: record.tags,
       category_key: categoryKey,
-      status: "valid",
-      errors: [],
+      status: transactionType === "invalid" ? "invalid" : "valid",
+      errors:
+        transactionType === "invalid"
+          ? [
+              `Invalid account combination: debit=${record.debit_account}, credit=${record.credit_account}`,
+            ]
+          : [],
     };
   }
 
@@ -123,14 +128,20 @@ export class MfRecordConverter {
   private determineTransactionType(
     debitAccount: string,
     creditAccount: string,
-  ): TransactionType {
+  ): PreviewTransactionType {
+    if (debitAccount === "相殺項目（費用）") {
+      return "offset_expense";
+    }
+    if (creditAccount === "相殺項目（収入）") {
+      return "offset_income";
+    }
     if (debitAccount === "普通預金") {
       return "income";
-    } else if (creditAccount === "普通預金") {
-      return "expense";
-    } else {
-      return "other";
     }
+    if (creditAccount === "普通預金") {
+      return "expense";
+    }
+    return "invalid";
   }
 
   public extractFinancialYear(dateString: string): number {

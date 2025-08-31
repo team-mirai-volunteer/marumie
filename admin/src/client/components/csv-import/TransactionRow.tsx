@@ -2,12 +2,83 @@
 import "client-only";
 
 import type { PreviewTransaction } from "@/server/lib/mf-record-converter";
+import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 
 interface TransactionRowProps {
   record: PreviewTransaction;
   index: number;
   currentPage: number;
   perPage: number;
+}
+
+const DEFAULT_CATEGORY_COLOR = "#64748B"; // slate-500 as default fallback color
+
+function getCategoryInfoByAccount(accountName: string) {
+  return ACCOUNT_CATEGORY_MAPPING[accountName];
+}
+
+function getCategoryColor(accountName: string): string {
+  const categoryInfo = getCategoryInfoByAccount(accountName);
+  return categoryInfo?.color || DEFAULT_CATEGORY_COLOR;
+}
+
+function getCategoryLabel(accountName: string): string {
+  const categoryInfo = getCategoryInfoByAccount(accountName);
+  return categoryInfo?.shortLabel || accountName;
+}
+
+function getTransactionCategory(record: PreviewTransaction) {
+  // 借方（debit）が費用系の場合は借方のカテゴリを、そうでなければ貸方のカテゴリを表示
+  const debitInfo = getCategoryInfoByAccount(record.debit_account);
+  const creditInfo = getCategoryInfoByAccount(record.credit_account);
+
+  if (debitInfo?.type === "expense") {
+    return {
+      account: record.debit_account,
+      color: getCategoryColor(record.debit_account),
+      label: getCategoryLabel(record.debit_account),
+      type: debitInfo.type,
+    };
+  } else {
+    return {
+      account: record.credit_account,
+      color: getCategoryColor(record.credit_account),
+      label: getCategoryLabel(record.credit_account),
+      type: creditInfo?.type || "unknown",
+    };
+  }
+}
+
+function getTypeLabel(type: string): string {
+  switch (type) {
+    case "income":
+      return "収入";
+    case "expense":
+      return "支出";
+    case "offset_income":
+      return "相殺収入";
+    case "offset_expense":
+      return "相殺支出";
+    case "invalid":
+      return "無効";
+    default:
+      return "不明";
+  }
+}
+
+function getTypeBadgeClass(type: string): string {
+  switch (type) {
+    case "income":
+    case "offset_income":
+      return "bg-green-600";
+    case "expense":
+    case "offset_expense":
+      return "bg-red-600";
+    case "invalid":
+      return "bg-orange-600";
+    default:
+      return "bg-gray-600";
+  }
 }
 
 function getStatusBgClass(status: PreviewTransaction["status"]) {
@@ -90,6 +161,33 @@ export default function TransactionRow({
         {record.credit_amount
           ? `¥${record.credit_amount.toLocaleString()}`
           : "-"}
+      </td>
+      <td className="px-2 py-3 text-sm text-white">
+        {(() => {
+          const category = getTransactionCategory(record);
+          return (
+            <span
+              className={`px-2 py-1 rounded text-white text-xs font-medium ${getTypeBadgeClass(category.type)}`}
+            >
+              {getTypeLabel(category.type)}
+            </span>
+          );
+        })()}
+      </td>
+      <td className="px-2 py-3 text-sm text-white">
+        {(() => {
+          const category = getTransactionCategory(record);
+          return (
+            <div
+              className={`inline-block px-2 py-1 rounded text-xs font-medium max-w-fit ${
+                category.type === "income" ? "text-black" : "text-white"
+              }`}
+              style={{ backgroundColor: category.color }}
+            >
+              {category.label}
+            </div>
+          );
+        })()}
       </td>
       <td className="px-2 py-3 text-sm text-white">
         {record.description || "-"}

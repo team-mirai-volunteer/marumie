@@ -11,6 +11,11 @@ export interface PreviewMfCsvInput {
   politicalOrganizationId: string;
 }
 
+export interface TransactionTypeStats {
+  count: number;
+  amount: number;
+}
+
 export interface PreviewMfCsvResult {
   transactions: PreviewTransaction[];
   summary: {
@@ -18,6 +23,26 @@ export interface PreviewMfCsvResult {
     validCount: number;
     invalidCount: number;
     skipCount: number;
+  };
+  statistics: {
+    valid: {
+      income: TransactionTypeStats;
+      expense: TransactionTypeStats;
+      offset_income: TransactionTypeStats;
+      offset_expense: TransactionTypeStats;
+    };
+    invalid: {
+      income: TransactionTypeStats;
+      expense: TransactionTypeStats;
+      offset_income: TransactionTypeStats;
+      offset_expense: TransactionTypeStats;
+    };
+    skip: {
+      income: TransactionTypeStats;
+      expense: TransactionTypeStats;
+      offset_income: TransactionTypeStats;
+      offset_expense: TransactionTypeStats;
+    };
   };
 }
 
@@ -42,6 +67,7 @@ export class PreviewMfCsvUsecase {
             invalidCount: 0,
             skipCount: 0,
           },
+          statistics: this.createEmptyStatistics(),
         };
       }
 
@@ -92,9 +118,12 @@ export class PreviewMfCsvUsecase {
           .length,
       };
 
+      const statistics = this.calculateStatistics(previewTransactions);
+
       return {
         transactions: previewTransactions,
         summary,
+        statistics,
       };
     } catch (_error) {
       return {
@@ -105,7 +134,67 @@ export class PreviewMfCsvUsecase {
           invalidCount: 0,
           skipCount: 0,
         },
+        statistics: this.createEmptyStatistics(),
       };
     }
+  }
+
+  private createEmptyStatistics() {
+    return {
+      valid: {
+        income: { count: 0, amount: 0 },
+        expense: { count: 0, amount: 0 },
+        offset_income: { count: 0, amount: 0 },
+        offset_expense: { count: 0, amount: 0 },
+      },
+      invalid: {
+        income: { count: 0, amount: 0 },
+        expense: { count: 0, amount: 0 },
+        offset_income: { count: 0, amount: 0 },
+        offset_expense: { count: 0, amount: 0 },
+      },
+      skip: {
+        income: { count: 0, amount: 0 },
+        expense: { count: 0, amount: 0 },
+        offset_income: { count: 0, amount: 0 },
+        offset_expense: { count: 0, amount: 0 },
+      },
+    };
+  }
+
+  private calculateStatistics(transactions: PreviewTransaction[]) {
+    const statistics = this.createEmptyStatistics();
+
+    for (const transaction of transactions) {
+      const status = transaction.status;
+      const transactionType = transaction.transaction_type;
+
+      // statusが有効な値かチェック
+      if (status !== "valid" && status !== "invalid" && status !== "skip") {
+        continue;
+      }
+
+      // transactionTypeが有効な値かチェック
+      if (
+        transactionType !== "income" &&
+        transactionType !== "expense" &&
+        transactionType !== "offset_income" &&
+        transactionType !== "offset_expense"
+      ) {
+        continue;
+      }
+
+      // 統計を更新
+      statistics[status][transactionType].count += 1;
+
+      // 収入系は credit_amount、支出系は debit_amount を使用
+      const amount =
+        transactionType === "income" || transactionType === "offset_income"
+          ? transaction.credit_amount
+          : transaction.debit_amount;
+      statistics[status][transactionType].amount += amount;
+    }
+
+    return statistics;
   }
 }

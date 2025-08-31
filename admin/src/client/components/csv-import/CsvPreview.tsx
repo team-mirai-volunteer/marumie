@@ -7,6 +7,7 @@ import type { PreviewTransaction } from "@/server/lib/mf-record-converter";
 import { apiClient } from "@/client/lib/api-client";
 import TransactionRow from "./TransactionRow";
 import { Pagination } from "@/client/components/ui/Pagination";
+import StatisticsTable from "./StatisticsTable";
 
 interface CsvPreviewProps {
   file: File | null;
@@ -25,6 +26,9 @@ export default function CsvPreview({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeTab, setActiveTab] = useState<
+    "all" | "valid" | "invalid" | "skip"
+  >("all");
   const perPage = 10;
   const onPreviewCompleteRef = useRef(onPreviewComplete);
 
@@ -36,6 +40,7 @@ export default function CsvPreview({
       setPreviewResult(null);
       setError(null);
       setCurrentPage(1);
+      setActiveTab("all");
       return;
     }
 
@@ -43,6 +48,7 @@ export default function CsvPreview({
       setLoading(true);
       setError(null);
       setCurrentPage(1);
+      setActiveTab("all");
 
       try {
         const result = await apiClient.previewCsv({
@@ -64,6 +70,26 @@ export default function CsvPreview({
             invalidCount: 0,
             skipCount: 0,
           },
+          statistics: {
+            valid: {
+              income: { count: 0, amount: 0 },
+              expense: { count: 0, amount: 0 },
+              offset_income: { count: 0, amount: 0 },
+              offset_expense: { count: 0, amount: 0 },
+            },
+            invalid: {
+              income: { count: 0, amount: 0 },
+              expense: { count: 0, amount: 0 },
+              offset_income: { count: 0, amount: 0 },
+              offset_expense: { count: 0, amount: 0 },
+            },
+            skip: {
+              income: { count: 0, amount: 0 },
+              expense: { count: 0, amount: 0 },
+              offset_income: { count: 0, amount: 0 },
+              offset_expense: { count: 0, amount: 0 },
+            },
+          },
         });
       } finally {
         setLoading(false);
@@ -75,10 +101,30 @@ export default function CsvPreview({
 
   const handlePageChange = (page: number) => {
     if (!previewResult) return;
-    const totalPages = Math.ceil(previewResult.transactions.length / perPage);
+    const filteredTransactions = getFilteredTransactions();
+    const totalPages = Math.ceil(filteredTransactions.length / perPage);
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
+  };
+
+  const handleTabChange = (tab: "all" | "valid" | "invalid" | "skip") => {
+    setActiveTab(tab);
+    setCurrentPage(1);
+  };
+
+  const getFilteredTransactions = (): PreviewTransaction[] => {
+    if (!previewResult) return [];
+
+    const sortedTransactions = getSortedTransactions();
+
+    if (activeTab === "all") {
+      return sortedTransactions;
+    }
+
+    return sortedTransactions.filter(
+      (transaction) => transaction.status === activeTab,
+    );
   };
 
   const getSortedTransactions = (): PreviewTransaction[] => {
@@ -93,28 +139,15 @@ export default function CsvPreview({
   };
 
   const getCurrentPageRecords = (): PreviewTransaction[] => {
-    const sortedTransactions = getSortedTransactions();
+    const filteredTransactions = getFilteredTransactions();
     const startIndex = (currentPage - 1) * perPage;
     const endIndex = startIndex + perPage;
-    return sortedTransactions.slice(startIndex, endIndex);
+    return filteredTransactions.slice(startIndex, endIndex);
   };
 
   const totalPages = previewResult
-    ? Math.ceil(getSortedTransactions().length / perPage)
+    ? Math.ceil(getFilteredTransactions().length / perPage)
     : 0;
-
-  const getStatusColorClass = (status: PreviewTransaction["status"]) => {
-    switch (status) {
-      case "valid":
-        return "text-green-500";
-      case "invalid":
-        return "text-red-500";
-      case "skip":
-        return "text-yellow-500";
-      default:
-        return "text-gray-500";
-    }
-  };
 
   if (!file) return null;
 
@@ -139,28 +172,69 @@ export default function CsvPreview({
   if (!previewResult || previewResult.transactions.length === 0) return null;
 
   const currentRecords = getCurrentPageRecords();
+  const filteredTransactions = getFilteredTransactions();
+
+  const getTabCount = (tab: "all" | "valid" | "invalid" | "skip") => {
+    if (tab === "all") return previewResult.summary.totalCount;
+    return previewResult.transactions.filter((t) => t.status === tab).length;
+  };
+
+  const getTabLabel = (tab: "valid" | "invalid" | "skip") => {
+    switch (tab) {
+      case "valid":
+        return "有効";
+      case "invalid":
+        return "無効";
+      case "skip":
+        return "スキップ";
+    }
+  };
 
   return (
     <div className="bg-primary-panel rounded-xl p-4 mt-4">
       <h3 className="text-lg font-medium text-white mb-4">CSVプレビュー</h3>
+
+      <StatisticsTable statistics={previewResult.statistics} />
+
+      {/* タブフィルター */}
+      <div className="mb-4">
+        <div className="flex gap-2">
+          {[
+            { key: "all" as const, label: "全件", color: "text-white" },
+            { key: "valid" as const, label: "有効", color: "text-green-500" },
+            { key: "invalid" as const, label: "無効", color: "text-red-500" },
+            {
+              key: "skip" as const,
+              label: "スキップ",
+              color: "text-yellow-500",
+            },
+          ].map(({ key, label, color }) => (
+            <button
+              type="button"
+              key={key}
+              onClick={() => handleTabChange(key)}
+              className={`px-3 py-2 text-sm font-medium rounded-md border transition-all duration-200 ${
+                activeTab === key
+                  ? `${color} border-white bg-white/10`
+                  : "text-primary-muted border-primary-border hover:text-white hover:border-white/50"
+              }`}
+            >
+              {label} ({getTabCount(key)})
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="mb-4">
         <p className="text-primary-muted">
-          全 {previewResult.summary.totalCount} 件中{" "}
-          {(currentPage - 1) * perPage + 1} -{" "}
-          {Math.min(currentPage * perPage, previewResult.summary.totalCount)}{" "}
+          {activeTab === "all" ? "全" : getTabLabel(activeTab)}{" "}
+          {filteredTransactions.length} 件中{" "}
+          {filteredTransactions.length > 0
+            ? (currentPage - 1) * perPage + 1
+            : 0}{" "}
+          - {Math.min(currentPage * perPage, filteredTransactions.length)}{" "}
           件を表示
         </p>
-        <div className="flex gap-4 text-sm mt-2">
-          <span className={getStatusColorClass("valid")}>
-            有効: {previewResult.summary.validCount}件
-          </span>
-          <span className={getStatusColorClass("invalid")}>
-            無効: {previewResult.summary.invalidCount}件
-          </span>
-          <span className={getStatusColorClass("skip")}>
-            スキップ: {previewResult.summary.skipCount}件
-          </span>
-        </div>
       </div>
 
       <div className="overflow-x-auto">
@@ -186,7 +260,16 @@ export default function CsvPreview({
                 貸方金額
               </th>
               <th className="px-2 py-3 text-left text-sm font-semibold text-white">
-                摘要
+                種別
+              </th>
+              <th className="px-2 py-3 text-left text-sm font-semibold text-white">
+                カテゴリ
+              </th>
+              <th className="px-2 py-3 text-left text-sm font-semibold text-white">
+                摘要{" "}
+                <span className="text-xs font-normal">
+                  ※サービスには表示されません
+                </span>
               </th>
             </tr>
           </thead>

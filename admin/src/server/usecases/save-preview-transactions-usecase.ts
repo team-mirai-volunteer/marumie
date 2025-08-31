@@ -4,27 +4,30 @@ import {
   type PreviewTransaction,
   MfRecordConverter,
 } from "../lib/mf-record-converter";
+import { convertPreviewTypeToDbType } from "@/types/preview-transaction";
 
-export interface UploadMfCsvInput {
+export interface SavePreviewTransactionsInput {
   validTransactions: PreviewTransaction[];
   politicalOrganizationId: string;
 }
 
-export interface UploadMfCsvResult {
+export interface SavePreviewTransactionsResult {
   processedCount: number;
   savedCount: number;
   skippedCount: number;
   errors: string[];
 }
 
-export class UploadMfCsvUsecase {
+export class SavePreviewTransactionsUsecase {
   constructor(
     private transactionRepository: ITransactionRepository,
     private recordConverter: MfRecordConverter = new MfRecordConverter(),
   ) {}
 
-  async execute(input: UploadMfCsvInput): Promise<UploadMfCsvResult> {
-    const result: UploadMfCsvResult = {
+  async execute(
+    input: SavePreviewTransactionsInput,
+  ): Promise<SavePreviewTransactionsResult> {
+    const result: SavePreviewTransactionsResult = {
       processedCount: 0,
       savedCount: 0,
       skippedCount: 0,
@@ -68,9 +71,8 @@ export class UploadMfCsvUsecase {
         await this.transactionRepository.createMany(transactionInputs);
       result.savedCount = createResult.length;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      result.errors.push(errorMessage);
+      console.error("Upload CSV error:", error);
+      result.errors.push("データの保存中にエラーが発生しました");
     }
 
     return result;
@@ -80,6 +82,16 @@ export class UploadMfCsvUsecase {
     previewTransaction: PreviewTransaction,
     politicalOrganizationId: string,
   ): CreateTransactionInput {
+    // PreviewTransactionTypeをDbTransactionTypeに変換
+    const dbTransactionType = convertPreviewTypeToDbType(
+      previewTransaction.transaction_type,
+    );
+    if (!dbTransactionType) {
+      throw new Error(
+        `Invalid transaction type: ${previewTransaction.transaction_type}`,
+      );
+    }
+
     return {
       political_organization_id: politicalOrganizationId,
       transaction_no: previewTransaction.transaction_no,
@@ -89,7 +101,7 @@ export class UploadMfCsvUsecase {
           ? previewTransaction.transaction_date
           : previewTransaction.transaction_date.toISOString(),
       ),
-      transaction_type: previewTransaction.transaction_type,
+      transaction_type: dbTransactionType,
       debit_account: previewTransaction.debit_account,
       debit_sub_account: previewTransaction.debit_sub_account || "",
       debit_department: "",

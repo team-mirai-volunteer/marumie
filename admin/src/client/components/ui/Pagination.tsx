@@ -1,6 +1,11 @@
 "use client";
 import "client-only";
 
+const MAX_VISIBLE_BUTTONS = 10;
+const HALF_VISIBLE_BUTTONS = Math.floor(MAX_VISIBLE_BUTTONS / 2);
+const EDGE_THRESHOLD = HALF_VISIBLE_BUTTONS;
+const EDGE_OFFSET = MAX_VISIBLE_BUTTONS - 1;
+
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
@@ -32,33 +37,36 @@ export function Pagination({
       </button>
 
       <div className="flex gap-1">
-        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-          let pageNum: number;
-          if (totalPages <= 5) {
-            pageNum = i + 1;
-          } else if (currentPage <= 3) {
-            pageNum = i + 1;
-          } else if (currentPage >= totalPages - 2) {
-            pageNum = totalPages - 4 + i;
-          } else {
-            pageNum = currentPage - 2 + i;
-          }
+        {Array.from(
+          { length: Math.min(MAX_VISIBLE_BUTTONS, totalPages) },
+          (_, i) => {
+            let pageNum: number;
+            if (totalPages <= MAX_VISIBLE_BUTTONS) {
+              pageNum = i + 1;
+            } else if (currentPage <= EDGE_THRESHOLD) {
+              pageNum = i + 1;
+            } else if (currentPage >= totalPages - HALF_VISIBLE_BUTTONS + 1) {
+              pageNum = totalPages - EDGE_OFFSET + i;
+            } else {
+              pageNum = currentPage - HALF_VISIBLE_BUTTONS + i;
+            }
 
-          return (
-            <button
-              type="button"
-              key={pageNum}
-              onClick={() => onPageChange(pageNum)}
-              className={`px-3 py-2 text-sm border-0 rounded-lg cursor-pointer transition-colors duration-200 text-white ${
-                pageNum === currentPage
-                  ? "bg-primary-accent"
-                  : "bg-primary-hover hover:bg-primary-border"
-              }`}
-            >
-              {pageNum}
-            </button>
-          );
-        })}
+            return (
+              <button
+                type="button"
+                key={pageNum}
+                onClick={() => onPageChange(pageNum)}
+                className={`px-3 py-2 text-sm border-0 rounded-lg cursor-pointer transition-colors duration-200 text-white ${
+                  pageNum === currentPage
+                    ? "bg-primary-accent"
+                    : "bg-primary-hover hover:bg-primary-border"
+                }`}
+              >
+                {pageNum}
+              </button>
+            );
+          },
+        )}
       </div>
 
       <button

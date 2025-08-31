@@ -1,10 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
-import {
-  type DeleteAllTransactionsParams,
-  DeleteAllTransactionsUsecase,
-} from "@/server/usecases/delete-all-transactions-usecase";
+import { DeleteAllTransactionsUsecase } from "@/server/usecases/delete-all-transactions-usecase";
 import {
   type GetTransactionsParams,
   GetTransactionsUsecase,
@@ -39,14 +36,8 @@ export async function GET(request: Request) {
     if (politicalOrganizationId) {
       params.politicalOrganizationId = politicalOrganizationId;
     }
-    if (
-      transactionType &&
-      ["income", "expense", "other"].includes(transactionType)
-    ) {
-      params.transactionType = transactionType as
-        | "income"
-        | "expense"
-        | "other";
+    if (transactionType && ["income", "expense"].includes(transactionType)) {
+      params.transactionType = transactionType as "income" | "expense";
     }
     if (dateFrom) {
       params.dateFrom = new Date(dateFrom);
@@ -70,42 +61,12 @@ export async function GET(request: Request) {
   }
 }
 
-export async function DELETE(request: Request) {
+export async function DELETE(_request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const politicalOrganizationId = searchParams.get("politicalOrganizationId");
-    const transactionType = searchParams.get("transactionType");
-    const dateFrom = searchParams.get("dateFrom");
-    const dateTo = searchParams.get("dateTo");
-    const financialYear = searchParams.get("financialYear");
-
     const repository = new PrismaTransactionRepository(prisma);
     const usecase = new DeleteAllTransactionsUsecase(repository);
 
-    const params: DeleteAllTransactionsParams = {};
-    if (politicalOrganizationId) {
-      params.politicalOrganizationId = politicalOrganizationId;
-    }
-    if (
-      transactionType &&
-      ["income", "expense", "other"].includes(transactionType)
-    ) {
-      params.transactionType = transactionType as
-        | "income"
-        | "expense"
-        | "other";
-    }
-    if (dateFrom) {
-      params.dateFrom = new Date(dateFrom);
-    }
-    if (dateTo) {
-      params.dateTo = new Date(dateTo);
-    }
-    if (financialYear) {
-      params.financialYear = parseInt(financialYear, 10);
-    }
-
-    const result = await usecase.execute(params);
+    const result = await usecase.execute();
 
     return NextResponse.json(result);
   } catch (error) {
