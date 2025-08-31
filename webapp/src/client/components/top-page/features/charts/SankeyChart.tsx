@@ -4,7 +4,7 @@ import "client-only";
 import { ResponsiveSankey } from "@nivo/sankey";
 import React from "react";
 import { createPortal } from "react-dom";
-import type { SankeyData, SankeyNode } from "@/types/sankey";
+import type { SankeyData } from "@/types/sankey";
 import InteractiveRect from "./InteractiveRect";
 
 // 定数定義
@@ -595,7 +595,7 @@ export default function SankeyChart({ data }: SankeyChartProps) {
       `}</style>
       <ResponsiveSankey
         data={sortedData}
-        label={(node: SankeyNode) => {
+        label={(node: { id: string; label?: string }) => {
           return node.label || node.id;
         }}
         margin={{
