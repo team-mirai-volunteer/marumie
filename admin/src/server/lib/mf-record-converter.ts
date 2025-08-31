@@ -1,12 +1,12 @@
 import type { MfCsvRecord } from "./mf-csv-loader";
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
-import type { TransactionType } from "@/shared/models/transaction";
+import type { PreviewTransactionType } from "@/shared/types/preview-transaction";
 
 export interface PreviewTransaction {
   political_organization_id: string;
   transaction_no: string;
   transaction_date: Date | string;
-  transaction_type: TransactionType;
+  transaction_type: PreviewTransactionType;
   debit_account: string;
   debit_sub_account: string | undefined;
   debit_amount: number;
@@ -45,7 +45,7 @@ export class MfRecordConverter {
       political_organization_id: politicalOrganizationId,
       transaction_no: record.transaction_no,
       transaction_date: new Date(record.transaction_date),
-      transaction_type: transactionType as TransactionType,
+      transaction_type: transactionType as PreviewTransactionType,
       debit_account: record.debit_account,
       debit_sub_account: record.debit_sub_account,
       debit_amount: debitAmount,
@@ -128,7 +128,7 @@ export class MfRecordConverter {
   private determineTransactionType(
     debitAccount: string,
     creditAccount: string,
-  ): string {
+  ): PreviewTransactionType {
     if (debitAccount === "相殺項目（費用）") {
       return "offset_expense";
     }
