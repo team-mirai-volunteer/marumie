@@ -61,7 +61,7 @@ export async function GET(request: Request) {
   }
 }
 
-export async function DELETE(request: Request) {
+export async function DELETE(_request: Request) {
   try {
     const repository = new PrismaTransactionRepository(prisma);
     const usecase = new DeleteAllTransactionsUsecase(repository);
