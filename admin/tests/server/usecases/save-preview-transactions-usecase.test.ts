@@ -88,7 +88,7 @@ describe("SavePreviewTransactionsUsecase", () => {
         expect.arrayContaining([
           expect.objectContaining({
             political_organization_id: "test-org-id",
-            transaction_type: expect.stringMatching(/^(income|expense|other)$/),
+            transaction_type: expect.stringMatching(/^(income|expense|offset_income|offset_expense)$/),
           }),
         ])
       );

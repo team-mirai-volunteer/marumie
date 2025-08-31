@@ -3,7 +3,10 @@ import type {
   TransactionFilters,
   TransactionType,
 } from "@/shared/models/transaction";
-import type { DisplayTransaction } from "@/types/display-transaction";
+import type {
+  DisplayTransaction,
+  DisplayTransactionType,
+} from "@/types/display-transaction";
 import type { IPoliticalOrganizationRepository } from "../repositories/interfaces/political-organization-repository.interface";
 import type {
   ITransactionRepository,
@@ -15,7 +18,7 @@ export interface GetTransactionsBySlugParams {
   slug: string;
   page?: number;
   perPage?: number;
-  transactionType?: TransactionType;
+  transactionType?: DisplayTransactionType;
   dateFrom?: Date;
   dateTo?: Date;
   financialYear: number;
@@ -82,14 +85,19 @@ export class GetTransactionsBySlugUsecase {
       };
 
       const [transactionResult, lastUpdatedAt] = await Promise.all([
-        this.transactionRepository.findWithPagination(filters, pagination),
+        this.transactionRepository.findDisplayableTransactions(filters),
         this.transactionRepository.getLastUpdatedAt(),
       ]);
 
-      const transactions = convertToDisplayTransactions(
-        transactionResult.items,
+      // ページネーションを手動で実装（findDisplayableTransactionsではページネーションが無効）
+      const skip = (page - 1) * perPage;
+      const paginatedTransactions = transactionResult.slice(
+        skip,
+        skip + perPage,
       );
-      const total = transactionResult.total;
+
+      const transactions = convertToDisplayTransactions(paginatedTransactions);
+      const total = transactionResult.length;
       const totalPages = Math.ceil(total / perPage);
 
       return {

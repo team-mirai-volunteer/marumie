@@ -3,7 +3,10 @@ import {
   ACCOUNT_CATEGORY_MAPPING,
   type CategoryMapping,
 } from "@/shared/utils/category-mapping";
-import type { DisplayTransaction } from "@/types/display-transaction";
+import type {
+  DisplayTransaction,
+  DisplayTransactionType,
+} from "@/types/display-transaction";
 
 /**
  * アカウント名からカテゴリマッピングを取得する関数
@@ -22,11 +25,12 @@ export function getCategoryMapping(account: string): CategoryMapping {
 
 /**
  * Transaction を DisplayTransaction に変換する関数
- * @param transaction 元のTransactionオブジェクト
+ * offset系のTransactionTypeは型安全性によって除外される
+ * @param transaction 元のTransactionオブジェクト（offset系以外）
  * @returns 表示用に変換されたDisplayTransactionオブジェクト
  */
 export function convertToDisplayTransaction(
-  transaction: Transaction,
+  transaction: Transaction & { transaction_type: DisplayTransactionType },
 ): DisplayTransaction {
   // 年月の生成 (例: "2025.08")
   const date = new Date(transaction.transaction_date);
@@ -72,9 +76,10 @@ export function convertToDisplayTransaction(
 
 /**
  * Transaction配列をDisplayTransaction配列に変換する関数
+ * offset系のTransactionは型安全性によって除外される
  */
 export function convertToDisplayTransactions(
-  transactions: Transaction[],
+  transactions: (Transaction & { transaction_type: DisplayTransactionType })[],
 ): DisplayTransaction[] {
   return transactions.map(convertToDisplayTransaction);
 }

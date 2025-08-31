@@ -7,6 +7,7 @@ import type {
   Transaction,
   TransactionFilters,
 } from "@/shared/models/transaction";
+import type { DisplayTransactionType } from "@/types/display-transaction";
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 import type {
   DailyDonationData,
@@ -38,6 +39,35 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     });
 
     return transactions.map(this.mapToTransaction);
+  }
+
+  /**
+   * webapp専用のTransaction取得メソッド
+   * offset系のTransactionTypeを除外して取得する
+   *
+   * 適切なデータ計算のためにoffset_income, offset_expense はゆくゆく必要だが、
+   * webappでの用途は今のところないため、型とリポジトリレイヤーでfilterを
+   * かけるためにこのメソッド経由で取得するようにする。
+   */
+  async findDisplayableTransactions(
+    filters?: TransactionFilters,
+  ): Promise<(Transaction & { transaction_type: DisplayTransactionType })[]> {
+    const where = this.buildWhereClause(filters);
+
+    // webapp では offset 系のトランザクションを除外
+    where.transactionType = {
+      in: ["income", "expense"] as DisplayTransactionType[],
+    };
+
+    const transactions = await this.prisma.transaction.findMany({
+      where,
+      orderBy: { transactionDate: "desc" },
+    });
+
+    // 型安全性を保証するために、mapした結果に型アサーションを適用
+    return transactions.map(this.mapToTransaction) as (Transaction & {
+      transaction_type: DisplayTransactionType;
+    })[];
   }
 
   async findWithPagination(
