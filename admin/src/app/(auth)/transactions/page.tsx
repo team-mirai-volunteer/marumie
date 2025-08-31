@@ -133,22 +133,28 @@ export default function TransactionsPage() {
                         取引日
                       </th>
                       <th className="px-2 py-3 text-left text-sm font-semibold text-white">
-                        種別
-                      </th>
-                      <th className="px-2 py-3 text-left text-sm font-semibold text-white">
-                        借方
+                        借方勘定科目
                       </th>
                       <th className="px-2 py-3 text-right text-sm font-semibold text-white">
                         借方金額
                       </th>
                       <th className="px-2 py-3 text-left text-sm font-semibold text-white">
-                        貸方
+                        貸方勘定科目
                       </th>
                       <th className="px-2 py-3 text-right text-sm font-semibold text-white">
                         貸方金額
                       </th>
                       <th className="px-2 py-3 text-left text-sm font-semibold text-white">
-                        摘要
+                        種別
+                      </th>
+                      <th className="px-2 py-3 text-left text-sm font-semibold text-white">
+                        カテゴリ
+                      </th>
+                      <th className="px-2 py-3 text-left text-sm font-semibold text-white">
+                        摘要{" "}
+                        <span className="text-xs font-normal">
+                          ※サービスには表示されません
+                        </span>
                       </th>
                     </tr>
                   </thead>
