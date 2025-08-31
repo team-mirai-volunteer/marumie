@@ -1,6 +1,6 @@
 import type { MfCsvRecord } from "./mf-csv-loader";
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
-import type { PreviewTransactionType } from "@/shared/types/preview-transaction";
+import type { PreviewTransactionType } from "@/types/preview-transaction";
 
 export interface PreviewTransaction {
   political_organization_id: string;

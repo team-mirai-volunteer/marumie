@@ -4,7 +4,7 @@ import {
   type PreviewTransaction,
   MfRecordConverter,
 } from "../lib/mf-record-converter";
-import { convertPreviewTypeToDbType } from "@/shared/types/preview-transaction";
+import { convertPreviewTypeToDbType } from "@/types/preview-transaction";
 
 export interface SavePreviewTransactionsInput {
   validTransactions: PreviewTransaction[];
