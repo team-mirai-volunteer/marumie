@@ -145,7 +145,7 @@ export class MfRecordConverter {
   }
 
   public extractFinancialYear(dateString: string): number {
-    const startOfFinancialYear = 4;
+    const startOfFinancialYear = 1;
 
     const date = new Date(dateString);
     const year = date.getFullYear();
