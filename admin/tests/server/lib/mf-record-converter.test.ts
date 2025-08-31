@@ -1,4 +1,4 @@
-import { MfRecordConverter, type PreviewTransaction } from "@/server/lib/mf-record-converter";
+import { MfRecordConverter } from "@/server/lib/mf-record-converter";
 import { MfCsvRecord } from "@/server/lib/mf-csv-loader";
 
 describe("MfRecordConverter", () => {
