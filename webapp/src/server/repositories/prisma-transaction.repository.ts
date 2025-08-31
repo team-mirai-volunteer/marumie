@@ -41,35 +41,6 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     return transactions.map(this.mapToTransaction);
   }
 
-  /**
-   * webapp専用のTransaction取得メソッド
-   * offset系のTransactionTypeを除外して取得する
-   *
-   * 適切なデータ計算のためにoffset_income, offset_expense はゆくゆく必要だが、
-   * webappでの用途は今のところないため、型とリポジトリレイヤーでfilterを
-   * かけるためにこのメソッド経由で取得するようにする。
-   */
-  async findDisplayableTransactions(
-    filters?: TransactionFilters,
-  ): Promise<(Transaction & { transaction_type: DisplayTransactionType })[]> {
-    const where = this.buildWhereClause(filters);
-
-    // webapp では offset 系のトランザクションを除外
-    where.transactionType = {
-      in: ["income", "expense"] as DisplayTransactionType[],
-    };
-
-    const transactions = await this.prisma.transaction.findMany({
-      where,
-      orderBy: { transactionDate: "desc" },
-    });
-
-    // 型安全性を保証するために、mapした結果に型アサーションを適用
-    return transactions.map(this.mapToTransaction) as (Transaction & {
-      transaction_type: DisplayTransactionType;
-    })[];
-  }
-
   async findWithPagination(
     filters?: TransactionFilters,
     pagination?: PaginationOptions,
@@ -321,6 +292,12 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   ): Prisma.TransactionWhereInput {
     const where: Prisma.TransactionWhereInput = {};
 
+    // webapp では常に offset 系のトランザクションを除外
+    where.transactionType = {
+      in: ["income", "expense"] as DisplayTransactionType[],
+    };
+
+    // フィルターで特定の transaction_type が指定されている場合は上書き
     if (filters?.transaction_type) {
       where.transactionType = filters.transaction_type;
     }

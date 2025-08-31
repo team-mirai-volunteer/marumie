@@ -25,13 +25,22 @@ export function getCategoryMapping(account: string): CategoryMapping {
 
 /**
  * Transaction を DisplayTransaction に変換する関数
- * offset系のTransactionTypeは型安全性によって除外される
- * @param transaction 元のTransactionオブジェクト（offset系以外）
+ * @param transaction 元のTransactionオブジェクト
  * @returns 表示用に変換されたDisplayTransactionオブジェクト
  */
 export function convertToDisplayTransaction(
-  transaction: Transaction & { transaction_type: DisplayTransactionType },
+  transaction: Transaction,
 ): DisplayTransaction {
+  // offset系のトランザクションタイプが渡された場合は警告を出力
+  if (
+    transaction.transaction_type === "offset_income" ||
+    transaction.transaction_type === "offset_expense"
+  ) {
+    console.warn(
+      `offset（相殺取引）を直接表示することは想定されていません。データ取得方法が間違っていないか確認しましょう。transaction_type: ${transaction.transaction_type}, transaction ID: ${transaction.id}`,
+    );
+  }
+
   // 年月の生成 (例: "2025.08")
   const date = new Date(transaction.transaction_date);
   const year = date.getFullYear();
@@ -63,7 +72,7 @@ export function convertToDisplayTransaction(
     id: transaction.id,
     date: transaction.transaction_date,
     yearmonth,
-    transactionType: transaction.transaction_type,
+    transactionType: transaction.transaction_type as DisplayTransactionType,
     category,
     subcategory,
     label: account,
@@ -76,10 +85,9 @@ export function convertToDisplayTransaction(
 
 /**
  * Transaction配列をDisplayTransaction配列に変換する関数
- * offset系のTransactionは型安全性によって除外される
  */
 export function convertToDisplayTransactions(
-  transactions: (Transaction & { transaction_type: DisplayTransactionType })[],
+  transactions: Transaction[],
 ): DisplayTransaction[] {
   return transactions.map(convertToDisplayTransaction);
 }
