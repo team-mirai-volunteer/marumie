@@ -7,6 +7,7 @@ import type { PreviewTransaction } from "@/server/lib/mf-record-converter";
 import { apiClient } from "@/client/lib/api-client";
 import TransactionRow from "./TransactionRow";
 import { Pagination } from "@/client/components/ui/Pagination";
+import StatisticsTable from "./StatisticsTable";
 
 interface CsvPreviewProps {
   file: File | null;
@@ -63,6 +64,26 @@ export default function CsvPreview({
             validCount: 0,
             invalidCount: 0,
             skipCount: 0,
+          },
+          statistics: {
+            valid: {
+              income: { count: 0, amount: 0 },
+              expense: { count: 0, amount: 0 },
+              offset_income: { count: 0, amount: 0 },
+              offset_expense: { count: 0, amount: 0 },
+            },
+            invalid: {
+              income: { count: 0, amount: 0 },
+              expense: { count: 0, amount: 0 },
+              offset_income: { count: 0, amount: 0 },
+              offset_expense: { count: 0, amount: 0 },
+            },
+            skip: {
+              income: { count: 0, amount: 0 },
+              expense: { count: 0, amount: 0 },
+              offset_income: { count: 0, amount: 0 },
+              offset_expense: { count: 0, amount: 0 },
+            },
           },
         });
       } finally {
@@ -143,6 +164,9 @@ export default function CsvPreview({
   return (
     <div className="bg-primary-panel rounded-xl p-4 mt-4">
       <h3 className="text-lg font-medium text-white mb-4">CSVプレビュー</h3>
+
+      <StatisticsTable statistics={previewResult.statistics} />
+
       <div className="mb-4">
         <p className="text-primary-muted">
           全 {previewResult.summary.totalCount} 件中{" "}
