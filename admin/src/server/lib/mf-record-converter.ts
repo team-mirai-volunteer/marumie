@@ -41,11 +41,36 @@ export class MfRecordConverter {
       record.credit_account,
     );
 
+    if (transactionType === "invalid") {
+      return {
+        political_organization_id: politicalOrganizationId,
+        transaction_no: record.transaction_no,
+        transaction_date: new Date(record.transaction_date),
+        transaction_type: "income",
+        debit_account: record.debit_account,
+        debit_sub_account: record.debit_sub_account,
+        debit_amount: debitAmount,
+        credit_account: record.credit_account,
+        credit_sub_account: record.credit_sub_account,
+        credit_amount: creditAmount,
+        description: record.description,
+        description_1: descriptionParts.description_1,
+        description_2: descriptionParts.description_2,
+        description_3: descriptionParts.description_3,
+        tags: record.tags,
+        category_key: categoryKey,
+        status: "invalid",
+        errors: [
+          `Invalid account combination: debit=${record.debit_account}, credit=${record.credit_account}`,
+        ],
+      };
+    }
+
     return {
       political_organization_id: politicalOrganizationId,
       transaction_no: record.transaction_no,
       transaction_date: new Date(record.transaction_date),
-      transaction_type: transactionType,
+      transaction_type: transactionType as TransactionType,
       debit_account: record.debit_account,
       debit_sub_account: record.debit_sub_account,
       debit_amount: debitAmount,
@@ -123,14 +148,20 @@ export class MfRecordConverter {
   private determineTransactionType(
     debitAccount: string,
     creditAccount: string,
-  ): TransactionType {
+  ): string {
+    if (debitAccount === "相殺項目（費用）") {
+      return "offset_expense";
+    }
+    if (creditAccount === "相殺項目（収入）") {
+      return "offset_income";
+    }
     if (debitAccount === "普通預金") {
       return "income";
-    } else if (creditAccount === "普通預金") {
-      return "expense";
-    } else {
-      return "other";
     }
+    if (creditAccount === "普通預金") {
+      return "expense";
+    }
+    return "invalid";
   }
 
   public extractFinancialYear(dateString: string): number {

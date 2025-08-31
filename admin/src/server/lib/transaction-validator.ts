@@ -18,6 +18,8 @@ export class TransactionValidator {
     const invalidAccountLabels = new Set<string>();
     const validAccountLabels = new Set(Object.keys(ACCOUNT_CATEGORY_MAPPING));
     validAccountLabels.add("普通預金");
+    validAccountLabels.add("相殺項目（費用）");
+    validAccountLabels.add("相殺項目（収入）");
 
     for (const record of records) {
       const recordErrors: string[] = [];

@@ -68,9 +68,8 @@ export class UploadMfCsvUsecase {
         await this.transactionRepository.createMany(transactionInputs);
       result.savedCount = createResult.length;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      result.errors.push(errorMessage);
+      console.error("Upload CSV error:", error);
+      result.errors.push("データの保存中にエラーが発生しました");
     }
 
     return result;

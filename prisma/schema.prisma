@@ -14,7 +14,8 @@ datasource db {
 enum TransactionType {
   income
   expense
-  other
+  offset_income
+  offset_expense
 }
 
 enum UserRole {
