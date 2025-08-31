@@ -45,19 +45,19 @@ describe("convertCategoryAggregationToSankeyData", () => {
     expect(result.nodes).toEqual(
       expect.arrayContaining([
         // 収入サブカテゴリノード
-        { id: "個人からの寄付", label: "個人からの寄付", nodeType: "income-sub" },
-        { id: "法人その他の団体からの寄附", label: "法人その他の団体からの寄附", nodeType: "income-sub" },
+        { id: "income-sub-個人からの寄付", label: "個人からの寄付", nodeType: "income-sub" },
+        { id: "income-sub-法人その他の団体からの寄附", label: "法人その他の団体からの寄附", nodeType: "income-sub" },
         // 収入カテゴリノード
-        { id: "寄付", label: "寄付", nodeType: "income" },
-        { id: "その他", label: "その他", nodeType: "income" },
+        { id: "income-寄付", label: "寄付", nodeType: "income" },
+        { id: "income-その他の収入", label: "その他の収入", nodeType: "income" },
         // 中央の合計ノード
         { id: "合計", label: "合計", nodeType: "total" },
         // 支出カテゴリノード
-        { id: "政治活動費", label: "政治活動費", nodeType: "expense" },
-        { id: "経常経費", label: "経常経費", nodeType: "expense" },
+        { id: "expense-政治活動費", label: "政治活動費", nodeType: "expense" },
+        { id: "expense-経常経費", label: "経常経費", nodeType: "expense" },
         // 支出サブカテゴリノード
-        { id: "宣伝費", label: "宣伝費", nodeType: "expense-sub" },
-        { id: "人件費", label: "人件費", nodeType: "expense-sub" },
+        { id: "expense-sub-宣伝費", label: "宣伝費", nodeType: "expense-sub" },
+        { id: "expense-sub-人件費", label: "人件費", nodeType: "expense-sub" },
       ])
     );
 
@@ -65,17 +65,17 @@ describe("convertCategoryAggregationToSankeyData", () => {
     expect(result.links).toEqual(
       expect.arrayContaining([
         // 収入サブカテゴリ → 収入カテゴリ
-        { source: "個人からの寄付", target: "寄付", value: 1000000 },
-        { source: "法人その他の団体からの寄附", target: "寄付", value: 500000 },
+        { source: "income-sub-個人からの寄付", target: "income-寄付", value: 1000000 },
+        { source: "income-sub-法人その他の団体からの寄附", target: "income-寄付", value: 500000 },
         // 収入カテゴリ → 合計
-        { source: "寄付", target: "合計", value: 1500000 }, // 合計値
-        { source: "その他", target: "合計", value: 200000 },
+        { source: "income-寄付", target: "合計", value: 1500000 }, // 合計値
+        { source: "income-その他の収入", target: "合計", value: 200000 },
         // 合計 → 支出カテゴリ
-        { source: "合計", target: "政治活動費", value: 800000 },
-        { source: "合計", target: "経常経費", value: 900000 }, // 合計値
+        { source: "合計", target: "expense-政治活動費", value: 800000 },
+        { source: "合計", target: "expense-経常経費", value: 900000 }, // 合計値
         // 支出カテゴリ → 支出サブカテゴリ
-        { source: "政治活動費", target: "宣伝費", value: 800000 },
-        { source: "経常経費", target: "人件費", value: 600000 },
+        { source: "expense-政治活動費", target: "expense-sub-宣伝費", value: 800000 },
+        { source: "expense-経常経費", target: "expense-sub-人件費", value: 600000 },
       ])
     );
 
@@ -107,17 +107,17 @@ describe("convertCategoryAggregationToSankeyData", () => {
     // ノードの検証（サブカテゴリなし、現残高なし）
     expect(result.nodes).toEqual(
       expect.arrayContaining([
-        { id: "寄付", label: "寄付", nodeType: "income" },
+        { id: "income-寄付", label: "寄付", nodeType: "income" },
         { id: "合計", label: "合計", nodeType: "total" },
-        { id: "政治活動費", label: "政治活動費", nodeType: "expense" },
+        { id: "expense-政治活動費", label: "政治活動費", nodeType: "expense" },
       ])
     );
 
     // リンクの検証（3層構造）
     expect(result.links).toEqual(
       expect.arrayContaining([
-        { source: "寄付", target: "合計", value: 1000000 },
-        { source: "合計", target: "政治活動費", value: 1000000 },
+        { source: "income-寄付", target: "合計", value: 1000000 },
+        { source: "合計", target: "expense-政治活動費", value: 1000000 },
       ])
     );
 
@@ -209,13 +209,13 @@ describe("convertCategoryAggregationToSankeyData", () => {
 
     // 寄付カテゴリの合計値の検証（1000000 + 200000 = 1200000）
     const donateLinkToTotal = result.links.find(
-      link => link.source === "寄付" && link.target === "合計"
+      link => link.source === "income-寄付" && link.target === "合計"
     );
     expect(donateLinkToTotal?.value).toBe(1200000);
 
     // サブカテゴリからカテゴリへのリンクも存在することを確認
     const subToCategory = result.links.find(
-      link => link.source === "個人からの寄付" && link.target === "寄付"
+      link => link.source === "income-sub-個人からの寄付" && link.target === "income-寄付"
     );
     expect(subToCategory?.value).toBe(1000000);
   });
@@ -239,13 +239,13 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
     // 「現残高」ノードが追加されることを確認
-    const currentBalanceNode = result.nodes.find(node => node.id === "現残高");
+    const currentBalanceNode = result.nodes.find(node => node.id === "expense-現残高");
     expect(currentBalanceNode).toBeDefined();
     expect(currentBalanceNode?.label).toBe("現残高");
 
     // 「現残高」へのリンクが追加されることを確認
     const linkToCurrentBalance = result.links.find(
-      link => link.source === "合計" && link.target === "現残高"
+      link => link.source === "合計" && link.target === "expense-現残高"
     );
     expect(linkToCurrentBalance).toBeDefined();
     expect(linkToCurrentBalance?.value).toBe(800000); // 200万 - 120万 = 80万
@@ -270,12 +270,12 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
     // 「現残高」ノードが追加されないことを確認
-    const currentBalanceNode = result.nodes.find(node => node.id === "現残高");
+    const currentBalanceNode = result.nodes.find(node => node.id === "expense-現残高");
     expect(currentBalanceNode).toBeUndefined();
 
     // 「現残高」へのリンクが追加されないことを確認
     const linkToCurrentBalance = result.links.find(
-      link => link.target === "現残高"
+      link => link.target === "expense-現残高"
     );
     expect(linkToCurrentBalance).toBeUndefined();
   });
@@ -301,23 +301,23 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
     // 「現残高」ノードが追加されることを確認
-    const currentBalanceNode = result.nodes.find(node => node.id === "現残高");
+    const currentBalanceNode = result.nodes.find(node => node.id === "expense-現残高");
     expect(currentBalanceNode).toBeDefined();
 
     // 「現残高」のリンクが正しく追加されることを確認
     const linkToCurrentBalance = result.links.find(
-      link => link.source === "合計" && link.target === "現残高"
+      link => link.source === "合計" && link.target === "expense-現残高"
     );
     expect(linkToCurrentBalance?.value).toBe(1500000); // 300万 - 150万 = 150万
 
     // 既存のサブカテゴリ構造は維持されることを確認
     const subToCategory = result.links.find(
-      link => link.source === "個人からの寄付" && link.target === "寄付"
+      link => link.source === "income-sub-個人からの寄付" && link.target === "income-寄付"
     );
     expect(subToCategory).toBeDefined();
 
     const categoryToSub = result.links.find(
-      link => link.source === "政治活動費" && link.target === "宣伝費"
+      link => link.source === "expense-政治活動費" && link.target === "expense-sub-宣伝費"
     );
     expect(categoryToSub).toBeDefined();
   });

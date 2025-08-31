@@ -2,7 +2,6 @@ import type {
   Transaction,
   TransactionFilters,
 } from "@/shared/models/transaction";
-import type { DisplayTransactionType } from "@/types/display-transaction";
 
 export interface PaginatedResult<T> {
   items: T[];
@@ -53,6 +52,11 @@ export interface ITransactionRepository {
     pagination?: PaginationOptions,
   ): Promise<PaginatedResult<Transaction>>;
   getCategoryAggregationForSankey(
+    politicalOrganizationId: string,
+    financialYear: number,
+    categoryType?: "political-category" | "friendly-category",
+  ): Promise<SankeyCategoryAggregationResult>;
+  getCategoryAggregationWithTag(
     politicalOrganizationId: string,
     financialYear: number,
   ): Promise<SankeyCategoryAggregationResult>;

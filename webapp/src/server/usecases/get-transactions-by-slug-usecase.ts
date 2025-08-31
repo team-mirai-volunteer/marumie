@@ -1,8 +1,5 @@
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
-import type {
-  TransactionFilters,
-  TransactionType,
-} from "@/shared/models/transaction";
+import type { TransactionFilters } from "@/shared/models/transaction";
 import type {
   DisplayTransaction,
   DisplayTransactionType,

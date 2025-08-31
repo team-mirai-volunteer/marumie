@@ -55,29 +55,41 @@ export const getTransactionPageDataAction = unstable_cache(
       politicalOrganizationRepository,
     );
 
-    // 4つのUsecaseを並列実行
-    const [transactionData, monthlyData, sankeyData, donationData] =
-      await Promise.all([
-        transactionUsecase.execute(params),
-        monthlyUsecase.execute({
-          slug: params.slug,
-          financialYear: params.financialYear,
-        }),
-        sankeyUsecase.execute({
-          slug: params.slug,
-          financialYear: params.financialYear,
-        }),
-        donationUsecase.execute({
-          slug: params.slug,
-          financialYear: params.financialYear,
-          today: new Date(),
-        }),
-      ]);
+    // 5つのUsecaseを並列実行（sankeyは2回実行）
+    const [
+      transactionData,
+      monthlyData,
+      sankeyPoliticalCategoryData,
+      sankeyFriendlyCategoryData,
+      donationData,
+    ] = await Promise.all([
+      transactionUsecase.execute(params),
+      monthlyUsecase.execute({
+        slug: params.slug,
+        financialYear: params.financialYear,
+      }),
+      sankeyUsecase.execute({
+        slug: params.slug,
+        financialYear: params.financialYear,
+        categoryType: "political-category",
+      }),
+      sankeyUsecase.execute({
+        slug: params.slug,
+        financialYear: params.financialYear,
+        categoryType: "friendly-category",
+      }),
+      donationUsecase.execute({
+        slug: params.slug,
+        financialYear: params.financialYear,
+        today: new Date(),
+      }),
+    ]);
 
     return {
       transactionData,
       monthlyData: monthlyData.monthlyData,
-      sankeyData: sankeyData.sankeyData,
+      political: sankeyPoliticalCategoryData.sankeyData,
+      friendly: sankeyFriendlyCategoryData.sankeyData,
       donationSummary: donationData.donationSummary,
     };
   },

@@ -34,7 +34,7 @@ const DIMENSIONS = {
   // マージン・オフセット
   LABEL_OFFSET_DESKTOP: 16,
   LABEL_OFFSET_MOBILE: 5,
-  PERCENTAGE_OFFSET: 5,
+  PERCENTAGE_OFFSET: 2,
   AMOUNT_LABEL_OFFSET: 15,
   TOTAL_LABEL_TOP_OFFSET_DESKTOP: 18,
   TOTAL_LABEL_TOP_OFFSET_MOBILE: 12,
@@ -55,7 +55,7 @@ const DIMENSIONS = {
 } as const;
 
 const TEXT = {
-  MAX_CHARS_PER_LINE: 5,
+  MAX_CHARS_PER_LINE: 7,
   TOTAL_NODE_ID: "合計",
   TOTAL_LABEL_TOP: "収入支出",
   TOTAL_LABEL_PERCENTAGE: "100%",
@@ -72,7 +72,8 @@ const CHART_CONFIG = {
   MARGIN_HORIZONTAL_MOBILE: 40,
   MARGIN_BOTTOM: 30,
   NODE_THICKNESS: 12,
-  NODE_SPACING: 24,
+  NODE_SPACING_DESKTOP: 24,
+  NODE_SPACING_MOBILE: 12,
   LINK_OPACITY: 0.5,
   LINK_HOVER_OPACITY: 0.8,
   HOVER_OPACITY: 0.9,
@@ -139,7 +140,7 @@ const CustomNodesLayer = ({
 
   const handleMouseEnter = (
     event: React.MouseEvent,
-    nodeData: { id: string; value?: number },
+    nodeData: { id: string; label?: string; value?: number },
   ) => {
     // 元のnode情報を再構築（必要な場合）
     const originalNode = nodes.find((n) => n.id === nodeData.id);
@@ -149,7 +150,11 @@ const CustomNodesLayer = ({
       y: event.pageY - 10, // clientY → pageY でスクロール位置を含む
       node:
         originalNode ||
-        ({ id: nodeData.id, value: nodeData.value } as SankeyNodeWithPosition),
+        ({
+          id: nodeData.id,
+          label: nodeData.label,
+          value: nodeData.value,
+        } as SankeyNodeWithPosition),
     });
   };
 
@@ -179,6 +184,7 @@ const CustomNodesLayer = ({
             <InteractiveRect
               key={node.id}
               id={node.id}
+              label={node.label}
               x={x}
               y={node.y}
               width={width}
@@ -211,7 +217,7 @@ const CustomNodesLayer = ({
               pointerEvents: "none",
             }}
           >
-            <strong>{tooltip.node.id}</strong>
+            <strong>{tooltip.node.label || tooltip.node.id}</strong>
             <br />
             {`¥${Math.round(tooltip.node.value || 0).toLocaleString("ja-JP")}`}
           </div>,
@@ -339,7 +345,7 @@ const renderPrimaryLabel = (
   textAnchor: "start" | "middle" | "end" | "inherit",
   isMobile: boolean,
 ) => {
-  const label = node.id; // HACK: 表示にはnode.idを使用（本来はnode.labelを使うべき）
+  const label = node.label || node.id; // 表示にはnode.labelを使用、fallbackでnode.idを使用
 
   // サブカテゴリ判定
   const isSubcategory =
@@ -526,6 +532,14 @@ export default function SankeyChart({ data }: SankeyChartProps) {
         return aOrder - bOrder; // タイプ順
       }
 
+      // 「現残高」は末尾に配置
+      if (a.label === "現残高" && b.label !== "現残高") {
+        return 1; // aを後に
+      }
+      if (b.label === "現残高" && a.label !== "現残高") {
+        return -1; // bを後に
+      }
+
       // 同じタイプ内では金額の絶対値順（降順）
       const aValue = Math.abs(calculateNodeValue(a.id, data.links));
       const bValue = Math.abs(calculateNodeValue(b.id, data.links));
@@ -581,6 +595,9 @@ export default function SankeyChart({ data }: SankeyChartProps) {
       `}</style>
       <ResponsiveSankey
         data={sortedData}
+        label={(node: { id: string; label?: string }) => {
+          return node.label || node.id;
+        }}
         margin={{
           top: !isMobile
             ? CHART_CONFIG.MARGIN_TOP_DESKTOP
@@ -601,7 +618,11 @@ export default function SankeyChart({ data }: SankeyChartProps) {
         nodeOpacity={1}
         nodeBorderWidth={0}
         nodeThickness={CHART_CONFIG.NODE_THICKNESS}
-        nodeSpacing={CHART_CONFIG.NODE_SPACING}
+        nodeSpacing={
+          !isMobile
+            ? CHART_CONFIG.NODE_SPACING_DESKTOP
+            : CHART_CONFIG.NODE_SPACING_MOBILE
+        }
         sort="auto"
         linkOpacity={CHART_CONFIG.LINK_OPACITY}
         linkHoverOpacity={CHART_CONFIG.LINK_OPACITY}
