@@ -1,56 +1,65 @@
-import type {
-  CreateTransactionInput,
-  TransactionType,
-} from "@/shared/models/transaction";
 import type { MfCsvRecord } from "./mf-csv-loader";
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
+import type { TransactionType } from "@/shared/models/transaction";
+
+export interface PreviewTransaction {
+  political_organization_id: string;
+  transaction_no: string;
+  transaction_date: Date | string;
+  transaction_type: TransactionType;
+  debit_account: string;
+  debit_sub_account: string | undefined;
+  debit_amount: number;
+  credit_account: string;
+  credit_sub_account: string | undefined;
+  credit_amount: number;
+  description: string | undefined;
+  description_1: string | undefined;
+  description_2: string | undefined;
+  description_3: string | undefined;
+  tags: string | undefined;
+  category_key: string;
+  status: "valid" | "invalid" | "skip";
+  errors: string[];
+  skipReason?: string;
+}
 
 export class MfRecordConverter {
-  constructor() {}
-
   public convertRow(
     record: MfCsvRecord,
     politicalOrganizationId: string,
-  ): CreateTransactionInput {
+  ): PreviewTransaction {
     const debitAmount = this.parseAmount(record.debit_amount);
     const creditAmount = this.parseAmount(record.credit_amount);
+    const descriptionParts = this.splitDescription(record.description);
+    const categoryKey = this.determineCategoryKey(
+      record.debit_account,
+      record.credit_account,
+    );
     const transactionType = this.determineTransactionType(
       record.debit_account,
       record.credit_account,
     );
-    const financialYear = this.extractFinancialYear(record.transaction_date);
-
-    const descriptionParts = this.splitDescription(record.description);
 
     return {
       political_organization_id: politicalOrganizationId,
       transaction_no: record.transaction_no,
       transaction_date: new Date(record.transaction_date),
-      financial_year: financialYear,
       transaction_type: transactionType,
       debit_account: record.debit_account,
       debit_sub_account: record.debit_sub_account,
-      debit_department: record.debit_department,
-      debit_partner: record.debit_partner,
-      debit_tax_category: record.debit_tax_category,
       debit_amount: debitAmount,
       credit_account: record.credit_account,
       credit_sub_account: record.credit_sub_account,
-      credit_department: record.credit_department,
-      credit_partner: record.credit_partner,
-      credit_tax_category: record.credit_tax_category,
       credit_amount: creditAmount,
       description: record.description,
       description_1: descriptionParts.description_1,
       description_2: descriptionParts.description_2,
       description_3: descriptionParts.description_3,
-      description_detail: undefined,
       tags: record.tags,
-      memo: record.memo,
-      category_key: this.determineCategoryKey(
-        record.debit_account,
-        record.credit_account,
-      ),
+      category_key: categoryKey,
+      status: "valid",
+      errors: [],
     };
   }
 
@@ -62,19 +71,21 @@ export class MfRecordConverter {
     const cleaned = amountStr.replace(/[,\s]/g, "");
     const parsed = parseInt(cleaned, 10);
 
-    return isNaN(parsed) ? 0 : parsed;
+    return Number.isNaN(parsed) ? 0 : parsed;
   }
 
-  private determineTransactionType(
+  private determineCategoryKey(
     debitAccount: string,
     creditAccount: string,
-  ): TransactionType {
+  ): string {
     if (debitAccount === "普通預金") {
-      return "income";
+      const mapping = ACCOUNT_CATEGORY_MAPPING[creditAccount];
+      return mapping ? mapping.key : "undefined";
     } else if (creditAccount === "普通預金") {
-      return "expense";
+      const mapping = ACCOUNT_CATEGORY_MAPPING[debitAccount];
+      return mapping ? mapping.key : "undefined";
     } else {
-      return "other";
+      return "undefined";
     }
   }
 
@@ -91,14 +102,9 @@ export class MfRecordConverter {
 
     switch (parts.length) {
       case 1:
-        return {
-          description_1: parts[0],
-        };
+        return { description_1: parts[0] };
       case 2:
-        return {
-          description_1: parts[0],
-          description_3: parts[1],
-        };
+        return { description_1: parts[0], description_3: parts[1] };
       case 3:
         return {
           description_1: parts[0],
@@ -106,7 +112,6 @@ export class MfRecordConverter {
           description_3: parts[2],
         };
       default:
-        // 4つ以上の場合、3つめ以降を結合
         return {
           description_1: parts[0],
           description_2: parts[1],
@@ -115,23 +120,16 @@ export class MfRecordConverter {
     }
   }
 
-  private determineCategoryKey(
+  private determineTransactionType(
     debitAccount: string,
     creditAccount: string,
-  ): string {
-    // incomeの場合：貸方（credit）のアカウントがカテゴリ
+  ): TransactionType {
     if (debitAccount === "普通預金") {
-      const mapping = ACCOUNT_CATEGORY_MAPPING[creditAccount];
-      return mapping ? mapping.key : "undefined";
-    }
-    // expenseの場合：借方（debit）のアカウントがカテゴリ
-    else if (creditAccount === "普通預金") {
-      const mapping = ACCOUNT_CATEGORY_MAPPING[debitAccount];
-      return mapping ? mapping.key : "undefined";
-    }
-    // その他の場合はデフォルト
-    else {
-      return "undefined";
+      return "income";
+    } else if (creditAccount === "普通預金") {
+      return "expense";
+    } else {
+      return "other";
     }
   }
 

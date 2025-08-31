@@ -1,29 +1,14 @@
-import type { CreateTransactionInput } from "@/shared/models/transaction";
 import { MfCsvLoader } from "../lib/mf-csv-loader";
-import { MfRecordConverter } from "../lib/mf-record-converter";
+import {
+  MfRecordConverter,
+  type PreviewTransaction,
+} from "../lib/mf-record-converter";
 import { TransactionValidator } from "../lib/transaction-validator";
 import type { ITransactionRepository } from "../repositories/interfaces/transaction-repository.interface";
 
 export interface PreviewMfCsvInput {
   csvContent: string;
   politicalOrganizationId: string;
-}
-
-export interface PreviewTransaction {
-  political_organization_id: string;
-  transaction_no: string;
-  transaction_date: Date;
-  debit_account: string;
-  debit_sub_account: string | undefined;
-  debit_amount: number;
-  credit_account: string;
-  credit_sub_account: string | undefined;
-  credit_amount: number;
-  description: string | undefined;
-  tags: string | undefined;
-  status: "valid" | "invalid" | "skip";
-  errors: string[];
-  skipReason?: string;
 }
 
 export interface PreviewMfCsvResult {
@@ -62,7 +47,7 @@ export class PreviewMfCsvUsecase {
 
       const validationResult = this.validator.validateRecords(csvRecords);
 
-      const transactionInputs: CreateTransactionInput[] = csvRecords.map(
+      const previewTransactions: PreviewTransaction[] = csvRecords.map(
         (record) =>
           this.recordConverter.convertRow(
             record,
@@ -70,56 +55,32 @@ export class PreviewMfCsvUsecase {
           ),
       );
 
-      const transactionNos = transactionInputs
+      const transactionNos = previewTransactions
         .map((t) => t.transaction_no)
         .filter(Boolean) as string[];
+
       const existingTransactions =
         await this.transactionRepository.findByTransactionNos(transactionNos);
+
       const existingTransactionNosSet = new Set(
         existingTransactions.map((t) => t.transaction_no),
       );
 
-      const previewTransactions: PreviewTransaction[] = transactionInputs.map(
-        (transaction, index) => {
-          const csvRecord = csvRecords[index];
-          const validationError = validationResult.errors.find(
-            (e) => e.record === csvRecord,
-          );
+      // Apply validation and duplicate check
+      previewTransactions.forEach((transaction, index) => {
+        const csvRecord = csvRecords[index];
+        const validationError = validationResult.errors.find(
+          (e) => e.record === csvRecord,
+        );
 
-          let status: "valid" | "invalid" | "skip";
-          let errors: string[] = [];
-          let skipReason: string | undefined;
-
-          if (validationError) {
-            status = "invalid";
-            errors = validationError.errors;
-          } else if (
-            existingTransactionNosSet.has(transaction.transaction_no || "")
-          ) {
-            status = "skip";
-            skipReason = "重複データのためスキップされます";
-          } else {
-            status = "valid";
-          }
-
-          return {
-            political_organization_id: input.politicalOrganizationId,
-            transaction_no: transaction.transaction_no || "",
-            transaction_date: transaction.transaction_date,
-            debit_account: transaction.debit_account,
-            debit_sub_account: transaction.debit_sub_account,
-            debit_amount: transaction.debit_amount,
-            credit_account: transaction.credit_account,
-            credit_sub_account: transaction.credit_sub_account,
-            credit_amount: transaction.credit_amount,
-            description: transaction.description,
-            tags: transaction.tags,
-            status,
-            errors,
-            skipReason,
-          };
-        },
-      );
+        if (validationError) {
+          transaction.status = "invalid";
+          transaction.errors = validationError.errors;
+        } else if (existingTransactionNosSet.has(transaction.transaction_no)) {
+          transaction.status = "skip";
+          transaction.skipReason = "重複データのためスキップされます";
+        }
+      });
 
       const summary = {
         totalCount: previewTransactions.length,

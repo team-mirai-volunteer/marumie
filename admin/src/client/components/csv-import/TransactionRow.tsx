@@ -1,7 +1,7 @@
 "use client";
 import "client-only";
 
-import type { PreviewTransaction } from "@/server/usecases/preview-mf-csv-usecase";
+import type { PreviewTransaction } from "@/server/lib/mf-record-converter";
 
 interface TransactionRowProps {
   record: PreviewTransaction;

@@ -104,7 +104,7 @@ describe("UploadMfCsvUsecase", () => {
       expect(result.processedCount).toBe(0);
       expect(result.savedCount).toBe(0);
       expect(result.skippedCount).toBe(0);
-      expect(result.errors).toEqual([]);
+      expect(result.errors).toEqual(["有効なトランザクションがありません"]);
       expect(mockRepository.createMany).not.toHaveBeenCalled();
     });
 

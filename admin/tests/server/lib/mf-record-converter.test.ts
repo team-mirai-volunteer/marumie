@@ -1,6 +1,5 @@
-import { MfRecordConverter } from "@/server/lib/mf-record-converter";
+import { MfRecordConverter, type PreviewTransaction } from "@/server/lib/mf-record-converter";
 import { MfCsvRecord } from "@/server/lib/mf-csv-loader";
-import { CreateTransactionInput } from "@/shared/models/transaction";
 
 describe("MfRecordConverter", () => {
   let converter: MfRecordConverter;
@@ -45,6 +44,7 @@ describe("MfRecordConverter", () => {
 
       expect(result.debit_amount).toBe(1500000);
       expect(result.credit_amount).toBe(500000);
+      expect(result.transaction_type).toBe("other");
     });
 
     it("should handle amounts with commas", () => {
@@ -116,31 +116,6 @@ describe("MfRecordConverter", () => {
       expect(result.transaction_type).toBe("other");
     });
 
-    it("should calculate financial year correctly", () => {
-      // Test March (before April) - should be previous year
-      const marchRecord = createMockRecord({
-        transaction_date: "2025/3/15",
-      });
-      const marchResult = converter.convertRow(marchRecord, "test-org-id");
-      expect(marchResult.financial_year).toBe(2024);
-
-      // Test April (start of fiscal year) - should be current year
-      const aprilRecord = createMockRecord({
-        transaction_date: "2025/4/1",
-      });
-      const aprilResult = converter.convertRow(aprilRecord, "test-org-id");
-      expect(aprilResult.financial_year).toBe(2025);
-
-      // Test December (after April) - should be current year
-      const decemberRecord = createMockRecord({
-        transaction_date: "2025/12/31",
-      });
-      const decemberResult = converter.convertRow(
-        decemberRecord,
-        "test-org-id",
-      );
-      expect(decemberResult.financial_year).toBe(2025);
-    });
 
     it("should preserve all other fields from the original record", () => {
       const record = createMockRecord({
@@ -160,7 +135,6 @@ describe("MfRecordConverter", () => {
       expect(result.debit_account).toBe("普通預金");
       expect(result.debit_sub_account).toBe("テスト銀行");
       expect(result.tags).toBe("テストタグ");
-      expect(result.memo).toBe("テストメモ");
     });
 
     it("should prioritize debit_account when both accounts are 普通預金", () => {
@@ -254,16 +228,14 @@ describe("MfRecordConverter", () => {
       });
     });
 
-    it("should preserve tags and memo fields as-is", () => {
+    it("should preserve tags field as-is", () => {
       const record = createMockRecord({
         tags: "テストタグ値",
-        memo: "テストメモ値",
       });
 
       const result = converter.convertRow(record, "test-org-id");
 
       expect(result.tags).toBe("テストタグ値");
-      expect(result.memo).toBe("テストメモ値");
     });
   });
 

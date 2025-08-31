@@ -2,10 +2,8 @@
 import "client-only";
 
 import { useEffect, useRef, useState } from "react";
-import type {
-  PreviewMfCsvResult,
-  PreviewTransaction,
-} from "@/server/usecases/preview-mf-csv-usecase";
+import type { PreviewMfCsvResult } from "@/server/usecases/preview-mf-csv-usecase";
+import type { PreviewTransaction } from "@/server/lib/mf-record-converter";
 import { apiClient } from "@/client/lib/api-client";
 import TransactionRow from "./TransactionRow";
 import { Pagination } from "@/client/components/ui/Pagination";
