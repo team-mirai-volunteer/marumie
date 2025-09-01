@@ -10,7 +10,6 @@ import {
 } from "@/server/usecases/preview-mf-csv-usecase";
 import type { ITransactionRepository } from "@/server/repositories/interfaces/transaction-repository.interface";
 import type { CreateTransactionInput } from "@/shared/models/transaction";
-import { convertPreviewTypeToDbType } from "@/types/preview-transaction";
 
 describe("SavePreviewTransactionsUsecase", () => {
   let usecase: SavePreviewTransactionsUsecase;
@@ -163,7 +162,7 @@ describe("SavePreviewTransactionsUsecase", () => {
             transaction_no: t.transaction_no,
             transaction_date: new Date(t.transaction_date),
             financial_year: new Date(t.transaction_date).getFullYear(),
-            transaction_type: convertPreviewTypeToDbType(t.transaction_type)!,
+            transaction_type: t.transaction_type!,
             debit_account: t.debit_account,
             debit_sub_account: t.debit_sub_account || '',
             debit_department: '',

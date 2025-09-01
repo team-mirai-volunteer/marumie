@@ -4,7 +4,6 @@ import {
   type PreviewTransaction,
   MfRecordConverter,
 } from "../lib/mf-record-converter";
-import { convertPreviewTypeToDbType } from "@/types/preview-transaction";
 
 export interface SavePreviewTransactionsInput {
   validTransactions: PreviewTransaction[];
@@ -47,7 +46,7 @@ export class SavePreviewTransactionsUsecase {
       }
 
       const validTransactions = input.validTransactions.filter(
-        (t) => t.status === "valid",
+        (t) => t.status === "valid" && t.transaction_type !== null,
       );
 
       result.processedCount = input.validTransactions.length;
@@ -82,11 +81,8 @@ export class SavePreviewTransactionsUsecase {
     previewTransaction: PreviewTransaction,
     politicalOrganizationId: string,
   ): CreateTransactionInput {
-    // PreviewTransactionTypeをDbTransactionTypeに変換
-    const dbTransactionType = convertPreviewTypeToDbType(
-      previewTransaction.transaction_type,
-    );
-    if (!dbTransactionType) {
+    // transaction_typeがnullの場合はエラー
+    if (previewTransaction.transaction_type === null) {
       throw new Error(
         `Invalid transaction type: ${previewTransaction.transaction_type}`,
       );
@@ -101,7 +97,7 @@ export class SavePreviewTransactionsUsecase {
           ? previewTransaction.transaction_date
           : previewTransaction.transaction_date.toISOString(),
       ),
-      transaction_type: dbTransactionType,
+      transaction_type: previewTransaction.transaction_type,
       debit_account: previewTransaction.debit_account,
       debit_sub_account: previewTransaction.debit_sub_account || "",
       debit_department: "",

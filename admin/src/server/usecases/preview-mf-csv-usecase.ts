@@ -174,13 +174,8 @@ export class PreviewMfCsvUsecase {
         continue;
       }
 
-      // transactionTypeが有効な値かチェック
-      if (
-        transactionType !== "income" &&
-        transactionType !== "expense" &&
-        transactionType !== "offset_income" &&
-        transactionType !== "offset_expense"
-      ) {
+      // transactionTypeがnullの場合はスキップ
+      if (transactionType === null) {
         continue;
       }
 
