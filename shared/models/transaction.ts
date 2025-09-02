@@ -8,7 +8,7 @@ export type TransactionType =
 export interface Transaction {
   id: string;
   political_organization_id: string;
-  transaction_no?: string;
+  transaction_no: string;
   transaction_date: Date;
   financial_year: number;
   transaction_type: TransactionType;
