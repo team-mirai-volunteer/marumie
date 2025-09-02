@@ -16,6 +16,7 @@ export interface GetDailyDonationParams {
   slug: string;
   financialYear: number;
   today: Date;
+  daysRange?: number;
 }
 
 export interface GetDailyDonationResult {
@@ -41,16 +42,28 @@ export class GetDailyDonationUsecase {
         );
       }
 
-      // 日次寄付データを取得
+      // 指定日数前の日付を計算
+      const daysRange = params.daysRange ?? 90;
+      const fromDaysAgo = this.calculateDaysAgo(params.today, daysRange);
+
+      // 日次寄付データを取得（指定日数分）
       const dailyDonationData =
         await this.transactionRepository.getDailyDonationData(
           politicalOrganization.id,
           params.financialYear,
+          fromDaysAgo,
         );
+
+      // 寄付がない日を埋めて指定日数分のレコード作成
+      const paddedDailyData = this.padMissingDays(
+        dailyDonationData,
+        fromDaysAgo,
+        params.today,
+      );
 
       // Usecaseでサマリー計算を実行
       const donationSummary = this.calculateDonationSummary(
-        dailyDonationData,
+        paddedDailyData,
         params.today,
       );
 
@@ -100,5 +113,49 @@ export class GetDailyDonationUsecase {
       amountDayOverDay,
       countDayOverDay,
     };
+  }
+
+  private calculateDaysAgo(today: Date, daysRange: number): Date {
+    const fromDaysAgo = new Date(today);
+    fromDaysAgo.setDate(fromDaysAgo.getDate() - (daysRange - 1)); // 今日を含めて指定日数
+    return fromDaysAgo;
+  }
+
+  private padMissingDays(
+    dailyDonationData: DailyDonationData[],
+    fromDate: Date,
+    toDate: Date,
+  ): DailyDonationData[] {
+    const result: DailyDonationData[] = [];
+    const currentDate = new Date(fromDate);
+    let cumulativeAmount = 0;
+
+    // データをMapに変換して高速検索
+    const dataMap = new Map<string, DailyDonationData>();
+    for (const data of dailyDonationData) {
+      dataMap.set(data.date, data);
+    }
+
+    while (currentDate <= toDate) {
+      const dateStr = currentDate.toISOString().split("T")[0];
+      const existingData = dataMap.get(dateStr);
+
+      if (existingData) {
+        // 既存データがある場合
+        result.push(existingData);
+        cumulativeAmount = existingData.cumulativeAmount;
+      } else {
+        // 寄付がない日の場合、0で埋める
+        result.push({
+          date: dateStr,
+          dailyAmount: 0,
+          cumulativeAmount,
+        });
+      }
+
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return result;
   }
 }
