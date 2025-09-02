@@ -17,17 +17,17 @@ function calculateFinancialData(sankeyData: SankeyData | null) {
     .filter((link: SankeyLink) => link.target === "合計")
     .reduce((sum: number, link: SankeyLink) => sum + link.value, 0);
 
-  // 支出の計算（「合計」ノードからの流出、ただし「expense-現残高」は除く）
+  // 支出の計算（「合計」ノードからの流出、ただし「expense-収支」は除く）
   const expense = sankeyData.links
     .filter(
       (link: SankeyLink) =>
-        link.source === "合計" && link.target !== "expense-現残高",
+        link.source === "合計" && link.target !== "expense-収支",
     )
     .reduce((sum: number, link: SankeyLink) => sum + link.value, 0);
 
-  // 残高の計算（「expense-現残高」への流出があればその値、なければ0）
+  // 残高の計算（「expense-収支」への流出があればその値、なければ0）
   const balanceLink = sankeyData.links.find(
-    (link: SankeyLink) => link.target === "expense-現残高",
+    (link: SankeyLink) => link.target === "expense-収支",
   );
   const balance = balanceLink ? balanceLink.value : 0;
 
