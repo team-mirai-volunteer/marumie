@@ -67,7 +67,16 @@ export interface ITransactionRepository {
   getDailyDonationData(
     politicalOrganizationId: string,
     financialYear: number,
-    fromDate?: Date,
   ): Promise<DailyDonationData[]>;
+  getDailyDonationDataInRange(
+    politicalOrganizationId: string,
+    financialYear: number,
+    fromDate: Date,
+    toDate: Date,
+  ): Promise<DailyDonationData[]>;
+  getTotalDonationAmount(
+    politicalOrganizationId: string,
+    financialYear: number,
+  ): Promise<number>;
   getLastUpdatedAt(): Promise<Date | null>;
 }

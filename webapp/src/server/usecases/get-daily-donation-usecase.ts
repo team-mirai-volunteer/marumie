@@ -16,7 +16,7 @@ export interface GetDailyDonationParams {
   slug: string;
   financialYear: number;
   today: Date;
-  daysRange?: number;
+  daysRange: number;
 }
 
 export interface GetDailyDonationResult {
@@ -43,15 +43,22 @@ export class GetDailyDonationUsecase {
       }
 
       // 指定日数前の日付を計算
-      const daysRange = params.daysRange ?? 90;
-      const fromDaysAgo = this.calculateDaysAgo(params.today, daysRange);
+      const fromDaysAgo = this.calculateDaysAgo(params.today, params.daysRange);
 
       // 日次寄付データを取得（指定日数分）
       const dailyDonationData =
-        await this.transactionRepository.getDailyDonationData(
+        await this.transactionRepository.getDailyDonationDataInRange(
           politicalOrganization.id,
           params.financialYear,
           fromDaysAgo,
+          params.today,
+        );
+
+      // 年度全体の累計寄付金額を取得
+      const totalDonationAmount =
+        await this.transactionRepository.getTotalDonationAmount(
+          politicalOrganization.id,
+          params.financialYear,
         );
 
       // 寄付がない日を埋めて指定日数分のレコード作成
@@ -64,6 +71,7 @@ export class GetDailyDonationUsecase {
       // Usecaseでサマリー計算を実行
       const donationSummary = this.calculateDonationSummary(
         paddedDailyData,
+        totalDonationAmount,
         params.today,
       );
 
@@ -77,11 +85,11 @@ export class GetDailyDonationUsecase {
 
   private calculateDonationSummary(
     dailyDonationData: DailyDonationData[],
+    totalDonationAmount: number,
     today: Date,
   ): DonationSummaryData {
-    // 統計情報を計算
-    const totalAmount =
-      dailyDonationData[dailyDonationData.length - 1]?.cumulativeAmount || 0;
+    // 統計情報を計算（累計金額は専用メソッドから取得）
+    const totalAmount = totalDonationAmount;
     const totalDays = dailyDonationData.length;
 
     // 今日と昨日の日付を文字列で準備

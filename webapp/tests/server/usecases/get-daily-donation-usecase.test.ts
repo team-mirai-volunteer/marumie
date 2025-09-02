@@ -9,7 +9,8 @@ describe("GetDailyDonationUsecase", () => {
 
   beforeEach(() => {
     mockTransactionRepository = {
-      getDailyDonationData: jest.fn(),
+      getDailyDonationDataInRange: jest.fn(),
+      getTotalDonationAmount: jest.fn(),
     } as any;
 
     mockPoliticalOrganizationRepository = {
@@ -23,11 +24,19 @@ describe("GetDailyDonationUsecase", () => {
   });
 
   describe("execute", () => {
-    const mockOrganization = { id: "org-1", slug: "test-org" };
+    const mockOrganization = { 
+      id: "org-1", 
+      slug: "test-org", 
+      name: "Test Organization",
+      description: "Test description",
+      createdAt: new Date("2024-01-01"),
+      updatedAt: new Date("2024-01-01")
+    };
     const params = {
       slug: "test-org",
       financialYear: 2025,
       today: new Date("2025-03-01"),
+      daysRange: 90,
     };
 
     beforeEach(() => {
@@ -49,21 +58,30 @@ describe("GetDailyDonationUsecase", () => {
         { date: "2025-01-03", dailyAmount: 1500, cumulativeAmount: 4500 },
       ];
 
-      mockTransactionRepository.getDailyDonationData.mockResolvedValue(mockDailyData);
+      mockTransactionRepository.getDailyDonationDataInRange.mockResolvedValue(mockDailyData);
+      mockTransactionRepository.getTotalDonationAmount.mockResolvedValue(10000);
 
       const result = await usecase.execute(params);
 
       expect(result.donationSummary.dailyDonationData).toHaveLength(90);
-      expect(mockTransactionRepository.getDailyDonationData).toHaveBeenCalledWith(
+      expect(result.donationSummary.totalAmount).toBe(10000); // 専用メソッドから取得
+      expect(mockTransactionRepository.getDailyDonationDataInRange).toHaveBeenCalledWith(
         "org-1",
         2025,
-        new Date("2024-12-02") // 90日前の日付（2025/3/1 - 89日）
+        new Date("2024-12-02"), // 90日前の日付（2025/3/1 - 89日）
+        new Date("2025-03-01") // 今日の日付
+      );
+      expect(mockTransactionRepository.getTotalDonationAmount).toHaveBeenCalledWith(
+        "org-1",
+        2025
       );
     });
 
     it("should use custom days range when provided", async () => {
       const mockDailyData: DailyDonationData[] = [];
-      mockTransactionRepository.getDailyDonationData.mockResolvedValue(mockDailyData);
+      
+      mockTransactionRepository.getDailyDonationDataInRange.mockResolvedValue(mockDailyData);
+      mockTransactionRepository.getTotalDonationAmount.mockResolvedValue(5000);
 
       const result = await usecase.execute({
         ...params,
@@ -71,10 +89,16 @@ describe("GetDailyDonationUsecase", () => {
       });
 
       expect(result.donationSummary.dailyDonationData).toHaveLength(30);
-      expect(mockTransactionRepository.getDailyDonationData).toHaveBeenCalledWith(
+      expect(result.donationSummary.totalAmount).toBe(5000);
+      expect(mockTransactionRepository.getDailyDonationDataInRange).toHaveBeenCalledWith(
         "org-1",
         2025,
-        new Date("2025-01-31") // 30日前の日付（2025/3/1 - 29日）
+        new Date("2025-01-31"), // 30日前の日付（2025/3/1 - 29日）
+        new Date("2025-03-01")
+      );
+      expect(mockTransactionRepository.getTotalDonationAmount).toHaveBeenCalledWith(
+        "org-1",
+        2025
       );
     });
 
@@ -84,7 +108,8 @@ describe("GetDailyDonationUsecase", () => {
         { date: "2025-03-01", dailyAmount: 500, cumulativeAmount: 1500 },
       ];
 
-      mockTransactionRepository.getDailyDonationData.mockResolvedValue(mockDailyData);
+      mockTransactionRepository.getDailyDonationDataInRange.mockResolvedValue(mockDailyData);
+      mockTransactionRepository.getTotalDonationAmount.mockResolvedValue(2000);
 
       const result = await usecase.execute({
         ...params,
@@ -119,7 +144,8 @@ describe("GetDailyDonationUsecase", () => {
         { date: "2025-03-01", dailyAmount: 1500, cumulativeAmount: 2500 },
       ];
 
-      mockTransactionRepository.getDailyDonationData.mockResolvedValue(mockDailyData);
+      mockTransactionRepository.getDailyDonationDataInRange.mockResolvedValue(mockDailyData);
+      mockTransactionRepository.getTotalDonationAmount.mockResolvedValue(5000);
 
       const result = await usecase.execute({
         ...params,
@@ -127,12 +153,14 @@ describe("GetDailyDonationUsecase", () => {
       });
 
       const summary = result.donationSummary;
+      expect(summary.totalAmount).toBe(5000); // 専用メソッドから取得
       expect(summary.amountDayOverDay).toBe(500); // 1500 - 1000
       expect(summary.countDayOverDay).toBe(0); // 両日とも寄付があるので差は0
     });
 
     it("should handle empty donation data", async () => {
-      mockTransactionRepository.getDailyDonationData.mockResolvedValue([]);
+      mockTransactionRepository.getDailyDonationDataInRange.mockResolvedValue([]);
+      mockTransactionRepository.getTotalDonationAmount.mockResolvedValue(0);
 
       const result = await usecase.execute(params);
 
@@ -149,7 +177,8 @@ describe("GetDailyDonationUsecase", () => {
         { date: "2025-08-03", dailyAmount: 2000, cumulativeAmount: 3000 },
       ];
 
-      mockTransactionRepository.getDailyDonationData.mockResolvedValue(mockDailyData);
+      mockTransactionRepository.getDailyDonationDataInRange.mockResolvedValue(mockDailyData);
+      mockTransactionRepository.getTotalDonationAmount.mockResolvedValue(8000);
 
       const result = await usecase.execute({
         ...params,
@@ -184,10 +213,15 @@ describe("GetDailyDonationUsecase", () => {
       });
 
       // repositoryが正しい日付範囲で呼ばれることを確認
-      expect(mockTransactionRepository.getDailyDonationData).toHaveBeenCalledWith(
+      expect(mockTransactionRepository.getDailyDonationDataInRange).toHaveBeenCalledWith(
         "org-1",
         2025,
-        new Date("2025-08-01") // 3日前の日付（2025/8/3 - 2日）
+        new Date("2025-08-01"), // 3日前の日付（2025/8/3 - 2日）
+        new Date("2025-08-03")
+      );
+      expect(mockTransactionRepository.getTotalDonationAmount).toHaveBeenCalledWith(
+        "org-1",
+        2025
       );
     });
   });

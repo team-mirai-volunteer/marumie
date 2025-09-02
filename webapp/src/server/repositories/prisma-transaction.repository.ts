@@ -305,6 +305,74 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     return dailyData;
   }
 
+  async getDailyDonationDataInRange(
+    politicalOrganizationId: string,
+    financialYear: number,
+    fromDate: Date,
+    toDate: Date,
+  ): Promise<DailyDonationData[]> {
+    // 寄付カテゴリに該当するアカウントキーを抽出
+    const donationAccountKeys = Object.keys(ACCOUNT_CATEGORY_MAPPING).filter(
+      (key) => ACCOUNT_CATEGORY_MAPPING[key].category === "寄付",
+    );
+
+    // 寄付に該当するアカウントからの収入データを日別に集計
+    const dailyDonationResults = await this.prisma.$queryRaw<
+      Array<{ transaction_date: Date; total_amount: number }>
+    >`
+      SELECT
+        transaction_date,
+        SUM(credit_amount) as total_amount
+      FROM transactions
+      WHERE political_organization_id = ${BigInt(politicalOrganizationId)}
+        AND financial_year = ${financialYear}
+        AND transaction_type = 'income'
+        AND credit_account IN (${Prisma.join(donationAccountKeys)})
+        AND transaction_date >= ${fromDate}
+        AND transaction_date <= ${toDate}
+      GROUP BY transaction_date
+      ORDER BY transaction_date
+    `;
+
+    // 日付文字列にフォーマットし、累積額を計算
+    let cumulativeAmount = 0;
+    const dailyData: DailyDonationData[] = dailyDonationResults.map((item) => {
+      const dailyAmount = Number(item.total_amount);
+      cumulativeAmount += dailyAmount;
+
+      return {
+        date: item.transaction_date.toISOString().split("T")[0], // YYYY-MM-DD形式
+        dailyAmount,
+        cumulativeAmount,
+      };
+    });
+
+    return dailyData;
+  }
+
+  async getTotalDonationAmount(
+    politicalOrganizationId: string,
+    financialYear: number,
+  ): Promise<number> {
+    // 寄付カテゴリに該当するアカウントキーを抽出
+    const donationAccountKeys = Object.keys(ACCOUNT_CATEGORY_MAPPING).filter(
+      (key) => ACCOUNT_CATEGORY_MAPPING[key].category === "寄付",
+    );
+
+    // 寄付に該当するアカウントからの収入データを合計
+    const result = await this.prisma.$queryRaw<Array<{ total_amount: number }>>`
+      SELECT
+        SUM(credit_amount) as total_amount
+      FROM transactions
+      WHERE political_organization_id = ${BigInt(politicalOrganizationId)}
+        AND financial_year = ${financialYear}
+        AND transaction_type = 'income'
+        AND credit_account IN (${Prisma.join(donationAccountKeys)})
+    `;
+
+    return Number(result[0]?.total_amount || 0);
+  }
+
   async getLastUpdatedAt(): Promise<Date | null> {
     const result = await this.prisma.transaction.aggregate({
       _max: {

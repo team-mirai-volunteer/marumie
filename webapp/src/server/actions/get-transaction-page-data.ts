@@ -82,6 +82,7 @@ export const getTransactionPageDataAction = unstable_cache(
         slug: params.slug,
         financialYear: params.financialYear,
         today: new Date(),
+        daysRange: 90,
       }),
     ]);
 
