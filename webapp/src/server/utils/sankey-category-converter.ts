@@ -184,14 +184,14 @@ export function convertCategoryAggregationToSankeyData(
     0,
   );
 
-  // 収入 > 支出の場合、「現残高」を追加
+  // 収入 > 支出の場合、「収支」を追加
   if (totalIncome > totalExpense) {
     const currentBalance = totalIncome - totalExpense;
-    expenseByCategory.set("現残高", currentBalance);
+    expenseByCategory.set("収支", currentBalance);
 
-    // 支出データに「現残高」レコードを追加（UI用）
+    // 支出データに「収支」レコードを追加（UI用）
     processedAggregation.expense.push({
-      category: "現残高",
+      category: "収支",
       totalAmount: currentBalance,
     });
   }
