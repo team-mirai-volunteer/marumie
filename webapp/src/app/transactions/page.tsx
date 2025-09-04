@@ -8,7 +8,7 @@ import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumn from "@/client/components/layout/MainColumn";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 import InteractiveTransactionTable from "@/client/components/top-page/features/transactions-table/InteractiveTransactionTable";
-import { getTransactionsBySlugAction } from "@/server/actions/get-transactions-by-slug";
+import { loadTransactionsPageData } from "@/server/loaders/load-transactions-page-data";
 import { formatUpdatedAt } from "@/server/utils/format-date";
 
 interface TransactionsPageProps {
@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const currentFinancialYear = 2025;
 
   try {
-    const result = await getTransactionsBySlugAction({
+    const result = await loadTransactionsPageData({
       slug,
       page: 1,
       perPage: 1,
@@ -81,7 +81,7 @@ export default async function TransactionsPage({
   const financialYear = 2025; // 固定値
 
   try {
-    const data = await getTransactionsBySlugAction({
+    const data = await loadTransactionsPageData({
       slug,
       page,
       perPage,

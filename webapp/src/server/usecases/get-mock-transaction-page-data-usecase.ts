@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { GetTransactionPageDataParams } from "@/server/actions/get-transaction-page-data";
+import type { TopPageDataParams } from "@/server/loaders/load-top-page-data";
 import type { MonthlyAggregation } from "@/server/repositories/interfaces/transaction-repository.interface";
 import type { DonationSummaryData } from "@/server/usecases/get-daily-donation-usecase";
 import type { SankeyData } from "@/types/sankey";
@@ -81,7 +81,7 @@ const MOCK_TRANSACTION_DATA = {
 };
 
 export class GetMockTransactionPageDataUsecase {
-  async execute(params: GetTransactionPageDataParams) {
+  async execute(params: TopPageDataParams) {
     console.log("🔧 Using mock data for development");
 
     return {

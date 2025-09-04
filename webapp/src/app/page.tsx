@@ -6,7 +6,7 @@ import CashFlowSection from "@/client/components/top-page/CashFlowSection";
 import DonationSummarySection from "@/client/components/top-page/DonationSummarySection";
 import MonthlyTrendsSection from "@/client/components/top-page/MonthlyTrendsSection";
 import TransactionsSection from "@/client/components/top-page/TransactionsSection";
-import { getTransactionPageDataAction } from "@/server/actions/get-transaction-page-data";
+import { loadTopPageData } from "@/server/loaders/load-top-page-data";
 import { formatUpdatedAt } from "@/server/utils/format-date";
 
 export const revalidate = 300; // 5 minutes
@@ -15,7 +15,7 @@ export default async function Home() {
   const slug = "team-mirai";
 
   // 統合アクションで全データを取得
-  const data = await getTransactionPageDataAction({
+  const data = await loadTopPageData({
     slug,
     page: 1,
     perPage: 6, // 表示用に7件のみ取得
