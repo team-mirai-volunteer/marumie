@@ -9,15 +9,18 @@ import type {
   UploadCsvRequest,
   UploadCsvResponse,
 } from "@/server/actions/upload-csv";
+import type { PreviewCsvRequest } from "@/server/actions/preview-csv";
 
 interface CsvUploadClientProps {
   organizations: PoliticalOrganization[];
   uploadAction: (data: UploadCsvRequest) => Promise<UploadCsvResponse>;
+  previewAction: (data: PreviewCsvRequest) => Promise<PreviewMfCsvResult>;
 }
 
 export default function CsvUploadClient({
   organizations,
   uploadAction,
+  previewAction,
 }: CsvUploadClientProps) {
   const politicalOrgSelectId = useId();
   const csvFileInputId = useId();
@@ -135,6 +138,7 @@ export default function CsvUploadClient({
         file={file}
         politicalOrganizationId={politicalOrganizationId}
         onPreviewComplete={handlePreviewComplete}
+        previewAction={previewAction}
       />
 
       {(() => {
