@@ -1,23 +1,4 @@
 import type { Transaction } from "@/shared/models/transaction";
-import type { PreviewMfCsvResult } from "@/server/usecases/preview-mf-csv-usecase";
-import type { PreviewTransaction } from "@/server/lib/mf-record-converter";
-
-export interface PreviewCsvRequest {
-  file: File;
-  politicalOrganizationId: string;
-}
-
-export interface UploadCsvRequest {
-  validTransactions: PreviewTransaction[];
-  politicalOrganizationId: string;
-}
-
-export interface UploadCsvResponse {
-  ok: boolean;
-  processedCount: number;
-  savedCount: number;
-  message: string;
-}
 
 export interface TransactionListResponse {
   transactions: Transaction[];
@@ -77,45 +58,6 @@ export class ApiClient {
     }
 
     return response.json();
-  }
-
-  private async requestFormData<T>(
-    url: string,
-    formData: FormData,
-  ): Promise<T> {
-    const response = await fetch(`${this.baseUrl}${url}`, {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      const errorMsg = errorData.error || "Upload failed";
-      const details = errorData.details
-        ? ` Details: ${Array.isArray(errorData.details) ? errorData.details.join(", ") : errorData.details}`
-        : "";
-      throw new Error(errorMsg + details);
-    }
-
-    return response.json();
-  }
-
-  async previewCsv(data: PreviewCsvRequest): Promise<PreviewMfCsvResult> {
-    const formData = new FormData();
-    formData.append("file", data.file);
-    formData.append("politicalOrganizationId", data.politicalOrganizationId);
-
-    return this.requestFormData<PreviewMfCsvResult>(
-      "/api/preview-csv",
-      formData,
-    );
-  }
-
-  async uploadCsv(data: UploadCsvRequest): Promise<UploadCsvResponse> {
-    return this.request<UploadCsvResponse>("/api/upload-csv", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
   }
 
   async getTransactions(params?: {
