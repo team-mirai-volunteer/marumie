@@ -1,10 +1,14 @@
 // DB保存用のTransactionType (invalidは含まない)
-export type TransactionType = 'income' | 'expense' | 'offset_income' | 'offset_expense';
+export type TransactionType =
+  | "income"
+  | "expense"
+  | "offset_income"
+  | "offset_expense";
 
 export interface Transaction {
   id: string;
   political_organization_id: string;
-  transaction_no?: string;
+  transaction_no: string;
   transaction_date: Date;
   financial_year: number;
   transaction_type: TransactionType;
@@ -34,7 +38,7 @@ export interface Transaction {
 
 export interface CreateTransactionInput {
   political_organization_id: string;
-  transaction_no?: string;
+  transaction_no: string;
   transaction_date: Date;
   financial_year: number;
   transaction_type: TransactionType;
@@ -60,7 +64,8 @@ export interface CreateTransactionInput {
   category_key: string;
 }
 
-export interface UpdateTransactionInput extends Partial<CreateTransactionInput> {}
+export interface UpdateTransactionInput
+  extends Partial<CreateTransactionInput> {}
 
 export interface TransactionFilters {
   political_organization_id?: string;
