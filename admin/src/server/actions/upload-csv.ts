@@ -59,26 +59,6 @@ export async function uploadCsv(
         ? `${result.processedCount}件を処理し、${result.savedCount}件を新規保存、${result.skippedCount}件を重複のためスキップしました`
         : `${result.processedCount}件を処理し、${result.savedCount}件を保存しました`;
 
-    // Refresh webapp cache after successful upload
-    if (result.savedCount > 0) {
-      try {
-        const webappUrl = process.env.WEBAPP_URL || "http://localhost:3000";
-        const refreshToken = process.env.DATA_REFRESH_TOKEN;
-
-        if (refreshToken) {
-          await fetch(`${webappUrl}/api/refresh`, {
-            method: "POST",
-            headers: {
-              "x-refresh-token": refreshToken,
-            },
-          });
-        }
-      } catch (refreshError) {
-        console.warn("Failed to refresh webapp cache:", refreshError);
-        // Don't fail the upload if cache refresh fails
-      }
-    }
-
     return {
       ok: true,
       processedCount: result.processedCount,
