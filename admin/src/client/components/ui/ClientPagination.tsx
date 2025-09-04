@@ -15,7 +15,7 @@ export function ClientPagination({
     const pages = [];
     const showPages = 5;
     let startPage = Math.max(1, currentPage - Math.floor(showPages / 2));
-    let endPage = Math.min(totalPages, startPage + showPages - 1);
+    const endPage = Math.min(totalPages, startPage + showPages - 1);
 
     if (endPage - startPage + 1 < showPages) {
       startPage = Math.max(1, endPage - showPages + 1);
