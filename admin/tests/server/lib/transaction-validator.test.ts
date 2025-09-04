@@ -28,7 +28,7 @@ describe("TransactionValidator", () => {
     credit_invoice: "",
     credit_amount: "1000",
     description: "",
-    tags: "",
+    friendly_category: "",
     memo: "",
     ...overrides,
   });

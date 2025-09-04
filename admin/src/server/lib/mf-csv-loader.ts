@@ -16,7 +16,7 @@ export interface MfCsvRecord {
   credit_invoice: string;
   credit_amount: string;
   description: string;
-  tags: string;
+  friendly_category: string;
   memo: string;
 }
 
@@ -43,8 +43,8 @@ export class MfCsvLoader {
     貸方金額: "credit_amount",
     "貸方金額(円)": "credit_amount", // 実際のMFフォーマット
     摘要: "description",
-    タグ: "tags",
-    起訖タグ: "tags", // 実際のMFフォーマット
+    タグ: "friendly_category",
+    起訖タグ: "friendly_category", // 実際のMFフォーマット
     メモ: "memo",
   };
 
@@ -146,7 +146,7 @@ export class MfCsvLoader {
       credit_invoice: "",
       credit_amount: "",
       description: "",
-      tags: "",
+      friendly_category: "",
       memo: "",
     };
 

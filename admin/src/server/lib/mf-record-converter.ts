@@ -17,7 +17,7 @@ export interface PreviewTransaction {
   description_1: string | undefined;
   description_2: string | undefined;
   description_3: string | undefined;
-  tags: string | undefined;
+  friendly_category: string | undefined;
   category_key: string;
   status: "valid" | "invalid" | "skip";
   errors: string[];
@@ -56,7 +56,7 @@ export class MfRecordConverter {
       description_1: descriptionParts.description_1,
       description_2: descriptionParts.description_2,
       description_3: descriptionParts.description_3,
-      tags: record.tags,
+      friendly_category: record.friendly_category,
       category_key: categoryKey,
       status: transactionType === null ? "invalid" : "valid",
       errors:

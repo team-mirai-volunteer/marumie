@@ -115,7 +115,7 @@ export class SavePreviewTransactionsUsecase {
       description_2: previewTransaction.description_2,
       description_3: previewTransaction.description_3,
       description_detail: undefined,
-      tags: previewTransaction.tags || "",
+      friendly_category: previewTransaction.friendly_category || "",
       memo: "",
       category_key: previewTransaction.category_key,
     };
