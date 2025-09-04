@@ -280,6 +280,31 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     return transactions.map(this.mapToTransaction);
   }
 
+  async checkDuplicateTransactionNos(
+    politicalOrgId: string,
+    transactionNos: string[],
+  ): Promise<string[]> {
+    if (transactionNos.length === 0) {
+      return [];
+    }
+
+    const existingTransactions = await this.prisma.transaction.findMany({
+      where: {
+        politicalOrganizationId: BigInt(politicalOrgId),
+        transactionNo: {
+          in: transactionNos,
+        },
+      },
+      select: {
+        transactionNo: true,
+      },
+    });
+
+    return existingTransactions
+      .map((t) => t.transactionNo)
+      .filter((no): no is string => no !== null);
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public mapToTransaction(prismaTransaction: any): Transaction {
     return {
