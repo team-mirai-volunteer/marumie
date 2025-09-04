@@ -26,7 +26,6 @@ export interface UploadCsvResponse {
 export async function uploadCsv(
   data: UploadCsvRequest,
 ): Promise<UploadCsvResponse> {
-  "use server";
   try {
     const { validTransactions, politicalOrganizationId } = data;
 

@@ -18,7 +18,6 @@ export interface PreviewCsvRequest {
 export async function previewCsv(
   data: PreviewCsvRequest,
 ): Promise<PreviewMfCsvResult> {
-  "use server";
   try {
     const { file, politicalOrganizationId } = data;
 

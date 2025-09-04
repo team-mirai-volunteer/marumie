@@ -1,4 +1,6 @@
 "use client";
+import "client-only";
+
 import { useEffect, useState } from "react";
 import { completeInviteSession } from "@/server/auth/login";
 
