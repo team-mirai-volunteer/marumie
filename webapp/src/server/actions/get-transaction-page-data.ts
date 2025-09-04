@@ -1,5 +1,3 @@
-"use server";
-
 import { PrismaClient } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 import { PrismaPoliticalOrganizationRepository } from "@/server/repositories/prisma-political-organization.repository";
