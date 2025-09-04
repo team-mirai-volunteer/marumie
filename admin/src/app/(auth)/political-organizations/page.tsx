@@ -1,10 +1,10 @@
 import "server-only";
 
 import Link from "next/link";
-import { getPoliticalOrganizations } from "@/server/actions/get-political-organizations";
+import { loadPoliticalOrganizationsData } from "@/server/loaders/load-political-organizations-data";
 
 export default async function PoliticalOrganizationsPage() {
-  const organizations = await getPoliticalOrganizations();
+  const organizations = await loadPoliticalOrganizationsData();
 
   return (
     <div className="bg-primary-panel rounded-xl p-4">
