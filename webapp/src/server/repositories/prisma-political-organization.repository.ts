@@ -18,6 +18,14 @@ export class PrismaPoliticalOrganizationRepository
     return organization ? this.mapToPoliticalOrganization(organization) : null;
   }
 
+  async findBySlugs(slugs: string[]): Promise<PoliticalOrganization[]> {
+    const organizations = await this.prisma.politicalOrganization.findMany({
+      where: { slug: { in: slugs } },
+    });
+
+    return organizations.map(this.mapToPoliticalOrganization);
+  }
+
   async findById(id: string): Promise<PoliticalOrganization | null> {
     const organization = await this.prisma.politicalOrganization.findUnique({
       where: { id: BigInt(id) },

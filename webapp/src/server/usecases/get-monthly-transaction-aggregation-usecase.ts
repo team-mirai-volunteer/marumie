@@ -5,7 +5,7 @@ import type {
 } from "../repositories/interfaces/transaction-repository.interface";
 
 export interface GetMonthlyTransactionAggregationParams {
-  slug: string;
+  slugs: string[];
   financialYear: number;
 }
 
@@ -23,18 +23,20 @@ export class GetMonthlyTransactionAggregationUsecase {
     params: GetMonthlyTransactionAggregationParams,
   ): Promise<GetMonthlyTransactionAggregationResult> {
     try {
-      const politicalOrganization =
-        await this.politicalOrganizationRepository.findBySlug(params.slug);
+      const politicalOrganizations =
+        await this.politicalOrganizationRepository.findBySlugs(params.slugs);
 
-      if (!politicalOrganization) {
+      if (politicalOrganizations.length === 0) {
         throw new Error(
-          `Political organization with slug "${params.slug}" not found`,
+          `Political organizations with slugs "${params.slugs.join(", ")}" not found`,
         );
       }
 
+      // Get monthly data for all organizations using IN clause
+      const organizationIds = politicalOrganizations.map((org) => org.id);
       const monthlyData =
-        await this.transactionRepository.getMonthlyAggregation(
-          politicalOrganization.id,
+        await this.transactionRepository.getMonthlyAggregationMultiple(
+          organizationIds,
           params.financialYear,
         );
 

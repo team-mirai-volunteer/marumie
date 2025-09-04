@@ -12,11 +12,11 @@ import { formatUpdatedAt } from "@/server/utils/format-date";
 export const revalidate = 300; // 5 minutes
 
 export default async function Home() {
-  const slug = "team-mirai";
+  const slugs = ["team-mirai", "digimin"];
 
   // 統合アクションで全データを取得
   const data = await loadTopPageData({
-    slug,
+    slugs,
     page: 1,
     perPage: 6, // 表示用に7件のみ取得
     financialYear: 2025, // デフォルト値

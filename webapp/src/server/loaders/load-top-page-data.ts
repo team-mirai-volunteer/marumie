@@ -63,21 +63,21 @@ export const loadTopPageData = unstable_cache(
     ] = await Promise.all([
       transactionUsecase.execute(params),
       monthlyUsecase.execute({
-        slug: params.slug,
+        slugs: params.slugs,
         financialYear: params.financialYear,
       }),
       sankeyUsecase.execute({
-        slug: params.slug,
+        slugs: params.slugs,
         financialYear: params.financialYear,
         categoryType: "political-category",
       }),
       sankeyUsecase.execute({
-        slug: params.slug,
+        slugs: params.slugs,
         financialYear: params.financialYear,
         categoryType: "friendly-category",
       }),
       donationUsecase.execute({
-        slug: params.slug,
+        slugs: params.slugs,
         financialYear: params.financialYear,
         today: new Date(),
       }),
