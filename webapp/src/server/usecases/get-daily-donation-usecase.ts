@@ -44,7 +44,7 @@ export class GetDailyDonationUsecase {
       // 日次寄付データを取得（IN句で効率的に）
       const organizationIds = politicalOrganizations.map((org) => org.id);
       const aggregatedDailyData =
-        await this.transactionRepository.getDailyDonationDataMultiple(
+        await this.transactionRepository.getDailyDonationData(
           organizationIds,
           params.financialYear,
         );

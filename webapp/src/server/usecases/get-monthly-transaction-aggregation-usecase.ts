@@ -35,7 +35,7 @@ export class GetMonthlyTransactionAggregationUsecase {
       // Get monthly data for all organizations using IN clause
       const organizationIds = politicalOrganizations.map((org) => org.id);
       const monthlyData =
-        await this.transactionRepository.getMonthlyAggregationMultiple(
+        await this.transactionRepository.getMonthlyAggregation(
           organizationIds,
           params.financialYear,
         );

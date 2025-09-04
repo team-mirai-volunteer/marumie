@@ -80,122 +80,12 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   }
 
   async getCategoryAggregationForSankey(
-    politicalOrganizationId: string,
-    financialYear: number,
-    categoryType?: "political-category" | "friendly-category",
-  ): Promise<SankeyCategoryAggregationResult> {
-    if (categoryType === "friendly-category") {
-      return this.getCategoryAggregationWithTag(
-        politicalOrganizationId,
-        financialYear,
-      );
-    }
-
-    // デフォルト: politicalカテゴリーの場合は、従来通りmainCategory + subCategoryでグループ化
-    const baseWhere = {
-      politicalOrganizationId: BigInt(politicalOrganizationId),
-      financialYear,
-    };
-
-    const incomeAggregation = await this.prisma.transaction.groupBy({
-      by: ["creditAccount"],
-      where: {
-        ...baseWhere,
-        transactionType: "income",
-      },
-      _sum: {
-        creditAmount: true,
-      },
-    });
-
-    const expenseAggregation = await this.prisma.transaction.groupBy({
-      by: ["debitAccount"],
-      where: {
-        ...baseWhere,
-        transactionType: "expense",
-      },
-      _sum: {
-        debitAmount: true,
-      },
-    });
-
-    // accountからcategory/subcategoryにマッピングして集計
-    const income = this.aggregateByCategory(
-      incomeAggregation.map((item) => ({
-        account: item.creditAccount || "",
-        amount: Number(item._sum.creditAmount || 0),
-      })),
-    );
-
-    const expense = this.aggregateByCategory(
-      expenseAggregation.map((item) => ({
-        account: item.debitAccount || "",
-        amount: Number(item._sum.debitAmount || 0),
-      })),
-    );
-
-    return { income, expense };
-  }
-
-  async getCategoryAggregationWithTag(
-    politicalOrganizationId: string,
-    financialYear: number,
-  ): Promise<SankeyCategoryAggregationResult> {
-    const baseWhere = {
-      politicalOrganizationId: BigInt(politicalOrganizationId),
-      financialYear,
-    };
-
-    // friendlyカテゴリーの場合は、mainCategory + tagでグループ化
-    const incomeAggregation = await this.prisma.transaction.groupBy({
-      by: ["creditAccount", "friendlyCategory"],
-      where: {
-        ...baseWhere,
-        transactionType: "income",
-      },
-      _sum: {
-        creditAmount: true,
-      },
-    });
-
-    const expenseAggregation = await this.prisma.transaction.groupBy({
-      by: ["debitAccount", "friendlyCategory"],
-      where: {
-        ...baseWhere,
-        transactionType: "expense",
-      },
-      _sum: {
-        debitAmount: true,
-      },
-    });
-
-    // accountとtagでグループ化
-    const income = this.aggregateByCategoryWithTag(
-      incomeAggregation.map((item) => ({
-        account: item.creditAccount || "",
-        tag: item.friendlyCategory || "",
-        amount: Number(item._sum.creditAmount || 0),
-      })),
-    );
-
-    const expense = this.aggregateByCategoryWithTag(
-      expenseAggregation.map((item) => ({
-        account: item.debitAccount || "",
-        tag: item.friendlyCategory || "",
-        amount: Number(item._sum.debitAmount || 0),
-      })),
-    );
-
-    return { income, expense };
-  }
-
-  async getCategoryAggregationForSankeyMultiple(
     politicalOrganizationIds: string[],
     financialYear: number,
     categoryType?: "political-category" | "friendly-category",
   ): Promise<SankeyCategoryAggregationResult> {
     if (categoryType === "friendly-category") {
-      return this.getCategoryAggregationWithTagMultiple(
+      return this.getCategoryAggregationWithTag(
         politicalOrganizationIds,
         financialYear,
       );
@@ -249,7 +139,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     return { income, expense };
   }
 
-  async getCategoryAggregationWithTagMultiple(
+  async getCategoryAggregationWithTag(
     politicalOrganizationIds: string[],
     financialYear: number,
   ): Promise<SankeyCategoryAggregationResult> {
@@ -304,81 +194,6 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   }
 
   async getMonthlyAggregation(
-    politicalOrganizationId: string,
-    financialYear: number,
-  ): Promise<MonthlyAggregation[]> {
-    const [incomeResults, expenseResults] = await Promise.all([
-      this.prisma.$queryRaw<
-        Array<{ year: bigint; month: bigint; total_amount: number }>
-      >`
-        SELECT
-          EXTRACT(YEAR FROM transaction_date) as year,
-          EXTRACT(MONTH FROM transaction_date) as month,
-          SUM(credit_amount) as total_amount
-        FROM transactions
-        WHERE political_organization_id = ${BigInt(politicalOrganizationId)}
-          AND financial_year = ${financialYear}
-          AND transaction_type = 'income'
-        GROUP BY EXTRACT(YEAR FROM transaction_date), EXTRACT(MONTH FROM transaction_date)
-        ORDER BY year, month
-      `,
-      this.prisma.$queryRaw<
-        Array<{ year: bigint; month: bigint; total_amount: number }>
-      >`
-        SELECT
-          EXTRACT(YEAR FROM transaction_date) as year,
-          EXTRACT(MONTH FROM transaction_date) as month,
-          SUM(debit_amount) as total_amount
-        FROM transactions
-        WHERE political_organization_id = ${BigInt(politicalOrganizationId)}
-          AND financial_year = ${financialYear}
-          AND transaction_type = 'expense'
-        GROUP BY EXTRACT(YEAR FROM transaction_date), EXTRACT(MONTH FROM transaction_date)
-        ORDER BY year, month
-      `,
-    ]);
-
-    // 年月別のマップを作成
-    const monthlyMap = new Map<
-      string,
-      { yearMonth: string; income: number; expense: number }
-    >();
-
-    // 収入データを追加
-    for (const item of incomeResults) {
-      const year = Number(item.year);
-      const month = Number(item.month);
-      const yearMonth = `${year}-${month.toString().padStart(2, "0")}`;
-      if (!monthlyMap.has(yearMonth)) {
-        monthlyMap.set(yearMonth, { yearMonth, income: 0, expense: 0 });
-      }
-      const existing = monthlyMap.get(yearMonth);
-      if (existing) {
-        existing.income = Number(item.total_amount);
-      }
-    }
-
-    // 支出データを追加
-    for (const item of expenseResults) {
-      const year = Number(item.year);
-      const month = Number(item.month);
-      const yearMonth = `${year}-${month.toString().padStart(2, "0")}`;
-      if (!monthlyMap.has(yearMonth)) {
-        monthlyMap.set(yearMonth, { yearMonth, income: 0, expense: 0 });
-      }
-      const existing = monthlyMap.get(yearMonth);
-      if (existing) {
-        existing.expense = Number(item.total_amount);
-      }
-    }
-
-    // 結果を配列に変換して年月順でソート
-    return Array.from(monthlyMap.values()).sort((a, b) =>
-      a.yearMonth.localeCompare(b.yearMonth),
-    );
-  }
-
-  async getMonthlyAggregationMultiple(
     politicalOrganizationIds: string[],
     financialYear: number,
   ): Promise<MonthlyAggregation[]> {
@@ -457,47 +272,6 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   }
 
   async getDailyDonationData(
-    politicalOrganizationId: string,
-    financialYear: number,
-  ): Promise<DailyDonationData[]> {
-    // 寄付カテゴリに該当するアカウントキーを抽出
-    const donationAccountKeys = Object.keys(ACCOUNT_CATEGORY_MAPPING).filter(
-      (key) => ACCOUNT_CATEGORY_MAPPING[key].category === "寄付",
-    );
-
-    // 寄付に該当するアカウントからの収入データを日別に集計
-    const dailyDonationResults = await this.prisma.$queryRaw<
-      Array<{ transaction_date: Date; total_amount: number }>
-    >`
-      SELECT
-        transaction_date,
-        SUM(credit_amount) as total_amount
-      FROM transactions
-      WHERE political_organization_id = ${BigInt(politicalOrganizationId)}
-        AND financial_year = ${financialYear}
-        AND transaction_type = 'income'
-        AND credit_account IN (${Prisma.join(donationAccountKeys)})
-      GROUP BY transaction_date
-      ORDER BY transaction_date
-    `;
-
-    // 日付文字列にフォーマットし、累積額を計算
-    let cumulativeAmount = 0;
-    const dailyData: DailyDonationData[] = dailyDonationResults.map((item) => {
-      const dailyAmount = Number(item.total_amount);
-      cumulativeAmount += dailyAmount;
-
-      return {
-        date: item.transaction_date.toISOString().split("T")[0], // YYYY-MM-DD形式
-        dailyAmount,
-        cumulativeAmount,
-      };
-    });
-
-    return dailyData;
-  }
-
-  async getDailyDonationDataMultiple(
     politicalOrganizationIds: string[],
     financialYear: number,
   ): Promise<DailyDonationData[]> {
