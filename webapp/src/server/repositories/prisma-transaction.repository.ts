@@ -493,7 +493,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       description_2: prismaTransaction.description2 ?? undefined,
       description_3: prismaTransaction.description3 ?? undefined,
       description_detail: prismaTransaction.descriptionDetail ?? undefined,
-      friendly_category: undefined,
+      friendly_category: prismaTransaction.friendlyCategory ?? undefined,
       memo: prismaTransaction.memo ?? undefined,
       category_key: prismaTransaction.categoryKey,
       created_at: prismaTransaction.createdAt,
