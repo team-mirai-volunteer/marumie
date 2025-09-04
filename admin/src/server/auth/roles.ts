@@ -52,3 +52,27 @@ export async function requireRole(requiredRole: UserRole): Promise<boolean> {
   }
   return true;
 }
+
+export async function getCurrentUserOrganizations(): Promise<bigint[]> {
+  const user = await getCurrentUser();
+  if (!user) return [];
+
+  const userOrgs = await prisma.userPoliticalOrganization.findMany({
+    where: { userId: user.id },
+    select: { politicalOrganizationId: true },
+  });
+
+  return userOrgs.map(
+    (org: { politicalOrganizationId: bigint }) => org.politicalOrganizationId,
+  );
+}
+
+export async function hasOrganizationAccess(
+  organizationId: bigint,
+): Promise<boolean> {
+  const currentRole = await getCurrentUserRole();
+  if (currentRole === "admin") return true;
+
+  const userOrgs = await getCurrentUserOrganizations();
+  return userOrgs.includes(organizationId);
+}

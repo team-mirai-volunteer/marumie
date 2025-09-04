@@ -1,14 +1,85 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String                      @id @default(uuid())
+  authId        String                      @unique @map("auth_id")
+  email         String                      @unique @db.VarChar(255)
+  role          UserRole                    @default(user)
+  createdAt     DateTime                    @default(now()) @map("created_at")
+  updatedAt     DateTime                    @updatedAt @map("updated_at")
+  organizations UserPoliticalOrganization[]
+
+  @@map("users")
+}
+
+model PoliticalOrganization {
+  id           BigInt                      @id @default(autoincrement())
+  name         String                      @db.VarChar(255)
+  description  String?
+  createdAt    DateTime                    @default(now()) @map("created_at")
+  updatedAt    DateTime                    @updatedAt @map("updated_at")
+  slug         String                      @unique @db.VarChar(255)
+  transactions Transaction[]
+  users        UserPoliticalOrganization[]
+
+  @@map("political_organizations")
+}
+
+model Transaction {
+  id                      BigInt                @id @default(autoincrement())
+  politicalOrganizationId BigInt                @map("political_organization_id")
+  transactionNo           String                @map("transaction_no") @db.VarChar(255)
+  transactionDate         DateTime              @map("transaction_date") @db.Date
+  financialYear           Int                   @map("financial_year")
+  transactionType         TransactionType       @map("transaction_type")
+  debitAccount            String                @map("debit_account") @db.VarChar(255)
+  debitSubAccount         String?               @map("debit_sub_account") @db.VarChar(255)
+  debitDepartment         String?               @map("debit_department") @db.VarChar(255)
+  debitPartner            String?               @map("debit_partner") @db.VarChar(255)
+  debitTaxCategory        String?               @map("debit_tax_category") @db.VarChar(255)
+  debitAmount             Decimal               @map("debit_amount") @db.Decimal(15, 2)
+  creditAccount           String                @map("credit_account") @db.VarChar(255)
+  creditSubAccount        String?               @map("credit_sub_account") @db.VarChar(255)
+  creditDepartment        String?               @map("credit_department") @db.VarChar(255)
+  creditPartner           String?               @map("credit_partner") @db.VarChar(255)
+  creditTaxCategory       String?               @map("credit_tax_category") @db.VarChar(255)
+  creditAmount            Decimal               @map("credit_amount") @db.Decimal(15, 2)
+  description             String?
+  description1            String?               @map("description_1")
+  description2            String?               @map("description_2")
+  description3            String?               @map("description_3")
+  descriptionDetail       String?               @map("description_detail")
+  createdAt               DateTime              @default(now()) @map("created_at")
+  updatedAt               DateTime              @updatedAt @map("updated_at")
+  memo                    String?
+  tags                    String?
+  categoryKey             String                @map("category_key") @db.VarChar(255)
+  politicalOrganization   PoliticalOrganization @relation(fields: [politicalOrganizationId], references: [id], onDelete: Cascade)
+
+  @@unique([politicalOrganizationId, transactionNo])
+  @@map("transactions")
+}
+
+model UserPoliticalOrganization {
+  id                      String                @id @default(uuid())
+  userId                  String                @map("user_id")
+  politicalOrganizationId BigInt                @map("political_organization_id")
+  role                    String                @default("member")
+  createdAt               DateTime              @default(now()) @map("created_at")
+  updatedAt               DateTime              @updatedAt @map("updated_at")
+  politicalOrganization   PoliticalOrganization @relation(fields: [politicalOrganizationId], references: [id], onDelete: Cascade)
+  user                    User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, politicalOrganizationId])
+  @@map("user_political_organizations")
 }
 
 enum TransactionType {
@@ -21,62 +92,4 @@ enum TransactionType {
 enum UserRole {
   admin
   user
-}
-
-model User {
-  id        String   @id @default(uuid())
-  authId    String   @unique @map("auth_id") // References Supabase auth.users.id
-  email     String   @unique @db.VarChar(255)
-  role      UserRole @default(user)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("users")
-}
-
-model PoliticalOrganization {
-  id           BigInt        @id @default(autoincrement())
-  name         String        @db.VarChar(255)
-  slug         String        @unique @db.VarChar(255)
-  description  String?       @db.Text
-  createdAt    DateTime      @default(now()) @map("created_at")
-  updatedAt    DateTime      @updatedAt @map("updated_at")
-  transactions Transaction[]
-
-  @@map("political_organizations")
-}
-
-model Transaction {
-  id                      BigInt               @id @default(autoincrement())
-  politicalOrganizationId BigInt               @map("political_organization_id")
-  politicalOrganization   PoliticalOrganization @relation(fields: [politicalOrganizationId], references: [id], onDelete: Cascade)
-  transactionNo           String               @map("transaction_no") @db.VarChar(255)
-  transactionDate         DateTime             @map("transaction_date") @db.Date
-  financialYear           Int                  @map("financial_year")
-  transactionType         TransactionType      @map("transaction_type")
-  debitAccount            String               @map("debit_account") @db.VarChar(255)
-  debitSubAccount         String?              @map("debit_sub_account") @db.VarChar(255)
-  debitDepartment         String?              @map("debit_department") @db.VarChar(255)
-  debitPartner            String?              @map("debit_partner") @db.VarChar(255)
-  debitTaxCategory        String?              @map("debit_tax_category") @db.VarChar(255)
-  debitAmount             Decimal              @map("debit_amount") @db.Decimal(15, 2)
-  creditAccount           String               @map("credit_account") @db.VarChar(255)
-  creditSubAccount        String?              @map("credit_sub_account") @db.VarChar(255)
-  creditDepartment        String?              @map("credit_department") @db.VarChar(255)
-  creditPartner           String?              @map("credit_partner") @db.VarChar(255)
-  creditTaxCategory       String?              @map("credit_tax_category") @db.VarChar(255)
-  creditAmount            Decimal              @map("credit_amount") @db.Decimal(15, 2)
-  description             String?              @db.Text
-  description1            String?              @map("description_1") @db.Text
-  description2            String?              @map("description_2") @db.Text
-  description3            String?              @map("description_3") @db.Text
-  descriptionDetail       String?              @map("description_detail") @db.Text
-  tags                    String?              @db.Text
-  memo                    String?              @db.Text
-  categoryKey             String               @map("category_key") @db.VarChar(255)
-  createdAt               DateTime             @default(now()) @map("created_at")
-  updatedAt               DateTime             @updatedAt @map("updated_at")
-
-  @@unique([politicalOrganizationId, transactionNo])
-  @@map("transactions")
 }
