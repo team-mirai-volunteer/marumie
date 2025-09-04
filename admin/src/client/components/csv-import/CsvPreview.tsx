@@ -6,7 +6,7 @@ import type { PreviewMfCsvResult } from "@/server/usecases/preview-mf-csv-usecas
 import type { PreviewTransaction } from "@/server/lib/mf-record-converter";
 import type { PreviewCsvRequest } from "@/server/actions/preview-csv";
 import TransactionRow from "./TransactionRow";
-import { Pagination } from "@/client/components/ui/Pagination";
+import { ClientPagination } from "@/client/components/ui/ClientPagination";
 import StatisticsTable from "./StatisticsTable";
 
 interface CsvPreviewProps {
@@ -289,7 +289,7 @@ export default function CsvPreview({
         </table>
       </div>
 
-      <Pagination
+      <ClientPagination
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={handlePageChange}

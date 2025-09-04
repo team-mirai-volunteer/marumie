@@ -1,17 +1,3 @@
-import type { Transaction } from "@/shared/models/transaction";
-
-export interface TransactionListResponse {
-  transactions: Transaction[];
-  total: number;
-  page: number;
-  perPage: number;
-  totalPages: number;
-}
-
-export interface DeleteAllTransactionsResponse {
-  deletedCount: number;
-}
-
 export interface UpdateUserRoleRequest {
   userId: string;
   role: string;
@@ -58,63 +44,6 @@ export class ApiClient {
     }
 
     return response.json();
-  }
-
-  async getTransactions(params?: {
-    page?: number;
-    perPage?: number;
-    politicalOrganizationId?: string;
-    transactionType?: string;
-    dateFrom?: string;
-    dateTo?: string;
-    financialYear?: number;
-  }): Promise<TransactionListResponse> {
-    const searchParams = new URLSearchParams();
-
-    if (params?.page) searchParams.append("page", params.page.toString());
-    if (params?.perPage)
-      searchParams.append("perPage", params.perPage.toString());
-    if (params?.politicalOrganizationId)
-      searchParams.append(
-        "politicalOrganizationId",
-        params.politicalOrganizationId,
-      );
-    if (params?.transactionType)
-      searchParams.append("transactionType", params.transactionType);
-    if (params?.dateFrom) searchParams.append("dateFrom", params.dateFrom);
-    if (params?.dateTo) searchParams.append("dateTo", params.dateTo);
-    if (params?.financialYear)
-      searchParams.append("financialYear", params.financialYear.toString());
-
-    const url = `/api/transactions?${searchParams.toString()}`;
-    return this.request<TransactionListResponse>(url);
-  }
-
-  async deleteAllTransactions(params?: {
-    politicalOrganizationId?: string;
-    transactionType?: string;
-    dateFrom?: string;
-    dateTo?: string;
-    financialYear?: number;
-  }): Promise<DeleteAllTransactionsResponse> {
-    const searchParams = new URLSearchParams();
-
-    if (params?.politicalOrganizationId)
-      searchParams.append(
-        "politicalOrganizationId",
-        params.politicalOrganizationId,
-      );
-    if (params?.transactionType)
-      searchParams.append("transactionType", params.transactionType);
-    if (params?.dateFrom) searchParams.append("dateFrom", params.dateFrom);
-    if (params?.dateTo) searchParams.append("dateTo", params.dateTo);
-    if (params?.financialYear)
-      searchParams.append("financialYear", params.financialYear.toString());
-
-    const url = `/api/transactions?${searchParams.toString()}`;
-    return this.request<DeleteAllTransactionsResponse>(url, {
-      method: "DELETE",
-    });
   }
 
   async updateUserRole(data: UpdateUserRoleRequest): Promise<void> {
