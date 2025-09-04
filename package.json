@@ -42,7 +42,7 @@
     "db:seed": "node prisma/seed.cjs",
     "db:reset": "pnpm supabase:reset && pnpm db:migrate && pnpm db:seed",
     "db:studio": "prisma studio",
-    "postinstall": "prisma generate && npx simple-git-hooks",
+    "postinstall": "prisma db execute --file delete_ghost_migration.sql --url=$DATABASE_URL || true && prisma migrate deploy && prisma generate && npx simple-git-hooks",
     "// Supabase": "==========================================",
     "supabase:init": "pnpm dlx supabase init",
     "supabase:start": "pnpm dlx supabase start",
