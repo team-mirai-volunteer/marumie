@@ -1,7 +1,7 @@
 import "server-only";
 
 import { PoliticalOrganizationForm } from "@/client/components/political-organizations/PoliticalOrganizationForm";
-import { getPoliticalOrganization } from "@/server/actions/get-political-organization";
+import { loadPoliticalOrganizationData } from "@/server/loaders/load-political-organization-data";
 import { updatePoliticalOrganization } from "@/server/actions/update-political-organization";
 import type { UpdatePoliticalOrganizationData } from "@/server/actions/update-political-organization";
 
@@ -16,7 +16,7 @@ export default async function EditPoliticalOrganizationPage({
 
   let organization;
   try {
-    organization = await getPoliticalOrganization(orgId);
+    organization = await loadPoliticalOrganizationData(orgId);
   } catch (error) {
     return (
       <div className="bg-primary-panel rounded-xl p-4">

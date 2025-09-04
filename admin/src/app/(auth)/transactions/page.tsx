@@ -1,7 +1,7 @@
 import { TransactionRow } from "@/client/components/transactions/TransactionRow";
 import { StaticPagination } from "@/client/components/ui/StaticPagination";
 import { DeleteAllButton } from "@/client/components/transactions/DeleteAllButton";
-import { getTransactions } from "@/server/loaders/transaction-loader";
+import { loadTransactionsData } from "@/server/loaders/load-transactions-data";
 
 interface TransactionsPageProps {
   searchParams: Promise<{ page?: string }>;
@@ -14,7 +14,7 @@ export default async function TransactionsPage({
   const currentPage = parseInt(params.page || "1", 10);
   const perPage = 50;
 
-  const data = await getTransactions({
+  const data = await loadTransactionsData({
     page: currentPage,
     perPage,
   });
