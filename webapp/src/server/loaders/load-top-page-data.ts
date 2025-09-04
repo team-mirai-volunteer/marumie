@@ -14,13 +14,13 @@ import {
 const prisma = new PrismaClient();
 const CACHE_REVALIDATE_SECONDS = 60;
 
-export interface GetTransactionPageDataParams
+export interface TopPageDataParams
   extends Omit<GetTransactionsBySlugParams, "financialYear"> {
   financialYear: number; // 必須項目として設定
 }
 
-export const getTransactionPageDataAction = unstable_cache(
-  async (params: GetTransactionPageDataParams) => {
+export const loadTopPageData = unstable_cache(
+  async (params: TopPageDataParams) => {
     // モックデータを使用する場合
     if (process.env.USE_MOCK_DATA === "true") {
       const mockUsecase = new GetMockTransactionPageDataUsecase();
@@ -91,6 +91,6 @@ export const getTransactionPageDataAction = unstable_cache(
       donationSummary: donationData.donationSummary,
     };
   },
-  ["transaction-page-data"],
+  ["top-page-data"],
   { revalidate: CACHE_REVALIDATE_SECONDS },
 );

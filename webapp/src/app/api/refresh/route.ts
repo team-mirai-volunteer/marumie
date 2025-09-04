@@ -22,8 +22,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    revalidateTag("transactions-by-slug");
-    revalidateTag("transaction-page-data");
+    revalidateTag("transactions-page-data");
+    revalidateTag("top-page-data");
 
     revalidatePath("/transactions");
     revalidatePath("/");
