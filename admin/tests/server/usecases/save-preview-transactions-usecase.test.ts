@@ -14,12 +14,13 @@ import type { CreateTransactionInput } from "@/shared/models/transaction";
 describe("SavePreviewTransactionsUsecase", () => {
   let usecase: SavePreviewTransactionsUsecase;
   let previewUsecase: PreviewMfCsvUsecase;
-  let mockRepository: jest.Mocked<Pick<ITransactionRepository, 'createMany' | 'findByTransactionNos'>>;
+  let mockRepository: jest.Mocked<Pick<ITransactionRepository, 'createMany' | 'findByTransactionNos' | 'checkDuplicateTransactionNos'>>;
 
   beforeEach(() => {
     mockRepository = {
       createMany: jest.fn(),
       findByTransactionNos: jest.fn().mockResolvedValue([]),
+      checkDuplicateTransactionNos: jest.fn().mockResolvedValue([]),
     };
     usecase = new SavePreviewTransactionsUsecase(mockRepository as unknown as ITransactionRepository);
     previewUsecase = new PreviewMfCsvUsecase(mockRepository as unknown as ITransactionRepository);
