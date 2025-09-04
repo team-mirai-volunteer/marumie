@@ -1,30 +1,41 @@
+import "server-only";
+
 import { PrismaClient } from "@prisma/client";
-import { NextResponse } from "next/server";
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
 import { SavePreviewTransactionsUsecase } from "@/server/usecases/save-preview-transactions-usecase";
-
-export const runtime = "nodejs";
+import type { PreviewTransaction } from "@/server/lib/mf-record-converter";
 
 const prisma = new PrismaClient();
 const transactionRepository = new PrismaTransactionRepository(prisma);
 const uploadUsecase = new SavePreviewTransactionsUsecase(transactionRepository);
 
-export async function POST(request: Request) {
+export interface UploadCsvRequest {
+  validTransactions: PreviewTransaction[];
+  politicalOrganizationId: string;
+}
+
+export interface UploadCsvResponse {
+  ok: boolean;
+  processedCount: number;
+  savedCount: number;
+  skippedCount: number;
+  message: string;
+  errors?: string[];
+}
+
+export async function uploadCsv(
+  data: UploadCsvRequest,
+): Promise<UploadCsvResponse> {
+  "use server";
   try {
-    const { validTransactions, politicalOrganizationId } = await request.json();
+    const { validTransactions, politicalOrganizationId } = data;
 
     if (!validTransactions || !Array.isArray(validTransactions)) {
-      return NextResponse.json(
-        { error: "有効なトランザクションデータが指定されていません" },
-        { status: 400 },
-      );
+      throw new Error("有効なトランザクションデータが指定されていません");
     }
 
     if (!politicalOrganizationId) {
-      return NextResponse.json(
-        { error: "政治団体IDが指定されていません" },
-        { status: 400 },
-      );
+      throw new Error("政治団体IDが指定されていません");
     }
 
     const result = await uploadUsecase.execute({
@@ -33,17 +44,14 @@ export async function POST(request: Request) {
     });
 
     if (result.errors.length > 0) {
-      return NextResponse.json(
-        {
-          error: "処理中にエラーが発生しました",
-          details: result.errors,
-          processedCount: result.processedCount,
-          savedCount: result.savedCount,
-          skippedCount: result.skippedCount,
-          message: `${result.processedCount}件を処理し、${result.savedCount}件を保存、${result.skippedCount}件をスキップしました`,
-        },
-        { status: 400 },
-      );
+      return {
+        ok: false,
+        processedCount: result.processedCount,
+        savedCount: result.savedCount,
+        skippedCount: result.skippedCount,
+        message: `${result.processedCount}件を処理し、${result.savedCount}件を保存、${result.skippedCount}件をスキップしました`,
+        errors: result.errors,
+      };
     }
 
     const message =
@@ -71,21 +79,18 @@ export async function POST(request: Request) {
       }
     }
 
-    return NextResponse.json({
+    return {
       ok: true,
       processedCount: result.processedCount,
       savedCount: result.savedCount,
       skippedCount: result.skippedCount,
       message,
-    });
+    };
   } catch (error) {
     console.error("Upload CSV error:", error);
-    return NextResponse.json(
-      {
-        error: "サーバー内部エラーが発生しました",
-      },
-      { status: 500 },
-    );
+    throw error instanceof Error
+      ? error
+      : new Error("サーバー内部エラーが発生しました");
   } finally {
     await prisma.$disconnect();
   }

@@ -1,35 +1,33 @@
+"use server";
+
 import { PrismaClient } from "@prisma/client";
-import { NextResponse } from "next/server";
 import { EncodingConverter } from "@/server/lib/encoding-converter";
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
 import { PreviewMfCsvUsecase } from "@/server/usecases/preview-mf-csv-usecase";
-
-export const runtime = "nodejs";
+import type { PreviewMfCsvResult } from "@/server/usecases/preview-mf-csv-usecase";
 
 const prisma = new PrismaClient();
 const transactionRepository = new PrismaTransactionRepository(prisma);
 const previewUsecase = new PreviewMfCsvUsecase(transactionRepository);
 
-export async function POST(request: Request) {
+export interface PreviewCsvRequest {
+  file: File;
+  politicalOrganizationId: string;
+}
+
+export async function previewCsv(
+  data: PreviewCsvRequest,
+): Promise<PreviewMfCsvResult> {
+  "use server";
   try {
-    const formData = await request.formData();
-    const file = formData.get("file") as File | null;
-    const politicalOrganizationId = formData.get("politicalOrganizationId") as
-      | string
-      | null;
+    const { file, politicalOrganizationId } = data;
 
     if (!file) {
-      return NextResponse.json(
-        { error: "ファイルが選択されていません" },
-        { status: 400 },
-      );
+      throw new Error("ファイルが選択されていません");
     }
 
     if (!politicalOrganizationId) {
-      return NextResponse.json(
-        { error: "政治団体IDが指定されていません" },
-        { status: 400 },
-      );
+      throw new Error("政治団体IDが指定されていません");
     }
 
     // Convert file to buffer and then to properly encoded string
@@ -41,16 +39,12 @@ export async function POST(request: Request) {
       politicalOrganizationId,
     });
 
-    return NextResponse.json(result);
+    return result;
   } catch (error) {
     console.error("Preview CSV error:", error);
-    return NextResponse.json(
-      {
-        error: "サーバー内部エラーが発生しました",
-        details: error instanceof Error ? error.message : String(error),
-      },
-      { status: 500 },
-    );
+    throw error instanceof Error
+      ? error
+      : new Error("サーバー内部エラーが発生しました");
   } finally {
     await prisma.$disconnect();
   }
