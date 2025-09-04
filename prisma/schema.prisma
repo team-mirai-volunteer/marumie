@@ -50,7 +50,7 @@ model Transaction {
   id                      BigInt               @id @default(autoincrement())
   politicalOrganizationId BigInt               @map("political_organization_id")
   politicalOrganization   PoliticalOrganization @relation(fields: [politicalOrganizationId], references: [id], onDelete: Cascade)
-  transactionNo           String?              @unique @map("transaction_no") @db.VarChar(255)
+  transactionNo           String               @map("transaction_no") @db.VarChar(255)
   transactionDate         DateTime             @map("transaction_date") @db.Date
   financialYear           Int                  @map("financial_year")
   transactionType         TransactionType      @map("transaction_type")
@@ -71,11 +71,12 @@ model Transaction {
   description2            String?              @map("description_2") @db.Text
   description3            String?              @map("description_3") @db.Text
   descriptionDetail       String?              @map("description_detail") @db.Text
-  tags                    String?              @db.Text
+  friendlyCategory        String?              @map("friendly_category") @db.Text
   memo                    String?              @db.Text
   categoryKey             String               @map("category_key") @db.VarChar(255)
   createdAt               DateTime             @default(now()) @map("created_at")
   updatedAt               DateTime             @updatedAt @map("updated_at")
 
+  @@unique([politicalOrganizationId, transactionNo])
   @@map("transactions")
 }

@@ -82,7 +82,7 @@ export default function TransactionTableRow({
           {/* Title and Amount section */}
           <div className="flex items-center justify-between gap-4">
             <span className="text-sm font-bold text-gray-800 flex-1 leading-[1.43em]">
-              {transaction.tags || transaction.category}
+              {transaction.friendly_category || transaction.category}
             </span>
             <span
               className={`text-base font-bold text-right ${
@@ -127,7 +127,7 @@ export default function TransactionTableRow({
       {/* Title column - flexible width */}
       <td className="hidden md:table-cell h-16">
         <span className="leading-7 font-bold text-base text-gray-800">
-          {transaction.tags || transaction.category}
+          {transaction.friendly_category || transaction.category}
         </span>
       </td>
 

@@ -39,7 +39,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
         description2: input.description_2 || null,
         description3: input.description_3 || null,
         descriptionDetail: input.description_detail || null,
-        tags: input.tags || null,
+        friendlyCategory: input.friendly_category || null,
         memo: input.memo || null,
         categoryKey: input.category_key,
       },
@@ -189,7 +189,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
           description2: input.description_2 || null,
           description3: input.description_3 || null,
           descriptionDetail: input.description_detail || null,
-          tags: input.tags || null,
+          friendlyCategory: input.friendly_category || null,
           memo: input.memo || null,
           categoryKey: input.category_key,
         };
@@ -280,6 +280,31 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     return transactions.map(this.mapToTransaction);
   }
 
+  async checkDuplicateTransactionNos(
+    politicalOrgId: string,
+    transactionNos: string[],
+  ): Promise<string[]> {
+    if (transactionNos.length === 0) {
+      return [];
+    }
+
+    const existingTransactions = await this.prisma.transaction.findMany({
+      where: {
+        politicalOrganizationId: BigInt(politicalOrgId),
+        transactionNo: {
+          in: transactionNos,
+        },
+      },
+      select: {
+        transactionNo: true,
+      },
+    });
+
+    return existingTransactions
+      .map((t) => t.transactionNo)
+      .filter((no): no is string => no !== null);
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public mapToTransaction(prismaTransaction: any): Transaction {
     return {
@@ -307,7 +332,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       description_2: prismaTransaction.description2,
       description_3: prismaTransaction.description3,
       description_detail: prismaTransaction.descriptionDetail,
-      tags: prismaTransaction.tags,
+      friendly_category: prismaTransaction.friendlyCategory,
       memo: prismaTransaction.memo,
       category_key: prismaTransaction.categoryKey,
       created_at: prismaTransaction.createdAt,

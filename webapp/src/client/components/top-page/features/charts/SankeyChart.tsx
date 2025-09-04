@@ -532,11 +532,11 @@ export default function SankeyChart({ data }: SankeyChartProps) {
         return aOrder - bOrder; // タイプ順
       }
 
-      // 「現残高」は末尾に配置
-      if (a.label === "現残高" && b.label !== "現残高") {
+      // 「収支」は末尾に配置
+      if (a.label === "収支" && b.label !== "収支") {
         return 1; // aを後に
       }
-      if (b.label === "現残高" && a.label !== "現残高") {
+      if (b.label === "収支" && a.label !== "収支") {
         return -1; // bを後に
       }
 

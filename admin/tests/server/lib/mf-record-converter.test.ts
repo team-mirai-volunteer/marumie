@@ -29,7 +29,7 @@ describe("MfRecordConverter", () => {
       credit_invoice: "",
       credit_amount: "1000",
       description: "",
-      tags: "",
+      friendly_category: "",
       memo: "",
       ...overrides,
     });
@@ -44,7 +44,7 @@ describe("MfRecordConverter", () => {
 
       expect(result.debit_amount).toBe(1500000);
       expect(result.credit_amount).toBe(500000);
-      expect(result.transaction_type).toBe("invalid");
+      expect(result.transaction_type).toBe(null);
     });
 
     it("should handle amounts with commas", () => {
@@ -113,7 +113,7 @@ describe("MfRecordConverter", () => {
 
       const result = converter.convertRow(record, "test-org-id");
 
-      expect(result.transaction_type).toBe("invalid");
+      expect(result.transaction_type).toBe(null);
     });
 
 
@@ -123,7 +123,7 @@ describe("MfRecordConverter", () => {
         transaction_date: "2025/12/31",
         debit_account: "普通預金",
         debit_sub_account: "テスト銀行",
-        tags: "テストタグ",
+        friendly_category: "テストタグ",
         memo: "テストメモ",
       });
 
@@ -134,7 +134,7 @@ describe("MfRecordConverter", () => {
       expect(result.transaction_date).toEqual(new Date("2025/12/31"));
       expect(result.debit_account).toBe("普通預金");
       expect(result.debit_sub_account).toBe("テスト銀行");
-      expect(result.tags).toBe("テストタグ");
+      expect(result.friendly_category).toBe("テストタグ");
     });
 
     it("should prioritize debit_account when both accounts are 普通預金", () => {
@@ -228,14 +228,14 @@ describe("MfRecordConverter", () => {
       });
     });
 
-    it("should preserve tags field as-is", () => {
+    it("should preserve friendly_category field as-is", () => {
       const record = createMockRecord({
-        tags: "テストタグ値",
+        friendly_category: "テストタグ値",
       });
 
       const result = converter.convertRow(record, "test-org-id");
 
-      expect(result.tags).toBe("テストタグ値");
+      expect(result.friendly_category).toBe("テストタグ値");
     });
   });
 

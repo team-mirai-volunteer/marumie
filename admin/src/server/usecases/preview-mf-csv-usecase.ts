@@ -85,12 +85,13 @@ export class PreviewMfCsvUsecase {
         .map((t) => t.transaction_no)
         .filter(Boolean) as string[];
 
-      const existingTransactions =
-        await this.transactionRepository.findByTransactionNos(transactionNos);
+      const duplicateTransactionNos =
+        await this.transactionRepository.checkDuplicateTransactionNos(
+          input.politicalOrganizationId,
+          transactionNos,
+        );
 
-      const existingTransactionNosSet = new Set(
-        existingTransactions.map((t) => t.transaction_no),
-      );
+      const existingTransactionNosSet = new Set(duplicateTransactionNos);
 
       // Apply validation and duplicate check
       previewTransactions.forEach((transaction, index) => {
@@ -174,13 +175,8 @@ export class PreviewMfCsvUsecase {
         continue;
       }
 
-      // transactionTypeが有効な値かチェック
-      if (
-        transactionType !== "income" &&
-        transactionType !== "expense" &&
-        transactionType !== "offset_income" &&
-        transactionType !== "offset_expense"
-      ) {
+      // transactionTypeがnullの場合はスキップ
+      if (transactionType === null) {
         continue;
       }
 

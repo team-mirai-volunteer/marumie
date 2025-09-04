@@ -147,7 +147,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
 
     // friendlyカテゴリーの場合は、mainCategory + tagでグループ化
     const incomeAggregation = await this.prisma.transaction.groupBy({
-      by: ["creditAccount", "tags"],
+      by: ["creditAccount", "friendlyCategory"],
       where: {
         ...baseWhere,
         transactionType: "income",
@@ -158,7 +158,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     });
 
     const expenseAggregation = await this.prisma.transaction.groupBy({
-      by: ["debitAccount", "tags"],
+      by: ["debitAccount", "friendlyCategory"],
       where: {
         ...baseWhere,
         transactionType: "expense",
@@ -173,7 +173,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     const income = this.aggregateByCategoryWithTag(
       incomeAggregation.map((item) => ({
         account: item.creditAccount || "",
-        tag: item.tags || "",
+        tag: item.friendlyCategory || "",
         amount: Number(item._sum.creditAmount || 0),
       })),
     );
@@ -181,7 +181,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     const expense = this.aggregateByCategoryWithTag(
       expenseAggregation.map((item) => ({
         account: item.debitAccount || "",
-        tag: item.tags || "",
+        tag: item.friendlyCategory || "",
         amount: Number(item._sum.debitAmount || 0),
       })),
     );
@@ -477,7 +477,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       description_2: prismaTransaction.description2 ?? undefined,
       description_3: prismaTransaction.description3 ?? undefined,
       description_detail: prismaTransaction.descriptionDetail ?? undefined,
-      tags: prismaTransaction.tags ?? undefined,
+      friendly_category: prismaTransaction.friendlyCategory ?? undefined,
       memo: prismaTransaction.memo ?? undefined,
       category_key: prismaTransaction.categoryKey,
       created_at: prismaTransaction.createdAt,

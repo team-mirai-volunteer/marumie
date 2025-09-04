@@ -220,7 +220,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
     expect(subToCategory?.value).toBe(1000000);
   });
 
-  it("should add '現残高' when income > expense", () => {
+  it("should add '収支' when income > expense", () => {
     const aggregation: SankeyCategoryAggregationResult = {
       income: [
         {
@@ -238,20 +238,20 @@ describe("convertCategoryAggregationToSankeyData", () => {
 
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
-    // 「現残高」ノードが追加されることを確認
-    const currentBalanceNode = result.nodes.find(node => node.id === "expense-現残高");
+    // 「収支」ノードが追加されることを確認
+    const currentBalanceNode = result.nodes.find(node => node.id === "expense-収支");
     expect(currentBalanceNode).toBeDefined();
-    expect(currentBalanceNode?.label).toBe("現残高");
+    expect(currentBalanceNode?.label).toBe("収支");
 
-    // 「現残高」へのリンクが追加されることを確認
+    // 「収支」へのリンクが追加されることを確認
     const linkToCurrentBalance = result.links.find(
-      link => link.source === "合計" && link.target === "expense-現残高"
+      link => link.source === "合計" && link.target === "expense-収支"
     );
     expect(linkToCurrentBalance).toBeDefined();
     expect(linkToCurrentBalance?.value).toBe(800000); // 200万 - 120万 = 80万
   });
 
-  it("should not add '現残高' when income <= expense", () => {
+  it("should not add '収支' when income <= expense", () => {
     const aggregation: SankeyCategoryAggregationResult = {
       income: [
         {
@@ -269,18 +269,18 @@ describe("convertCategoryAggregationToSankeyData", () => {
 
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
-    // 「現残高」ノードが追加されないことを確認
-    const currentBalanceNode = result.nodes.find(node => node.id === "expense-現残高");
+    // 「収支」ノードが追加されないことを確認
+    const currentBalanceNode = result.nodes.find(node => node.id === "expense-収支");
     expect(currentBalanceNode).toBeUndefined();
 
-    // 「現残高」へのリンクが追加されないことを確認
+    // 「収支」へのリンクが追加されないことを確認
     const linkToCurrentBalance = result.links.find(
-      link => link.target === "expense-現残高"
+      link => link.target === "expense-収支"
     );
     expect(linkToCurrentBalance).toBeUndefined();
   });
 
-  it("should handle '現残高' with existing subcategories", () => {
+  it("should handle '収支' with existing subcategories", () => {
     const aggregation: SankeyCategoryAggregationResult = {
       income: [
         {
@@ -300,13 +300,13 @@ describe("convertCategoryAggregationToSankeyData", () => {
 
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
-    // 「現残高」ノードが追加されることを確認
-    const currentBalanceNode = result.nodes.find(node => node.id === "expense-現残高");
+    // 「収支」ノードが追加されることを確認
+    const currentBalanceNode = result.nodes.find(node => node.id === "expense-収支");
     expect(currentBalanceNode).toBeDefined();
 
-    // 「現残高」のリンクが正しく追加されることを確認
+    // 「収支」のリンクが正しく追加されることを確認
     const linkToCurrentBalance = result.links.find(
-      link => link.source === "合計" && link.target === "expense-現残高"
+      link => link.source === "合計" && link.target === "expense-収支"
     );
     expect(linkToCurrentBalance?.value).toBe(1500000); // 300万 - 150万 = 150万
 

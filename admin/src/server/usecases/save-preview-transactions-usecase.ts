@@ -4,7 +4,6 @@ import {
   type PreviewTransaction,
   MfRecordConverter,
 } from "../lib/mf-record-converter";
-import { convertPreviewTypeToDbType } from "@/types/preview-transaction";
 
 export interface SavePreviewTransactionsInput {
   validTransactions: PreviewTransaction[];
@@ -47,7 +46,7 @@ export class SavePreviewTransactionsUsecase {
       }
 
       const validTransactions = input.validTransactions.filter(
-        (t) => t.status === "valid",
+        (t) => t.status === "valid" && t.transaction_type !== null,
       );
 
       result.processedCount = input.validTransactions.length;
@@ -70,6 +69,11 @@ export class SavePreviewTransactionsUsecase {
       const createResult =
         await this.transactionRepository.createMany(transactionInputs);
       result.savedCount = createResult.length;
+
+      // Refresh webapp cache after successful save
+      if (result.savedCount > 0) {
+        await this.refreshWebappCache();
+      }
     } catch (error) {
       console.error("Upload CSV error:", error);
       result.errors.push("データの保存中にエラーが発生しました");
@@ -82,11 +86,8 @@ export class SavePreviewTransactionsUsecase {
     previewTransaction: PreviewTransaction,
     politicalOrganizationId: string,
   ): CreateTransactionInput {
-    // PreviewTransactionTypeをDbTransactionTypeに変換
-    const dbTransactionType = convertPreviewTypeToDbType(
-      previewTransaction.transaction_type,
-    );
-    if (!dbTransactionType) {
+    // transaction_typeがnullの場合はエラー
+    if (previewTransaction.transaction_type === null) {
       throw new Error(
         `Invalid transaction type: ${previewTransaction.transaction_type}`,
       );
@@ -101,7 +102,7 @@ export class SavePreviewTransactionsUsecase {
           ? previewTransaction.transaction_date
           : previewTransaction.transaction_date.toISOString(),
       ),
-      transaction_type: dbTransactionType,
+      transaction_type: previewTransaction.transaction_type,
       debit_account: previewTransaction.debit_account,
       debit_sub_account: previewTransaction.debit_sub_account || "",
       debit_department: "",
@@ -119,9 +120,28 @@ export class SavePreviewTransactionsUsecase {
       description_2: previewTransaction.description_2,
       description_3: previewTransaction.description_3,
       description_detail: undefined,
-      tags: previewTransaction.tags || "",
+      friendly_category: previewTransaction.friendly_category || "",
       memo: "",
       category_key: previewTransaction.category_key,
     };
+  }
+
+  private async refreshWebappCache(): Promise<void> {
+    try {
+      const webappUrl = process.env.WEBAPP_URL || "http://localhost:3000";
+      const refreshToken = process.env.DATA_REFRESH_TOKEN;
+
+      if (refreshToken) {
+        await fetch(`${webappUrl}/api/refresh`, {
+          method: "POST",
+          headers: {
+            "x-refresh-token": refreshToken,
+          },
+        });
+      }
+    } catch (refreshError) {
+      console.warn("Failed to refresh webapp cache:", refreshError);
+      // Don't fail the usecase if cache refresh fails
+    }
   }
 }

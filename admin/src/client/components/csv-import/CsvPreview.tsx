@@ -4,21 +4,23 @@ import "client-only";
 import { useEffect, useRef, useState } from "react";
 import type { PreviewMfCsvResult } from "@/server/usecases/preview-mf-csv-usecase";
 import type { PreviewTransaction } from "@/server/lib/mf-record-converter";
-import { apiClient } from "@/client/lib/api-client";
+import type { PreviewCsvRequest } from "@/server/actions/preview-csv";
 import TransactionRow from "./TransactionRow";
-import { Pagination } from "@/client/components/ui/Pagination";
+import { ClientPagination } from "@/client/components/ui/ClientPagination";
 import StatisticsTable from "./StatisticsTable";
 
 interface CsvPreviewProps {
   file: File | null;
   politicalOrganizationId: string;
   onPreviewComplete?: (result: PreviewMfCsvResult) => void;
+  previewAction: (data: PreviewCsvRequest) => Promise<PreviewMfCsvResult>;
 }
 
 export default function CsvPreview({
   file,
   politicalOrganizationId,
   onPreviewComplete,
+  previewAction,
 }: CsvPreviewProps) {
   const [previewResult, setPreviewResult] = useState<PreviewMfCsvResult | null>(
     null,
@@ -51,7 +53,7 @@ export default function CsvPreview({
       setActiveTab("all");
 
       try {
-        const result = await apiClient.previewCsv({
+        const result = await previewAction({
           file,
           politicalOrganizationId,
         });
@@ -97,7 +99,7 @@ export default function CsvPreview({
     };
 
     previewFile();
-  }, [file, politicalOrganizationId]);
+  }, [file, politicalOrganizationId, previewAction]);
 
   const handlePageChange = (page: number) => {
     if (!previewResult) return;
@@ -287,7 +289,7 @@ export default function CsvPreview({
         </table>
       </div>
 
-      <Pagination
+      <ClientPagination
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={handlePageChange}

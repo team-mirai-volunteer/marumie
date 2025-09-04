@@ -1,12 +1,12 @@
 import type { MfCsvRecord } from "./mf-csv-loader";
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
-import type { PreviewTransactionType } from "@/types/preview-transaction";
+import type { TransactionType } from "@/shared/models/transaction";
 
 export interface PreviewTransaction {
   political_organization_id: string;
   transaction_no: string;
   transaction_date: Date | string;
-  transaction_type: PreviewTransactionType;
+  transaction_type: TransactionType | null;
   debit_account: string;
   debit_sub_account: string | undefined;
   debit_amount: number;
@@ -17,7 +17,7 @@ export interface PreviewTransaction {
   description_1: string | undefined;
   description_2: string | undefined;
   description_3: string | undefined;
-  tags: string | undefined;
+  friendly_category: string | undefined;
   category_key: string;
   status: "valid" | "invalid" | "skip";
   errors: string[];
@@ -45,7 +45,7 @@ export class MfRecordConverter {
       political_organization_id: politicalOrganizationId,
       transaction_no: record.transaction_no,
       transaction_date: new Date(record.transaction_date),
-      transaction_type: transactionType as PreviewTransactionType,
+      transaction_type: transactionType,
       debit_account: record.debit_account,
       debit_sub_account: record.debit_sub_account,
       debit_amount: debitAmount,
@@ -56,11 +56,11 @@ export class MfRecordConverter {
       description_1: descriptionParts.description_1,
       description_2: descriptionParts.description_2,
       description_3: descriptionParts.description_3,
-      tags: record.tags,
+      friendly_category: record.friendly_category,
       category_key: categoryKey,
-      status: transactionType === "invalid" ? "invalid" : "valid",
+      status: transactionType === null ? "invalid" : "valid",
       errors:
-        transactionType === "invalid"
+        transactionType === null
           ? [
               `Invalid account combination: debit=${record.debit_account}, credit=${record.credit_account}`,
             ]
@@ -128,7 +128,7 @@ export class MfRecordConverter {
   private determineTransactionType(
     debitAccount: string,
     creditAccount: string,
-  ): PreviewTransactionType {
+  ): TransactionType | null {
     if (debitAccount === "相殺項目（費用）") {
       return "offset_expense";
     }
@@ -141,7 +141,7 @@ export class MfRecordConverter {
     if (creditAccount === "普通預金") {
       return "expense";
     }
-    return "invalid";
+    return null;
   }
 
   public extractFinancialYear(dateString: string): number {
