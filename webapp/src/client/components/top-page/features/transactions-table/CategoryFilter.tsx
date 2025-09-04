@@ -169,7 +169,7 @@ export default function CategoryFilter({
                   key={category.id}
                   type="button"
                   onClick={() => handleExpenseToggle(category.id)}
-                  className={`flex items-center gap-2 py-[6px] pl-2 pr-1 w-full transition-colors cursor-pointer `}
+                  className="flex items-center gap-2 py-[6px] pl-2 pr-1 w-full h-auto hover:bg-[#F1F5F9] transition-colors cursor-pointer"
                 >
                   <div className="w-[18px] h-[18px] flex items-center justify-center">
                     {category.checked && (
