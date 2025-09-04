@@ -58,7 +58,7 @@ function mapRecordToMfTransaction(rec) {
         creditAmountYen: coerceInt(rec['貸方金額(円)']),
 
         summary: coerceString(rec['摘要']),
-        tags: coerceString(rec['タグ']),
+        friendly_category: coerceString(rec['タグ']),
         memo: coerceString(rec['メモ']),
         note1: coerceString(rec['摘要1']),
         note2: coerceString(rec['摘要2']),

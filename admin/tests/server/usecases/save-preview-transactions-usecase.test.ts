@@ -180,7 +180,7 @@ describe("SavePreviewTransactionsUsecase", () => {
             description_2: t.description_2,
             description_3: t.description_3,
             description_detail: undefined,
-            tags: t.tags || '',
+            friendly_category: t.friendly_category || '',
             memo: '',
             category_key: t.category_key,
             created_at: new Date(),

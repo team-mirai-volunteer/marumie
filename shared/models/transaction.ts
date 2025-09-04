@@ -29,7 +29,7 @@ export interface Transaction {
   description_2?: string;
   description_3?: string;
   description_detail?: string;
-  tags?: string;
+  friendly_category?: string;
   memo?: string;
   category_key: string;
   created_at: Date;
@@ -59,7 +59,7 @@ export interface CreateTransactionInput {
   description_2?: string;
   description_3?: string;
   description_detail?: string;
-  tags?: string;
+  friendly_category?: string;
   memo?: string;
   category_key: string;
 }

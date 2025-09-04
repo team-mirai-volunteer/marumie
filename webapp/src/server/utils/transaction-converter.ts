@@ -77,7 +77,7 @@ export function convertToDisplayTransaction(
     subcategory,
     label: account,
     shortLabel: categoryMapping.shortLabel,
-    tags: transaction.tags,
+    friendly_category: transaction.friendly_category,
     absAmount,
     amount,
   };

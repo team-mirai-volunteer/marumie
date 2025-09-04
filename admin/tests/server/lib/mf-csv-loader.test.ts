@@ -41,7 +41,7 @@ describe("MfCsvLoader", () => {
         credit_invoice: "",
         credit_amount: "1500000",
         description: "拠出 テスト太郎",
-        tags: "テスト太郎",
+        friendly_category: "テスト太郎",
         memo: "",
       });
     });
