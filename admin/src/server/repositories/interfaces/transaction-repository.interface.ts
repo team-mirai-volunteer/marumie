@@ -35,4 +35,8 @@ export interface ITransactionRepository {
     skipped: number;
   }>;
   findByTransactionNos(transactionNos: string[]): Promise<Transaction[]>;
+  checkDuplicateTransactionNos(
+    politicalOrgId: string,
+    transactionNos: string[],
+  ): Promise<string[]>;
 }

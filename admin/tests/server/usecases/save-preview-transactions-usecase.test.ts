@@ -14,12 +14,13 @@ import type { CreateTransactionInput } from "@/shared/models/transaction";
 describe("SavePreviewTransactionsUsecase", () => {
   let usecase: SavePreviewTransactionsUsecase;
   let previewUsecase: PreviewMfCsvUsecase;
-  let mockRepository: jest.Mocked<Pick<ITransactionRepository, 'createMany' | 'findByTransactionNos'>>;
+  let mockRepository: jest.Mocked<Pick<ITransactionRepository, 'createMany' | 'findByTransactionNos' | 'checkDuplicateTransactionNos'>>;
 
   beforeEach(() => {
     mockRepository = {
       createMany: jest.fn(),
       findByTransactionNos: jest.fn().mockResolvedValue([]),
+      checkDuplicateTransactionNos: jest.fn().mockResolvedValue([]),
     };
     usecase = new SavePreviewTransactionsUsecase(mockRepository as unknown as ITransactionRepository);
     previewUsecase = new PreviewMfCsvUsecase(mockRepository as unknown as ITransactionRepository);
@@ -201,6 +202,111 @@ describe("SavePreviewTransactionsUsecase", () => {
       } else {
         expect(mockRepository.createMany).not.toHaveBeenCalled();
       }
+    });
+
+    it("should handle duplicate transaction_no within same political organization", async () => {
+      // 同じtransaction_noを持つCSVデータ
+      const csvContent = `取引No,取引日,借方勘定科目,借方補助科目,借方部門,借方取引先,借方税区分,借方インボイス,借方金額,貸方勘定科目,貸方補助科目,貸方部門,貸方取引先,貸方税区分,貸方インボイス,貸方金額,摘要,仕訳メモ,タグ
+TXN-001,2025/6/1,人件費,,,,,,1000,普通預金,,,,,,1000,給与支払1,,
+TXN-001,2025/6/2,人件費,,,,,,2000,普通預金,,,,,,2000,給与支払2,,`;
+
+      // 既存データとして同じtransaction_noが存在することをモック
+      mockRepository.checkDuplicateTransactionNos.mockResolvedValue(['TXN-001']);
+
+      const previewInput: PreviewMfCsvInput = {
+        csvContent,
+        politicalOrganizationId: "test-org-id",
+      };
+      const previewResult = await previewUsecase.execute(previewInput);
+
+      const input: SavePreviewTransactionsInput = {
+        validTransactions: previewResult.transactions,
+        politicalOrganizationId: "test-org-id",
+      };
+
+      const result = await usecase.execute(input);
+
+      // 重複により全てスキップされるはず
+      expect(result.processedCount).toBe(2);
+      expect(result.savedCount).toBe(0);
+      expect(result.skippedCount).toBe(2);
+      
+      // repositoryのcreateMany呼び出しを確認（有効な取引がないので呼ばれない）
+      expect(mockRepository.createMany).not.toHaveBeenCalled();
+      
+      // checkDuplicateTransactionNosが正しい引数で呼ばれることを確認
+      expect(mockRepository.checkDuplicateTransactionNos).toHaveBeenCalledWith(
+        "test-org-id",
+        ["TXN-001", "TXN-001"]
+      );
+    });
+
+    it("should allow same transaction_no for different political organizations", async () => {
+      const csvContent = `取引No,取引日,借方勘定科目,借方補助科目,借方部門,借方取引先,借方税区分,借方インボイス,借方金額,貸方勘定科目,貸方補助科目,貸方部門,貸方取引先,貸方税区分,貸方インボイス,貸方金額,摘要,仕訳メモ,タグ
+TXN-001,2025/6/1,人件費,,,,,,1000,普通預金,,,,,,1000,給与支払,,`;
+
+      // 異なる政治団体では重複なし
+      mockRepository.checkDuplicateTransactionNos.mockResolvedValue([]);
+      
+      // createManyのモック設定
+      mockRepository.createMany.mockResolvedValue([
+        {
+          id: 'test-id',
+          political_organization_id: "different-org-id",
+          transaction_no: "TXN-001",
+          transaction_date: new Date('2025-06-01'),
+          financial_year: 2025,
+          transaction_type: 'expense',
+          debit_account: '人件費',
+          debit_sub_account: '',
+          debit_department: '',
+          debit_partner: '',
+          debit_tax_category: '',
+          debit_amount: 1000,
+          credit_account: '普通預金',
+          credit_sub_account: '',
+          credit_department: '',
+          credit_partner: '',
+          credit_tax_category: '',
+          credit_amount: 1000,
+          description: '給与支払',
+          description_1: undefined,
+          description_2: undefined,
+          description_3: undefined,
+          description_detail: undefined,
+          friendly_category: '',
+          memo: '',
+          category_key: '人件費',
+          created_at: new Date(),
+          updated_at: new Date()
+        }
+      ]);
+
+      const previewInput: PreviewMfCsvInput = {
+        csvContent,
+        politicalOrganizationId: "different-org-id",
+      };
+      const previewResult = await previewUsecase.execute(previewInput);
+
+      const input: SavePreviewTransactionsInput = {
+        validTransactions: previewResult.transactions,
+        politicalOrganizationId: "different-org-id",
+      };
+
+      const result = await usecase.execute(input);
+
+      // 異なる政治団体では正常に保存されるはず
+      expect(result.processedCount).toBe(1);
+      expect(result.savedCount).toBe(1);
+      expect(result.skippedCount).toBe(0);
+      expect(result.errors).toEqual([]);
+      
+      // repositoryが呼ばれることを確認
+      expect(mockRepository.createMany).toHaveBeenCalledTimes(1);
+      expect(mockRepository.checkDuplicateTransactionNos).toHaveBeenCalledWith(
+        "different-org-id",
+        ["TXN-001"]
+      );
     });
   });
 });
