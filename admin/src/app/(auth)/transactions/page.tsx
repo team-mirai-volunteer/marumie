@@ -4,13 +4,14 @@ import { DeleteAllButton } from "@/client/components/transactions/DeleteAllButto
 import { getTransactions } from "@/server/loaders/transaction-loader";
 
 interface TransactionsPageProps {
-  searchParams: { page?: string };
+  searchParams: Promise<{ page?: string }>;
 }
 
 export default async function TransactionsPage({
   searchParams,
 }: TransactionsPageProps) {
-  const currentPage = parseInt(searchParams.page || "1", 10);
+  const params = await searchParams;
+  const currentPage = parseInt(params.page || "1", 10);
   const perPage = 50;
 
   const data = await getTransactions({
