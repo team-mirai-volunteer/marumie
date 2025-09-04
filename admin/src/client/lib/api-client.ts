@@ -1,18 +1,6 @@
-import type { PoliticalOrganization } from "@/shared/models/political-organization";
 import type { Transaction } from "@/shared/models/transaction";
 import type { PreviewMfCsvResult } from "@/server/usecases/preview-mf-csv-usecase";
 import type { PreviewTransaction } from "@/server/lib/mf-record-converter";
-
-export interface CreatePoliticalOrganizationRequest {
-  name: string;
-  slug: string;
-  description?: string;
-}
-
-export interface UpdatePoliticalOrganizationRequest {
-  name?: string;
-  description?: string;
-}
 
 export interface PreviewCsvRequest {
   file: File;
@@ -110,46 +98,6 @@ export class ApiClient {
     }
 
     return response.json();
-  }
-
-  async createPoliticalOrganization(
-    data: CreatePoliticalOrganizationRequest,
-  ): Promise<PoliticalOrganization> {
-    return this.request<PoliticalOrganization>("/api/political-organizations", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  }
-
-  async getPoliticalOrganization(id: string): Promise<PoliticalOrganization> {
-    return this.request<PoliticalOrganization>(
-      `/api/political-organizations/${id}`,
-    );
-  }
-
-  async updatePoliticalOrganization(
-    id: string,
-    data: UpdatePoliticalOrganizationRequest,
-  ): Promise<PoliticalOrganization> {
-    return this.request<PoliticalOrganization>(
-      `/api/political-organizations/${id}`,
-      {
-        method: "PUT",
-        body: JSON.stringify(data),
-      },
-    );
-  }
-
-  async deletePoliticalOrganization(id: string): Promise<void> {
-    await this.request<void>(`/api/political-organizations/${id}`, {
-      method: "DELETE",
-    });
-  }
-
-  async listPoliticalOrganizations(): Promise<PoliticalOrganization[]> {
-    return this.request<PoliticalOrganization[]>(
-      "/api/political-organizations",
-    );
   }
 
   async previewCsv(data: PreviewCsvRequest): Promise<PreviewMfCsvResult> {
