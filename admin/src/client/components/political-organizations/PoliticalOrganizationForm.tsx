@@ -15,8 +15,6 @@ interface PoliticalOrganizationFormProps {
   onSubmit: (data: PoliticalOrganizationFormData) => Promise<void>;
   submitButtonText: string;
   title: string;
-  isLoading?: boolean;
-  error?: string | null;
 }
 
 export function PoliticalOrganizationForm({
@@ -24,19 +22,28 @@ export function PoliticalOrganizationForm({
   onSubmit,
   submitButtonText,
   title,
-  isLoading = false,
-  error = null,
 }: PoliticalOrganizationFormProps) {
   const [formData, setFormData] = useState<PoliticalOrganizationFormData>({
     name: initialData.name || "",
     slug: initialData.slug || "",
     description: initialData.description || "",
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.slug.trim()) return;
-    await onSubmit(formData);
+
+    try {
+      setIsLoading(true);
+      setError(null);
+      await onSubmit(formData);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "更新に失敗しました");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleInputChange = (
