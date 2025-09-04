@@ -29,7 +29,7 @@
   },
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "cd ../ && prisma migrate reset --force && prisma generate && cd webapp && next build",
+    "build": "cd ../ && prisma db push --accept-data-loss --force-reset && prisma generate && cd webapp && next build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
