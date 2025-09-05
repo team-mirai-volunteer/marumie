@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { PrismaClient } from "@prisma/client";
 import { PrismaTransactionRepository } from "../repositories/prisma-transaction.repository";
 import { DeleteAllTransactionsUsecase } from "../usecases/delete-all-transactions-usecase";
@@ -18,6 +18,8 @@ export async function deleteAllTransactionsAction(): Promise<{
 
     const result = await usecase.execute();
 
+    // キャッシュを無効化してトランザクション一覧を更新
+    revalidateTag("transactions-data");
     revalidatePath("/transactions");
 
     return {
