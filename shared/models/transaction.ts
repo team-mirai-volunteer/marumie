@@ -32,6 +32,7 @@ export interface Transaction {
   friendly_category?: string;
   memo?: string;
   category_key: string;
+  label: string;
   created_at: Date;
   updated_at: Date;
 }
@@ -62,6 +63,7 @@ export interface CreateTransactionInput {
   friendly_category?: string;
   memo?: string;
   category_key: string;
+  label?: string;
 }
 
 export interface UpdateTransactionInput
