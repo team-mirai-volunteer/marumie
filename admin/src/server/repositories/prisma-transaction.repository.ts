@@ -5,6 +5,7 @@ import type {
   TransactionFilters,
   UpdateTransactionInput,
 } from "@/shared/models/transaction";
+import type { TransactionWithOrganization } from "@/shared/models/transaction-with-organization";
 import type {
   ITransactionRepository,
   PaginatedResult,
@@ -70,7 +71,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   async findWithPagination(
     filters?: TransactionFilters,
     pagination?: PaginationOptions,
-  ): Promise<PaginatedResult<Transaction>> {
+  ): Promise<PaginatedResult<TransactionWithOrganization>> {
     const where = this.buildWhereClause(filters);
 
     const page = pagination?.page || 1;
@@ -80,6 +81,9 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     const [transactions, total] = await Promise.all([
       this.prisma.transaction.findMany({
         where,
+        include: {
+          politicalOrganization: true,
+        },
         orderBy: { transactionDate: "desc" },
         skip,
         take: perPage,
@@ -90,7 +94,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     const totalPages = Math.ceil(total / perPage);
 
     return {
-      items: transactions.map(this.mapToTransaction),
+      items: transactions.map((t) => this.mapToTransaction(t, true)),
       total,
       page,
       perPage,
@@ -306,8 +310,11 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public mapToTransaction(prismaTransaction: any): Transaction {
-    return {
+  public mapToTransaction(
+    prismaTransaction: any,
+    includeOrganization = false,
+  ): Transaction | TransactionWithOrganization {
+    const base: Transaction = {
       id: prismaTransaction.id.toString(),
       political_organization_id:
         prismaTransaction.politicalOrganizationId.toString(),
@@ -338,5 +345,15 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       created_at: prismaTransaction.createdAt,
       updated_at: prismaTransaction.updatedAt,
     };
+
+    if (includeOrganization) {
+      return {
+        ...base,
+        political_organization_name:
+          prismaTransaction.politicalOrganization?.name,
+      } as TransactionWithOrganization;
+    }
+
+    return base;
   }
 }

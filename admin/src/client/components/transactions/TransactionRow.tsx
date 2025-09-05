@@ -1,11 +1,11 @@
 "use client";
 import "client-only";
 
-import type { Transaction } from "@/shared/models/transaction";
+import type { TransactionWithOrganization } from "@/shared/models/transaction-with-organization";
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 
 interface TransactionRowProps {
-  transaction: Transaction;
+  transaction: TransactionWithOrganization;
 }
 
 const DEFAULT_CATEGORY_COLOR = "#64748B"; // slate-500 as default fallback color
@@ -24,7 +24,7 @@ function getCategoryLabel(accountName: string): string {
   return categoryInfo?.shortLabel || accountName;
 }
 
-function getTransactionCategory(transaction: Transaction) {
+function getTransactionCategory(transaction: TransactionWithOrganization) {
   // transaction_typeがexpenseの場合は借方のカテゴリを、そうでなければ貸方のカテゴリを表示
 
   if (transaction.transaction_type === "expense") {
@@ -85,6 +85,9 @@ export function TransactionRow({ transaction }: TransactionRowProps) {
     <tr className="border-b border-primary-border">
       <td className="px-2 py-3 text-sm text-white">
         {formatDate(transaction.transaction_date)}
+      </td>
+      <td className="px-2 py-3 text-sm text-white">
+        {transaction.political_organization_name || "-"}
       </td>
       <td className="px-2 py-3 text-sm text-white">
         {transaction.debit_account}

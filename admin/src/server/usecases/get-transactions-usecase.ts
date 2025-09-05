@@ -1,7 +1,5 @@
-import type {
-  Transaction,
-  TransactionFilters,
-} from "@/shared/models/transaction";
+import type { TransactionFilters } from "@/shared/models/transaction";
+import type { TransactionWithOrganization } from "@/shared/models/transaction-with-organization";
 import type {
   ITransactionRepository,
   PaginationOptions,
@@ -18,7 +16,7 @@ export interface GetTransactionsParams {
 }
 
 export interface GetTransactionsResult {
-  transactions: Transaction[];
+  transactions: TransactionWithOrganization[];
   total: number;
   page: number;
   perPage: number;
