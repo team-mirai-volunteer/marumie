@@ -14,9 +14,6 @@ export interface PreviewTransaction {
   credit_sub_account: string | undefined;
   credit_amount: number;
   description: string | undefined;
-  description_1: string | undefined;
-  description_2: string | undefined;
-  description_3: string | undefined;
   friendly_category: string | undefined;
   category_key: string;
   status: "valid" | "invalid" | "skip";
@@ -31,7 +28,6 @@ export class MfRecordConverter {
   ): PreviewTransaction {
     const debitAmount = this.parseAmount(record.debit_amount);
     const creditAmount = this.parseAmount(record.credit_amount);
-    const descriptionParts = this.splitDescription(record.description);
     const categoryKey = this.determineCategoryKey(
       record.debit_account,
       record.credit_account,
@@ -53,9 +49,6 @@ export class MfRecordConverter {
       credit_sub_account: record.credit_sub_account,
       credit_amount: creditAmount,
       description: record.description,
-      description_1: descriptionParts.description_1,
-      description_2: descriptionParts.description_2,
-      description_3: descriptionParts.description_3,
       friendly_category: record.friendly_category,
       category_key: categoryKey,
       status: transactionType === null ? "invalid" : "valid",
@@ -91,37 +84,6 @@ export class MfRecordConverter {
       return mapping ? mapping.key : "undefined";
     } else {
       return "undefined";
-    }
-  }
-
-  private splitDescription(description: string): {
-    description_1?: string;
-    description_2?: string;
-    description_3?: string;
-  } {
-    if (!description || description.trim() === "") {
-      return {};
-    }
-
-    const parts = description.trim().split(/\s+/);
-
-    switch (parts.length) {
-      case 1:
-        return { description_1: parts[0] };
-      case 2:
-        return { description_1: parts[0], description_3: parts[1] };
-      case 3:
-        return {
-          description_1: parts[0],
-          description_2: parts[1],
-          description_3: parts[2],
-        };
-      default:
-        return {
-          description_1: parts[0],
-          description_2: parts[1],
-          description_3: parts.slice(2).join(" "),
-        };
     }
   }
 
