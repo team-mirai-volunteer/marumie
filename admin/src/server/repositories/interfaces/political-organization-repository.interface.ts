@@ -6,4 +6,6 @@ export interface IPoliticalOrganizationRepository {
     slug: string,
     description?: string,
   ): Promise<PoliticalOrganization>;
+  delete(id: bigint): Promise<void>;
+  countTransactions(id: bigint): Promise<number>;
 }

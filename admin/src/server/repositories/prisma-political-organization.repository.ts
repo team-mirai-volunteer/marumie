@@ -25,4 +25,16 @@ export class PrismaPoliticalOrganizationRepository
       id: organization.id.toString(),
     };
   }
+
+  async delete(id: bigint): Promise<void> {
+    await this.prisma.politicalOrganization.delete({
+      where: { id },
+    });
+  }
+
+  async countTransactions(id: bigint): Promise<number> {
+    return await this.prisma.transaction.count({
+      where: { politicalOrganizationId: id },
+    });
+  }
 }
