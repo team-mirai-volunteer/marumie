@@ -188,28 +188,60 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
               {/* ラベル */}
               <text
                 x={node.x + node.width / 2}
-                y={node.y + node.height / 2 - 5}
+                y={node.y + node.height / 2 - 10}
                 textAnchor="middle"
-                className={`text-sm font-bold pointer-events-none ${
+                fontSize="16"
+                fontWeight="700"
+                className={`pointer-events-none font-bold ${
                   node.name === BALANCE_SHEET_LABELS.debtExcess
                     ? "fill-red-600"
                     : "fill-black"
                 }`}
+                style={{ fontFamily: "'Noto Sans JP', sans-serif" }}
               >
                 {node.name}
               </text>
+
+              {/* 金額 */}
               <text
                 x={node.x + node.width / 2}
                 y={node.y + node.height / 2 + 15}
                 textAnchor="middle"
-                className={`text-xs font-medium pointer-events-none ${
+                className={`pointer-events-none ${
                   node.name === BALANCE_SHEET_LABELS.debtExcess
                     ? "fill-red-600"
                     : "fill-black"
                 }`}
               >
-                {node.name === BALANCE_SHEET_LABELS.debtExcess ? "▲" : ""}
-                {formatAmount(node.value)}
+                {node.name === BALANCE_SHEET_LABELS.debtExcess && (
+                  <tspan
+                    fontSize="18"
+                    fontWeight="700"
+                    style={{ fontFamily: "'Noto Sans JP', sans-serif" }}
+                  >
+                    ▲
+                  </tspan>
+                )}
+                {formatAmount(node.value)
+                  .split(/(\d+)/)
+                  .map((part, partIndex) => {
+                    const isNumber = /^\d+$/.test(part);
+                    return (
+                      <tspan
+                        key={`${node.name}-${partIndex}-${part}`}
+                        fontSize={isNumber ? "20" : "14"}
+                        fontWeight={isNumber ? "700" : "500"}
+                        dx={partIndex > 0 ? "4" : "0"}
+                        style={{
+                          fontFamily: isNumber
+                            ? "'SF Pro', -apple-system, system-ui, sans-serif"
+                            : "'Noto Sans JP', sans-serif",
+                        }}
+                      >
+                        {part}
+                      </tspan>
+                    );
+                  })}
               </text>
             </g>
           ))}
