@@ -2,7 +2,33 @@ import type { SankeyData, SankeyLink, SankeyNode } from "@/types/sankey";
 import type { SankeyCategoryAggregationResult } from "../repositories/interfaces/transaction-repository.interface";
 
 /**
- * 1%以下の小項目をまとめる処理
+ * サブカテゴリが10個になるように閾値を動的計算する処理
+ */
+function calculateDynamicThreshold(
+  items: Array<{ subcategory?: string; totalAmount: number }>,
+  targetCount: number = 10,
+): number {
+  // サブカテゴリのみを対象とする
+  const subcategoryItems = items.filter((item) => item.subcategory);
+
+  // サブカテゴリの個数が目標以下の場合は閾値を0にして統合しない
+  if (subcategoryItems.length <= targetCount) {
+    return 0;
+  }
+
+  // 金額で降順ソート
+  const sortedItems = [...subcategoryItems].sort(
+    (a, b) => b.totalAmount - a.totalAmount,
+  );
+
+  // 上位targetCount個目の金額を閾値とする
+  // これにより、上位targetCount-1個 + その他1個 = 合計targetCount個になる
+  const dynamicThreshold = sortedItems[targetCount - 1].totalAmount;
+  return dynamicThreshold;
+}
+
+/**
+ * 小項目をまとめる処理（動的閾値）
  */
 function consolidateSmallItems(
   aggregation: SankeyCategoryAggregationResult,
@@ -12,21 +38,11 @@ function consolidateSmallItems(
     return aggregation;
   }
 
-  // 全体の収入・支出合計を計算
-  const totalIncome = aggregation.income.reduce(
-    (sum, item) => sum + item.totalAmount,
-    0,
-  );
-  const totalExpense = aggregation.expense.reduce(
-    (sum, item) => sum + item.totalAmount,
-    0,
-  );
+  // サブカテゴリが10個になるように閾値を動的計算
+  const incomeThreshold = calculateDynamicThreshold(aggregation.income, 8);
+  const expenseThreshold = calculateDynamicThreshold(aggregation.expense, 8);
 
-  // 1%の閾値
-  const incomeThreshold = totalIncome * 0.01;
-  const expenseThreshold = totalExpense * 0.01;
-
-  // 収入の処理 - カテゴリ別に1%以下を集計
+  // 収入の処理 - カテゴリ別に閾値以下を集計
   const consolidatedIncome: typeof aggregation.income = [];
   const smallIncomeByCategory = new Map<string, number>();
 
@@ -39,7 +55,7 @@ function consolidateSmallItems(
     }
   }
 
-  // カテゴリ別に1%以下の合計項目を追加
+  // カテゴリ別に閾値以下の合計項目を追加
   for (const [category, total] of smallIncomeByCategory) {
     if (total > 0) {
       consolidatedIncome.push({
@@ -50,7 +66,7 @@ function consolidateSmallItems(
     }
   }
 
-  // 支出の処理 - カテゴリ別に1%以下を集計
+  // 支出の処理 - カテゴリ別に閾値以下を集計
   const consolidatedExpense: typeof aggregation.expense = [];
   const smallExpenseByCategory = new Map<string, number>();
 
@@ -63,7 +79,7 @@ function consolidateSmallItems(
     }
   }
 
-  // カテゴリ別に1%以下の合計項目を追加
+  // カテゴリ別に閾値以下の合計項目を追加
   for (const [category, total] of smallExpenseByCategory) {
     if (total > 0) {
       consolidatedExpense.push({

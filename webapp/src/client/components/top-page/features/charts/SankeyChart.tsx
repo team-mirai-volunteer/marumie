@@ -365,78 +365,65 @@ const renderPrimaryLabel = (
 
   // サブカテゴリの場合は特別な処理
   if (isSubcategory) {
-    const maxCharsPerLine = TEXT.MAX_CHARS_PER_LINE_SUB;
+    const N = TEXT.MAX_CHARS_PER_LINE_SUB; // N = 6
+    let processedLabel = label;
 
-    // 13文字以上の場合は11文字+「...」に省略
-    if (label.length >= TEXT.ELLIPSIS_THRESHOLD_SUB) {
-      const truncatedLabel = `${label.substring(0, 11)}...`;
+    // ① N*2+1文字以上（13文字以上）だったらN*2-1文字で切って「…」をつけて2*N文字にする
+    if (label.length >= N * 2 + 1) {
+      processedLabel = `${label.substring(0, N * 2 - 1)}…`;
+    }
+
+    // ② N+1文字以上（7文字以上）だったら改行する
+    if (processedLabel.length >= N + 1) {
+      const lines = [];
+      for (let i = 0; i < processedLabel.length; i += N) {
+        lines.push(processedLabel.substring(i, i + N));
+      }
+
+      const lineHeight = isMobile
+        ? DIMENSIONS.LINE_HEIGHT_SUB_MOBILE
+        : DIMENSIONS.LINE_HEIGHT;
+
+      // 複数行テキストの総高さを計算
+      const totalTextHeight = (lines.length - 1) * lineHeight;
+
       return (
         <text
           key={`${node.id}-primary`}
           x={x}
-          y={node.y + node.height / 2}
-          textAnchor={textAnchor as "start" | "middle" | "end"}
-          dominantBaseline="middle"
+          y={node.y + node.height / 2 - totalTextHeight / 2}
+          textAnchor={textAnchor}
           fill={COLORS.TEXT}
           fontSize={fontSize}
           fontWeight="bold"
+          dominantBaseline="middle"
         >
-          {truncatedLabel}
+          {lines.map((line, index) => (
+            <tspan
+              key={`${node.id}-${index}`}
+              x={x}
+              dy={index === 0 ? 0 : lineHeight}
+            >
+              {line}
+            </tspan>
+          ))}
         </text>
       );
     }
 
-    // 6文字以下の場合は1行で表示
-    if (label.length <= maxCharsPerLine) {
-      return (
-        <text
-          key={`${node.id}-primary`}
-          x={x}
-          y={node.y + node.height / 2}
-          textAnchor={textAnchor as "start" | "middle" | "end"}
-          dominantBaseline="middle"
-          fill={COLORS.TEXT}
-          fontSize={fontSize}
-          fontWeight="bold"
-        >
-          {label}
-        </text>
-      );
-    }
-
-    // 7-12文字の場合は6文字で改行
-    const lines = [];
-    for (let i = 0; i < label.length; i += maxCharsPerLine) {
-      lines.push(label.substring(i, i + maxCharsPerLine));
-    }
-
-    const lineHeight = isMobile
-      ? DIMENSIONS.LINE_HEIGHT_SUB_MOBILE
-      : DIMENSIONS.LINE_HEIGHT;
-
-    // 複数行テキストの総高さを計算
-    const totalTextHeight = (lines.length - 1) * lineHeight;
-
+    // N文字以下の場合は1行で表示
     return (
       <text
         key={`${node.id}-primary`}
         x={x}
-        y={node.y + node.height / 2 - totalTextHeight / 2}
-        textAnchor={textAnchor}
+        y={node.y + node.height / 2}
+        textAnchor={textAnchor as "start" | "middle" | "end"}
+        dominantBaseline="middle"
         fill={COLORS.TEXT}
         fontSize={fontSize}
         fontWeight="bold"
-        dominantBaseline="middle"
       >
-        {lines.map((line, index) => (
-          <tspan
-            key={`${node.id}-${index}`}
-            x={x}
-            dy={index === 0 ? 0 : lineHeight}
-          >
-            {line}
-          </tspan>
-        ))}
+        {processedLabel}
       </text>
     );
   }
