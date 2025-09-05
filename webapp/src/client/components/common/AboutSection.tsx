@@ -60,7 +60,7 @@ export default function AboutSection() {
         </div>
 
         <div className="flex justify-center">
-          <div className="flex items-center gap-3">
+          <div className="grid grid-cols-4 gap-3 md:flex md:flex-wrap md:justify-center md:gap-3">
             {socialLinks.map((social) => (
               <a
                 key={social.name}
