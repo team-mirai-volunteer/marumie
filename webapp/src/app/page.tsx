@@ -1,4 +1,5 @@
 import "server-only";
+import AboutSection from "@/client/components/common/AboutSection";
 import ExplanationSection from "@/client/components/common/ExplanationSection";
 import TransparencySection from "@/client/components/common/TransparencySection";
 import MainColumn from "@/client/components/layout/MainColumn";
@@ -47,6 +48,7 @@ export default async function Home() {
         updatedAt={updatedAt}
       />
       <ExplanationSection />
+      <AboutSection />
     </MainColumn>
   );
 }
