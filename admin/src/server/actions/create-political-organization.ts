@@ -2,7 +2,6 @@
 
 import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 const prisma = new PrismaClient();
 
@@ -33,6 +32,9 @@ export async function createPoliticalOrganization(
         description: description?.trim() || null,
       },
     });
+
+    revalidatePath("/political-organizations");
+    return { success: true };
   } catch (error) {
     console.error("Error creating political organization:", error);
 
@@ -44,7 +46,4 @@ export async function createPoliticalOrganization(
       error instanceof Error ? error.message : "政治団体の作成に失敗しました",
     );
   }
-
-  revalidatePath("/political-organizations");
-  redirect("/political-organizations");
 }

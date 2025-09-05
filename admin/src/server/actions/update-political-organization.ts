@@ -2,7 +2,6 @@
 
 import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 const prisma = new PrismaClient();
 
@@ -41,6 +40,9 @@ export async function updatePoliticalOrganization(
         description: description?.trim() || null,
       },
     });
+
+    revalidatePath("/political-organizations");
+    return { success: true };
   } catch (error) {
     console.error("Error updating political organization:", error);
 
@@ -59,7 +61,4 @@ export async function updatePoliticalOrganization(
       error instanceof Error ? error.message : "政治団体の更新に失敗しました",
     );
   }
-
-  revalidatePath("/political-organizations");
-  redirect("/political-organizations");
 }
