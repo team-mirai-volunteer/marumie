@@ -2,6 +2,7 @@ import "server-only";
 
 import Link from "next/link";
 import { loadPoliticalOrganizationsData } from "@/server/loaders/load-political-organizations-data";
+import { DeletePoliticalOrganizationButton } from "@/client/components/political-organizations/DeletePoliticalOrganizationButton";
 
 export default async function PoliticalOrganizationsPage() {
   const organizations = await loadPoliticalOrganizationsData();
@@ -50,12 +51,18 @@ export default async function PoliticalOrganizationsPage() {
                       {new Date(org.createdAt).toLocaleDateString("ja-JP")}
                     </div>
                   </div>
-                  <Link
-                    href={`/political-organizations/${org.id}`}
-                    className="bg-primary-hover text-white no-underline text-sm px-4 py-2 rounded-lg hover:bg-primary-border transition-colors duration-200"
-                  >
-                    編集
-                  </Link>
+                  <div className="flex gap-2">
+                    <Link
+                      href={`/political-organizations/${org.id}`}
+                      className="bg-primary-hover text-white no-underline text-sm px-4 py-2 rounded-lg hover:bg-primary-border transition-colors duration-200"
+                    >
+                      編集
+                    </Link>
+                    <DeletePoliticalOrganizationButton
+                      orgId={BigInt(org.id)}
+                      orgName={org.name}
+                    />
+                  </div>
                 </div>
               </div>
             ))}
