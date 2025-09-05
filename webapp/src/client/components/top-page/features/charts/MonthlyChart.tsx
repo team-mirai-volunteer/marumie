@@ -232,7 +232,6 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
       shared: true,
       intersect: false,
       custom: ({ series, dataPointIndex }) => {
-        const yearMonth = data[dataPointIndex].yearMonth;
         const income = series[0][dataPointIndex];
         const expense = Math.abs(series[1][dataPointIndex]); // 正の値に変換
         const balance = series[2][dataPointIndex];
