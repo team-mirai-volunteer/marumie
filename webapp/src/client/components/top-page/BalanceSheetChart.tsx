@@ -1,82 +1,146 @@
 "use client";
 
-import { ResponsiveTreeMap } from "@nivo/treemap";
-import type { BalanceSheetData, TreemapData } from "@/types/balance-sheet";
+import type { BalanceSheetData } from "@/types/balance-sheet";
 import { BALANCE_SHEET_LABELS } from "@/types/balance-sheet";
 
 interface BalanceSheetChartProps {
   data: BalanceSheetData;
 }
 
+// レイアウト定数
+const CHART_WIDTH = 500;
+const CHART_HEIGHT = 380;
+const MARGIN = 1;
+const LABEL_HEIGHT = 20;
+
+interface BalanceSheetNode {
+  name: string;
+  value: number;
+  color: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
-  // バランスシートデータをTreemap用に変換
-  const convertToTreemapData = (
+  // 座標計算によるレイアウト
+  const calculateLayout = (
     balanceSheet: BalanceSheetData,
-  ): TreemapData[] => {
-    const leftSideData: TreemapData = {
-      name: "資産",
-      children: [],
-    };
+  ): BalanceSheetNode[] => {
+    const nodes: BalanceSheetNode[] = [];
 
-    const rightSideData: TreemapData = {
-      name: "負債・資本",
-      children: [],
-    };
+    // 左側（資産）の合計値
+    const leftTotal =
+      balanceSheet.left.currentAssets +
+      balanceSheet.left.fixedAssets +
+      balanceSheet.left.debtExcess;
+    // 右側（負債・資本）の合計値
+    const rightTotal =
+      balanceSheet.right.currentLiabilities +
+      balanceSheet.right.fixedLiabilities +
+      balanceSheet.right.netAssets;
 
-    // 左側（資産）のデータを変換
+    // 左側の幅を計算（全体幅の比率）
+    const totalValue = leftTotal + rightTotal;
+    const leftWidth = (CHART_WIDTH * leftTotal) / totalValue;
+    const rightWidth = CHART_WIDTH - leftWidth;
+
+    let currentY = 0;
+
+    // 左側（資産）のノードを配置
     if (balanceSheet.left.currentAssets > 0) {
-      leftSideData.children.push({
+      const height =
+        (CHART_HEIGHT * balanceSheet.left.currentAssets) / leftTotal;
+      nodes.push({
         name: BALANCE_SHEET_LABELS.currentAssets,
         value: balanceSheet.left.currentAssets,
-        color: "#99F6E4", // cyan-200
+        color: "#99F6E4",
+        x: 0,
+        y: currentY,
+        width: leftWidth - MARGIN / 2,
+        height: height - MARGIN,
       });
+      currentY += height;
     }
 
     if (balanceSheet.left.fixedAssets > 0) {
-      leftSideData.children.push({
+      const height = (CHART_HEIGHT * balanceSheet.left.fixedAssets) / leftTotal;
+      nodes.push({
         name: BALANCE_SHEET_LABELS.fixedAssets,
         value: balanceSheet.left.fixedAssets,
-        color: "#2DD4BF", // teal-400
+        color: "#2DD4BF",
+        x: 0,
+        y: currentY,
+        width: leftWidth - MARGIN / 2,
+        height: height - MARGIN,
       });
+      currentY += height;
     }
 
     if (balanceSheet.left.debtExcess > 0) {
-      leftSideData.children.push({
+      const height = (CHART_HEIGHT * balanceSheet.left.debtExcess) / leftTotal;
+      nodes.push({
         name: BALANCE_SHEET_LABELS.debtExcess,
         value: balanceSheet.left.debtExcess,
-        color: "#FCA5A5", // red-300, dashed border will be handled separately
+        color: "#DC2626",
+        x: 0,
+        y: currentY,
+        width: leftWidth - MARGIN / 2,
+        height: height - MARGIN,
       });
     }
 
-    // 右側（負債・資本）のデータを変換
+    // 右側（負債・資本）のノードを配置
+    currentY = 0;
+
     if (balanceSheet.right.currentLiabilities > 0) {
-      rightSideData.children.push({
+      const height =
+        (CHART_HEIGHT * balanceSheet.right.currentLiabilities) / rightTotal;
+      nodes.push({
         name: BALANCE_SHEET_LABELS.currentLiabilities,
         value: balanceSheet.right.currentLiabilities,
-        color: "#FECACA", // red-200
+        color: "#FECACA",
+        x: leftWidth + MARGIN / 2,
+        y: currentY,
+        width: rightWidth - MARGIN / 2,
+        height: height - MARGIN,
       });
+      currentY += height;
     }
 
     if (balanceSheet.right.fixedLiabilities > 0) {
-      rightSideData.children.push({
+      const height =
+        (CHART_HEIGHT * balanceSheet.right.fixedLiabilities) / rightTotal;
+      nodes.push({
         name: BALANCE_SHEET_LABELS.fixedLiabilities,
         value: balanceSheet.right.fixedLiabilities,
-        color: "#F87171", // red-400
+        color: "#F87171",
+        x: leftWidth + MARGIN / 2,
+        y: currentY,
+        width: rightWidth - MARGIN / 2,
+        height: height - MARGIN,
       });
+      currentY += height;
     }
 
     if (balanceSheet.right.netAssets > 0) {
-      rightSideData.children.push({
+      const height = (CHART_HEIGHT * balanceSheet.right.netAssets) / rightTotal;
+      nodes.push({
         name: BALANCE_SHEET_LABELS.netAssets,
         value: balanceSheet.right.netAssets,
-        color: "#A3E635", // lime-400
+        color: "#22D3EE",
+        x: leftWidth + MARGIN / 2,
+        y: currentY,
+        width: rightWidth - MARGIN / 2,
+        height: height - MARGIN,
       });
     }
 
-    return [leftSideData, rightSideData];
+    return nodes;
   };
 
-  const treemapData = convertToTreemapData(data);
+  const nodes = calculateLayout(data);
 
   // 金額フォーマット関数
   const formatAmount = (amount: number) => {
@@ -93,44 +157,46 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
   };
 
   return (
-    <div className="flex justify-center gap-8 mt-10">
-      {treemapData.map((sideData) => (
-        <div key={sideData.name} className="w-64 h-96">
-          <h3 className="text-center font-bold text-lg mb-4 text-gray-800">
-            {sideData.name}
-          </h3>
-          <div className="h-80 bg-gray-50 rounded-lg overflow-hidden">
-            <ResponsiveTreeMap
-              data={sideData}
-              identity="name"
-              value="value"
-              tile="binary"
-              leavesOnly={true}
-              innerPadding={2}
-              outerPadding={2}
-              margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
-              labelSkipSize={12}
-              labelTextColor="#000000"
-              colors={(node) => node.data.color || "#E5E7EB"}
-              borderColor="#ffffff"
-              borderWidth={2}
-              label={(node) => {
-                const value = typeof node.value === "number" ? node.value : 0;
-                return `${node.id}\n${formatAmount(value)}`;
-              }}
-              tooltip={({ node }) => {
-                const value = typeof node.value === "number" ? node.value : 0;
-                return (
-                  <div className="bg-white p-3 shadow-lg rounded-lg border">
-                    <div className="font-bold text-gray-800">{node.id}</div>
-                    <div className="text-gray-600">{formatAmount(value)}</div>
-                  </div>
-                );
-              }}
-            />
-          </div>
-        </div>
-      ))}
+    <div className="flex justify-center mt-10">
+      <div className="relative">
+        <svg
+          width={CHART_WIDTH}
+          height={CHART_HEIGHT}
+          className="border border-gray-200"
+        >
+          {nodes.map((node) => (
+            <g key={node.name}>
+              <rect
+                x={node.x}
+                y={node.y}
+                width={node.width}
+                height={node.height}
+                fill={node.color}
+                stroke="#ffffff"
+                strokeWidth={2}
+                className="cursor-pointer"
+              />
+              {/* ラベル */}
+              <text
+                x={node.x + node.width / 2}
+                y={node.y + node.height / 2 - 5}
+                textAnchor="middle"
+                className="text-sm font-bold fill-black pointer-events-none"
+              >
+                {node.name}
+              </text>
+              <text
+                x={node.x + node.width / 2}
+                y={node.y + node.height / 2 + 15}
+                textAnchor="middle"
+                className="text-xs font-medium fill-black pointer-events-none"
+              >
+                {formatAmount(node.value)}
+              </text>
+            </g>
+          ))}
+        </svg>
+      </div>
     </div>
   );
 }
