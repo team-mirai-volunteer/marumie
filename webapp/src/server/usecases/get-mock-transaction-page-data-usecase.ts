@@ -56,6 +56,7 @@ const MOCK_DONATION_SUMMARY: DonationSummaryData = {
   totalDays: 30,
   amountDayOverDay: 125000,
   countDayOverDay: 1,
+  lastNonZeroDonationDate: new Date().toISOString().split("T")[0], // 今日をモックデータとして設定
 };
 
 const MOCK_TRANSACTION_DATA = {
