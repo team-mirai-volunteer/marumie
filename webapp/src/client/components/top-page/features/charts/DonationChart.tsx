@@ -100,7 +100,7 @@ export default function DonationChart({
             margin={{
               top: 20,
               right: 30,
-              left: 0,
+              left: 4,
               bottom: 20,
             }}
           >

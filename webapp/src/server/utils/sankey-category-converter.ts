@@ -21,10 +21,16 @@ function calculateDynamicThreshold(
     (a, b) => b.totalAmount - a.totalAmount,
   );
 
+  // 全体の合計金額を計算して1%を求める
+  const totalAmount = items.reduce((sum, item) => sum + item.totalAmount, 0);
+  const onePercentThreshold = totalAmount * 0.01;
+
   // 上位targetCount個目の金額を閾値とする
   // これにより、上位targetCount-1個 + その他1個 = 合計targetCount個になる
   const dynamicThreshold = sortedItems[targetCount - 1].totalAmount;
-  return dynamicThreshold;
+
+  // 動的閾値と1%閾値の最大値を返す（最低でも1%は保証）
+  return Math.max(dynamicThreshold, onePercentThreshold);
 }
 
 /**
