@@ -19,29 +19,42 @@
 - サーバーアクション（"use server"処理）は、データ更新やファイルアップロードなど副作用を伴う操作のためだけに使い、あわせて revalidatePath や revalidateTag などの再検証処理までを 1 セットで行う
 - クライアント側でのデータ取得は例外として、リアルタイム通信・高頻度ポーリング・ユーザー操作に即応する検索・オフライン最適化（React Query など）に限って許容する
 
-## admin code structure
+## コード構成（webapp・admin 共通）
 
-similar to the webapp, we will go with a code structure like below
+以下のディレクトリ構成に従ってコードを配置する：
 
 - app
 - client
 - server
+- types
 
-### responsiblities
-
-under each directory will be like the below
+### 各ディレクトリの責務
 
 - app
-  - app router, follows url directory of the website
-  - api, getting data, may refactor later
+  - App Router に基づくルーティング（URL構造に対応）
+  - API エンドポイント
 - client
-  - client components
+  - components
+    - Reactコンポーネント
+  - lib
+    - クライアントで動作するヘルパーなど
 - server
   - lib
-    - data wrangling
+    - データ加工・変換処理
   - repositories
-    - prisma stuff
+    - データベースアクセス層
   - usecases
-    - top level functions to be called by app
+    - app から呼び出されるトップレベル関数
+  - loaders
+    - サーバーサイドでのデータ取得処理
+  - actions
+    - サーバーアクション（"use server"）による副作用処理
   - auth
-    - auth related stuff
+    - 認証関連処理
+- types
+  - 型定義
+
+# GitHub操作ルール
+- ユーザーからPRを出して、と言われたときは、現在の作業のフィーチャーブランチを切りコミットを行ってからPRを出すようにする
+- developやmainへの直接pushは禁止です
+- Prismaのマイグレーションを含む差分は自動デプロイで環境を壊しうるので、ユーザーに許可を取ってから実行してください
