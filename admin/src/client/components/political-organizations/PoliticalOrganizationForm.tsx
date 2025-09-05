@@ -2,6 +2,7 @@
 import "client-only";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface PoliticalOrganizationFormData {
@@ -12,7 +13,9 @@ interface PoliticalOrganizationFormData {
 
 interface PoliticalOrganizationFormProps {
   initialData?: Partial<PoliticalOrganizationFormData>;
-  onSubmit: (data: PoliticalOrganizationFormData) => Promise<void>;
+  onSubmit: (
+    data: PoliticalOrganizationFormData,
+  ) => Promise<{ success: boolean }>;
   submitButtonText: string;
   title: string;
 }
@@ -23,6 +26,7 @@ export function PoliticalOrganizationForm({
   submitButtonText,
   title,
 }: PoliticalOrganizationFormProps) {
+  const router = useRouter();
   const [formData, setFormData] = useState<PoliticalOrganizationFormData>({
     name: initialData.name || "",
     slug: initialData.slug || "",
@@ -38,7 +42,10 @@ export function PoliticalOrganizationForm({
     try {
       setIsLoading(true);
       setError(null);
-      await onSubmit(formData);
+      const result = await onSubmit(formData);
+      if (result.success) {
+        router.push("/political-organizations");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "更新に失敗しました");
     } finally {

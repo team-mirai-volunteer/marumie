@@ -1,6 +1,7 @@
 import "server-only";
 
 import { PrismaClient } from "@prisma/client";
+import { revalidateTag } from "next/cache";
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
 import { SavePreviewTransactionsUsecase } from "@/server/usecases/save-preview-transactions-usecase";
 import type { PreviewTransaction } from "@/server/lib/mf-record-converter";
@@ -58,6 +59,9 @@ export async function uploadCsv(
       result.skippedCount > 0
         ? `${result.processedCount}件を処理し、${result.savedCount}件を新規保存、${result.skippedCount}件を重複のためスキップしました`
         : `${result.processedCount}件を処理し、${result.savedCount}件を保存しました`;
+
+    // キャッシュを無効化してトランザクション一覧を更新
+    revalidateTag("transactions-data");
 
     return {
       ok: true,
