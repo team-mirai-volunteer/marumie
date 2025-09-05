@@ -74,6 +74,7 @@ model Transaction {
   friendlyCategory        String?              @map("friendly_category") @db.Text
   memo                    String?              @db.Text
   categoryKey             String               @map("category_key") @db.VarChar(255)
+  label                   String               @default("") @db.VarChar(255)
   createdAt               DateTime             @default(now()) @map("created_at")
   updatedAt               DateTime             @updatedAt @map("updated_at")
 
