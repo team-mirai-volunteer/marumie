@@ -414,19 +414,19 @@ const renderPrimaryLabel = (
       ? DIMENSIONS.LINE_HEIGHT_SUB_MOBILE
       : DIMENSIONS.LINE_HEIGHT;
 
+    // 複数行テキストの総高さを計算
+    const totalTextHeight = (lines.length - 1) * lineHeight;
+
     return (
       <text
         key={`${node.id}-primary`}
         x={x}
-        y={
-          node.y +
-          node.height / 2 -
-          (lines.length - 1) * DIMENSIONS.MULTI_LINE_OFFSET
-        }
+        y={node.y + node.height / 2 - totalTextHeight / 2}
         textAnchor={textAnchor}
         fill={COLORS.TEXT}
         fontSize={fontSize}
         fontWeight="bold"
+        dominantBaseline="middle"
       >
         {lines.map((line, index) => (
           <tspan
@@ -465,19 +465,19 @@ const renderPrimaryLabel = (
     lines.push(label.substring(i, i + TEXT.MAX_CHARS_PER_LINE));
   }
 
+  // 複数行テキストの総高さを計算
+  const totalTextHeight = (lines.length - 1) * DIMENSIONS.LINE_HEIGHT;
+
   return (
     <text
       key={`${node.id}-primary`}
       x={x}
-      y={
-        node.y +
-        node.height / 2 -
-        (lines.length - 1) * DIMENSIONS.MULTI_LINE_OFFSET
-      }
+      y={node.y + node.height / 2 - totalTextHeight / 2}
       textAnchor={textAnchor}
       fill={COLORS.TEXT}
       fontSize={fontSize}
       fontWeight="bold"
+      dominantBaseline="middle"
     >
       {lines.map((line, index) => (
         <tspan

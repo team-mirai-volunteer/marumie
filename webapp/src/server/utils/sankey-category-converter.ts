@@ -44,7 +44,7 @@ function consolidateSmallItems(
     if (total > 0) {
       consolidatedIncome.push({
         category,
-        subcategory: `1%以下合計（${category}）`,
+        subcategory: `その他(${category})`,
         totalAmount: total,
       });
     }
@@ -68,7 +68,7 @@ function consolidateSmallItems(
     if (total > 0) {
       consolidatedExpense.push({
         category,
-        subcategory: `1%以下合計（${category}）`,
+        subcategory: `その他(${category})`,
         totalAmount: total,
       });
     }
