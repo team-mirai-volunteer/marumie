@@ -46,7 +46,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "みらいオープンデータ - チームみらいの政治資金をオープンに",
+  title: "みらい まる見え政治資金 - チームみらいの政治資金をオープンに",
   description:
     "チームみらいの政治資金の流れを透明性を持って公開するプラットフォームです。",
   robots: {

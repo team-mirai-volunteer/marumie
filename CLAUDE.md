@@ -44,7 +44,7 @@
   - repositories
     - データベースアクセス層
   - usecases
-    - app から呼び出されるトップレベル関数
+    - loaderやactionなどのエントリーポイントから呼び出されるトップレベル関数
   - loaders
     - サーバーサイドでのデータ取得処理
   - actions
