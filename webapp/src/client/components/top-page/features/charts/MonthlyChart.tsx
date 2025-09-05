@@ -233,19 +233,33 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
       intersect: false,
       custom: ({ series, dataPointIndex }) => {
         const yearMonth = data[dataPointIndex].yearMonth;
-        const [, month] = yearMonth.split("-");
-        const monthNumber = parseInt(month, 10);
+        const income = series[0][dataPointIndex];
+        const expense = Math.abs(series[1][dataPointIndex]); // 正の値に変換
         const balance = series[2][dataPointIndex];
 
+        const incomeManEn = (income / 10000).toFixed(0);
+        const expenseManEn = (expense / 10000).toFixed(0);
         const balanceManEn = (balance / 10000).toFixed(0);
-        const formattedBalance = parseInt(balanceManEn).toLocaleString();
+
+        const formattedIncome = parseInt(incomeManEn, 10).toLocaleString();
+        const formattedExpense = parseInt(expenseManEn, 10).toLocaleString();
+        const formattedBalance = parseInt(balanceManEn, 10).toLocaleString();
         const balanceSign = balance >= 0 ? "+" : "";
-        const balanceColor = balance >= 0 ? "#238778" : "#DC2626";
 
         return `
-          <div class="custom-tooltip">
-            <div class="tooltip-title">${monthNumber}月収支</div>
-            <div class="tooltip-balance" style="color: ${balanceColor}">${balanceSign}${formattedBalance}万円</div>
+          <div class="monthly-tooltip">
+            <div class="tooltip-row">
+              <span class="tooltip-label">収入</span>
+              <span class="tooltip-value income-value">${formattedIncome}<span class="tooltip-unit">万円</span></span>
+            </div>
+            <div class="tooltip-row">
+              <span class="tooltip-label">支出</span>
+              <span class="tooltip-value expense-value">${formattedExpense}<span class="tooltip-unit">万円</span></span>
+            </div>
+            <div class="tooltip-row">
+              <span class="tooltip-label">収支</span>
+              <span class="tooltip-value balance-value">${balanceSign}${formattedBalance}<span class="tooltip-unit">万円</span></span>
+            </div>
           </div>
         `;
       },
@@ -300,26 +314,65 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
           .apexcharts-xaxistooltip {
             display: none !important;
           }
-          .custom-tooltip {
-            background: rgba(255, 255, 255, 0.92);
+          .apexcharts-tooltip.apexcharts-theme-light {
+            opacity: 1 !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+          }
+          .monthly-tooltip {
+            background: rgba(255, 255, 255, 0.85);
             border: 1px solid #64748B;
             border-radius: 6px;
-            padding: 8px 12px;
+            padding: 11px 22px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             font-family: 'Noto Sans JP', sans-serif;
+            min-width: max-content;
             position: relative;
           }
-          .tooltip-title {
+          .tooltip-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2px;
+          }
+          .tooltip-row:last-child {
+            margin-bottom: 0;
+            margin-top: 4px;
+          }
+          .tooltip-label {
             font-weight: 700;
             font-size: 13px;
             line-height: 1.31;
             color: #4B5563;
-            margin-bottom: 3px;
           }
-          .tooltip-balance {
+          .tooltip-value {
             font-weight: 700;
             font-size: 14px;
             line-height: 1.5;
+          }
+          .income-value {
+            color: #238778;
+          }
+          .expense-value {
+            color: #DC2626;
+          }
+          .balance-value {
+            color: #1E293B;
+          }
+          .tooltip-unit {
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.31;
+          }
+          .income-value .tooltip-unit {
+            color: #238778;
+          }
+          .expense-value .tooltip-unit {
+            color: #DC2626;
+          }
+          .balance-value .tooltip-unit {
+            color: #1E293B;
           }
           .apexcharts-canvas:hover {
             cursor: pointer;
