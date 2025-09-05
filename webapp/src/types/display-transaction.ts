@@ -15,7 +15,8 @@ export interface DisplayTransaction {
   transactionType: DisplayTransactionType; // webapp では 'income' | 'expense' のみ
   category: string; // 表示用カテゴリ名
   subcategory?: string; // サブカテゴリ（任意）
-  label: string; // 元のアカウント名（debit_account または credit_account）
+  account: string; // 元のアカウント名（debit_account または credit_account）
+  label: string; // テーブルのlabelカラム (string default "")
   shortLabel: string; // 表示用短縮ラベル（Figmaデザイン準拠）
   friendly_category?: string; // フレンドリーカテゴリ情報をそのまま保持
   absAmount: number; // 金額（絶対値）
