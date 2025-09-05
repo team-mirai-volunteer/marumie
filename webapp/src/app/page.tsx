@@ -47,8 +47,8 @@ export default async function Home() {
         transactionData={data?.transactionData ?? null}
         updatedAt={updatedAt}
       />
-      <AboutSection />
       <ExplanationSection />
+      <AboutSection />
     </MainColumn>
   );
 }
