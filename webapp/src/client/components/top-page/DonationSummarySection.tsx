@@ -10,12 +10,10 @@ import DonationSummaryCards from "./features/donation-summary/DonationSummaryCar
 
 interface DonationSummarySectionProps {
   donationSummary?: DonationSummaryData;
-  updatedAt: string;
 }
 
 export default function DonationSummarySection({
   donationSummary,
-  updatedAt,
 }: DonationSummarySectionProps) {
   // サーバーサイドで計算された統計情報を使用
   const totalDonationAmount = donationSummary?.totalAmount || 0;
@@ -23,6 +21,22 @@ export default function DonationSummarySection({
   const dayOverDayChange = donationSummary?.amountDayOverDay || 0;
   const donationCountChange = donationSummary?.countDayOverDay || 0;
   const dailyDonationData = donationSummary?.dailyDonationData || [];
+
+  // DonationSection専用のupdatedAt表示フォーマット
+  const formatDonationUpdatedAt = (dateString: string | null): string => {
+    if (!dateString) return "仕分け中";
+
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    return `${year}.${month}.${day}時点で仕分け済`;
+  };
+
+  const donationUpdatedAt = formatDonationUpdatedAt(
+    donationSummary?.lastNonZeroDonationDate || null,
+  );
 
   // 金額を億・万・円に分解する関数
   const formatLargeAmount = (amount: number) => {
@@ -51,7 +65,7 @@ export default function DonationSummarySection({
           />
         }
         title="これまでの累計寄付金額"
-        updatedAt={updatedAt}
+        updatedAt={donationUpdatedAt}
         subtitle="いただいた寄付総額と直近3ヶ月の推移"
       />
 

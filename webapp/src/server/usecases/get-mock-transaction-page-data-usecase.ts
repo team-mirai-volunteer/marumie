@@ -4,6 +4,7 @@ import type { TopPageDataParams } from "@/server/loaders/load-top-page-data";
 import type { MonthlyAggregation } from "@/server/repositories/interfaces/transaction-repository.interface";
 import type { DonationSummaryData } from "@/server/usecases/get-daily-donation-usecase";
 import type { SankeyData } from "@/types/sankey";
+import type { BalanceSheetData } from "@/types/balance-sheet";
 
 // モックデータ定義
 const MOCK_MONTHLY_DATA: MonthlyAggregation[] = [
@@ -56,6 +57,20 @@ const MOCK_DONATION_SUMMARY: DonationSummaryData = {
   totalDays: 30,
   amountDayOverDay: 125000,
   countDayOverDay: 1,
+  lastNonZeroDonationDate: new Date().toISOString().split("T")[0], // 今日をモックデータとして設定
+};
+
+const MOCK_BALANCE_SHEET_DATA: BalanceSheetData = {
+  left: {
+    currentAssets: 100000000, // 1億円
+    fixedAssets: 150000000, // 1億5000万円
+    debtExcess: 100000000, // 1億円（債務超過）
+  },
+  right: {
+    currentLiabilities: 200000000, // 2億円
+    fixedLiabilities: 150000000, // 1億5000万円
+    netAssets: 0, // 純資産なし（債務超過のため）
+  },
 };
 
 const MOCK_TRANSACTION_DATA = {
@@ -98,6 +113,7 @@ export class GetMockTransactionPageDataUsecase {
       political: MOCK_SANKEY_DATA,
       friendly: MOCK_SANKEY_DATA,
       donationSummary: MOCK_DONATION_SUMMARY,
+      balanceSheetData: MOCK_BALANCE_SHEET_DATA,
     };
   }
 }

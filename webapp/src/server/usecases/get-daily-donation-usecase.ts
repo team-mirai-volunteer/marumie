@@ -10,6 +10,7 @@ export interface DonationSummaryData {
   totalDays: number; // 寄付日数
   amountDayOverDay: number; // 寄付金額の前日比
   countDayOverDay: number; // 寄付件数の前日比
+  lastNonZeroDonationDate: string | null; // 最後に0以外の寄附があった日
 }
 
 export interface GetDailyDonationParams {
@@ -187,12 +188,20 @@ export class GetDailyDonationUsecase {
     const yesterdayHasDonation = yesterdayDonation > 0 ? 1 : 0;
     const countDayOverDay = todayHasDonation - yesterdayHasDonation;
 
+    // 最後に0以外の寄附があった日を検索（逆順で検索）
+    const lastNonZeroDonationDate =
+      recentDailyData
+        .slice()
+        .reverse()
+        .find((item) => item.dailyAmount > 0)?.date || null;
+
     return {
       dailyDonationData: recentDailyData,
       totalAmount,
       totalDays,
       amountDayOverDay,
       countDayOverDay,
+      lastNonZeroDonationDate,
     };
   }
 }
