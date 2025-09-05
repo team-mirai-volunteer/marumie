@@ -3,7 +3,7 @@ import Image from "next/image";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 import type { BalanceSheetData } from "@/types/balance-sheet";
-import BalanceSheetChart from "./BalanceSheetChart";
+import BalanceSheetChart from "./features/charts/BalanceSheetChart";
 
 interface BalanceSheetSectionProps {
   data?: BalanceSheetData;
@@ -25,7 +25,7 @@ export default function BalanceSheetSection({
         }
         title="現時点での貸借対照表"
         updatedAt="2025.8.14時点"
-        subtitle="現在のチームみらいの財産と負債の状況"
+        subtitle="現在のチームみらいの財産と負債の状況（ダミーデータ）"
       />
 
       {data ? (

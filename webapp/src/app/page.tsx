@@ -41,20 +41,7 @@ export default async function Home() {
         updatedAt={updatedAt}
       />
       <DonationSummarySection donationSummary={data?.donationSummary} />
-      <BalanceSheetSection
-        data={{
-          left: {
-            currentAssets: 100000000, // 1億円
-            fixedAssets: 150000000, // 1億5000万円
-            debtExcess: 100000000, // 1億円（債務超過）
-          },
-          right: {
-            currentLiabilities: 200000000, // 2億円
-            fixedLiabilities: 150000000, // 1億5000万円
-            netAssets: 0, // 純資産なし（債務超過のため）
-          },
-        }}
-      />
+      <BalanceSheetSection data={data?.balanceSheetData} />
       <TransparencySection title="党首も毎日これを見て、お金をやりくりしています👀" />
       <TransactionsSection
         transactionData={data?.transactionData ?? null}

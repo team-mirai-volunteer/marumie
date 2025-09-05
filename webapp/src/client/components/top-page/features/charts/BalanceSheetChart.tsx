@@ -11,7 +11,6 @@ interface BalanceSheetChartProps {
 const CHART_WIDTH = 500;
 const CHART_HEIGHT = 380;
 const MARGIN = 1;
-const LABEL_HEIGHT = 20;
 
 interface BalanceSheetNode {
   name: string;
@@ -41,10 +40,9 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
       balanceSheet.right.fixedLiabilities +
       balanceSheet.right.netAssets;
 
-    // 左側の幅を計算（全体幅の比率）
-    const totalValue = leftTotal + rightTotal;
-    const leftWidth = (CHART_WIDTH * leftTotal) / totalValue;
-    const rightWidth = CHART_WIDTH - leftWidth;
+    // 常に左右の幅を50:50にする
+    const leftWidth = CHART_WIDTH / 2;
+    const rightWidth = CHART_WIDTH / 2;
 
     let currentY = 0;
 
@@ -164,6 +162,8 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
           height={CHART_HEIGHT}
           viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`}
           className="w-full h-auto"
+          role="img"
+          aria-label="貸借対照表チャート"
         >
           {nodes.map((node) => (
             <g key={node.name}>

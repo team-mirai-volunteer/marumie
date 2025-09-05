@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 import { PrismaPoliticalOrganizationRepository } from "@/server/repositories/prisma-political-organization.repository";
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
+import { GetBalanceSheetUsecase } from "@/server/usecases/get-balance-sheet-usecase";
 import { GetDailyDonationUsecase } from "@/server/usecases/get-daily-donation-usecase";
 import { GetMockTransactionPageDataUsecase } from "@/server/usecases/get-mock-transaction-page-data-usecase";
 import { GetMonthlyTransactionAggregationUsecase } from "@/server/usecases/get-monthly-transaction-aggregation-usecase";
@@ -32,7 +33,7 @@ export const loadTopPageData = unstable_cache(
     const politicalOrganizationRepository =
       new PrismaPoliticalOrganizationRepository(prisma);
 
-    // 4つのUsecaseを初期化
+    // 5つのUsecaseを初期化
     const transactionUsecase = new GetTransactionsBySlugUsecase(
       transactionRepository,
       politicalOrganizationRepository,
@@ -53,13 +54,19 @@ export const loadTopPageData = unstable_cache(
       politicalOrganizationRepository,
     );
 
-    // 5つのUsecaseを並列実行（sankeyは2回実行）
+    const balanceSheetUsecase = new GetBalanceSheetUsecase(
+      transactionRepository,
+      politicalOrganizationRepository,
+    );
+
+    // 6つのUsecaseを並列実行（sankeyは2回実行）
     const [
       transactionData,
       monthlyData,
       sankeyPoliticalCategoryData,
       sankeyFriendlyCategoryData,
       donationData,
+      balanceSheetData,
     ] = await Promise.all([
       transactionUsecase.execute(params),
       monthlyUsecase.execute({
@@ -82,6 +89,10 @@ export const loadTopPageData = unstable_cache(
         today: new Date(),
         days: 90,
       }),
+      balanceSheetUsecase.execute({
+        slugs: params.slugs,
+        financialYear: params.financialYear,
+      }),
     ]);
 
     return {
@@ -90,6 +101,7 @@ export const loadTopPageData = unstable_cache(
       political: sankeyPoliticalCategoryData.sankeyData,
       friendly: sankeyFriendlyCategoryData.sankeyData,
       donationSummary: donationData.donationSummary,
+      balanceSheetData: balanceSheetData.balanceSheetData,
     };
   },
   ["top-page-data"],
