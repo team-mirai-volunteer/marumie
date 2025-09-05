@@ -1,10 +1,12 @@
 import "server-only";
+import AboutSection from "@/client/components/common/AboutSection";
 import ExplanationSection from "@/client/components/common/ExplanationSection";
 import TransparencySection from "@/client/components/common/TransparencySection";
 import MainColumn from "@/client/components/layout/MainColumn";
 import CashFlowSection from "@/client/components/top-page/CashFlowSection";
 import DonationSummarySection from "@/client/components/top-page/DonationSummarySection";
 import MonthlyTrendsSection from "@/client/components/top-page/MonthlyTrendsSection";
+import ProgressSection from "@/client/components/top-page/ProgressSection";
 import TransactionsSection from "@/client/components/top-page/TransactionsSection";
 import { loadTopPageData } from "@/server/loaders/load-top-page-data";
 import { formatUpdatedAt } from "@/server/utils/format-date";
@@ -46,7 +48,9 @@ export default async function Home() {
         transactionData={data?.transactionData ?? null}
         updatedAt={updatedAt}
       />
+      <ProgressSection />
       <ExplanationSection />
+      <AboutSection />
     </MainColumn>
   );
 }
