@@ -4,6 +4,7 @@ import type {
   TransactionFilters,
   UpdateTransactionInput,
 } from "@/shared/models/transaction";
+import type { TransactionWithOrganization } from "@/server/usecases/get-transactions-usecase";
 
 export interface PaginatedResult<T> {
   items: T[];
@@ -25,7 +26,7 @@ export interface ITransactionRepository {
   findWithPagination(
     filters?: TransactionFilters,
     pagination?: PaginationOptions,
-  ): Promise<PaginatedResult<Transaction>>;
+  ): Promise<PaginatedResult<TransactionWithOrganization>>;
   update(id: string, input: UpdateTransactionInput): Promise<Transaction>;
   delete(id: string): Promise<void>;
   deleteAll(filters?: TransactionFilters): Promise<number>;

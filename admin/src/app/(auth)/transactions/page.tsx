@@ -49,6 +49,9 @@ export default async function TransactionsPage({
                     取引日
                   </th>
                   <th className="px-2 py-3 text-left text-sm font-semibold text-white">
+                    政治団体
+                  </th>
+                  <th className="px-2 py-3 text-left text-sm font-semibold text-white">
                     借方勘定科目
                   </th>
                   <th className="px-2 py-3 text-right text-sm font-semibold text-white">
