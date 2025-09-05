@@ -3,6 +3,7 @@ import AboutSection from "@/client/components/common/AboutSection";
 import ExplanationSection from "@/client/components/common/ExplanationSection";
 import TransparencySection from "@/client/components/common/TransparencySection";
 import MainColumn from "@/client/components/layout/MainColumn";
+import BalanceSheetSection from "@/client/components/top-page/BalanceSheetSection";
 import CashFlowSection from "@/client/components/top-page/CashFlowSection";
 import DonationSummarySection from "@/client/components/top-page/DonationSummarySection";
 import MonthlyTrendsSection from "@/client/components/top-page/MonthlyTrendsSection";
@@ -40,6 +41,7 @@ export default async function Home() {
         updatedAt={updatedAt}
       />
       <DonationSummarySection donationSummary={data?.donationSummary} />
+      <BalanceSheetSection data={data?.balanceSheetData} />
       <TransparencySection title="党首も毎日これを見て、お金をやりくりしています👀" />
       <TransactionsSection
         transactionData={data?.transactionData ?? null}
