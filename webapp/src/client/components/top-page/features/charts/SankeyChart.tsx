@@ -50,12 +50,16 @@ const DIMENSIONS = {
   // その他
   TSPAN_DY_DESKTOP: "16",
   TSPAN_DY_MOBILE: "10",
+  LINE_HEIGHT_SUB_MOBILE: 6,
   CHART_HEIGHT_DESKTOP: 650,
   CHART_HEIGHT_MOBILE: 300,
 } as const;
 
 const TEXT = {
   MAX_CHARS_PER_LINE: 7,
+  MAX_CHARS_PER_LINE_SUB: 6,
+  MAX_CHARS_TOTAL_SUB: 12,
+  ELLIPSIS_THRESHOLD_SUB: 13,
   TOTAL_NODE_ID: "合計",
   TOTAL_LABEL_TOP: "収入支出",
   TOTAL_LABEL_PERCENTAGE: "100%",
@@ -69,7 +73,7 @@ const CHART_CONFIG = {
   MARGIN_TOP_DESKTOP: 40,
   MARGIN_TOP_MOBILE: 20,
   MARGIN_HORIZONTAL_DESKTOP: 100,
-  MARGIN_HORIZONTAL_MOBILE: 40,
+  MARGIN_HORIZONTAL_MOBILE: 48,
   MARGIN_BOTTOM: 30,
   NODE_THICKNESS: 12,
   NODE_SPACING_DESKTOP: 24,
@@ -359,6 +363,85 @@ const renderPrimaryLabel = (
       ? DIMENSIONS.FONT_SIZE_SUB_MOBILE
       : DIMENSIONS.FONT_SIZE_MOBILE;
 
+  // サブカテゴリの場合は特別な処理
+  if (isSubcategory) {
+    const maxCharsPerLine = TEXT.MAX_CHARS_PER_LINE_SUB;
+
+    // 13文字以上の場合は11文字+「...」に省略
+    if (label.length >= TEXT.ELLIPSIS_THRESHOLD_SUB) {
+      const truncatedLabel = `${label.substring(0, 11)}...`;
+      return (
+        <text
+          key={`${node.id}-primary`}
+          x={x}
+          y={node.y + node.height / 2}
+          textAnchor={textAnchor as "start" | "middle" | "end"}
+          dominantBaseline="middle"
+          fill={COLORS.TEXT}
+          fontSize={fontSize}
+          fontWeight="bold"
+        >
+          {truncatedLabel}
+        </text>
+      );
+    }
+
+    // 6文字以下の場合は1行で表示
+    if (label.length <= maxCharsPerLine) {
+      return (
+        <text
+          key={`${node.id}-primary`}
+          x={x}
+          y={node.y + node.height / 2}
+          textAnchor={textAnchor as "start" | "middle" | "end"}
+          dominantBaseline="middle"
+          fill={COLORS.TEXT}
+          fontSize={fontSize}
+          fontWeight="bold"
+        >
+          {label}
+        </text>
+      );
+    }
+
+    // 7-12文字の場合は6文字で改行
+    const lines = [];
+    for (let i = 0; i < label.length; i += maxCharsPerLine) {
+      lines.push(label.substring(i, i + maxCharsPerLine));
+    }
+
+    const lineHeight = isMobile
+      ? DIMENSIONS.LINE_HEIGHT_SUB_MOBILE
+      : DIMENSIONS.LINE_HEIGHT;
+
+    return (
+      <text
+        key={`${node.id}-primary`}
+        x={x}
+        y={
+          node.y +
+          node.height / 2 -
+          (lines.length - 1) * DIMENSIONS.MULTI_LINE_OFFSET
+        }
+        textAnchor={textAnchor}
+        fill={COLORS.TEXT}
+        fontSize={fontSize}
+        fontWeight="bold"
+      >
+        {lines.map((line, index) => (
+          <tspan
+            key={`${node.id}-${index}`}
+            x={x}
+            dy={index === 0 ? 0 : lineHeight}
+          >
+            {line}
+          </tspan>
+        ))}
+      </text>
+    );
+  }
+
+  // 通常のカテゴリ（非サブカテゴリ）の処理
   if (label.length <= TEXT.MAX_CHARS_PER_LINE) {
     return (
       <text
@@ -376,7 +459,7 @@ const renderPrimaryLabel = (
     );
   }
 
-  // 複数行に分割
+  // 複数行に分割（通常カテゴリ）
   const lines = [];
   for (let i = 0; i < label.length; i += TEXT.MAX_CHARS_PER_LINE) {
     lines.push(label.substring(i, i + TEXT.MAX_CHARS_PER_LINE));
