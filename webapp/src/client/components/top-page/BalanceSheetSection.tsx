@@ -2,9 +2,16 @@ import "server-only";
 import Image from "next/image";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
+import type { BalanceSheetData } from "@/types/balance-sheet";
 import BalanceSheetChart from "./BalanceSheetChart";
 
-export default function BalanceSheetSection() {
+interface BalanceSheetSectionProps {
+  data?: BalanceSheetData;
+}
+
+export default function BalanceSheetSection({
+  data,
+}: BalanceSheetSectionProps) {
   return (
     <MainColumnCard id="balance-sheet">
       <CardHeader
@@ -21,7 +28,13 @@ export default function BalanceSheetSection() {
         subtitle="現在のチームみらいの財産と負債の状況"
       />
 
-      <BalanceSheetChart />
+      {data ? (
+        <BalanceSheetChart data={data} />
+      ) : (
+        <div className="flex justify-center items-center h-80 text-gray-500">
+          データを読み込み中...
+        </div>
+      )}
     </MainColumnCard>
   );
 }
