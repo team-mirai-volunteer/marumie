@@ -23,7 +23,7 @@ export default function Sidebar({
   };
 
   const navItems = [
-    { href: "/user-info", label: "User Info" },
+    { href: "/user-info", label: "ユーザー情報" },
     { href: "/political-organizations", label: "政治団体" },
     { href: "/transactions", label: "トランザクション" },
     { href: "/upload-csv", label: "CSVアップロード" },
