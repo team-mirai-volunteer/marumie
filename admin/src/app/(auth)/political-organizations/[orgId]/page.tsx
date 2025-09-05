@@ -31,7 +31,7 @@ export default async function EditPoliticalOrganizationPage({
 
   const handleSubmit = async (formData: UpdatePoliticalOrganizationData) => {
     "use server";
-    await updatePoliticalOrganization(orgId, formData);
+    return await updatePoliticalOrganization(orgId, formData);
   };
 
   return (

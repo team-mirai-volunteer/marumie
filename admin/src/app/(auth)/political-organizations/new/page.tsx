@@ -7,7 +7,7 @@ import type { CreatePoliticalOrganizationData } from "@/server/actions/create-po
 export default function NewPoliticalOrganizationPage() {
   const handleSubmit = async (formData: CreatePoliticalOrganizationData) => {
     "use server";
-    await createPoliticalOrganization(formData);
+    return await createPoliticalOrganization(formData);
   };
 
   return (
