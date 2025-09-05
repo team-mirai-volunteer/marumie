@@ -25,10 +25,6 @@ export interface Transaction {
   credit_tax_category?: string;
   credit_amount: number;
   description?: string;
-  description_1?: string;
-  description_2?: string;
-  description_3?: string;
-  description_detail?: string;
   friendly_category?: string;
   memo?: string;
   category_key: string;
@@ -56,10 +52,6 @@ export interface CreateTransactionInput {
   credit_tax_category?: string;
   credit_amount: number;
   description?: string;
-  description_1?: string;
-  description_2?: string;
-  description_3?: string;
-  description_detail?: string;
   friendly_category?: string;
   memo?: string;
   category_key: string;
