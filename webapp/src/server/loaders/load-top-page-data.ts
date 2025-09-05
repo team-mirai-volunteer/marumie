@@ -56,7 +56,6 @@ export const loadTopPageData = unstable_cache(
 
     const balanceSheetUsecase = new GetBalanceSheetUsecase(
       transactionRepository,
-      politicalOrganizationRepository,
     );
 
     // 6つのUsecaseを並列実行（sankeyは2回実行）

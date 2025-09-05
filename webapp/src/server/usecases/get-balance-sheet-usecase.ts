@@ -14,6 +14,7 @@ export class GetBalanceSheetUsecase {
   constructor(private _transactionRepository: ITransactionRepository) {}
 
   async execute(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _params: GetBalanceSheetParams,
   ): Promise<GetBalanceSheetResult> {
     try {
