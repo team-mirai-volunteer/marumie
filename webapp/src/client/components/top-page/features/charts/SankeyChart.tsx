@@ -50,12 +50,16 @@ const DIMENSIONS = {
   // その他
   TSPAN_DY_DESKTOP: "16",
   TSPAN_DY_MOBILE: "10",
+  LINE_HEIGHT_SUB_MOBILE: 6,
   CHART_HEIGHT_DESKTOP: 650,
   CHART_HEIGHT_MOBILE: 300,
 } as const;
 
 const TEXT = {
   MAX_CHARS_PER_LINE: 7,
+  MAX_CHARS_PER_LINE_SUB: 6,
+  MAX_CHARS_TOTAL_SUB: 12,
+  ELLIPSIS_THRESHOLD_SUB: 13,
   TOTAL_NODE_ID: "合計",
   TOTAL_LABEL_TOP: "収入支出",
   TOTAL_LABEL_PERCENTAGE: "100%",
@@ -69,7 +73,7 @@ const CHART_CONFIG = {
   MARGIN_TOP_DESKTOP: 40,
   MARGIN_TOP_MOBILE: 20,
   MARGIN_HORIZONTAL_DESKTOP: 100,
-  MARGIN_HORIZONTAL_MOBILE: 40,
+  MARGIN_HORIZONTAL_MOBILE: 48,
   MARGIN_BOTTOM: 30,
   NODE_THICKNESS: 12,
   NODE_SPACING_DESKTOP: 24,
@@ -359,6 +363,72 @@ const renderPrimaryLabel = (
       ? DIMENSIONS.FONT_SIZE_SUB_MOBILE
       : DIMENSIONS.FONT_SIZE_MOBILE;
 
+  // サブカテゴリの場合は特別な処理
+  if (isSubcategory) {
+    const N = TEXT.MAX_CHARS_PER_LINE_SUB; // N = 6
+    let processedLabel = label;
+
+    // ① N*2+1文字以上（13文字以上）だったらN*2-1文字で切って「…」をつけて2*N文字にする
+    if (label.length >= N * 2 + 1) {
+      processedLabel = `${label.substring(0, N * 2 - 1)}…`;
+    }
+
+    // ② N+1文字以上（7文字以上）だったら改行する
+    if (processedLabel.length >= N + 1) {
+      const lines = [];
+      for (let i = 0; i < processedLabel.length; i += N) {
+        lines.push(processedLabel.substring(i, i + N));
+      }
+
+      const lineHeight = isMobile
+        ? DIMENSIONS.LINE_HEIGHT_SUB_MOBILE
+        : DIMENSIONS.LINE_HEIGHT;
+
+      // 複数行テキストの総高さを計算
+      const totalTextHeight = (lines.length - 1) * lineHeight;
+
+      return (
+        <text
+          key={`${node.id}-primary`}
+          x={x}
+          y={node.y + node.height / 2 - totalTextHeight / 2}
+          textAnchor={textAnchor}
+          fill={COLORS.TEXT}
+          fontSize={fontSize}
+          fontWeight="bold"
+          dominantBaseline="middle"
+        >
+          {lines.map((line, index) => (
+            <tspan
+              key={`${node.id}-${index}`}
+              x={x}
+              dy={index === 0 ? 0 : lineHeight}
+            >
+              {line}
+            </tspan>
+          ))}
+        </text>
+      );
+    }
+
+    // N文字以下の場合は1行で表示
+    return (
+      <text
+        key={`${node.id}-primary`}
+        x={x}
+        y={node.y + node.height / 2}
+        textAnchor={textAnchor as "start" | "middle" | "end"}
+        dominantBaseline="middle"
+        fill={COLORS.TEXT}
+        fontSize={fontSize}
+        fontWeight="bold"
+      >
+        {processedLabel}
+      </text>
+    );
+  }
+
+  // 通常のカテゴリ（非サブカテゴリ）の処理
   if (label.length <= TEXT.MAX_CHARS_PER_LINE) {
     return (
       <text
@@ -376,25 +446,25 @@ const renderPrimaryLabel = (
     );
   }
 
-  // 複数行に分割
+  // 複数行に分割（通常カテゴリ）
   const lines = [];
   for (let i = 0; i < label.length; i += TEXT.MAX_CHARS_PER_LINE) {
     lines.push(label.substring(i, i + TEXT.MAX_CHARS_PER_LINE));
   }
 
+  // 複数行テキストの総高さを計算
+  const totalTextHeight = (lines.length - 1) * DIMENSIONS.LINE_HEIGHT;
+
   return (
     <text
       key={`${node.id}-primary`}
       x={x}
-      y={
-        node.y +
-        node.height / 2 -
-        (lines.length - 1) * DIMENSIONS.MULTI_LINE_OFFSET
-      }
+      y={node.y + node.height / 2 - totalTextHeight / 2}
       textAnchor={textAnchor}
       fill={COLORS.TEXT}
       fontSize={fontSize}
       fontWeight="bold"
+      dominantBaseline="middle"
     >
       {lines.map((line, index) => (
         <tspan

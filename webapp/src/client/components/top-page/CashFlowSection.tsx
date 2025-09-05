@@ -56,7 +56,7 @@ export default function CashFlowSection({
               : "border-transparent text-[#9CA3AF] hover:text-gray-600"
           }`}
         >
-          独自の区分
+          詳細
         </button>
         <button
           type="button"
