@@ -10,7 +10,7 @@ import {
 } from "../usecases/get-transactions-usecase";
 
 const prisma = new PrismaClient();
-const CACHE_REVALIDATE_SECONDS = 60;
+const CACHE_REVALIDATE_SECONDS = 5;
 
 export const loadTransactionsData = unstable_cache(
   async (
