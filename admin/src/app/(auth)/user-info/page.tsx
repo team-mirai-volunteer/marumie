@@ -16,18 +16,18 @@ export default async function UserInfoPage() {
 
   return (
     <div className="card">
-      <h1>User Info</h1>
+      <h1>ユーザー情報</h1>
       <p>
         <b>ID:</b> {user.id}
       </p>
       <p>
-        <b>Email:</b> {user.email}
+        <b>メールアドレス:</b> {user.email}
       </p>
       <p>
-        <b>Role:</b> {userRole}
+        <b>ロール:</b> {userRole}
       </p>
       <p>
-        <b>Last Sign In:</b>{" "}
+        <b>最終ログイン:</b>{" "}
         {user.last_sign_in_at
           ? new Date(user.last_sign_in_at).toLocaleString("ja-JP")
           : "N/A"}
