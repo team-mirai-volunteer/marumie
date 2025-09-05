@@ -13,7 +13,7 @@ export interface DonationSummaryData {
 }
 
 export interface GetDailyDonationParams {
-  slug: string;
+  slugs: string[];
   financialYear: number;
   today: Date;
 }
@@ -32,25 +32,26 @@ export class GetDailyDonationUsecase {
     params: GetDailyDonationParams,
   ): Promise<GetDailyDonationResult> {
     try {
-      const politicalOrganization =
-        await this.politicalOrganizationRepository.findBySlug(params.slug);
+      const politicalOrganizations =
+        await this.politicalOrganizationRepository.findBySlugs(params.slugs);
 
-      if (!politicalOrganization) {
+      if (politicalOrganizations.length === 0) {
         throw new Error(
-          `Political organization with slug "${params.slug}" not found`,
+          `Political organizations with slugs "${params.slugs.join(", ")}" not found`,
         );
       }
 
-      // 日次寄付データを取得
-      const dailyDonationData =
+      // 日次寄付データを取得（IN句で効率的に）
+      const organizationIds = politicalOrganizations.map((org) => org.id);
+      const aggregatedDailyData =
         await this.transactionRepository.getDailyDonationData(
-          politicalOrganization.id,
+          organizationIds,
           params.financialYear,
         );
 
       // Usecaseでサマリー計算を実行
       const donationSummary = this.calculateDonationSummary(
-        dailyDonationData,
+        aggregatedDailyData,
         params.today,
       );
 

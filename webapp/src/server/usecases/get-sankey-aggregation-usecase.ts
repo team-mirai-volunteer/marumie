@@ -4,7 +4,7 @@ import type { ITransactionRepository } from "../repositories/interfaces/transact
 import { convertCategoryAggregationToSankeyData } from "../utils/sankey-category-converter";
 
 export interface GetSankeyAggregationParams {
-  slug: string;
+  slugs: string[];
   financialYear: number;
   categoryType?: "political-category" | "friendly-category";
 }
@@ -24,19 +24,20 @@ export class GetSankeyAggregationUsecase {
   ): Promise<GetSankeyAggregationResult> {
     try {
       // 政治団体を取得
-      const politicalOrganization =
-        await this.politicalOrganizationRepository.findBySlug(params.slug);
+      const politicalOrganizations =
+        await this.politicalOrganizationRepository.findBySlugs(params.slugs);
 
-      if (!politicalOrganization) {
+      if (politicalOrganizations.length === 0) {
         throw new Error(
-          `Political organization with slug "${params.slug}" not found`,
+          `Political organizations with slugs "${params.slugs.join(", ")}" not found`,
         );
       }
 
-      // 集計データを取得
-      const aggregation =
+      // 集計データを取得（IN句で効率的に）
+      const organizationIds = politicalOrganizations.map((org) => org.id);
+      const aggregatedResult =
         await this.transactionRepository.getCategoryAggregationForSankey(
-          politicalOrganization.id,
+          organizationIds,
           params.financialYear,
           params.categoryType,
         );
@@ -44,7 +45,7 @@ export class GetSankeyAggregationUsecase {
       // Sankeyデータに変換
       const isFriendlyCategory = params.categoryType === "friendly-category";
       const sankeyData = convertCategoryAggregationToSankeyData(
-        aggregation,
+        aggregatedResult,
         isFriendlyCategory,
       );
 

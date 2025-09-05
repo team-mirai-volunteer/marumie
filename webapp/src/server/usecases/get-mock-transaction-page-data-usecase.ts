@@ -87,10 +87,12 @@ export class GetMockTransactionPageDataUsecase {
     return {
       transactionData: {
         ...MOCK_TRANSACTION_DATA,
-        politicalOrganization: {
-          ...MOCK_TRANSACTION_DATA.politicalOrganization,
-          slug: params.slug,
-        },
+        politicalOrganizations: [
+          {
+            ...MOCK_TRANSACTION_DATA.politicalOrganization,
+            slug: params.slugs[0] || "mock-slug",
+          },
+        ],
       },
       monthlyData: MOCK_MONTHLY_DATA,
       political: MOCK_SANKEY_DATA,

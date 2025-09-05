@@ -16,22 +16,22 @@ interface TransactionsPageProps {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const slug = "team-mirai";
+  const slugs = ["team-mirai", "digimin"];
 
   // financialYearのデフォルト値を設定
   const currentFinancialYear = 2025;
 
   try {
     const result = await loadTransactionsPageData({
-      slug,
+      slugs,
       page: 1,
       perPage: 1,
       financialYear: currentFinancialYear,
     });
 
     return {
-      title: `みらいオープンデータ - すべての入出金（${result.politicalOrganization.name}）`,
-      description: `${result.politicalOrganization.name}の政治資金取引一覧を表示しています。`,
+      title: `みらいオープンデータ - すべての入出金（${result.politicalOrganizations[0]?.name || "Unknown"}）`,
+      description: `${result.politicalOrganizations[0]?.name || "Unknown"}の政治資金取引一覧を表示しています。`,
     };
   } catch {
     return {
@@ -44,7 +44,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function TransactionsPage({
   searchParams,
 }: TransactionsPageProps) {
-  const slug = "team-mirai";
+  const slugs = ["team-mirai", "digimin"];
   const searchParamsResolved = await searchParams;
 
   const page = parseInt(
@@ -82,7 +82,7 @@ export default async function TransactionsPage({
 
   try {
     const data = await loadTransactionsPageData({
-      slug,
+      slugs,
       page,
       perPage,
       transactionType,

@@ -6,6 +6,7 @@ import {
 import type {
   Transaction,
   TransactionFilters,
+  TransactionType,
 } from "@/shared/models/transaction";
 import type { DisplayTransactionType } from "@/types/display-transaction";
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
@@ -79,20 +80,22 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   }
 
   async getCategoryAggregationForSankey(
-    politicalOrganizationId: string,
+    politicalOrganizationIds: string[],
     financialYear: number,
     categoryType?: "political-category" | "friendly-category",
   ): Promise<SankeyCategoryAggregationResult> {
     if (categoryType === "friendly-category") {
       return this.getCategoryAggregationWithTag(
-        politicalOrganizationId,
+        politicalOrganizationIds,
         financialYear,
       );
     }
 
     // デフォルト: politicalカテゴリーの場合は、従来通りmainCategory + subCategoryでグループ化
     const baseWhere = {
-      politicalOrganizationId: BigInt(politicalOrganizationId),
+      politicalOrganizationId: {
+        in: politicalOrganizationIds.map((id) => BigInt(id)),
+      },
       financialYear,
     };
 
@@ -137,11 +140,13 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   }
 
   async getCategoryAggregationWithTag(
-    politicalOrganizationId: string,
+    politicalOrganizationIds: string[],
     financialYear: number,
   ): Promise<SankeyCategoryAggregationResult> {
     const baseWhere = {
-      politicalOrganizationId: BigInt(politicalOrganizationId),
+      politicalOrganizationId: {
+        in: politicalOrganizationIds.map((id) => BigInt(id)),
+      },
       financialYear,
     };
 
@@ -169,7 +174,6 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     });
 
     // accountとtagでグループ化
-
     const income = this.aggregateByCategoryWithTag(
       incomeAggregation.map((item) => ({
         account: item.creditAccount || "",
@@ -190,9 +194,13 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   }
 
   async getMonthlyAggregation(
-    politicalOrganizationId: string,
+    politicalOrganizationIds: string[],
     financialYear: number,
   ): Promise<MonthlyAggregation[]> {
+    const organizationIdsBigInt = politicalOrganizationIds.map((id) =>
+      BigInt(id),
+    );
+
     const [incomeResults, expenseResults] = await Promise.all([
       this.prisma.$queryRaw<
         Array<{ year: bigint; month: bigint; total_amount: number }>
@@ -202,7 +210,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
           EXTRACT(MONTH FROM transaction_date) as month,
           SUM(credit_amount) as total_amount
         FROM transactions
-        WHERE political_organization_id = ${BigInt(politicalOrganizationId)}
+        WHERE political_organization_id IN (${Prisma.join(organizationIdsBigInt)})
           AND financial_year = ${financialYear}
           AND transaction_type = 'income'
         GROUP BY EXTRACT(YEAR FROM transaction_date), EXTRACT(MONTH FROM transaction_date)
@@ -216,7 +224,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
           EXTRACT(MONTH FROM transaction_date) as month,
           SUM(debit_amount) as total_amount
         FROM transactions
-        WHERE political_organization_id = ${BigInt(politicalOrganizationId)}
+        WHERE political_organization_id IN (${Prisma.join(organizationIdsBigInt)})
           AND financial_year = ${financialYear}
           AND transaction_type = 'expense'
         GROUP BY EXTRACT(YEAR FROM transaction_date), EXTRACT(MONTH FROM transaction_date)
@@ -258,19 +266,21 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       }
     }
 
-    // 結果を配列に変換して年月順でソート
     return Array.from(monthlyMap.values()).sort((a, b) =>
       a.yearMonth.localeCompare(b.yearMonth),
     );
   }
 
   async getDailyDonationData(
-    politicalOrganizationId: string,
+    politicalOrganizationIds: string[],
     financialYear: number,
   ): Promise<DailyDonationData[]> {
     // 寄付カテゴリに該当するアカウントキーを抽出
     const donationAccountKeys = Object.keys(ACCOUNT_CATEGORY_MAPPING).filter(
       (key) => ACCOUNT_CATEGORY_MAPPING[key].category === "寄付",
+    );
+    const organizationIdsBigInt = politicalOrganizationIds.map((id) =>
+      BigInt(id),
     );
 
     // 寄付に該当するアカウントからの収入データを日別に集計
@@ -281,7 +291,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
         transaction_date,
         SUM(credit_amount) as total_amount
       FROM transactions
-      WHERE political_organization_id = ${BigInt(politicalOrganizationId)}
+      WHERE political_organization_id IN (${Prisma.join(organizationIdsBigInt)})
         AND financial_year = ${financialYear}
         AND transaction_type = 'income'
         AND credit_account IN (${Prisma.join(donationAccountKeys)})
@@ -413,6 +423,12 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       where.politicalOrganizationId = BigInt(filters.political_organization_id);
     }
 
+    if (filters?.political_organization_ids) {
+      where.politicalOrganizationId = {
+        in: filters.political_organization_ids.map((id) => BigInt(id)),
+      };
+    }
+
     if (filters?.financial_year) {
       where.financialYear = filters.financial_year;
     }
@@ -456,10 +472,10 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       id: prismaTransaction.id.toString(),
       political_organization_id:
         prismaTransaction.politicalOrganizationId.toString(),
-      transaction_no: prismaTransaction.transactionNo ?? undefined,
+      transaction_no: prismaTransaction.transactionNo || "",
       transaction_date: prismaTransaction.transactionDate,
       financial_year: prismaTransaction.financialYear,
-      transaction_type: prismaTransaction.transactionType,
+      transaction_type: prismaTransaction.transactionType as TransactionType,
       debit_account: prismaTransaction.debitAccount,
       debit_sub_account: prismaTransaction.debitSubAccount ?? undefined,
       debit_department: prismaTransaction.debitDepartment ?? undefined,

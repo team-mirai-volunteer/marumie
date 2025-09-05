@@ -52,20 +52,16 @@ export interface ITransactionRepository {
     pagination?: PaginationOptions,
   ): Promise<PaginatedResult<Transaction>>;
   getCategoryAggregationForSankey(
-    politicalOrganizationId: string,
+    politicalOrganizationIds: string[],
     financialYear: number,
     categoryType?: "political-category" | "friendly-category",
   ): Promise<SankeyCategoryAggregationResult>;
-  getCategoryAggregationWithTag(
-    politicalOrganizationId: string,
-    financialYear: number,
-  ): Promise<SankeyCategoryAggregationResult>;
   getMonthlyAggregation(
-    politicalOrganizationId: string,
+    politicalOrganizationIds: string[],
     financialYear: number,
   ): Promise<MonthlyAggregation[]>;
   getDailyDonationData(
-    politicalOrganizationId: string,
+    politicalOrganizationIds: string[],
     financialYear: number,
   ): Promise<DailyDonationData[]>;
   getLastUpdatedAt(): Promise<Date | null>;

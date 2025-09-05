@@ -12,7 +12,7 @@ import type {
 import { convertToDisplayTransactions } from "../utils/transaction-converter";
 
 export interface GetTransactionsBySlugParams {
-  slug: string;
+  slugs: string[];
   page?: number;
   perPage?: number;
   transactionType?: DisplayTransactionType;
@@ -30,7 +30,7 @@ export interface GetTransactionsBySlugResult {
   page: number;
   perPage: number;
   totalPages: number;
-  politicalOrganization: PoliticalOrganization;
+  politicalOrganizations: PoliticalOrganization[];
   lastUpdatedAt: string | null;
 }
 
@@ -44,20 +44,21 @@ export class GetTransactionsBySlugUsecase {
     params: GetTransactionsBySlugParams,
   ): Promise<GetTransactionsBySlugResult> {
     try {
-      const politicalOrganization =
-        await this.politicalOrganizationRepository.findBySlug(params.slug);
+      const politicalOrganizations =
+        await this.politicalOrganizationRepository.findBySlugs(params.slugs);
 
-      if (!politicalOrganization) {
+      if (politicalOrganizations.length === 0) {
         throw new Error(
-          `Political organization with slug "${params.slug}" not found`,
+          `Political organizations with slugs "${params.slugs.join(", ")}" not found`,
         );
       }
 
       const page = Math.max(params.page || 1, 1);
       const perPage = Math.min(Math.max(params.perPage || 50, 1), 100);
 
+      const organizationIds = politicalOrganizations.map((org) => org.id);
       const filters: TransactionFilters = {
-        political_organization_id: politicalOrganization.id,
+        political_organization_ids: organizationIds,
       };
 
       if (params.transactionType) {
@@ -98,7 +99,7 @@ export class GetTransactionsBySlugUsecase {
         page,
         perPage,
         totalPages,
-        politicalOrganization,
+        politicalOrganizations,
         lastUpdatedAt: lastUpdatedAt?.toISOString() ?? null,
       };
     } catch (error) {

@@ -69,6 +69,7 @@ export interface UpdateTransactionInput
 
 export interface TransactionFilters {
   political_organization_id?: string;
+  political_organization_ids?: string[];
   transaction_type?: TransactionType;
   debit_account?: string;
   credit_account?: string;
