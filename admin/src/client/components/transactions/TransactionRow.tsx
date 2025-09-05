@@ -142,6 +142,11 @@ export function TransactionRow({ transaction }: TransactionRowProps) {
       </td>
       <td className="px-2 py-3 text-sm text-white">
         {transaction.description || "-"}
+        {transaction.label && (
+          <div className="text-blue-400 text-xs mt-1">
+            ラベル: {transaction.label}
+          </div>
+        )}
       </td>
     </tr>
   );

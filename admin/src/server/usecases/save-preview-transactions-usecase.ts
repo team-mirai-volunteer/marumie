@@ -116,6 +116,7 @@ export class SavePreviewTransactionsUsecase {
       credit_tax_category: "",
       credit_amount: previewTransaction.credit_amount,
       description: previewTransaction.description || "",
+      label: previewTransaction.label || "",
       friendly_category: previewTransaction.friendly_category || "",
       memo: "",
       category_key: previewTransaction.category_key,
