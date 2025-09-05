@@ -58,13 +58,13 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
   // maxAbsValueに応じて刻み幅を決定し、四捨五入
   let yAxisMax: number;
   let tickInterval: number;
-  if (maxAbsValue > 100000000) {
-    // 1億円より大きい場合は1000万円刻み
-    tickInterval = 10000000;
+  if (maxAbsValue > 500000000) {
+    // 5億円より大きい場合は1億円刻み
+    tickInterval = 100000000;
     yAxisMax = Math.round(maxWithMargin / tickInterval) * tickInterval;
   } else {
-    // 1億円以下の場合は100万円刻み
-    tickInterval = 1000000;
+    // 5億円以下の場合は1000万円刻み
+    tickInterval = 10000000;
     yAxisMax = Math.round(maxWithMargin / tickInterval) * tickInterval;
   }
   const yAxisMin = -yAxisMax;
@@ -130,7 +130,7 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
     },
     plotOptions: {
       bar: {
-        columnWidth: "35px",
+        columnWidth: "52.5px",
       },
     },
     stroke: {
@@ -268,6 +268,19 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
     },
   };
 
+  // データ数に応じた動的横幅を計算
+  const calculateWidth = (dataCount: number) => {
+    const minWidth = 320; // 最小幅
+    const maxWidth = 600; // 最大幅
+    const widthPerData = 40; // データ1つあたりの幅
+    const baseWidth = 200; // ベース幅（マージンなど）
+
+    const calculatedWidth = baseWidth + dataCount * widthPerData;
+    return Math.max(minWidth, Math.min(maxWidth, calculatedWidth));
+  };
+
+  const chartWidth = calculateWidth(data.length);
+
   return (
     <div
       className="overflow-x-auto overflow-y-hidden rounded-lg bg-white"
@@ -278,7 +291,7 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
       <div id="monthly-chart-description" className="sr-only">
         1年間の月別収入、支出、収支の推移を示す棒グラフです。
       </div>
-      <div className="min-w-[600px]" style={{ height: 462 }}>
+      <div style={{ minWidth: `${chartWidth}px`, height: 462 }}>
         <Chart options={options} series={series} type="line" height={462} />
         <style jsx global>{`
           .apexcharts-tooltip-title {
