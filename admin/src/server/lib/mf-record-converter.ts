@@ -38,9 +38,11 @@ export class MfRecordConverter {
       record.credit_account,
     );
 
-    const label = record.description?.startsWith("デビット")
-      ? record.description
-      : undefined;
+    const label = this.determineLabel(
+      record.description,
+      record.debit_account,
+      record.credit_account,
+    );
 
     return {
       political_organization_id: politicalOrganizationId,
@@ -110,6 +112,29 @@ export class MfRecordConverter {
       return "expense";
     }
     return null;
+  }
+
+  private determineLabel(
+    description: string | undefined,
+    debitAccount: string,
+    creditAccount: string,
+  ): string | undefined {
+    if (!description) {
+      return undefined;
+    }
+
+    // 収入項目が「個人からの寄附」の場合はlabelを設定しない
+    if (debitAccount === "普通預金" && creditAccount === "個人からの寄附") {
+      return undefined;
+    }
+
+    // 支出項目が「人件費」の場合はlabelを設定しない
+    if (creditAccount === "普通預金" && debitAccount === "人件費") {
+      return undefined;
+    }
+
+    // それ以外の場合はdescriptionをlabelとして使用
+    return description;
   }
 
   public extractFinancialYear(dateString: string): number {
