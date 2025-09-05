@@ -30,9 +30,9 @@ export default function MainButton({
         from-[#BCECD3]
         to-[#64D8C6]
         border
-        border-black
-        rounded-[40px]
-        text-black
+        border-[#1F2937]
+        rounded-[6px]
+        text-[#1F2937]
         font-bold
         text-base
         leading-[1.5em]
