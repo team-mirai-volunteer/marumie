@@ -43,11 +43,6 @@ const socialLinks = [
     href: "https://github.com/team-mirai-volunteer",
     icon: "icon-github.svg",
   },
-  {
-    name: "Note",
-    href: "https://note.com/annotakahiro24",
-    icon: "icon-note.svg",
-  },
 ];
 
 export default function AboutSection() {
