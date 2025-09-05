@@ -52,7 +52,7 @@ export default function DonationSummarySection({
         }
         title="これまでの累計寄付金額"
         updatedAt={updatedAt}
-        subtitle="いただいた寄付総額と直近1ヶ月の推移"
+        subtitle="いただいた寄付総額と直近3ヶ月の推移"
       />
 
       {/* 寄付統計サマリー */}

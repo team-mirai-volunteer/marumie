@@ -27,11 +27,8 @@ export default function DonationChart({
   data,
   height = 287,
 }: DonationChartProps) {
-  // 直近30日のデータを抽出
-  const recentData = data.slice(-30);
-
-  // チャート用にデータを変換
-  const chartData: ChartDataPoint[] = recentData.map((item) => ({
+  // BFF側で既に90日分に絞られているので、全データを使用
+  const chartData: ChartDataPoint[] = data.map((item) => ({
     date: item.date,
     displayDate: formatXAxisLabel(item.date),
     cumulativeAmount: item.cumulativeAmount,
@@ -66,7 +63,7 @@ export default function DonationChart({
       >
         <div className="text-center text-gray-500">
           <div className="text-lg font-medium mb-2">
-            直近1ヶ月の寄付金額の推移
+            直近3ヶ月の寄付金額の推移
           </div>
           <div className="text-sm">データがありません</div>
         </div>
@@ -79,16 +76,16 @@ export default function DonationChart({
       className="bg-white rounded-lg "
       style={{ height }}
       role="img"
-      aria-label="直近1ヶ月の寄付金額の推移グラフ"
+      aria-label="直近3ヶ月の寄付金額の推移グラフ"
       aria-describedby="donation-chart-description"
     >
       <div className="text-center">
         <h4 className="text-[13px] font-bold leading-[1.31] text-gray-600">
-          直近1ヶ月の寄付金額の推移
+          直近3ヶ月の寄付金額の推移
         </h4>
       </div>
       <div id="donation-chart-description" className="sr-only">
-        直近30日間の累計寄付金額の推移を示す折れ線グラフです。
+        直近90日間の累計寄付金額の推移を示す折れ線グラフです。
       </div>
       <div
         style={{ height: height }}

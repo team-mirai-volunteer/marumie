@@ -80,6 +80,7 @@ export const loadTopPageData = unstable_cache(
         slugs: params.slugs,
         financialYear: params.financialYear,
         today: new Date(),
+        days: 90,
       }),
     ]);
 

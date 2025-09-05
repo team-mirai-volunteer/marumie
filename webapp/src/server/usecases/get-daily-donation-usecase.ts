@@ -16,6 +16,7 @@ export interface GetDailyDonationParams {
   slugs: string[];
   financialYear: number;
   today: Date;
+  days: number;
 }
 
 export interface GetDailyDonationResult {
@@ -41,17 +42,34 @@ export class GetDailyDonationUsecase {
         );
       }
 
-      // 日次寄付データを取得（IN句で効率的に）
       const organizationIds = politicalOrganizations.map((org) => org.id);
-      const aggregatedDailyData =
+
+      // ② 日付ごとにgroup byされた寄附をクエリで取得
+      const rawDailyData =
         await this.transactionRepository.getDailyDonationData(
           organizationIds,
           params.financialYear,
         );
 
-      // Usecaseでサマリー計算を実行
-      const donationSummary = this.calculateDonationSummary(
-        aggregatedDailyData,
+      // ③ 毎日寄附があるわけではないので、日付が歯抜けにならないよう日付を追加し、金額をゼロ埋めする
+      const filledDailyData = this.fillMissingDates(
+        rawDailyData,
+        params.financialYear,
+      );
+
+      // ④ ③に対してcumsumを追加する
+      const cumulativeDailyData = this.calculateCumSum(filledDailyData);
+
+      // ⑤ ④の直近N日をsliceしてdailyDonationDataとして返す
+      const recentDailyData = this.sliceRecentDays(
+        cumulativeDailyData,
+        params.days,
+        params.today,
+      );
+
+      // ⑥ その他返り値の型は変更ないので埋めて返す
+      const donationSummary = this.buildDonationSummary(
+        recentDailyData,
         params.today,
       );
 
@@ -63,14 +81,89 @@ export class GetDailyDonationUsecase {
     }
   }
 
-  private calculateDonationSummary(
-    dailyDonationData: DailyDonationData[],
+  private fillMissingDates(
+    rawDailyData: DailyDonationData[],
+    financialYear: number,
+  ): DailyDonationData[] {
+    // 政治団体の財政年度の開始日と終了日を計算（1月1日〜12月31日）
+    const startDate = new Date(financialYear, 0, 1); // 1月1日
+    const endDate = new Date(financialYear, 11, 31); // 12月31日
+
+    // 既存データをMapに変換（日付をキーに）
+    const dataMap = new Map<string, DailyDonationData>();
+    for (const item of rawDailyData) {
+      dataMap.set(item.date, item);
+    }
+
+    // すべての日付を生成してゼロ埋め
+    const filledData: DailyDonationData[] = [];
+    const currentDate = new Date(startDate);
+
+    while (currentDate <= endDate) {
+      const dateStr = currentDate.toISOString().split("T")[0];
+      const existingData = dataMap.get(dateStr);
+
+      if (existingData) {
+        filledData.push(existingData);
+      } else {
+        filledData.push({
+          date: dateStr,
+          dailyAmount: 0,
+          cumulativeAmount: 0, // この段階では0、後でcumsumで計算する
+        });
+      }
+
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return filledData;
+  }
+
+  private calculateCumSum(
+    filledData: DailyDonationData[],
+  ): DailyDonationData[] {
+    let cumulativeAmount = 0;
+    return filledData.map((item) => {
+      cumulativeAmount += item.dailyAmount;
+      return {
+        ...item,
+        cumulativeAmount,
+      };
+    });
+  }
+
+  private sliceRecentDays(
+    cumulativeData: DailyDonationData[],
+    days: number,
+    today: Date,
+  ): DailyDonationData[] {
+    const todayStr = today.toISOString().split("T")[0];
+
+    // 今日の位置を見つける
+    const todayIndex = cumulativeData.findIndex(
+      (item) => item.date === todayStr,
+    );
+
+    if (todayIndex === -1) {
+      // 今日のデータが見つからない場合は、最後のN日を返す
+      return cumulativeData.slice(-days);
+    }
+
+    // 今日から遡ってN日分のデータを取得
+    const startIndex = Math.max(0, todayIndex - days + 1);
+    return cumulativeData.slice(startIndex, todayIndex + 1);
+  }
+
+  private buildDonationSummary(
+    recentDailyData: DailyDonationData[],
     today: Date,
   ): DonationSummaryData {
     // 統計情報を計算
     const totalAmount =
-      dailyDonationData[dailyDonationData.length - 1]?.cumulativeAmount || 0;
-    const totalDays = dailyDonationData.length;
+      recentDailyData[recentDailyData.length - 1]?.cumulativeAmount || 0;
+    const totalDays = recentDailyData.filter(
+      (item) => item.dailyAmount > 0,
+    ).length;
 
     // 今日と昨日の日付を文字列で準備
     const todayStr = today.toISOString().split("T")[0];
@@ -79,8 +172,8 @@ export class GetDailyDonationUsecase {
     const yesterdayStr = yesterday.toISOString().split("T")[0];
 
     // 今日と昨日の寄付データを検索
-    const todayData = dailyDonationData.find((item) => item.date === todayStr);
-    const yesterdayData = dailyDonationData.find(
+    const todayData = recentDailyData.find((item) => item.date === todayStr);
+    const yesterdayData = recentDailyData.find(
       (item) => item.date === yesterdayStr,
     );
 
@@ -95,7 +188,7 @@ export class GetDailyDonationUsecase {
     const countDayOverDay = todayHasDonation - yesterdayHasDonation;
 
     return {
-      dailyDonationData,
+      dailyDonationData: recentDailyData,
       totalAmount,
       totalDays,
       amountDayOverDay,
