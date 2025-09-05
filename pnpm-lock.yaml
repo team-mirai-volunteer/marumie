@@ -151,9 +151,6 @@ importers:
       '@next/third-parties':
         specifier: ^15.5.0
         version: 15.5.0(next@15.4.6)(react@19.1.0)
-      '@nivo/treemap':
-        specifier: ^0.99.0
-        version: 0.99.0(react-dom@19.1.0)(react@19.1.0)
       '@prisma/client':
         specifier: ^6.14.0
         version: 6.14.0(prisma@6.14.0)(typescript@5.9.2)
@@ -1440,26 +1437,6 @@ packages:
       - react-dom
     dev: false
 
-  /@nivo/treemap@0.99.0(react-dom@19.1.0)(react@19.1.0):
-    resolution: {integrity: sha512-zGVQyR+e38UqUsMrsnio8Ulz7IYDZ4HpUv+iVKSYX29Fa8TS39yHGyaGXTXt6PvL6owjvdwhJ/7TQAeO/qcWaQ==}
-    peerDependencies:
-      react: ^16.14 || ^17.0 || ^18.0 || ^19.0
-    dependencies:
-      '@nivo/colors': 0.99.0(react-dom@19.1.0)(react@19.1.0)
-      '@nivo/core': 0.99.0(react-dom@19.1.0)(react@19.1.0)
-      '@nivo/text': 0.99.0(react-dom@19.1.0)(react@19.1.0)
-      '@nivo/theming': 0.99.0(react@19.1.0)
-      '@nivo/tooltip': 0.99.0(react-dom@19.1.0)(react@19.1.0)
-      '@react-spring/core': 10.0.1(react@19.1.0)
-      '@react-spring/web': 10.0.1(react-dom@19.1.0)(react@19.1.0)
-      '@types/d3-hierarchy': 3.1.7
-      d3-hierarchy: 3.1.2
-      lodash: 4.17.21
-      react: 19.1.0
-    transitivePeerDependencies:
-      - react-dom
-    dev: false
-
   /@nodelib/fs.scandir@2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -1961,10 +1938,6 @@ packages:
 
   /@types/d3-ease@3.0.2:
     resolution: {integrity: sha512-NcV1JjO5oDzoK26oMzbILE6HW7uVXOHLQvHshBUW4UMdZGfiY6v5BeQwh9a9tCzv+CeefZQHJt5SRgK154RtiA==}
-    dev: false
-
-  /@types/d3-hierarchy@3.1.7:
-    resolution: {integrity: sha512-tJFtNoYBtRtkNysX1Xq4sxtjK8YgoWUNpIiUee0/jHGRwqvzYxkq0hGVbbOGSz+JgFxxRu4K8nb3YpG3CMARtg==}
     dev: false
 
   /@types/d3-interpolate@3.0.4:
@@ -3105,11 +3078,6 @@ packages:
 
   /d3-format@3.1.0:
     resolution: {integrity: sha512-YyUI6AEuY/Wpt8KWLgZHsIU86atmikuoOmCfommt0LYHiQSPjvX2AcFc38PX0CBpr2RCyZhjex+NS/LPOv6YqA==}
-    engines: {node: '>=12'}
-    dev: false
-
-  /d3-hierarchy@3.1.2:
-    resolution: {integrity: sha512-FX/9frcub54beBdugHjDCdikxThEqjnR93Qt7PvQTOHxyiNCAlvMrHhclk3cD5VeAaq9fxmfRp+CnWw9rEMBuA==}
     engines: {node: '>=12'}
     dev: false
 

@@ -84,10 +84,10 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
         name: BALANCE_SHEET_LABELS.debtExcess,
         value: balanceSheet.left.debtExcess,
         color: "#DC2626",
-        x: 0,
-        y: currentY,
-        width: leftWidth - MARGIN / 2,
-        height: height - MARGIN,
+        x: 1,
+        y: currentY + 1,
+        width: leftWidth - MARGIN / 2 - 2,
+        height: height - MARGIN - 2,
       });
     }
 
@@ -159,11 +159,7 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
   return (
     <div className="flex justify-center mt-10">
       <div className="relative">
-        <svg
-          width={CHART_WIDTH}
-          height={CHART_HEIGHT}
-          className="border border-gray-200"
-        >
+        <svg width={CHART_WIDTH} height={CHART_HEIGHT}>
           {nodes.map((node) => (
             <g key={node.name}>
               <rect
@@ -171,9 +167,22 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
                 y={node.y}
                 width={node.width}
                 height={node.height}
-                fill={node.color}
-                stroke="#ffffff"
-                strokeWidth={2}
+                fill={
+                  node.name === BALANCE_SHEET_LABELS.debtExcess
+                    ? "transparent"
+                    : node.color
+                }
+                stroke={
+                  node.name === BALANCE_SHEET_LABELS.debtExcess
+                    ? "#B91C1C"
+                    : "#ffffff"
+                }
+                strokeWidth={
+                  node.name === BALANCE_SHEET_LABELS.debtExcess ? 1 : 2
+                }
+                strokeDasharray={
+                  node.name === BALANCE_SHEET_LABELS.debtExcess ? "2,2" : "none"
+                }
                 className="cursor-pointer"
               />
               {/* ラベル */}
@@ -181,7 +190,11 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
                 x={node.x + node.width / 2}
                 y={node.y + node.height / 2 - 5}
                 textAnchor="middle"
-                className="text-sm font-bold fill-black pointer-events-none"
+                className={`text-sm font-bold pointer-events-none ${
+                  node.name === BALANCE_SHEET_LABELS.debtExcess
+                    ? "fill-red-600"
+                    : "fill-black"
+                }`}
               >
                 {node.name}
               </text>
@@ -189,8 +202,13 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
                 x={node.x + node.width / 2}
                 y={node.y + node.height / 2 + 15}
                 textAnchor="middle"
-                className="text-xs font-medium fill-black pointer-events-none"
+                className={`text-xs font-medium pointer-events-none ${
+                  node.name === BALANCE_SHEET_LABELS.debtExcess
+                    ? "fill-red-600"
+                    : "fill-black"
+                }`}
               >
+                {node.name === BALANCE_SHEET_LABELS.debtExcess ? "▲" : ""}
                 {formatAmount(node.value)}
               </text>
             </g>

@@ -44,14 +44,14 @@ export default async function Home() {
       <BalanceSheetSection
         data={{
           left: {
-            currentAssets: 150000000, // 1億5000万円
-            fixedAssets: 200000000, // 2億円
-            debtExcess: 0,
+            currentAssets: 100000000, // 1億円
+            fixedAssets: 150000000, // 1億5000万円
+            debtExcess: 100000000, // 1億円（債務超過）
           },
           right: {
-            currentLiabilities: 100000000, // 1億円
+            currentLiabilities: 200000000, // 2億円
             fixedLiabilities: 150000000, // 1億5000万円
-            netAssets: 100000000, // 1億円（左右の合計が同じ350M）
+            netAssets: 0, // 純資産なし（債務超過のため）
           },
         }}
       />

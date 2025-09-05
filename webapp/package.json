@@ -4,7 +4,6 @@
   "version": "0.0.0",
   "dependencies": {
     "@next/third-parties": "^15.5.0",
-    "@nivo/treemap": "^0.99.0",
     "@prisma/client": "^6.14.0",
     "@vercel/speed-insights": "^1.2.0",
     "apexcharts": "^5.3.3",
