@@ -144,10 +144,17 @@ const CustomNodesLayer = ({
   ) => {
     // 元のnode情報を再構築（必要な場合）
     const originalNode = nodes.find((n) => n.id === nodeData.id);
+
+    // 支出側（expense, expense-sub）かどうかを判定
+    const isExpenseSide =
+      originalNode?.nodeType === "expense" ||
+      originalNode?.nodeType === "expense-sub";
+
     setTooltip({
       visible: true,
-      x: event.pageX + 10, // clientX → pageX でスクロール位置を含む
-      y: event.pageY - 10, // clientY → pageY でスクロール位置を含む
+      // 支出側の場合は左側に、その他は右側に表示
+      x: isExpenseSide ? event.pageX - 10 : event.pageX + 10,
+      y: event.pageY - 10,
       node:
         originalNode ||
         ({
@@ -163,11 +170,17 @@ const CustomNodesLayer = ({
   };
 
   const handleMouseMove = (event: React.MouseEvent) => {
-    if (tooltip.visible) {
+    if (tooltip.visible && tooltip.node) {
+      // 支出側（expense, expense-sub）かどうかを判定
+      const isExpenseSide =
+        tooltip.node.nodeType === "expense" ||
+        tooltip.node.nodeType === "expense-sub";
+
       setTooltip((prev) => ({
         ...prev,
-        x: event.pageX + 10, // clientX → pageX でスクロール位置を含む
-        y: event.pageY - 10, // clientY → pageY でスクロール位置を含む
+        // 支出側の場合は左側に、その他は右側に表示
+        x: isExpenseSide ? event.pageX - 10 : event.pageX + 10,
+        y: event.pageY - 10,
       }));
     }
   };
@@ -207,19 +220,35 @@ const CustomNodesLayer = ({
               position: "absolute",
               left: tooltip.x,
               top: tooltip.y,
-              background: "white",
-              padding: "8px 12px",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-              fontSize: "12px",
-              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+              background: "rgba(255, 255, 255, 0.85)",
+              padding: "11px 16px",
+              border: "1px solid #64748B",
+              borderRadius: "6px",
+              fontSize: "13px",
+              fontWeight: "700",
+              fontFamily: "'Noto Sans JP', sans-serif",
+              lineHeight: "1.31",
+              color: "#4B5563",
+              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
               zIndex: 30, // headerのz-40(4000)より低く設定
               pointerEvents: "none",
+              minWidth: "max-content",
+              // 支出側の場合は右側を基準に配置
+              transform:
+                tooltip.node?.nodeType === "expense" ||
+                tooltip.node?.nodeType === "expense-sub"
+                  ? "translateX(-100%)"
+                  : "none",
             }}
           >
-            <strong>{tooltip.node.label || tooltip.node.id}</strong>
-            <br />
-            {`¥${Math.round(tooltip.node.value || 0).toLocaleString("ja-JP")}`}
+            <div style={{ marginBottom: "3px", fontWeight: "700" }}>
+              {tooltip.node.label || tooltip.node.id}
+            </div>
+            <div
+              style={{ fontSize: "14px", fontWeight: "700", color: "#1E293B" }}
+            >
+              ¥{Math.round(tooltip.node.value || 0).toLocaleString("ja-JP")}
+            </div>
           </div>,
           document.body,
         )}
