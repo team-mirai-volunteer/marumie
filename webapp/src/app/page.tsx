@@ -39,10 +39,7 @@ export default async function Home() {
         monthlyData={data?.monthlyData}
         updatedAt={updatedAt}
       />
-      <DonationSummarySection
-        donationSummary={data?.donationSummary}
-        updatedAt={updatedAt}
-      />
+      <DonationSummarySection donationSummary={data?.donationSummary} />
       <TransparencySection title="党首も毎日これを見て、お金をやりくりしています👀" />
       <TransactionsSection
         transactionData={data?.transactionData ?? null}
