@@ -44,9 +44,17 @@ export interface DailyDonationData {
   cumulativeAmount: number; // 累積寄付額
 }
 
+export interface SortOptions {
+  sortBy?: "date" | "amount";
+  order?: "asc" | "desc";
+}
+
 export interface ITransactionRepository {
   findById(id: string): Promise<Transaction | null>;
-  findAll(filters?: TransactionFilters): Promise<Transaction[]>;
+  findAll(
+    filters?: TransactionFilters,
+    sortOptions?: SortOptions,
+  ): Promise<Transaction[]>;
   findWithPagination(
     filters?: TransactionFilters,
     pagination?: PaginationOptions,
