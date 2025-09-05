@@ -31,11 +31,18 @@ export default function TransactionTableRow({
     return transaction.shortLabel;
   };
 
+  const getDisplayTitle = (transaction: DisplayTransaction) => {
+    const baseTitle = transaction.friendly_category || transaction.category;
+    return transaction.label
+      ? `${baseTitle} - ${transaction.label}`
+      : baseTitle;
+  };
+
   const getCategoryColors = (transaction: DisplayTransaction) => {
     const isIncome = transaction.amount > 0;
 
-    // Find mapping based on label (original account name)
-    const mapping = ACCOUNT_CATEGORY_MAPPING[transaction.label];
+    // Find mapping based on account (original account name)
+    const mapping = ACCOUNT_CATEGORY_MAPPING[transaction.account];
     const color = mapping?.color;
 
     if (color) {
@@ -82,7 +89,7 @@ export default function TransactionTableRow({
           {/* Title and Amount section */}
           <div className="flex items-center justify-between gap-4">
             <span className="text-sm font-bold text-gray-800 flex-1 leading-[1.43em]">
-              {transaction.friendly_category || transaction.category}
+              {getDisplayTitle(transaction)}
             </span>
             <span
               className={`text-base font-bold text-right ${
@@ -127,7 +134,7 @@ export default function TransactionTableRow({
       {/* Title column - flexible width */}
       <td className="hidden md:table-cell h-16">
         <span className="leading-7 font-bold text-base text-gray-800">
-          {transaction.friendly_category || transaction.category}
+          {getDisplayTitle(transaction)}
         </span>
       </td>
 

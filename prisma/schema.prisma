@@ -67,13 +67,10 @@ model Transaction {
   creditTaxCategory       String?              @map("credit_tax_category") @db.VarChar(255)
   creditAmount            Decimal              @map("credit_amount") @db.Decimal(15, 2)
   description             String?              @db.Text
-  description1            String?              @map("description_1") @db.Text
-  description2            String?              @map("description_2") @db.Text
-  description3            String?              @map("description_3") @db.Text
-  descriptionDetail       String?              @map("description_detail") @db.Text
   friendlyCategory        String?              @map("friendly_category") @db.Text
   memo                    String?              @db.Text
   categoryKey             String               @map("category_key") @db.VarChar(255)
+  label                   String               @default("") @db.VarChar(255)
   createdAt               DateTime             @default(now()) @map("created_at")
   updatedAt               DateTime             @updatedAt @map("updated_at")
 

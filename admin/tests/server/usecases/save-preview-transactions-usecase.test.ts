@@ -44,7 +44,7 @@ describe("SavePreviewTransactionsUsecase", () => {
       mockRepository.createMany.mockImplementation(
         async (transactions) => {
           capturedTransactions.push(...transactions);
-          return transactions.map(t => ({ ...t, id: 'test-id', created_at: new Date(), updated_at: new Date() }));
+          return transactions.map(t => ({ ...t, id: 'test-id', label: t.label || '', created_at: new Date(), updated_at: new Date() }));
         }
       );
 
@@ -177,13 +177,10 @@ describe("SavePreviewTransactionsUsecase", () => {
             credit_tax_category: '',
             credit_amount: t.credit_amount,
             description: t.description || '',
-            description_1: t.description_1,
-            description_2: t.description_2,
-            description_3: t.description_3,
-            description_detail: undefined,
             friendly_category: t.friendly_category || '',
             memo: '',
             category_key: t.category_key,
+            label: '',
             created_at: new Date(),
             updated_at: new Date()
           }))
@@ -270,13 +267,10 @@ TXN-001,2025/6/1,人件費,,,,,,1000,普通預金,,,,,,1000,給与支払,,`;
           credit_tax_category: '',
           credit_amount: 1000,
           description: '給与支払',
-          description_1: undefined,
-          description_2: undefined,
-          description_3: undefined,
-          description_detail: undefined,
           friendly_category: '',
           memo: '',
           category_key: '人件費',
+          label: '',
           created_at: new Date(),
           updated_at: new Date()
         }
