@@ -14,6 +14,7 @@ export interface PreviewTransaction {
   credit_sub_account: string | undefined;
   credit_amount: number;
   description: string | undefined;
+  label: string | undefined;
   friendly_category: string | undefined;
   category_key: string;
   status: "valid" | "invalid" | "skip";
@@ -37,6 +38,10 @@ export class MfRecordConverter {
       record.credit_account,
     );
 
+    const label = record.description?.startsWith("デビット")
+      ? record.description
+      : undefined;
+
     return {
       political_organization_id: politicalOrganizationId,
       transaction_no: record.transaction_no,
@@ -49,6 +54,7 @@ export class MfRecordConverter {
       credit_sub_account: record.credit_sub_account,
       credit_amount: creditAmount,
       description: record.description,
+      label: label,
       friendly_category: record.friendly_category,
       category_key: categoryKey,
       status: transactionType === null ? "invalid" : "valid",
