@@ -158,8 +158,13 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
 
   return (
     <div className="flex justify-center mt-10">
-      <div className="relative">
-        <svg width={CHART_WIDTH} height={CHART_HEIGHT}>
+      <div className="w-full max-w-[500px] relative">
+        <svg
+          width={CHART_WIDTH}
+          height={CHART_HEIGHT}
+          viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`}
+          className="w-full h-auto"
+        >
           {nodes.map((node) => (
             <g key={node.name}>
               <rect
