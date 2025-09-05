@@ -5,7 +5,7 @@ import type {
   TransactionFilters,
   UpdateTransactionInput,
 } from "@/shared/models/transaction";
-import type { TransactionWithOrganization } from "@/shared/models/transaction-with-organization";
+import type { TransactionWithOrganization } from "@/server/usecases/get-transactions-usecase";
 import type {
   ITransactionRepository,
   PaginatedResult,
@@ -65,7 +65,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       orderBy: { transactionDate: "desc" },
     });
 
-    return transactions.map(this.mapToTransaction);
+    return transactions.map((t) => this.mapToTransaction(t));
   }
 
   async findWithPagination(
@@ -220,7 +220,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       take: inputs.length,
     });
 
-    return createdTransactions.map(this.mapToTransaction);
+    return createdTransactions.map((t) => this.mapToTransaction(t));
   }
 
   async createManySkipDuplicates(inputs: CreateTransactionInput[]): Promise<{
@@ -281,7 +281,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       },
     });
 
-    return transactions.map(this.mapToTransaction);
+    return transactions.map((t) => this.mapToTransaction(t));
   }
 
   async checkDuplicateTransactionNos(
@@ -309,8 +309,8 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       .filter((no): no is string => no !== null);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public mapToTransaction(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     prismaTransaction: any,
     includeOrganization = false,
   ): Transaction | TransactionWithOrganization {
