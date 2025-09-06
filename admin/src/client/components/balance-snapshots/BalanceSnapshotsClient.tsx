@@ -15,13 +15,24 @@ export default function BalanceSnapshotsClient({
 }: BalanceSnapshotsClientProps) {
   const [selectedOrgId, setSelectedOrgId] = useState<string>("");
 
-  const handleFormSubmit = (data: {
+  const handleFormSubmit = async (data: {
     politicalOrganizationId: string;
     snapshotDate: string;
     balance: number;
   }) => {
-    console.log("Submit balance snapshot:", data);
-    // TODO: Server actionを呼び出す
+    try {
+      const { createBalanceSnapshot } = await import(
+        "@/server/actions/create-balance-snapshot"
+      );
+
+      await createBalanceSnapshot(data);
+
+      // TODO: 成功メッセージを表示
+      console.log("Balance snapshot created successfully");
+    } catch (error) {
+      // TODO: エラーメッセージを表示
+      console.error("Failed to create balance snapshot:", error);
+    }
   };
 
   return (
