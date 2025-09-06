@@ -52,7 +52,6 @@ export class GetSankeyAggregationUsecase {
         await this.balanceSnapshotRepository.getTotalLatestBalanceByOrgIds(
           organizationIdsAsString,
         );
-      console.log("totalLatestBalance", totalLatestBalance);
 
       // Sankeyデータに変換
       const isFriendlyCategory = params.categoryType === "friendly-category";

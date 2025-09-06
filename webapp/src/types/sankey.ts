@@ -13,4 +13,5 @@ export interface SankeyLink {
 export interface SankeyData {
   nodes: SankeyNode[];
   links: SankeyLink[];
+  totalLatestBalance?: number;
 }
