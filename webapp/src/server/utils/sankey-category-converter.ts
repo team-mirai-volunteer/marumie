@@ -198,14 +198,6 @@ export function convertCategoryAggregationToSankeyData(
   }
 
   // 収入と支出の合計を計算
-  const totalIncome = Array.from(incomeByCategory.values()).reduce(
-    (sum, amount) => sum + amount,
-    0,
-  );
-  const totalExpense = Array.from(expenseByCategory.values()).reduce(
-    (sum, amount) => sum + amount,
-    0,
-  );
 
   // latestBalanceが提供されている場合、「繰越し」として支出側に追加
   if (latestBalance !== undefined && latestBalance > 0) {
@@ -217,6 +209,15 @@ export function convertCategoryAggregationToSankeyData(
       totalAmount: latestBalance,
     });
   }
+
+  const totalIncome = Array.from(incomeByCategory.values()).reduce(
+    (sum, amount) => sum + amount,
+    0,
+  );
+  const totalExpense = Array.from(expenseByCategory.values()).reduce(
+    (sum, amount) => sum + amount,
+    0,
+  );
 
   // 収入 > 支出の場合、「処理中」を追加
   if (totalIncome > totalExpense) {
