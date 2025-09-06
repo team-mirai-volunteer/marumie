@@ -42,7 +42,10 @@ export default async function Home() {
       />
       <TransparencySection title="党首も毎日これを見て、お金をやりくりしています👀" />
       <DonationSummarySection donationSummary={data?.donationSummary} />
-      <BalanceSheetSection data={data?.balanceSheetData} />
+      <BalanceSheetSection
+        data={data?.balanceSheetData}
+        updatedAt={updatedAt}
+      />
       <TransactionsSection
         transactionData={data?.transactionData ?? null}
         updatedAt={updatedAt}

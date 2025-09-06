@@ -39,14 +39,11 @@ export class GetBalanceSheetUsecase {
       await this.politicalOrganizationRepository.findBySlugs(params.slugs);
     const orgIds = organizations.map((org) => org.id);
 
-    // 2. 各組織の最新残高スナップショットを取得
-    const balanceSnapshots =
-      await this.balanceSnapshotRepository.findLatestByOrgIds(orgIds);
-
-    // 3. 流動資産を計算（現在は残高の合計）
-    const currentAssets = balanceSnapshots.reduce((total, snapshot) => {
-      return total + snapshot.balance;
-    }, 0);
+    // 2. 各組織の最新残高の合計を取得
+    const currentAssets =
+      await this.balanceSnapshotRepository.getTotalLatestBalanceByOrgIds(
+        orgIds,
+      );
 
     // 4. 固定負債を計算（借入金の収入 - 支出）
     const [borrowingIncome, borrowingExpense] = await Promise.all([

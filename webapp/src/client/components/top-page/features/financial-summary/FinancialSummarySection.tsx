@@ -17,21 +17,17 @@ function calculateFinancialData(sankeyData: SankeyData | null) {
     .filter((link: SankeyLink) => link.target === "合計")
     .reduce((sum: number, link: SankeyLink) => sum + link.value, 0);
 
-  // 支出の計算（「合計」ノードからの流出、ただし「expense-収支」は除く）
-  const expense = sankeyData.links
-    .filter(
-      (link: SankeyLink) =>
-        link.source === "合計" && link.target !== "expense-収支",
-    )
-    .reduce((sum: number, link: SankeyLink) => sum + link.value, 0);
-
-  // 残高の計算（「expense-収支」への流出があればその値、なければ0）
-  const balanceLink = sankeyData.links.find(
-    (link: SankeyLink) => link.target === "expense-収支",
+  // 「繰越し」の値を取得（「合計」から「expense-繰越し」への流出）
+  const carryoverLink = sankeyData.links.find(
+    (link: SankeyLink) =>
+      link.source === "合計" && link.target === "expense-繰越し",
   );
-  const balance = balanceLink ? balanceLink.value : 0;
+  const currentBalance = carryoverLink ? carryoverLink.value : 0;
 
-  return { income, expense, balance };
+  // 支出の計算（収入総額から現在の残高を引いた値）
+  const expense = income - currentBalance;
+
+  return { income, expense, balance: currentBalance };
 }
 
 export default function FinancialSummarySection({
@@ -60,7 +56,7 @@ export default function FinancialSummarySection({
 
       <FinancialSummaryCard
         className="flex-1"
-        title="現在の残高"
+        title="現時点の収支"
         amount={formatAmount(financialData.balance)}
         titleColor="#1F2937"
         amountColor="#1F2937"

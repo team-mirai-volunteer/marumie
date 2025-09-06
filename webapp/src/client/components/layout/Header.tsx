@@ -19,8 +19,8 @@ const navigationItems = [
   },
   {
     href: "/#donation-summary",
-    label: "これまでの寄付金額",
-    desktopLabel: "寄付金額",
+    label: "これまでの寄附金額",
+    desktopLabel: "寄附金額",
   },
   {
     href: "/#transactions",

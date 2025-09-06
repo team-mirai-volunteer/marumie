@@ -24,10 +24,10 @@ export default function DonationSummaryCards({
     <>
       {/* SP レイアウト - 3つのカードが縦に並ぶ */}
       <div className="flex md:hidden flex-col gap-2">
-        {/* 累計寄付金額カード */}
+        {/* 累計寄附金額カード */}
         <BaseCard className="!p-3">
           <div className="flex flex-row justify-between items-center">
-            <div className="text-[#4B5563] font-bold text-sm">累計寄付金額</div>
+            <div className="text-[#4B5563] font-bold text-sm">累計寄附金額</div>
             <div className="flex flex-col items-end gap-2">
               <div className="flex items-baseline gap-[2px]">
                 {totalOku > 0 && (
@@ -72,12 +72,12 @@ export default function DonationSummaryCards({
           </div>
         </BaseCard>
 
-        {/* 寄付件数と企業団体献金 - 横並び */}
+        {/* 寄附件数と企業団体献金 - 横並び */}
         <div className="flex gap-2 items-stretch">
-          {/* 寄付件数カード - fill（残りの幅を全て使用） */}
+          {/* 寄附件数カード - fill（残りの幅を全て使用） */}
           <BaseCard className="flex-1 !p-3">
             <div className="flex flex-row justify-between items-center gap-3">
-              <div className="text-[#4B5563] font-bold text-sm">寄付件数</div>
+              <div className="text-[#4B5563] font-bold text-sm">寄附件数</div>
               <div className="flex flex-col items-end gap-2">
                 <div className="flex items-baseline gap-[2px]">
                   <span className="font-bold text-2xl leading-5 text-gray-800">
@@ -128,12 +128,12 @@ export default function DonationSummaryCards({
 
       {/* PC レイアウト - 3つのカードが横に並ぶ */}
       <div className="hidden md:flex gap-6">
-        {/* 累計寄付金額カード */}
+        {/* 累計寄附金額カード */}
         <BaseCard className="flex-1">
           <div className="flex flex-col">
             <div className="flex justify-between items-start mb-4">
               <div className="text-gray-800 font-bold text-base">
-                累計寄付金額
+                累計寄附金額
               </div>
               <div className="flex items-center gap-[2px]">
                 <span className="text-[#238778] font-bold text-[11px] leading-[17px]">
@@ -185,11 +185,11 @@ export default function DonationSummaryCards({
           </div>
         </BaseCard>
 
-        {/* 寄付件数カード */}
+        {/* 寄附件数カード */}
         <BaseCard className="w-60">
           <div className="flex flex-col gap-4">
             <div className="flex flex-row items-center gap-6">
-              <div className="text-gray-800 font-bold text-base">寄付件数</div>
+              <div className="text-gray-800 font-bold text-base">寄附件数</div>
               <div className="flex items-center gap-[2px]">
                 <span className="text-[#238778] font-bold text-[13px]">
                   前日比

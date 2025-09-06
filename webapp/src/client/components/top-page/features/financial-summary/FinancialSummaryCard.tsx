@@ -29,7 +29,7 @@ export default function FinancialSummaryCard({
         </div>
         <div className="flex items-baseline gap-1">
           <span
-            className="font-bold text-2xl sm:text-[36px] leading-5 leading-[30px]"
+            className="font-bold text-2xl sm:text-[36px] leading-5"
             style={{ color: amountColor }}
           >
             {amount.main}
@@ -44,14 +44,14 @@ export default function FinancialSummaryCard({
           )}
           {amount.tertiary && (
             <span
-              className="font-bold text-2xl sm:text-[36px] leading-5 sm:leading-[30px]"
+              className="font-bold text-2xl sm:text-[36px] leading-5"
               style={{ color: amountColor }}
             >
               {amount.tertiary}
             </span>
           )}
           <span
-            className="font-bold text-xs sm:text-base leading-5 sm:leading-[30px]"
+            className="font-bold text-xs sm:text-base leading-5"
             style={{ color: "#6B7280" }}
           >
             {amount.unit}

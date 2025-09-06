@@ -1,50 +1,33 @@
 import "server-only";
 import type { PrismaClient } from "@prisma/client";
-import type {
-  IBalanceSnapshotRepository,
-  BalanceSnapshotData,
-} from "./interfaces/balance-snapshot-repository.interface";
+import type { IBalanceSnapshotRepository } from "./interfaces/balance-snapshot-repository.interface";
 
 export class PrismaBalanceSnapshotRepository
   implements IBalanceSnapshotRepository
 {
   constructor(private prisma: PrismaClient) {}
 
-  async findLatestByOrgIds(orgIds: string[]): Promise<BalanceSnapshotData[]> {
+  async getTotalLatestBalanceByOrgIds(orgIds: string[]): Promise<number> {
     if (orgIds.length === 0) {
-      return [];
+      return 0;
     }
 
-    // 各org_idごとに最新のスナップショットを取得
-    const latestSnapshots = await this.prisma.$queryRaw<
+    // 各org_idごとに最新のスナップショットの残高の合計を取得
+    const result = await this.prisma.$queryRaw<
       Array<{
-        id: bigint;
-        political_organization_id: bigint;
-        snapshot_date: Date;
-        balance: string;
-        created_at: Date;
-        updated_at: Date;
+        total_balance: string;
       }>
     >`
-      SELECT DISTINCT ON (political_organization_id) 
-        id,
-        political_organization_id,
-        snapshot_date,
-        balance,
-        created_at,
-        updated_at
-      FROM balance_snapshots 
-      WHERE political_organization_id = ANY(${orgIds.map((id) => BigInt(id))})
-      ORDER BY political_organization_id, snapshot_date DESC, updated_at DESC
+      SELECT COALESCE(SUM(latest_balances.balance), 0)::text as total_balance
+      FROM (
+        SELECT DISTINCT ON (political_organization_id)
+          balance
+        FROM balance_snapshots
+        WHERE political_organization_id = ANY(${orgIds.map((id) => BigInt(id))})
+        ORDER BY political_organization_id, snapshot_date DESC, updated_at DESC
+      ) as latest_balances
     `;
 
-    return latestSnapshots.map((snapshot) => ({
-      id: snapshot.id.toString(),
-      political_organization_id: snapshot.political_organization_id.toString(),
-      snapshot_date: snapshot.snapshot_date,
-      balance: Number(snapshot.balance),
-      created_at: snapshot.created_at,
-      updated_at: snapshot.updated_at,
-    }));
+    return Number(result[0]?.total_balance || 0);
   }
 }

@@ -275,15 +275,15 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     politicalOrganizationIds: string[],
     financialYear: number,
   ): Promise<DailyDonationData[]> {
-    // 寄付カテゴリに該当するアカウントキーを抽出
+    // 寄附カテゴリに該当するアカウントキーを抽出
     const donationAccountKeys = Object.keys(ACCOUNT_CATEGORY_MAPPING).filter(
-      (key) => ACCOUNT_CATEGORY_MAPPING[key].category === "寄付",
+      (key) => ACCOUNT_CATEGORY_MAPPING[key].category === "寄附",
     );
     const organizationIdsBigInt = politicalOrganizationIds.map((id) =>
       BigInt(id),
     );
 
-    // 寄付に該当するアカウントからの収入データを日別に集計
+    // 寄附に該当するアカウントからの収入データを日別に集計
     const dailyDonationResults = await this.prisma.$queryRaw<
       Array<{ transaction_date: Date; total_amount: number }>
     >`

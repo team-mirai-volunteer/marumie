@@ -1,6 +1,7 @@
 import type { SankeyData } from "@/types/sankey";
 import type { IPoliticalOrganizationRepository } from "../repositories/interfaces/political-organization-repository.interface";
 import type { ITransactionRepository } from "../repositories/interfaces/transaction-repository.interface";
+import type { IBalanceSnapshotRepository } from "../repositories/interfaces/balance-snapshot-repository.interface";
 import { convertCategoryAggregationToSankeyData } from "../utils/sankey-category-converter";
 
 export interface GetSankeyAggregationParams {
@@ -17,6 +18,7 @@ export class GetSankeyAggregationUsecase {
   constructor(
     private transactionRepository: ITransactionRepository,
     private politicalOrganizationRepository: IPoliticalOrganizationRepository,
+    private balanceSnapshotRepository: IBalanceSnapshotRepository,
   ) {}
 
   async execute(
@@ -42,11 +44,21 @@ export class GetSankeyAggregationUsecase {
           params.categoryType,
         );
 
+      // 最新の残高データを取得（合計値）
+      const organizationIdsAsString = organizationIds.map((id) =>
+        id.toString(),
+      );
+      const totalLatestBalance =
+        await this.balanceSnapshotRepository.getTotalLatestBalanceByOrgIds(
+          organizationIdsAsString,
+        );
+
       // Sankeyデータに変換
       const isFriendlyCategory = params.categoryType === "friendly-category";
       const sankeyData = convertCategoryAggregationToSankeyData(
         aggregatedResult,
         isFriendlyCategory,
+        totalLatestBalance,
       );
 
       return { sankeyData };
