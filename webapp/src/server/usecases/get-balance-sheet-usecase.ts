@@ -14,9 +14,9 @@ export interface GetBalanceSheetResult {
 
 export class GetBalanceSheetUsecase {
   constructor(
-    private _transactionRepository: ITransactionRepository,
-    private _balanceSnapshotRepository: IBalanceSnapshotRepository,
-    private _politicalOrganizationRepository: IPoliticalOrganizationRepository,
+    private transactionRepository: ITransactionRepository,
+    private balanceSnapshotRepository: IBalanceSnapshotRepository,
+    private politicalOrganizationRepository: IPoliticalOrganizationRepository,
   ) {}
 
   async execute(params: GetBalanceSheetParams): Promise<GetBalanceSheetResult> {
@@ -36,12 +36,12 @@ export class GetBalanceSheetUsecase {
   ): Promise<BalanceSheetData> {
     // 1. slugから政治団体のIDを取得
     const organizations =
-      await this._politicalOrganizationRepository.findBySlugs(params.slugs);
+      await this.politicalOrganizationRepository.findBySlugs(params.slugs);
     const orgIds = organizations.map((org) => org.id);
 
     // 2. 各組織の最新残高スナップショットを取得
     const balanceSnapshots =
-      await this._balanceSnapshotRepository.findLatestByOrgIds(orgIds);
+      await this.balanceSnapshotRepository.findLatestByOrgIds(orgIds);
 
     // 3. 流動資産を計算（現在は残高の合計）
     const currentAssets = balanceSnapshots.reduce((total, snapshot) => {
@@ -50,11 +50,11 @@ export class GetBalanceSheetUsecase {
 
     // 4. 固定負債を計算（借入金の収入 - 支出）
     const [borrowingIncome, borrowingExpense] = await Promise.all([
-      this._transactionRepository.getBorrowingIncomeTotal(
+      this.transactionRepository.getBorrowingIncomeTotal(
         orgIds,
         params.financialYear,
       ),
-      this._transactionRepository.getBorrowingExpenseTotal(
+      this.transactionRepository.getBorrowingExpenseTotal(
         orgIds,
         params.financialYear,
       ),
