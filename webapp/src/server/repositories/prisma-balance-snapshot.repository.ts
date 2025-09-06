@@ -1,18 +1,9 @@
 import "server-only";
 import type { PrismaClient } from "@prisma/client";
-
-export interface IBalanceSnapshotRepository {
-  findLatestByOrgIds(orgIds: string[]): Promise<BalanceSnapshotData[]>;
-}
-
-export interface BalanceSnapshotData {
-  id: string;
-  political_organization_id: string;
-  snapshot_date: Date;
-  balance: number;
-  created_at: Date;
-  updated_at: Date;
-}
+import type {
+  IBalanceSnapshotRepository,
+  BalanceSnapshotData,
+} from "./interfaces/balance-snapshot-repository.interface";
 
 export class PrismaBalanceSnapshotRepository
   implements IBalanceSnapshotRepository
@@ -30,7 +21,7 @@ export class PrismaBalanceSnapshotRepository
         id: bigint;
         political_organization_id: bigint;
         snapshot_date: Date;
-        balance: any;
+        balance: string;
         created_at: Date;
         updated_at: Date;
       }>

@@ -1,6 +1,6 @@
 import type { BalanceSheetData } from "@/types/balance-sheet";
 import type { ITransactionRepository } from "../repositories/interfaces/transaction-repository.interface";
-import type { IBalanceSnapshotRepository } from "../repositories/prisma-balance-snapshot.repository";
+import type { IBalanceSnapshotRepository } from "../repositories/interfaces/balance-snapshot-repository.interface";
 import type { IPoliticalOrganizationRepository } from "../repositories/interfaces/political-organization-repository.interface";
 
 export interface GetBalanceSheetParams {
@@ -48,11 +48,24 @@ export class GetBalanceSheetUsecase {
       return total + snapshot.balance;
     }, 0);
 
+    // 4. 固定負債を計算（借入金の収入 - 支出）
+    const [borrowingIncome, borrowingExpense] = await Promise.all([
+      this._transactionRepository.getBorrowingIncomeTotal(
+        orgIds,
+        params.financialYear,
+      ),
+      this._transactionRepository.getBorrowingExpenseTotal(
+        orgIds,
+        params.financialYear,
+      ),
+    ]);
+    const fixedLiabilities = borrowingIncome - borrowingExpense;
+
     // TODO: 他の項目の実装
-    // 4. 固定資産の計算
-    // 5. 負債項目の計算
-    // 6. 純資産の計算
-    // 7. 債務超過の場合の処理
+    // 5. 固定資産の計算
+    // 6. 流動負債の計算
+    // 7. 純資産の計算
+    // 8. 債務超過の場合の処理
 
     const balanceSheetData: BalanceSheetData = {
       left: {
@@ -62,7 +75,7 @@ export class GetBalanceSheetUsecase {
       },
       right: {
         currentLiabilities: 0, // TODO: 実装
-        fixedLiabilities: 0, // TODO: 実装
+        fixedLiabilities,
         netAssets: 0, // TODO: 実装
       },
     };
