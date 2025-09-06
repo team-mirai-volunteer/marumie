@@ -80,6 +80,20 @@ export default function CategoryFilter({
     );
   };
 
+  const handleIncomeSelectAll = () => {
+    const allChecked = incomeCategories.every((cat) => cat.checked);
+    setIncomeCategories((prev) =>
+      prev.map((cat) => ({ ...cat, checked: !allChecked })),
+    );
+  };
+
+  const handleExpenseSelectAll = () => {
+    const allChecked = expenseCategories.every((cat) => cat.checked);
+    setExpenseCategories((prev) =>
+      prev.map((cat) => ({ ...cat, checked: !allChecked })),
+    );
+  };
+
   const handleCancel = () => {
     onClose();
   };
@@ -112,6 +126,35 @@ export default function CategoryFilter({
                 scrollbarColor: "#9ca3af transparent",
               }}
             >
+              {/* すべて選択オプション */}
+              <button
+                type="button"
+                onClick={handleIncomeSelectAll}
+                className="flex items-center gap-2 py-[6px] pl-2 pr-1 w-full h-auto hover:bg-[#F1F5F9] transition-colors cursor-pointer"
+              >
+                <div className="w-[18px] h-[18px] flex items-center justify-center">
+                  {incomeCategories.every((cat) => cat.checked) && (
+                    <div className="w-[18px] h-[18px] relative">
+                      <Image
+                        src="/icons/icon-checkmark.svg"
+                        alt="Checkmark"
+                        width={13}
+                        height={11}
+                        className="absolute top-[4px] left-[2.5px]"
+                      />
+                    </div>
+                  )}
+                </div>
+                <span
+                  className={`text-[13px] leading-[1.54] text-left flex-1 ${
+                    incomeCategories.every((cat) => cat.checked)
+                      ? "font-bold"
+                      : "font-medium"
+                  } text-[#47474C]`}
+                >
+                  （すべて選択）
+                </span>
+              </button>
               {incomeCategories.map((category) => (
                 <button
                   key={category.id}
@@ -164,6 +207,35 @@ export default function CategoryFilter({
                 scrollbarColor: "#9ca3af transparent",
               }}
             >
+              {/* すべて選択オプション */}
+              <button
+                type="button"
+                onClick={handleExpenseSelectAll}
+                className="flex items-center gap-2 py-[6px] pl-2 pr-1 w-full h-auto hover:bg-[#F1F5F9] transition-colors cursor-pointer"
+              >
+                <div className="w-[18px] h-[18px] flex items-center justify-center">
+                  {expenseCategories.every((cat) => cat.checked) && (
+                    <div className="w-[18px] h-[18px] relative">
+                      <Image
+                        src="/icons/icon-checkmark.svg"
+                        alt="Checkmark"
+                        width={13}
+                        height={11}
+                        className="absolute top-[4px] left-[2.5px]"
+                      />
+                    </div>
+                  )}
+                </div>
+                <span
+                  className={`text-[13px] leading-[1.54] text-left flex-1 ${
+                    expenseCategories.every((cat) => cat.checked)
+                      ? "font-bold"
+                      : "font-medium"
+                  } text-[#47474C]`}
+                >
+                  （すべて選択）
+                </span>
+              </button>
               {expenseCategories.map((category) => (
                 <button
                   key={category.id}

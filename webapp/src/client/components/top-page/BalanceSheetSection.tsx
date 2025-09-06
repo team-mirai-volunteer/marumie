@@ -7,10 +7,12 @@ import BalanceSheetChart from "./features/charts/BalanceSheetChart";
 
 interface BalanceSheetSectionProps {
   data?: BalanceSheetData;
+  updatedAt: string;
 }
 
 export default function BalanceSheetSection({
   data,
+  updatedAt,
 }: BalanceSheetSectionProps) {
   return (
     <MainColumnCard id="balance-sheet">
@@ -24,8 +26,8 @@ export default function BalanceSheetSection({
           />
         }
         title="現時点での貸借対照表"
-        updatedAt="2025.8.14時点"
-        subtitle="現在のチームみらいの財産と負債の状況（ダミーデータ）"
+        updatedAt={updatedAt}
+        subtitle="現在のチームみらいの財産と負債の状況"
       />
 
       {data ? (
