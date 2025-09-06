@@ -506,63 +506,147 @@ export default function SankeyChart({ data }: SankeyChartProps) {
     return totalValue;
   };
 
-  // ノードを金額順にソートする関数
-  const sortNodesByValue = (
+  // ① ノードを並び替え
+  const sortNodes = (
     nodes: Array<{ id: string; label?: string; nodeType?: string }>,
   ) => {
     return [...nodes].sort((a, b) => {
-      // 合計ノードは中央に配置されるので除外
-      if (
-        a.id === TEXT_CONFIG.TOTAL_NODE_ID ||
-        b.id === TEXT_CONFIG.TOTAL_NODE_ID
-      ) {
-        return 0;
-      }
-
-      // ノードタイプによる優先順位
+      // ノードタイプによる基本的な順序
       const typeOrder = {
+        "income-sub": 0,
         income: 1,
-        "income-sub": 2,
+        total: 2,
         expense: 3,
         "expense-sub": 4,
       } as const;
 
-      const aOrder = typeOrder[a.nodeType as keyof typeof typeOrder] || 99;
-      const bOrder = typeOrder[b.nodeType as keyof typeof typeOrder] || 99;
+      const aOrder = typeOrder[a.nodeType as keyof typeof typeOrder] ?? 5;
+      const bOrder = typeOrder[b.nodeType as keyof typeof typeOrder] ?? 5;
 
       if (aOrder !== bOrder) {
-        return aOrder - bOrder; // タイプ順
+        return aOrder - bOrder;
       }
 
-      // 「収支」は末尾に配置
-      if (a.label === "収支" && b.label !== "収支") {
-        return 1; // aを後に
-      }
-      if (b.label === "収支" && a.label !== "収支") {
-        return -1; // bを後に
+      // income, expense -> 単純に大きい順に並び替え
+      if (a.nodeType === "income" || a.nodeType === "expense") {
+        const aValue = calculateNodeValue(a.id, data.links);
+        const bValue = calculateNodeValue(b.id, data.links);
+
+        // expense カテゴリでの特別処理
+        if (a.nodeType === "expense") {
+          const aIsCarryover = a.id.endsWith("繰越し");
+          const bIsCarryover = b.id.endsWith("繰越し");
+          const aIsProcessing = a.id.endsWith("処理中");
+          const bIsProcessing = b.id.endsWith("処理中");
+
+          // 繰越し vs その他
+          if (aIsCarryover && !bIsCarryover) return 1; // 繰越しを最後に
+          if (bIsCarryover && !aIsCarryover) return -1; // 繰越しを最後に
+
+          // 処理中 vs その他（繰越し以外）
+          if (aIsProcessing && !bIsProcessing && !bIsCarryover) return 1; // 処理中を後に
+          if (bIsProcessing && !aIsProcessing && !aIsCarryover) return -1; // 処理中を後に
+        }
+
+        return bValue - aValue; // 大きい順
       }
 
-      // 同じタイプ内では金額の絶対値順（降順）
-      const aValue = Math.abs(calculateNodeValue(a.id, data.links));
-      const bValue = Math.abs(calculateNodeValue(b.id, data.links));
+      // income-sub, expense-sub -> 親カテゴリのサイズ・自カテゴリのサイズで複合ソート
+      if (a.nodeType === "income-sub" || a.nodeType === "expense-sub") {
+        // 親カテゴリを特定
+        const getParentCategory = (nodeId: string, nodeType: string) => {
+          if (nodeType === "income-sub") {
+            // income-sub-{subcategory} -> income-{category}への接続を探す
+            const link = data.links.find(
+              (link) =>
+                link.source === nodeId && link.target.startsWith("income-"),
+            );
+            return link?.target;
+          } else if (nodeType === "expense-sub") {
+            // expense-{category} -> expense-sub-{subcategory}への接続を探す
+            const link = data.links.find(
+              (link) =>
+                link.target === nodeId && link.source.startsWith("expense-"),
+            );
+            return link?.source;
+          }
+          return null;
+        };
 
-      return bValue - aValue;
+        const aParent = getParentCategory(a.id, a.nodeType!);
+        const bParent = getParentCategory(b.id, b.nodeType!);
+
+        // 親カテゴリのサイズで比較
+        if (aParent && bParent && aParent !== bParent) {
+          const aParentValue = calculateNodeValue(aParent, data.links);
+          const bParentValue = calculateNodeValue(bParent, data.links);
+          if (aParentValue !== bParentValue) {
+            return bParentValue - aParentValue; // 大きい親から
+          }
+        }
+
+        // 同じ親カテゴリなら自カテゴリのサイズで比較
+        const aValue = calculateNodeValue(a.id, data.links);
+        const bValue = calculateNodeValue(b.id, data.links);
+        return bValue - aValue; // 大きい順
+      }
+
+      return 0;
     });
   };
 
-  // リンクに色情報を追加したデータを作成
-  const processedData = {
-    ...data,
-    nodes: sortNodesByValue(data.nodes),
-    links: processLinksWithColors(),
+  const sortedNodes = sortNodes(data.nodes);
+
+  // ② リンクを並び替え
+  const sortLinks = (
+    links: Array<{
+      source: string;
+      target: string;
+      value: number;
+      startColor: string;
+      endColor: string;
+    }>,
+    nodeOrder: string[],
+  ) => {
+    return [...links].sort((a, b) => {
+      const aSourceIndex = nodeOrder.indexOf(a.source);
+      const bSourceIndex = nodeOrder.indexOf(b.source);
+      const aTargetIndex = nodeOrder.indexOf(a.target);
+      const bTargetIndex = nodeOrder.indexOf(b.target);
+
+      // income側 -> source側のノード順でソート
+      const aIsIncomeSide =
+        a.source.startsWith("income") ||
+        a.target.startsWith("income") ||
+        a.target === "合計";
+      const bIsIncomeSide =
+        b.source.startsWith("income") ||
+        b.target.startsWith("income") ||
+        b.target === "合計";
+
+      if (aIsIncomeSide && bIsIncomeSide) {
+        return aSourceIndex - bSourceIndex;
+      }
+
+      // expense側 -> target側のノード順でソート
+      if (!aIsIncomeSide && !bIsIncomeSide) {
+        return aTargetIndex - bTargetIndex;
+      }
+
+      // 混在の場合
+      return aSourceIndex - bSourceIndex;
+    });
   };
 
-  // HACK: リンクの色制御のための回避策
-  // Nivoはリンクの色をソースノードの色に依存させるため、
-  // getNodeColor()では薄い色を返してリンクを薄く表示し、
-  // CustomNodesLayerでは濃い色でノードを描画している
-  const nivoNodeColor = (node: { id: string; nodeType?: string }) =>
-    getNodeColor(node.id, node.nodeType, "light");
+  const processedLinks = processLinksWithColors();
+  const nodeOrder = sortedNodes.map((n) => n.id);
+  const sortedLinks = sortLinks(processedLinks, nodeOrder);
+
+  const processedData = {
+    ...data,
+    nodes: sortedNodes,
+    links: sortedLinks,
+  };
 
   return (
     <div
@@ -589,8 +673,11 @@ export default function SankeyChart({ data }: SankeyChartProps) {
       `}</style>
       <ResponsiveSankey
         data={processedData}
-        label={(node: { id: string; label?: string }) => {
-          return node.label || node.id;
+        label={(node) => {
+          return (
+            (node as { label?: string; id: string }).label ||
+            (node as { id: string }).id
+          );
         }}
         margin={{
           top: !isMobile
@@ -605,7 +692,13 @@ export default function SankeyChart({ data }: SankeyChartProps) {
             : CHART_CONFIG.MARGIN_HORIZONTAL_MOBILE,
         }}
         align="center"
-        colors={nivoNodeColor}
+        colors={(node) =>
+          getNodeColor(
+            (node as { id: string }).id,
+            (node as { nodeType?: string }).nodeType,
+            "light",
+          )
+        }
         valueFormat={(v) =>
           `¥${Math.round(v as number).toLocaleString("ja-JP")}`
         }
@@ -617,7 +710,7 @@ export default function SankeyChart({ data }: SankeyChartProps) {
             ? CHART_CONFIG.NODE_SPACING_DESKTOP
             : CHART_CONFIG.NODE_SPACING_MOBILE
         }
-        sort="auto"
+        sort="input"
         linkOpacity={CHART_CONFIG.LINK_OPACITY}
         linkHoverOpacity={CHART_CONFIG.LINK_OPACITY}
         enableLinkGradient={true}
