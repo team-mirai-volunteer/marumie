@@ -168,7 +168,12 @@ const CustomNodesLayer = ({
         {nodes.map((node: SankeyNodeWithPosition) => {
           const width = getNodeWidth(node.nodeType, isMobile);
           const x = node.x - (width - DIMENSIONS.NODE_BASE_WIDTH) / 2;
-          const color = getNodeColor(node.id, node.nodeType, "fill");
+          const color = getNodeColor(
+            node.id,
+            node.nodeType,
+            "fill",
+            node.label,
+          );
 
           return (
             <InteractiveRect
@@ -348,7 +353,7 @@ const renderPercentageLabel = (
   }
 
   // 処理中ノードの場合は特別な色を使用
-  const textColor = node.id.endsWith("処理中") ? "#CA8A04" : boxColor;
+  const textColor = node.label === "処理中" ? "#CA8A04" : boxColor;
 
   return (
     <text
@@ -451,7 +456,7 @@ const CustomLabelsLayer = ({
 
   // 全体の合計値を計算（合計ノードの値を使用）
   const totalValue =
-    nodes.find((node) => node.id === TEXT_CONFIG.TOTAL_NODE_ID)?.value || 0;
+    nodes.find((node) => node.label === TEXT_CONFIG.TOTAL_NODE_ID)?.value || 0;
 
   return (
     <g>
@@ -472,7 +477,12 @@ const CustomLabelsLayer = ({
         const textAnchor = isLeft ? "end" : "start";
         const percentageY = node.y - DIMENSIONS.PERCENTAGE_OFFSET;
         const percentageText = calculatePercentageText(node.value, totalValue);
-        const boxColor = getNodeColor(node.id, node.nodeType, "box");
+        const boxColor = getNodeColor(
+          node.id,
+          node.nodeType,
+          "box",
+          node.label,
+        );
         const elements = [];
 
         if (node.nodeType === "total") {
@@ -569,6 +579,7 @@ export default function SankeyChart({ data }: SankeyChartProps) {
             (node as { id: string }).id,
             (node as { nodeType?: string }).nodeType,
             "light",
+            (node as { label?: string }).label,
           )
         }
         valueFormat={(v) =>

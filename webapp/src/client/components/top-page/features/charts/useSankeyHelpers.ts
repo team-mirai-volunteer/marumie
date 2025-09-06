@@ -41,13 +41,14 @@ export function useNodeColors() {
       nodeId: string,
       nodeType?: string,
       variant: "fill" | "light" | "box" = "fill",
+      nodeLabel?: string,
     ): string => {
-      // 特別なノードの判定
-      if (nodeId?.endsWith("繰越し")) {
+      // 特別なノードの判定（labelベース）
+      if (nodeLabel === "繰越し") {
         return variant === "light" ? "#D2D4D8" : "#6B7280";
       }
 
-      if (nodeId?.endsWith("処理中")) {
+      if (nodeLabel === "処理中") {
         return variant === "light" ? "#FFF2F2" : "#FCA5A5";
       }
 
@@ -79,6 +80,7 @@ export function useLinkColors(data: SankeyData) {
         link.target,
         targetNode?.nodeType,
         "light",
+        targetNode?.label,
       );
 
       // すべてのリンクの色はターゲットノードの色で統一
@@ -140,10 +142,10 @@ export function useSankeySorting(data: SankeyData) {
 
           // expense カテゴリでの特別処理
           if (a.nodeType === "expense") {
-            const aIsCarryover = a.id.endsWith("繰越し");
-            const bIsCarryover = b.id.endsWith("繰越し");
-            const aIsProcessing = a.id.endsWith("処理中");
-            const bIsProcessing = b.id.endsWith("処理中");
+            const aIsCarryover = a.label === "繰越し";
+            const bIsCarryover = b.label === "繰越し";
+            const aIsProcessing = a.label === "処理中";
+            const bIsProcessing = b.label === "処理中";
 
             // 繰越し vs その他
             if (aIsCarryover && !bIsCarryover) return 1; // 繰越しを最後に
@@ -225,11 +227,11 @@ export function useSankeySorting(data: SankeyData) {
         const aIsIncomeSide =
           a.source.startsWith("income") ||
           a.target.startsWith("income") ||
-          a.target === "合計";
+          data.nodes.find((n) => n.id === a.target)?.label === "合計";
         const bIsIncomeSide =
           b.source.startsWith("income") ||
           b.target.startsWith("income") ||
-          b.target === "合計";
+          data.nodes.find((n) => n.id === b.target)?.label === "合計";
 
         if (aIsIncomeSide && bIsIncomeSide) {
           return aSourceIndex - bSourceIndex;
@@ -244,7 +246,7 @@ export function useSankeySorting(data: SankeyData) {
         return aSourceIndex - bSourceIndex;
       });
     },
-    [],
+    [data.nodes],
   );
 
   return { sortNodes, sortLinks };

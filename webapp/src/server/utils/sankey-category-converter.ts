@@ -1,5 +1,6 @@
 import type { SankeyData, SankeyLink, SankeyNode } from "@/types/sankey";
 import type { SankeyCategoryAggregationResult } from "../repositories/interfaces/transaction-repository.interface";
+import { createSafariCompatibleId } from "./sankey-id-utils";
 
 // サブカテゴリ表示の上限設定
 const SUBCATEGORY_LIMITS = {
@@ -163,7 +164,7 @@ export function convertCategoryAggregationToSankeyData(
   // 1. 収入サブカテゴリノード（subcategoryがあるもの）
   for (const item of processedAggregation.income) {
     if (item.subcategory) {
-      const nodeId = `income-sub-${item.subcategory}`;
+      const nodeId = createSafariCompatibleId(`income-sub-${item.subcategory}`);
       if (!nodeIds.has(nodeId)) {
         nodes.push({
           id: nodeId,
@@ -181,7 +182,7 @@ export function convertCategoryAggregationToSankeyData(
 
   // 2. 収入カテゴリノード
   for (const category of incomeByCategory.keys()) {
-    const nodeId = `income-${category}`;
+    const nodeId = createSafariCompatibleId(`income-${category}`);
     if (!nodeIds.has(nodeId)) {
       nodes.push({
         id: nodeId,
@@ -194,7 +195,7 @@ export function convertCategoryAggregationToSankeyData(
 
   // 3. 中央の合計ノード
   nodes.push({
-    id: "合計",
+    id: createSafariCompatibleId("合計"),
     label: "合計",
     nodeType: "total",
   });
@@ -244,7 +245,7 @@ export function convertCategoryAggregationToSankeyData(
   }
 
   for (const category of expenseByCategory.keys()) {
-    const nodeId = `expense-${category}`;
+    const nodeId = createSafariCompatibleId(`expense-${category}`);
     if (!nodeIds.has(nodeId)) {
       nodes.push({
         id: nodeId,
@@ -258,7 +259,9 @@ export function convertCategoryAggregationToSankeyData(
   // 5. 支出サブカテゴリノード（subcategoryがあるもの）
   for (const item of processedAggregation.expense) {
     if (item.subcategory) {
-      const nodeId = `expense-sub-${item.subcategory}`;
+      const nodeId = createSafariCompatibleId(
+        `expense-sub-${item.subcategory}`,
+      );
       if (!nodeIds.has(nodeId)) {
         nodes.push({
           id: nodeId,
@@ -276,8 +279,8 @@ export function convertCategoryAggregationToSankeyData(
   for (const item of processedAggregation.income) {
     if (item.subcategory) {
       links.push({
-        source: `income-sub-${item.subcategory}`,
-        target: `income-${item.category}`,
+        source: createSafariCompatibleId(`income-sub-${item.subcategory}`),
+        target: createSafariCompatibleId(`income-${item.category}`),
         value: item.totalAmount,
       });
     }
@@ -286,8 +289,8 @@ export function convertCategoryAggregationToSankeyData(
   // 2. 収入カテゴリ → 合計
   for (const [category, amount] of incomeByCategory) {
     links.push({
-      source: `income-${category}`,
-      target: "合計",
+      source: createSafariCompatibleId(`income-${category}`),
+      target: createSafariCompatibleId("合計"),
       value: amount,
     });
   }
@@ -295,8 +298,8 @@ export function convertCategoryAggregationToSankeyData(
   // 3. 合計 → 支出カテゴリ
   for (const [category, amount] of expenseByCategory) {
     links.push({
-      source: "合計",
-      target: `expense-${category}`,
+      source: createSafariCompatibleId("合計"),
+      target: createSafariCompatibleId(`expense-${category}`),
       value: amount,
     });
   }
@@ -305,8 +308,8 @@ export function convertCategoryAggregationToSankeyData(
   for (const item of processedAggregation.expense) {
     if (item.subcategory) {
       links.push({
-        source: `expense-${item.category}`,
-        target: `expense-sub-${item.subcategory}`,
+        source: createSafariCompatibleId(`expense-${item.category}`),
+        target: createSafariCompatibleId(`expense-sub-${item.subcategory}`),
         value: item.totalAmount,
       });
     }
