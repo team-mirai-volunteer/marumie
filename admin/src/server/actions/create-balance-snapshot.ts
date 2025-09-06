@@ -1,7 +1,6 @@
 "use server";
 
 import { PrismaClient } from "@prisma/client";
-import { revalidatePath } from "next/cache";
 import { PrismaBalanceSnapshotRepository } from "../repositories/prisma-balance-snapshot.repository";
 import { CreateBalanceSnapshotUsecase } from "../usecases/create-balance-snapshot-usecase";
 
@@ -38,7 +37,6 @@ export async function createBalanceSnapshot(data: CreateBalanceSnapshotData) {
       balance,
     });
 
-    revalidatePath("/balance-snapshots");
     return { success: true };
   } catch (error) {
     console.error("Error creating balance snapshot:", error);

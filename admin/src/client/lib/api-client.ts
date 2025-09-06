@@ -20,6 +20,15 @@ export interface SetupPasswordResponse {
   message?: string;
 }
 
+export interface BalanceSnapshot {
+  id: string;
+  political_organization_id: string;
+  snapshot_date: Date;
+  balance: number;
+  created_at: Date;
+  updated_at: Date;
+}
+
 export class ApiClient {
   private baseUrl: string;
 
@@ -67,6 +76,12 @@ export class ApiClient {
       method: "POST",
       body: JSON.stringify(data),
     });
+  }
+
+  async getBalanceSnapshots(orgId: string): Promise<BalanceSnapshot[]> {
+    return this.request<BalanceSnapshot[]>(
+      `/api/balance-snapshots?orgId=${orgId}`,
+    );
   }
 }
 

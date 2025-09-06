@@ -28,7 +28,7 @@ export class PrismaBalanceSnapshotRepository
 
     const balanceSnapshots = await this.prisma.balanceSnapshot.findMany({
       where,
-      orderBy: { snapshotDate: "desc" },
+      orderBy: [{ snapshotDate: "desc" }, { createdAt: "desc" }],
     });
 
     return balanceSnapshots.map((bs) => this.mapToBalanceSnapshot(bs));

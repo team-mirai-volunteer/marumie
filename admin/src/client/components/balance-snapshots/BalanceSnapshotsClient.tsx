@@ -7,23 +7,44 @@ import type { BalanceSnapshot } from "@/shared/models/balance-snapshot";
 import { PoliticalOrganizationSelector } from "@/client/components/ui";
 import BalanceSnapshotForm from "./BalanceSnapshotForm";
 import BalanceSnapshotList from "./BalanceSnapshotList";
+import CurrentBalance from "./CurrentBalance";
+import { apiClient } from "@/client/lib/api-client";
 
 interface BalanceSnapshotsClientProps {
   organizations: PoliticalOrganization[];
-  initialSnapshots: BalanceSnapshot[];
 }
 
 export default function BalanceSnapshotsClient({
   organizations,
-  initialSnapshots,
 }: BalanceSnapshotsClientProps) {
   const [selectedOrgId, setSelectedOrgId] = useState<string>("");
+  const [snapshots, setSnapshots] = useState<BalanceSnapshot[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const filteredSnapshots = selectedOrgId
-    ? initialSnapshots.filter(
-        (snapshot) => snapshot.political_organization_id === selectedOrgId,
-      )
-    : [];
+  const currentBalance = snapshots.length > 0 ? snapshots[0] : null;
+
+  const loadSnapshots = async (orgId: string) => {
+    if (!orgId) {
+      setSnapshots([]);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const data = await apiClient.getBalanceSnapshots(orgId);
+      setSnapshots(data);
+    } catch (error) {
+      console.error("Failed to load balance snapshots:", error);
+      setSnapshots([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOrgChange = (orgId: string) => {
+    setSelectedOrgId(orgId);
+    loadSnapshots(orgId);
+  };
 
   const handleFormSubmit = async (data: {
     politicalOrganizationId: string;
@@ -40,8 +61,8 @@ export default function BalanceSnapshotsClient({
       // TODO: 成功メッセージを表示
       console.log("Balance snapshot created successfully");
 
-      // TODO: データを再取得してリストを更新
-      window.location.reload();
+      // データを再取得してリストを更新
+      await loadSnapshots(selectedOrgId);
     } catch (error) {
       // TODO: エラーメッセージを表示
       console.error("Failed to create balance snapshot:", error);
@@ -54,23 +75,34 @@ export default function BalanceSnapshotsClient({
         <PoliticalOrganizationSelector
           organizations={organizations}
           value={selectedOrgId}
-          onChange={setSelectedOrgId}
+          onChange={handleOrgChange}
           autoSelectFirst={true}
         />
       </div>
 
       {selectedOrgId && (
         <div className="space-y-6">
-          <BalanceSnapshotForm
-            politicalOrganizationId={selectedOrgId}
-            onSubmit={handleFormSubmit}
-          />
+          <CurrentBalance snapshot={currentBalance} />
+
+          <div>
+            <h3 className="text-lg font-medium text-white mb-4">残高を登録</h3>
+            <BalanceSnapshotForm
+              politicalOrganizationId={selectedOrgId}
+              onSubmit={handleFormSubmit}
+            />
+          </div>
 
           <div>
             <h3 className="text-lg font-medium mb-4">
               残高スナップショット一覧
             </h3>
-            <BalanceSnapshotList snapshots={filteredSnapshots} />
+            {loading ? (
+              <div className="text-center py-4">
+                <p className="text-primary-muted">読み込み中...</p>
+              </div>
+            ) : (
+              <BalanceSnapshotList snapshots={snapshots} />
+            )}
           </div>
         </div>
       )}
