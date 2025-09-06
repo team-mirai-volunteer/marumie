@@ -315,6 +315,48 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     return dailyData;
   }
 
+  async getBorrowingIncomeTotal(
+    politicalOrganizationIds: string[],
+    financialYear: number,
+  ): Promise<number> {
+    const result = await this.prisma.transaction.aggregate({
+      _sum: {
+        creditAmount: true,
+      },
+      where: {
+        politicalOrganizationId: {
+          in: politicalOrganizationIds.map((id) => BigInt(id)),
+        },
+        financialYear,
+        creditAccount: "借入金",
+        transactionType: "income",
+      },
+    });
+
+    return Number(result._sum.creditAmount) || 0;
+  }
+
+  async getBorrowingExpenseTotal(
+    politicalOrganizationIds: string[],
+    financialYear: number,
+  ): Promise<number> {
+    const result = await this.prisma.transaction.aggregate({
+      _sum: {
+        debitAmount: true,
+      },
+      where: {
+        politicalOrganizationId: {
+          in: politicalOrganizationIds.map((id) => BigInt(id)),
+        },
+        financialYear,
+        debitAccount: "借入金",
+        transactionType: "expense",
+      },
+    });
+
+    return Number(result._sum.debitAmount) || 0;
+  }
+
   async getLastUpdatedAt(): Promise<Date | null> {
     const result = await this.prisma.transaction.aggregate({
       _max: {

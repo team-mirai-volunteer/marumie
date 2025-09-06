@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 import { PrismaPoliticalOrganizationRepository } from "@/server/repositories/prisma-political-organization.repository";
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
+import { PrismaBalanceSnapshotRepository } from "@/server/repositories/prisma-balance-snapshot.repository";
 import { GetBalanceSheetUsecase } from "@/server/usecases/get-balance-sheet-usecase";
 import { GetDailyDonationUsecase } from "@/server/usecases/get-daily-donation-usecase";
 import { GetMockTransactionPageDataUsecase } from "@/server/usecases/get-mock-transaction-page-data-usecase";
@@ -32,6 +33,9 @@ export const loadTopPageData = unstable_cache(
     const transactionRepository = new PrismaTransactionRepository(prisma);
     const politicalOrganizationRepository =
       new PrismaPoliticalOrganizationRepository(prisma);
+    const balanceSnapshotRepository = new PrismaBalanceSnapshotRepository(
+      prisma,
+    );
 
     // 5つのUsecaseを初期化
     const transactionUsecase = new GetTransactionsBySlugUsecase(
@@ -56,6 +60,8 @@ export const loadTopPageData = unstable_cache(
 
     const balanceSheetUsecase = new GetBalanceSheetUsecase(
       transactionRepository,
+      balanceSnapshotRepository,
+      politicalOrganizationRepository,
     );
 
     // 6つのUsecaseを並列実行（sankeyは2回実行）

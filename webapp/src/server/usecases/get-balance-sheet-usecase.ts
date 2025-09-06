@@ -1,5 +1,7 @@
 import type { BalanceSheetData } from "@/types/balance-sheet";
 import type { ITransactionRepository } from "../repositories/interfaces/transaction-repository.interface";
+import type { IBalanceSnapshotRepository } from "../repositories/interfaces/balance-snapshot-repository.interface";
+import type { IPoliticalOrganizationRepository } from "../repositories/interfaces/political-organization-repository.interface";
 
 export interface GetBalanceSheetParams {
   slugs: string[];
@@ -11,14 +13,15 @@ export interface GetBalanceSheetResult {
 }
 
 export class GetBalanceSheetUsecase {
-  constructor(private _transactionRepository: ITransactionRepository) {}
+  constructor(
+    private transactionRepository: ITransactionRepository,
+    private balanceSnapshotRepository: IBalanceSnapshotRepository,
+    private politicalOrganizationRepository: IPoliticalOrganizationRepository,
+  ) {}
 
-  async execute(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _params: GetBalanceSheetParams,
-  ): Promise<GetBalanceSheetResult> {
+  async execute(params: GetBalanceSheetParams): Promise<GetBalanceSheetResult> {
     try {
-      const balanceSheetData = await this.calculateBalanceSheet();
+      const balanceSheetData = await this.calculateBalanceSheet(params);
 
       return { balanceSheetData };
     } catch (error) {
@@ -28,28 +31,81 @@ export class GetBalanceSheetUsecase {
     }
   }
 
-  private async calculateBalanceSheet(): Promise<BalanceSheetData> {
-    // 現在はモックデータを返す
-    // 実際の実装では、トランザクションデータから資産・負債を計算する必要がある
-    const mockData: BalanceSheetData = {
+  private async calculateBalanceSheet(
+    params: GetBalanceSheetParams,
+  ): Promise<BalanceSheetData> {
+    // 1. slugから政治団体のIDを取得
+    const organizations =
+      await this.politicalOrganizationRepository.findBySlugs(params.slugs);
+    const orgIds = organizations.map((org) => org.id);
+
+    // 2. 各組織の最新残高スナップショットを取得
+    const balanceSnapshots =
+      await this.balanceSnapshotRepository.findLatestByOrgIds(orgIds);
+
+    // 3. 流動資産を計算（現在は残高の合計）
+    const currentAssets = balanceSnapshots.reduce((total, snapshot) => {
+      return total + snapshot.balance;
+    }, 0);
+
+    // 4. 固定負債を計算（借入金の収入 - 支出）
+    const [borrowingIncome, borrowingExpense] = await Promise.all([
+      this.transactionRepository.getBorrowingIncomeTotal(
+        orgIds,
+        params.financialYear,
+      ),
+      this.transactionRepository.getBorrowingExpenseTotal(
+        orgIds,
+        params.financialYear,
+      ),
+    ]);
+    const fixedLiabilities = borrowingIncome - borrowingExpense;
+
+    // 5. 固定資産と流動負債は決め打ちでゼロ
+    const fixedAssets = 0;
+    const currentLiabilities = 0;
+
+    // 6. 純資産と債務超過を計算
+    const [netAssets, debtExcess] = this.calculateNetAssetsAndDebtExcess(
+      currentAssets,
+      fixedAssets,
+      currentLiabilities,
+      fixedLiabilities,
+    );
+
+    const balanceSheetData: BalanceSheetData = {
       left: {
-        currentAssets: 5123456,
-        fixedAssets: 0,
-        debtExcess: 14876544,
+        currentAssets,
+        fixedAssets,
+        debtExcess,
       },
       right: {
-        currentLiabilities: 0,
-        fixedLiabilities: 20000000,
-        netAssets: 0,
+        currentLiabilities,
+        fixedLiabilities,
+        netAssets,
       },
     };
 
-    // TODO: 実際の計算ロジックを実装
-    // 1. 資産科目（現金、普通預金、固定資産等）の残高を計算
-    // 2. 負債科目（借入金、未払金等）の残高を計算
-    // 3. 純資産（資本金、利益剰余金等）の残高を計算
-    // 4. 債務超過の場合の処理
+    return balanceSheetData;
+  }
 
-    return mockData;
+  private calculateNetAssetsAndDebtExcess(
+    currentAssets: number,
+    fixedAssets: number,
+    currentLiabilities: number,
+    fixedLiabilities: number,
+  ): [netAssets: number, debtExcess: number] {
+    const totalAssets = currentAssets + fixedAssets;
+    const totalLiabilities = currentLiabilities + fixedLiabilities;
+
+    const balance = totalAssets - totalLiabilities;
+
+    if (balance >= 0) {
+      // 資産が負債を上回る場合：純資産あり、債務超過なし
+      return [balance, 0];
+    } else {
+      // 負債が資産を上回る場合：純資産なし、債務超過あり
+      return [0, Math.abs(balance)];
+    }
   }
 }

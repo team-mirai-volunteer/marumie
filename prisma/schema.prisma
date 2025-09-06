@@ -35,13 +35,14 @@ model User {
 }
 
 model PoliticalOrganization {
-  id           BigInt        @id @default(autoincrement())
-  name         String        @db.VarChar(255)
-  slug         String        @unique @db.VarChar(255)
-  description  String?       @db.Text
-  createdAt    DateTime      @default(now()) @map("created_at")
-  updatedAt    DateTime      @updatedAt @map("updated_at")
-  transactions Transaction[]
+  id              BigInt            @id @default(autoincrement())
+  name            String            @db.VarChar(255)
+  slug            String            @unique @db.VarChar(255)
+  description     String?           @db.Text
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  transactions    Transaction[]
+  balanceSnapshots BalanceSnapshot[]
 
   @@map("political_organizations")
 }
@@ -76,4 +77,17 @@ model Transaction {
 
   @@unique([politicalOrganizationId, transactionNo])
   @@map("transactions")
+}
+
+model BalanceSnapshot {
+  id                      BigInt                @id @default(autoincrement())
+  politicalOrganizationId BigInt                @map("political_organization_id")
+  politicalOrganization   PoliticalOrganization @relation(fields: [politicalOrganizationId], references: [id], onDelete: Cascade)
+  snapshotDate            DateTime              @map("snapshot_date") @db.Date
+  balance                 Decimal               @db.Decimal(15, 2)
+  createdAt               DateTime              @default(now()) @map("created_at")
+  updatedAt               DateTime              @updatedAt @map("updated_at")
+
+  @@index([politicalOrganizationId, snapshotDate(sort: Desc), updatedAt(sort: Desc)])
+  @@map("balance_snapshots")
 }
