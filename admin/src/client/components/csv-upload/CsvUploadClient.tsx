@@ -1,8 +1,9 @@
 "use client";
 import "client-only";
 
-import { useEffect, useId, useState } from "react";
+import { useId, useState } from "react";
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
+import { PoliticalOrganizationSelector } from "@/client/components/ui";
 import CsvPreview from "@/client/components/csv-import/CsvPreview";
 import type { PreviewMfCsvResult } from "@/server/usecases/preview-mf-csv-usecase";
 import type {
@@ -22,7 +23,6 @@ export default function CsvUploadClient({
   uploadAction,
   previewAction,
 }: CsvUploadClientProps) {
-  const politicalOrgSelectId = useId();
   const csvFileInputId = useId();
   const [file, setFile] = useState<File | null>(null);
   const [politicalOrganizationId, setPoliticalOrganizationId] =
@@ -32,13 +32,6 @@ export default function CsvUploadClient({
   const [previewResult, setPreviewResult] = useState<PreviewMfCsvResult | null>(
     null,
   );
-
-  useEffect(() => {
-    // 最初の政治団体を自動選択
-    if (organizations.length > 0) {
-      setPoliticalOrganizationId(organizations[0].id);
-    }
-  }, [organizations]);
 
   const handlePreviewComplete = (result: PreviewMfCsvResult) => {
     setPreviewResult(result);
@@ -94,28 +87,13 @@ export default function CsvUploadClient({
   return (
     <form onSubmit={onSubmit} className="space-y-3">
       <div>
-        <label
-          htmlFor={politicalOrgSelectId}
-          className="block text-sm font-medium text-white mb-2"
-        >
-          Political Organization:
-        </label>
-        <select
-          id={politicalOrgSelectId}
-          className="bg-primary-input text-white border border-primary-border rounded-lg px-3 py-2.5 w-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-accent focus:border-primary-accent"
+        <PoliticalOrganizationSelector
+          organizations={organizations}
           value={politicalOrganizationId}
-          onChange={(e) => setPoliticalOrganizationId(e.target.value)}
-          required
-        >
-          {organizations.length === 0 && (
-            <option value="">No political organizations found</option>
-          )}
-          {organizations.map((org) => (
-            <option key={org.id} value={org.id}>
-              {org.name}
-            </option>
-          ))}
-        </select>
+          onChange={setPoliticalOrganizationId}
+          label="Political Organization"
+          autoSelectFirst={true}
+        />
       </div>
       <div>
         <label
