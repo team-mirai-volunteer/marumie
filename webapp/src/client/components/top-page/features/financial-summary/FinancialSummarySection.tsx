@@ -27,12 +27,6 @@ function calculateFinancialData(sankeyData: SankeyData | null) {
   // 支出の計算（収入総額から現在の残高を引いた値）
   const expense = income - currentBalance;
 
-  // 残高の計算（「expense-収支」への流出があればその値、なければ0）
-  const balanceLink = sankeyData.links.find(
-    (link: SankeyLink) => link.target === "expense-収支",
-  );
-  const balance = balanceLink ? balanceLink.value : 0;
-
   return { income, expense, balance: currentBalance };
 }
 

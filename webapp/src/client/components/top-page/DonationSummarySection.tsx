@@ -64,12 +64,12 @@ export default function DonationSummarySection({
             height={30}
           />
         }
-        title="これまでの累計寄付金額"
+        title="これまでの累計寄附金額"
         updatedAt={donationUpdatedAt}
-        subtitle="いただいた寄付総額と直近3ヶ月の推移"
+        subtitle="いただいた寄附総額と直近3ヶ月の推移"
       />
 
-      {/* 寄付統計サマリー */}
+      {/* 寄附統計サマリー */}
       <DonationSummaryCards
         totalOku={totalOku}
         totalMan={totalMan}
@@ -79,20 +79,20 @@ export default function DonationSummarySection({
         donationCountChange={donationCountChange}
       />
 
-      {/* 寄付推移グラフ */}
+      {/* 寄附推移グラフ */}
       <DonationChart data={dailyDonationData} />
 
-      {/* 寄付メッセージとボタン */}
+      {/* 寄附メッセージとボタン */}
       <div className="bg-white rounded-lg px-8 text-center">
         <p className="text-gray-800 font-bold text-base leading-7 mb-6">
-          チームみらいは、皆さまのご支援・ご寄付のおかげで活動を続けられております。
+          チームみらいは、皆さまのご支援・ご寄附のおかげで活動を続けられております。
         </p>
         <Link
           href="https://team-mir.ai/support/donation"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <MainButton>ご寄付はこちら</MainButton>
+          <MainButton>ご寄附はこちら</MainButton>
         </Link>
       </div>
     </MainColumnCard>

@@ -35,7 +35,7 @@ export default function Footer() {
               href="/#donation-summary"
               className="text-gray-800 text-sm font-bold leading-[1.36em] hover:opacity-80 transition-opacity"
             >
-              寄付金額
+              寄附金額
             </Link>
           </div>
           {/* Mobile: Second row with 2 links */}

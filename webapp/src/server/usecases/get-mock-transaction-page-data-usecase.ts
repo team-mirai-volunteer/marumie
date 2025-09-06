@@ -24,7 +24,7 @@ const MOCK_MONTHLY_DATA: MonthlyAggregation[] = [
 
 const MOCK_SANKEY_DATA: SankeyData = {
   nodes: [
-    { id: "個人からの寄付" },
+    { id: "個人からの寄附" },
     { id: "法人その他の団体からの寄附" },
     { id: "合計" },
     { id: "人件費" },
@@ -32,7 +32,7 @@ const MOCK_SANKEY_DATA: SankeyData = {
     { id: "その他経費" },
   ],
   links: [
-    { source: "個人からの寄付", target: "合計", value: 18000000 },
+    { source: "個人からの寄附", target: "合計", value: 18000000 },
     { source: "法人その他の団体からの寄附", target: "合計", value: 5000000 },
     { source: "合計", target: "人件費", value: 12000000 },
     { source: "合計", target: "事務所費", value: 6000000 },

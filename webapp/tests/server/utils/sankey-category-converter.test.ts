@@ -7,12 +7,12 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const aggregation: SankeyCategoryAggregationResult = {
       income: [
         {
-          category: "寄付",
-          subcategory: "個人からの寄付",
+          category: "寄附",
+          subcategory: "個人からの寄附",
           totalAmount: 1000000,
         },
         {
-          category: "寄付",
+          category: "寄附",
           subcategory: "法人その他の団体からの寄附",
           totalAmount: 500000,
         },
@@ -45,10 +45,10 @@ describe("convertCategoryAggregationToSankeyData", () => {
     expect(result.nodes).toEqual(
       expect.arrayContaining([
         // 収入サブカテゴリノード
-        { id: "income-sub-個人からの寄付", label: "個人からの寄付", nodeType: "income-sub" },
+        { id: "income-sub-個人からの寄附", label: "個人からの寄附", nodeType: "income-sub" },
         { id: "income-sub-法人その他の団体からの寄附", label: "法人その他の団体からの寄附", nodeType: "income-sub" },
         // 収入カテゴリノード
-        { id: "income-寄付", label: "寄付", nodeType: "income" },
+        { id: "income-寄附", label: "寄附", nodeType: "income" },
         { id: "income-その他の収入", label: "その他の収入", nodeType: "income" },
         // 中央の合計ノード
         { id: "合計", label: "合計", nodeType: "total" },
@@ -65,10 +65,10 @@ describe("convertCategoryAggregationToSankeyData", () => {
     expect(result.links).toEqual(
       expect.arrayContaining([
         // 収入サブカテゴリ → 収入カテゴリ
-        { source: "income-sub-個人からの寄付", target: "income-寄付", value: 1000000 },
-        { source: "income-sub-法人その他の団体からの寄附", target: "income-寄付", value: 500000 },
+        { source: "income-sub-個人からの寄附", target: "income-寄附", value: 1000000 },
+        { source: "income-sub-法人その他の団体からの寄附", target: "income-寄附", value: 500000 },
         // 収入カテゴリ → 合計
-        { source: "income-寄付", target: "合計", value: 1500000 }, // 合計値
+        { source: "income-寄附", target: "合計", value: 1500000 }, // 合計値
         { source: "income-その他の収入", target: "合計", value: 200000 },
         // 合計 → 支出カテゴリ
         { source: "合計", target: "expense-政治活動費", value: 800000 },
@@ -90,7 +90,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const aggregation: SankeyCategoryAggregationResult = {
       income: [
         {
-          category: "寄付",
+          category: "寄附",
           totalAmount: 1000000,
         },
       ],
@@ -107,7 +107,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
     // ノードの検証（サブカテゴリなし、現残高なし）
     expect(result.nodes).toEqual(
       expect.arrayContaining([
-        { id: "income-寄付", label: "寄付", nodeType: "income" },
+        { id: "income-寄附", label: "寄附", nodeType: "income" },
         { id: "合計", label: "合計", nodeType: "total" },
         { id: "expense-政治活動費", label: "政治活動費", nodeType: "expense" },
       ])
@@ -116,7 +116,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
     // リンクの検証（3層構造）
     expect(result.links).toEqual(
       expect.arrayContaining([
-        { source: "income-寄付", target: "合計", value: 1000000 },
+        { source: "income-寄附", target: "合計", value: 1000000 },
         { source: "合計", target: "expense-政治活動費", value: 1000000 },
       ])
     );
@@ -147,13 +147,13 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const aggregation: SankeyCategoryAggregationResult = {
       income: [
         {
-          category: "寄付",
-          subcategory: "個人からの寄付",
+          category: "寄附",
+          subcategory: "個人からの寄附",
           totalAmount: 1000000,
         },
         {
-          category: "寄付",
-          subcategory: "個人からの寄付", // 重複
+          category: "寄附",
+          subcategory: "個人からの寄附", // 重複
           totalAmount: 500000,
         },
       ],
@@ -179,12 +179,12 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const aggregation: SankeyCategoryAggregationResult = {
       income: [
         {
-          category: "寄付",
-          subcategory: "個人からの寄付",
+          category: "寄附",
+          subcategory: "個人からの寄附",
           totalAmount: 1000000,
         },
         {
-          category: "寄付", // 同じカテゴリ、subcategoryなし
+          category: "寄附", // 同じカテゴリ、subcategoryなし
           totalAmount: 200000,
         },
         {
@@ -207,15 +207,15 @@ describe("convertCategoryAggregationToSankeyData", () => {
 
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
-    // 寄付カテゴリの合計値の検証（1000000 + 200000 = 1200000）
+    // 寄附カテゴリの合計値の検証（1000000 + 200000 = 1200000）
     const donateLinkToTotal = result.links.find(
-      link => link.source === "income-寄付" && link.target === "合計"
+      link => link.source === "income-寄附" && link.target === "合計"
     );
     expect(donateLinkToTotal?.value).toBe(1200000);
 
     // サブカテゴリからカテゴリへのリンクも存在することを確認
     const subToCategory = result.links.find(
-      link => link.source === "income-sub-個人からの寄付" && link.target === "income-寄付"
+      link => link.source === "income-sub-個人からの寄附" && link.target === "income-寄附"
     );
     expect(subToCategory?.value).toBe(1000000);
   });
@@ -224,7 +224,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const aggregation: SankeyCategoryAggregationResult = {
       income: [
         {
-          category: "寄付",
+          category: "寄附",
           totalAmount: 2000000, // 収入合計：200万
         },
       ],
@@ -238,24 +238,24 @@ describe("convertCategoryAggregationToSankeyData", () => {
 
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
-    // 「収支」ノードが追加されることを確認
-    const currentBalanceNode = result.nodes.find(node => node.id === "expense-収支");
-    expect(currentBalanceNode).toBeDefined();
-    expect(currentBalanceNode?.label).toBe("収支");
+    // 「処理中」ノードが追加されることを確認
+    const processingNode = result.nodes.find(node => node.id === "expense-処理中");
+    expect(processingNode).toBeDefined();
+    expect(processingNode?.label).toBe("処理中");
 
-    // 「収支」へのリンクが追加されることを確認
-    const linkToCurrentBalance = result.links.find(
-      link => link.source === "合計" && link.target === "expense-収支"
+    // 「処理中」へのリンクが追加されることを確認
+    const linkToProcessing = result.links.find(
+      link => link.source === "合計" && link.target === "expense-処理中"
     );
-    expect(linkToCurrentBalance).toBeDefined();
-    expect(linkToCurrentBalance?.value).toBe(800000); // 200万 - 120万 = 80万
+    expect(linkToProcessing).toBeDefined();
+    expect(linkToProcessing?.value).toBe(800000); // 200万 - 120万 = 80万
   });
 
   it("should not add '収支' when income <= expense", () => {
     const aggregation: SankeyCategoryAggregationResult = {
       income: [
         {
-          category: "寄付",
+          category: "寄附",
           totalAmount: 1000000, // 収入合計：100万
         },
       ],
@@ -284,8 +284,8 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const aggregation: SankeyCategoryAggregationResult = {
       income: [
         {
-          category: "寄付",
-          subcategory: "個人からの寄付",
+          category: "寄附",
+          subcategory: "個人からの寄附",
           totalAmount: 3000000, // 収入合計：300万
         },
       ],
@@ -300,19 +300,19 @@ describe("convertCategoryAggregationToSankeyData", () => {
 
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
-    // 「収支」ノードが追加されることを確認
-    const currentBalanceNode = result.nodes.find(node => node.id === "expense-収支");
-    expect(currentBalanceNode).toBeDefined();
+    // 「処理中」ノードが追加されることを確認
+    const processingNode = result.nodes.find(node => node.id === "expense-処理中");
+    expect(processingNode).toBeDefined();
 
-    // 「収支」のリンクが正しく追加されることを確認
-    const linkToCurrentBalance = result.links.find(
-      link => link.source === "合計" && link.target === "expense-収支"
+    // 「処理中」のリンクが正しく追加されることを確認
+    const linkToProcessing = result.links.find(
+      link => link.source === "合計" && link.target === "expense-処理中"
     );
-    expect(linkToCurrentBalance?.value).toBe(1500000); // 300万 - 150万 = 150万
+    expect(linkToProcessing?.value).toBe(1500000); // 300万 - 150万 = 150万
 
     // 既存のサブカテゴリ構造は維持されることを確認
     const subToCategory = result.links.find(
-      link => link.source === "income-sub-個人からの寄付" && link.target === "income-寄付"
+      link => link.source === "income-sub-個人からの寄附" && link.target === "income-寄附"
     );
     expect(subToCategory).toBeDefined();
 
