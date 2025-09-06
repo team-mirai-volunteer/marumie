@@ -4,6 +4,7 @@ import "client-only";
 import { useState } from "react";
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
 import { PoliticalOrganizationSelector } from "@/client/components/ui";
+import BalanceSnapshotForm from "./BalanceSnapshotForm";
 
 interface BalanceSnapshotsClientProps {
   organizations: PoliticalOrganization[];
@@ -14,8 +15,17 @@ export default function BalanceSnapshotsClient({
 }: BalanceSnapshotsClientProps) {
   const [selectedOrgId, setSelectedOrgId] = useState<string>("");
 
+  const handleFormSubmit = (data: {
+    politicalOrganizationId: string;
+    snapshotDate: string;
+    balance: number;
+  }) => {
+    console.log("Submit balance snapshot:", data);
+    // TODO: Server actionを呼び出す
+  };
+
   return (
-    <div className="space-y-3">
+    <div className="space-y-6">
       <div>
         <PoliticalOrganizationSelector
           organizations={organizations}
@@ -26,12 +36,13 @@ export default function BalanceSnapshotsClient({
       </div>
 
       {selectedOrgId && (
-        <div className="text-sm text-gray-400">
-          選択された政治団体ID: {selectedOrgId}
+        <div>
+          <BalanceSnapshotForm
+            politicalOrganizationId={selectedOrgId}
+            onSubmit={handleFormSubmit}
+          />
         </div>
       )}
-
-      <div className="text-gray-400">残高登録機能を実装予定です。</div>
     </div>
   );
 }
