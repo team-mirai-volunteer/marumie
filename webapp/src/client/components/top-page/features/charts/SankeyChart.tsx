@@ -31,7 +31,6 @@ const DIMENSIONS = {
   TOTAL_LABEL_TOP_OFFSET_DESKTOP: 18,
   TOTAL_LABEL_TOP_OFFSET_MOBILE: 12,
   LINE_HEIGHT: 12,
-  MULTI_LINE_OFFSET: 6,
 
   // フォントサイズ
   FONT_SIZE_DESKTOP: "14.5px",
@@ -50,8 +49,6 @@ const DIMENSIONS = {
 const TEXT_CONFIG = {
   MAX_CHARS_PER_LINE: 7,
   MAX_CHARS_PER_LINE_SUB: 6,
-  MAX_CHARS_TOTAL_SUB: 12,
-  ELLIPSIS_THRESHOLD_SUB: 13,
   TOTAL_NODE_ID: "合計",
   TOTAL_LABEL_TOP: "収入支出",
   TOTAL_LABEL_PERCENTAGE: "100%",
@@ -310,31 +307,15 @@ const renderTotalNodeLabels = (
 };
 
 // ラベルを複数行に分割する関数
-const splitLabel = (label: string, maxCharsPerLine: number): string[] => {
-  const N = maxCharsPerLine;
+const splitLabel = (label: string, maxChars: number): string[] => {
+  if (label.length <= maxChars) return [label];
 
-  // N文字以下の場合は1行で表示
-  if (label.length <= N) {
-    return [label];
-  }
-
-  // 特殊ケース：N+1文字（7文字）の場合は N-2, 3 に分割
-  if (label.length === N + 1) {
-    return [label.substring(0, N - 2), label.substring(N - 2)];
-  }
-
-  // 特殊ケース：N+2文字（8文字）の場合は N-1, 3 に分割
-  if (label.length === N + 2) {
-    return [label.substring(0, N - 1), label.substring(N - 1)];
-  }
-
-  // 残りのケースは2行に分割
-  const textToSplit =
-    label.length >= N * 2 + 1
-      ? `${label.substring(0, N * 2 - 1)}…` // 長すぎる場合は省略
-      : label; // 通常ケース
-
-  return [textToSplit.substring(0, N), textToSplit.substring(N)];
+  // 長い場合は2行に分割（長すぎる場合は省略）
+  const text =
+    label.length > maxChars * 2
+      ? `${label.substring(0, maxChars * 2 - 1)}…`
+      : label;
+  return [text.substring(0, maxChars), text.substring(maxChars)];
 };
 
 const renderPercentageLabel = (
@@ -507,6 +488,7 @@ export default function SankeyChart({ data }: SankeyChartProps) {
   const isMobile = useMobileDetection();
   const { getNodeColor } = useNodeColors();
   const { processLinksWithColors } = useLinkColors(data);
+
   // ノードの金額を計算する関数（リンクから合計値を算出）
   const calculateNodeValue = (
     nodeId: string,

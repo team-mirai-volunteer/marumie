@@ -53,7 +53,7 @@ export function useNodeColors() {
 
       // 通常のノードタイプ判定
       if (nodeType === "total") {
-        return variant === "light" ? COLORS.TOTAL_LIGHT : COLORS.TOTAL;
+        return variant === "light" ? COLORS.INCOME_LIGHT : COLORS.TOTAL;
       }
 
       if (nodeType === "income" || nodeType === "income-sub") {
@@ -74,33 +74,18 @@ export function useLinkColors(data: SankeyData) {
 
   const processLinksWithColors = React.useCallback(() => {
     return data.links.map((link) => {
-      const sourceNode = data.nodes.find((n) => n.id === link.source);
       const targetNode = data.nodes.find((n) => n.id === link.target);
-
-      const sourceColor = getNodeColor(
-        link.source,
-        sourceNode?.nodeType,
-        "light",
-      );
       const targetColor = getNodeColor(
         link.target,
         targetNode?.nodeType,
         "light",
       );
 
-      // 繰越しへのリンクは完全にグレー、他は単色
-      if (link.target.endsWith("繰越し")) {
-        return {
-          ...link,
-          startColor: targetColor,
-          endColor: targetColor,
-        };
-      }
-
+      // すべてのリンクの色はターゲットノードの色で統一
       return {
         ...link,
-        startColor: sourceColor,
-        endColor: sourceColor,
+        startColor: targetColor,
+        endColor: targetColor,
       };
     });
   }, [data.links, data.nodes, getNodeColor]);
