@@ -1,7 +1,8 @@
-import type { PrismaClient } from "@prisma/client";
+import type { Prisma, PrismaClient } from "@prisma/client";
 import type {
   BalanceSnapshot,
   CreateBalanceSnapshotInput,
+  BalanceSnapshotFilters,
 } from "@/shared/models/balance-snapshot";
 import type { IBalanceSnapshotRepository } from "./interfaces/balance-snapshot-repository.interface";
 
@@ -20,6 +21,35 @@ export class PrismaBalanceSnapshotRepository
     });
 
     return this.mapToBalanceSnapshot(balanceSnapshot);
+  }
+
+  async findAll(filters?: BalanceSnapshotFilters): Promise<BalanceSnapshot[]> {
+    const where = this.buildWhereClause(filters);
+
+    const balanceSnapshots = await this.prisma.balanceSnapshot.findMany({
+      where,
+      orderBy: { snapshotDate: "desc" },
+    });
+
+    return balanceSnapshots.map((bs) => this.mapToBalanceSnapshot(bs));
+  }
+
+  private buildWhereClause(
+    filters?: BalanceSnapshotFilters,
+  ): Prisma.BalanceSnapshotWhereInput {
+    const where: Prisma.BalanceSnapshotWhereInput = {};
+
+    if (filters?.political_organization_id) {
+      where.politicalOrganizationId = BigInt(filters.political_organization_id);
+    }
+
+    return where;
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.prisma.balanceSnapshot.delete({
+      where: { id: BigInt(id) },
+    });
   }
 
   private mapToBalanceSnapshot(
