@@ -128,6 +128,7 @@ function renameOtherCategories(
 export function convertCategoryAggregationToSankeyData(
   aggregation: SankeyCategoryAggregationResult,
   isFriendlyCategory: boolean = false,
+  latestBalance?: number,
 ): SankeyData {
   // 「その他」カテゴリをリネーム
   const renamedAggregation = renameOtherCategories(aggregation);
@@ -216,6 +217,22 @@ export function convertCategoryAggregationToSankeyData(
       category: "収支",
       totalAmount: currentBalance,
     });
+  }
+
+  // latestBalanceが提供されている場合、辻褄の合わない部分を「未仕分け」として追加
+  if (latestBalance !== undefined) {
+    const calculatedBalance = totalIncome - totalExpense;
+    const unclassifiedAmount = latestBalance - calculatedBalance;
+
+    if (unclassifiedAmount !== 0) {
+      expenseByCategory.set("未仕分け", Math.abs(unclassifiedAmount));
+
+      // 支出データに「未仕分け」レコードを追加（UI用）
+      processedAggregation.expense.push({
+        category: "未仕分け",
+        totalAmount: Math.abs(unclassifiedAmount),
+      });
+    }
   }
 
   for (const category of expenseByCategory.keys()) {
