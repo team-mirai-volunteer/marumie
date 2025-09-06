@@ -49,7 +49,7 @@ export default function BalanceSnapshotList({
         <thead>
           <tr className="border-b border-primary-border">
             <th className="px-2 py-3 text-left text-sm font-semibold text-white">
-              日付
+              残高日付
             </th>
             <th className="px-2 py-3 text-right text-sm font-semibold text-white">
               残高

@@ -81,8 +81,10 @@ export default function BalanceSnapshotsClient({
       </div>
 
       {selectedOrgId && (
-        <div className="space-y-6">
+        <div className="space-y-8">
           <CurrentBalance snapshot={currentBalance} />
+
+          <hr className="border-primary-border" />
 
           <div>
             <h3 className="text-lg font-medium text-white mb-4">残高を登録</h3>

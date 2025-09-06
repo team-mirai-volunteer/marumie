@@ -25,7 +25,7 @@ export default function CurrentBalance({ snapshot }: CurrentBalanceProps) {
           </span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-primary-muted">記録日</span>
+          <span className="text-primary-muted">残高日付</span>
           <span className="text-white">
             {new Date(snapshot.snapshot_date).toLocaleDateString("ja-JP")}
           </span>

@@ -98,7 +98,7 @@ export default function BalanceSnapshotForm({
             htmlFor={dateInputId}
             className="block text-sm font-medium text-white mb-2"
           >
-            記録日:
+            残高日付:
           </label>
           <input
             id={dateInputId}
