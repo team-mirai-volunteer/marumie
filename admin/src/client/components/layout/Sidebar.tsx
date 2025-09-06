@@ -26,6 +26,7 @@ export default function Sidebar({
     { href: "/user-info", label: "ユーザー情報" },
     { href: "/political-organizations", label: "政治団体" },
     { href: "/transactions", label: "トランザクション" },
+    { href: "/balance-snapshots", label: "残高登録" },
     { href: "/upload-csv", label: "CSVアップロード" },
     { href: "/users", label: "ユーザー管理", adminOnly: true },
   ];
