@@ -41,41 +41,54 @@ describe("convertCategoryAggregationToSankeyData", () => {
 
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
-    // ノードの検証
-    expect(result.nodes).toEqual(
+    // ノードの検証（labelベースで検証、IDはハッシュ化されている）
+    const nodeLabels = result.nodes.map(node => ({ label: node.label, nodeType: node.nodeType }));
+    expect(nodeLabels).toEqual(
       expect.arrayContaining([
         // 収入サブカテゴリノード
-        { id: "income-sub-個人からの寄附", label: "個人からの寄附", nodeType: "income-sub" },
-        { id: "income-sub-法人その他の団体からの寄附", label: "法人その他の団体からの寄附", nodeType: "income-sub" },
+        { label: "個人からの寄附", nodeType: "income-sub" },
+        { label: "法人その他の団体からの寄附", nodeType: "income-sub" },
         // 収入カテゴリノード
-        { id: "income-寄附", label: "寄附", nodeType: "income" },
-        { id: "income-その他の収入", label: "その他の収入", nodeType: "income" },
+        { label: "寄附", nodeType: "income" },
+        { label: "その他の収入", nodeType: "income" },
         // 中央の合計ノード
-        { id: "合計", label: "合計", nodeType: "total" },
+        { label: "合計", nodeType: "total" },
         // 支出カテゴリノード
-        { id: "expense-政治活動費", label: "政治活動費", nodeType: "expense" },
-        { id: "expense-経常経費", label: "経常経費", nodeType: "expense" },
+        { label: "政治活動費", nodeType: "expense" },
+        { label: "経常経費", nodeType: "expense" },
         // 支出サブカテゴリノード
-        { id: "expense-sub-宣伝費", label: "宣伝費", nodeType: "expense-sub" },
-        { id: "expense-sub-人件費", label: "人件費", nodeType: "expense-sub" },
+        { label: "宣伝費", nodeType: "expense-sub" },
+        { label: "人件費", nodeType: "expense-sub" },
       ])
     );
 
-    // リンクの検証
+    // リンクの検証（ノードをlabelで探してIDを取得）
+    const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
+    
+    const individualDonationId = getNodeIdByLabel("個人からの寄附");
+    const corporateDonationId = getNodeIdByLabel("法人その他の団体からの寄附");
+    const donationCategoryId = getNodeIdByLabel("寄附");
+    const otherIncomeCategoryId = getNodeIdByLabel("その他の収入");
+    const totalId = getNodeIdByLabel("合計");
+    const politicalActivityId = getNodeIdByLabel("政治活動費");
+    const operationalExpenseId = getNodeIdByLabel("経常経費");
+    const advertisingId = getNodeIdByLabel("宣伝費");
+    const personnelId = getNodeIdByLabel("人件費");
+    
     expect(result.links).toEqual(
       expect.arrayContaining([
         // 収入サブカテゴリ → 収入カテゴリ
-        { source: "income-sub-個人からの寄附", target: "income-寄附", value: 1000000 },
-        { source: "income-sub-法人その他の団体からの寄附", target: "income-寄附", value: 500000 },
+        { source: individualDonationId, target: donationCategoryId, value: 1000000 },
+        { source: corporateDonationId, target: donationCategoryId, value: 500000 },
         // 収入カテゴリ → 合計
-        { source: "income-寄附", target: "合計", value: 1500000 }, // 合計値
-        { source: "income-その他の収入", target: "合計", value: 200000 },
+        { source: donationCategoryId, target: totalId, value: 1500000 }, // 合計値
+        { source: otherIncomeCategoryId, target: totalId, value: 200000 },
         // 合計 → 支出カテゴリ
-        { source: "合計", target: "expense-政治活動費", value: 800000 },
-        { source: "合計", target: "expense-経常経費", value: 900000 }, // 合計値
+        { source: totalId, target: politicalActivityId, value: 800000 },
+        { source: totalId, target: operationalExpenseId, value: 900000 }, // 合計値
         // 支出カテゴリ → 支出サブカテゴリ
-        { source: "expense-政治活動費", target: "expense-sub-宣伝費", value: 800000 },
-        { source: "expense-経常経費", target: "expense-sub-人件費", value: 600000 },
+        { source: politicalActivityId, target: advertisingId, value: 800000 },
+        { source: operationalExpenseId, target: personnelId, value: 600000 },
       ])
     );
 
@@ -105,19 +118,25 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
     // ノードの検証（サブカテゴリなし、現残高なし）
-    expect(result.nodes).toEqual(
+    const nodeLabels = result.nodes.map(node => ({ label: node.label, nodeType: node.nodeType }));
+    expect(nodeLabels).toEqual(
       expect.arrayContaining([
-        { id: "income-寄附", label: "寄附", nodeType: "income" },
-        { id: "合計", label: "合計", nodeType: "total" },
-        { id: "expense-政治活動費", label: "政治活動費", nodeType: "expense" },
+        { label: "寄附", nodeType: "income" },
+        { label: "合計", nodeType: "total" },
+        { label: "政治活動費", nodeType: "expense" },
       ])
     );
 
     // リンクの検証（3層構造）
+    const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
+    const donationId = getNodeIdByLabel("寄附");
+    const totalId = getNodeIdByLabel("合計");
+    const politicalActivityId = getNodeIdByLabel("政治活動費");
+    
     expect(result.links).toEqual(
       expect.arrayContaining([
-        { source: "income-寄附", target: "合計", value: 1000000 },
-        { source: "合計", target: "expense-政治活動費", value: 1000000 },
+        { source: donationId, target: totalId, value: 1000000 },
+        { source: totalId, target: politicalActivityId, value: 1000000 },
       ])
     );
 
@@ -134,9 +153,9 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
     // 合計ノードのみ
-    expect(result.nodes).toEqual([
-      { id: "合計", label: "合計", nodeType: "total" },
-    ]);
+    expect(result.nodes).toHaveLength(1);
+    expect(result.nodes[0].label).toBe("合計");
+    expect(result.nodes[0].nodeType).toBe("total");
 
     // リンクなし
     expect(result.links).toEqual([]);
@@ -208,14 +227,19 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
     // 寄附カテゴリの合計値の検証（1000000 + 200000 = 1200000）
+    const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
+    const donationId = getNodeIdByLabel("寄附");
+    const totalId = getNodeIdByLabel("合計");
+    const individualDonationId = getNodeIdByLabel("個人からの寄附");
+    
     const donateLinkToTotal = result.links.find(
-      link => link.source === "income-寄附" && link.target === "合計"
+      link => link.source === donationId && link.target === totalId
     );
     expect(donateLinkToTotal?.value).toBe(1200000);
 
     // サブカテゴリからカテゴリへのリンクも存在することを確認
     const subToCategory = result.links.find(
-      link => link.source === "income-sub-個人からの寄附" && link.target === "income-寄附"
+      link => link.source === individualDonationId && link.target === donationId
     );
     expect(subToCategory?.value).toBe(1000000);
   });
@@ -239,13 +263,17 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
     // 「処理中」ノードが追加されることを確認
-    const processingNode = result.nodes.find(node => node.id === "expense-処理中");
+    const processingNode = result.nodes.find(node => node.label === "処理中");
     expect(processingNode).toBeDefined();
     expect(processingNode?.label).toBe("処理中");
 
     // 「処理中」へのリンクが追加されることを確認
+    const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
+    const totalId = getNodeIdByLabel("合計");
+    const processingId = getNodeIdByLabel("処理中");
+    
     const linkToProcessing = result.links.find(
-      link => link.source === "合計" && link.target === "expense-処理中"
+      link => link.source === totalId && link.target === processingId
     );
     expect(linkToProcessing).toBeDefined();
     expect(linkToProcessing?.value).toBe(800000); // 200万 - 120万 = 80万
@@ -269,15 +297,16 @@ describe("convertCategoryAggregationToSankeyData", () => {
 
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
-    // 「収支」ノードが追加されないことを確認
-    const currentBalanceNode = result.nodes.find(node => node.id === "expense-収支");
-    expect(currentBalanceNode).toBeUndefined();
+    // 「処理中」ノードが追加されないことを確認
+    const processingNode = result.nodes.find(node => node.label === "処理中");
+    expect(processingNode).toBeUndefined();
 
-    // 「収支」へのリンクが追加されないことを確認
-    const linkToCurrentBalance = result.links.find(
-      link => link.target === "expense-収支"
+    // 「処理中」へのリンクが追加されないことを確認
+    const processingId = result.nodes.find(n => n.label === "処理中")?.id;
+    const linkToProcessing = result.links.find(
+      link => link.target === processingId
     );
-    expect(linkToCurrentBalance).toBeUndefined();
+    expect(linkToProcessing).toBeUndefined();
   });
 
   it("should handle '収支' with existing subcategories", () => {
@@ -301,23 +330,31 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
     // 「処理中」ノードが追加されることを確認
-    const processingNode = result.nodes.find(node => node.id === "expense-処理中");
+    const processingNode = result.nodes.find(node => node.label === "処理中");
     expect(processingNode).toBeDefined();
 
     // 「処理中」のリンクが正しく追加されることを確認
+    const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
+    const totalId = getNodeIdByLabel("合計");
+    const processingId = getNodeIdByLabel("処理中");
+    const donationId = getNodeIdByLabel("寄附");
+    const politicalActivityId = getNodeIdByLabel("政治活動費");
+    const individualDonationId = getNodeIdByLabel("個人からの寄附");
+    const advertisingId = getNodeIdByLabel("宣伝費");
+    
     const linkToProcessing = result.links.find(
-      link => link.source === "合計" && link.target === "expense-処理中"
+      link => link.source === totalId && link.target === processingId
     );
     expect(linkToProcessing?.value).toBe(1500000); // 300万 - 150万 = 150万
 
     // 既存のサブカテゴリ構造は維持されることを確認
     const subToCategory = result.links.find(
-      link => link.source === "income-sub-個人からの寄附" && link.target === "income-寄附"
+      link => link.source === individualDonationId && link.target === donationId
     );
     expect(subToCategory).toBeDefined();
 
     const categoryToSub = result.links.find(
-      link => link.source === "expense-政治活動費" && link.target === "expense-sub-宣伝費"
+      link => link.source === politicalActivityId && link.target === advertisingId
     );
     expect(categoryToSub).toBeDefined();
   });
