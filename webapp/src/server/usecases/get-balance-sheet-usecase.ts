@@ -1,5 +1,7 @@
 import type { BalanceSheetData } from "@/types/balance-sheet";
 import type { ITransactionRepository } from "../repositories/interfaces/transaction-repository.interface";
+import type { IBalanceSnapshotRepository } from "../repositories/prisma-balance-snapshot.repository";
+import type { IPoliticalOrganizationRepository } from "../repositories/interfaces/political-organization-repository.interface";
 
 export interface GetBalanceSheetParams {
   slugs: string[];
@@ -11,14 +13,15 @@ export interface GetBalanceSheetResult {
 }
 
 export class GetBalanceSheetUsecase {
-  constructor(private _transactionRepository: ITransactionRepository) {}
+  constructor(
+    private _transactionRepository: ITransactionRepository,
+    private _balanceSnapshotRepository: IBalanceSnapshotRepository,
+    private _politicalOrganizationRepository: IPoliticalOrganizationRepository,
+  ) {}
 
-  async execute(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _params: GetBalanceSheetParams,
-  ): Promise<GetBalanceSheetResult> {
+  async execute(params: GetBalanceSheetParams): Promise<GetBalanceSheetResult> {
     try {
-      const balanceSheetData = await this.calculateBalanceSheet();
+      const balanceSheetData = await this.calculateBalanceSheet(params);
 
       return { balanceSheetData };
     } catch (error) {
@@ -28,28 +31,42 @@ export class GetBalanceSheetUsecase {
     }
   }
 
-  private async calculateBalanceSheet(): Promise<BalanceSheetData> {
-    // 現在はモックデータを返す
-    // 実際の実装では、トランザクションデータから資産・負債を計算する必要がある
-    const mockData: BalanceSheetData = {
+  private async calculateBalanceSheet(
+    params: GetBalanceSheetParams,
+  ): Promise<BalanceSheetData> {
+    // 1. slugから政治団体のIDを取得
+    const organizations =
+      await this._politicalOrganizationRepository.findBySlugs(params.slugs);
+    const orgIds = organizations.map((org) => org.id);
+
+    // 2. 各組織の最新残高スナップショットを取得
+    const balanceSnapshots =
+      await this._balanceSnapshotRepository.findLatestByOrgIds(orgIds);
+
+    // 3. 流動資産を計算（現在は残高の合計）
+    const currentAssets = balanceSnapshots.reduce((total, snapshot) => {
+      return total + snapshot.balance;
+    }, 0);
+
+    // TODO: 他の項目の実装
+    // 4. 固定資産の計算
+    // 5. 負債項目の計算
+    // 6. 純資産の計算
+    // 7. 債務超過の場合の処理
+
+    const balanceSheetData: BalanceSheetData = {
       left: {
-        currentAssets: 5123456,
-        fixedAssets: 0,
-        debtExcess: 14876544,
+        currentAssets,
+        fixedAssets: 0, // TODO: 実装
+        debtExcess: 0, // TODO: 計算
       },
       right: {
-        currentLiabilities: 0,
-        fixedLiabilities: 20000000,
-        netAssets: 0,
+        currentLiabilities: 0, // TODO: 実装
+        fixedLiabilities: 0, // TODO: 実装
+        netAssets: 0, // TODO: 実装
       },
     };
 
-    // TODO: 実際の計算ロジックを実装
-    // 1. 資産科目（現金、普通預金、固定資産等）の残高を計算
-    // 2. 負債科目（借入金、未払金等）の残高を計算
-    // 3. 純資産（資本金、利益剰余金等）の残高を計算
-    // 4. 債務超過の場合の処理
-
-    return mockData;
+    return balanceSheetData;
   }
 }
