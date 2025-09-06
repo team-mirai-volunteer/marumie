@@ -6,23 +6,14 @@ import React from "react";
 import { createPortal } from "react-dom";
 import type { SankeyData } from "@/types/sankey";
 import InteractiveRect from "./InteractiveRect";
+import {
+  useMobileDetection,
+  useNodeColors,
+  useLinkColors,
+} from "./useSankeyHelpers";
 
 // 定数定義
-const BREAKPOINT = {
-  MOBILE: 768,
-} as const;
-
-const COLORS = {
-  TOTAL: "#4F566B", // グレー
-  INCOME: "#2AA693", // 緑（収入）
-  EXPENSE: "#DC2626", // 赤（支出）
-  TEXT: "#1F2937", // テキスト色
-  // リンク色用（薄い色）
-  TOTAL_LIGHT: "#FBE2E7", // 薄い赤
-  INCOME_LIGHT: "#E5F7F4", // 薄い緑
-  EXPENSE_LIGHT: "#FBE2E7", // 薄い赤
-  CARRYOVER_LIGHT: "#E5E7EB", // 薄いグレー（繰越し用）
-} as const;
+const TEXT = "#1F2937"; // テキスト色
 
 const DIMENSIONS = {
   // ノード幅
@@ -56,7 +47,7 @@ const DIMENSIONS = {
   CHART_HEIGHT_MOBILE: 300,
 } as const;
 
-const TEXT = {
+const TEXT_CONFIG = {
   MAX_CHARS_PER_LINE: 7,
   MAX_CHARS_PER_LINE_SUB: 6,
   MAX_CHARS_TOTAL_SUB: 12,
@@ -110,44 +101,20 @@ const getNodeWidth = (nodeType: string | undefined, isMobile: boolean) => {
     : DIMENSIONS.REGULAR_WIDTH_MOBILE;
 };
 
-const getNodeFillColor = (nodeType: string | undefined, nodeId?: string) => {
-  if (nodeId?.endsWith("繰越し")) {
-    return "#6B7280";
-  }
-  if (nodeId?.endsWith("処理中")) {
-    return "#FCA5A5";
-  }
-  if (nodeType === "total") {
-    return COLORS.TOTAL;
-  }
-  if (nodeType === "income" || nodeType === "income-sub") {
-    return COLORS.INCOME;
-  }
-  return COLORS.EXPENSE;
-};
-
 // カスタムノードレイヤー（合計ボックスを太くする）
 const CustomNodesLayer = ({
   nodes,
 }: {
   nodes: readonly SankeyNodeWithPosition[];
 }) => {
-  const [isMobile, setIsMobile] = React.useState(false);
+  const isMobile = useMobileDetection();
+  const { getNodeColor } = useNodeColors();
   const [tooltip, setTooltip] = React.useState<{
     visible: boolean;
     x: number;
     y: number;
     node: SankeyNodeWithPosition | null;
   }>({ visible: false, x: 0, y: 0, node: null });
-
-  React.useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < BREAKPOINT.MOBILE);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
 
   const handleMouseEnter = (
     event: React.MouseEvent,
@@ -202,7 +169,7 @@ const CustomNodesLayer = ({
         {nodes.map((node: SankeyNodeWithPosition) => {
           const width = getNodeWidth(node.nodeType, isMobile);
           const x = node.x - (width - DIMENSIONS.NODE_BASE_WIDTH) / 2;
-          const color = getNodeFillColor(node.nodeType, node.id);
+          const color = getNodeColor(node.id, node.nodeType, "fill");
 
           return (
             <InteractiveRect
@@ -274,25 +241,9 @@ const calculatePercentageText = (nodeValue?: number, totalValue?: number) => {
   }
 
   const percentage = (nodeValue / totalValue) * 100;
-  return percentage < TEXT.PERCENTAGE_THRESHOLD
-    ? TEXT.PERCENTAGE_UNDER_ONE
+  return percentage < TEXT_CONFIG.PERCENTAGE_THRESHOLD
+    ? TEXT_CONFIG.PERCENTAGE_UNDER_ONE
     : `${Math.round(percentage)}%`;
-};
-
-const getBoxColor = (nodeType?: string, nodeId?: string) => {
-  if (nodeId?.endsWith("繰越し")) {
-    return "#6B7280";
-  }
-  if (nodeId?.endsWith("処理中")) {
-    return "#FCA5A5";
-  }
-  if (nodeType === "total") {
-    return COLORS.TOTAL;
-  }
-  if (nodeType === "income" || nodeType === "income-sub") {
-    return COLORS.INCOME;
-  }
-  return COLORS.EXPENSE;
 };
 
 const renderTotalNodeLabels = (
@@ -321,7 +272,7 @@ const renderTotalNodeLabels = (
       fontWeight="bold"
     >
       <tspan x={node.x + node.width / 2} dy="0">
-        {TEXT.TOTAL_LABEL_TOP}
+        {TEXT_CONFIG.TOTAL_LABEL_TOP}
       </tspan>
       <tspan
         x={node.x + node.width / 2}
@@ -329,14 +280,14 @@ const renderTotalNodeLabels = (
           !isMobile ? DIMENSIONS.TSPAN_DY_DESKTOP : DIMENSIONS.TSPAN_DY_MOBILE
         }
       >
-        {TEXT.TOTAL_LABEL_PERCENTAGE}
+        {TEXT_CONFIG.TOTAL_LABEL_PERCENTAGE}
       </tspan>
     </text>,
   );
 
   // 下のラベル：金額
   const amountText = node.value
-    ? `${Math.round(node.value / TEXT.CURRENCY_DIVIDER).toLocaleString("ja-JP")}${TEXT.CURRENCY_UNIT}`
+    ? `${Math.round(node.value / TEXT_CONFIG.CURRENCY_DIVIDER).toLocaleString("ja-JP")}${TEXT_CONFIG.CURRENCY_UNIT}`
     : "";
   if (amountText) {
     elements.push(
@@ -436,8 +387,8 @@ const renderPrimaryLabel = (
 
   // 行を決定
   const maxChars = isSubcategory
-    ? TEXT.MAX_CHARS_PER_LINE_SUB
-    : TEXT.MAX_CHARS_PER_LINE;
+    ? TEXT_CONFIG.MAX_CHARS_PER_LINE_SUB
+    : TEXT_CONFIG.MAX_CHARS_PER_LINE;
   const lines = splitLabel(label, maxChars);
 
   // 1行の場合
@@ -449,7 +400,7 @@ const renderPrimaryLabel = (
         y={node.y + node.height / 2}
         textAnchor={textAnchor as "start" | "middle" | "end"}
         dominantBaseline="middle"
-        fill={COLORS.TEXT}
+        fill={TEXT}
         fontSize={fontSize}
         fontWeight="bold"
       >
@@ -472,7 +423,7 @@ const renderPrimaryLabel = (
       x={x}
       y={node.y + node.height / 2 - totalTextHeight / 2}
       textAnchor={textAnchor}
-      fill={COLORS.TEXT}
+      fill={TEXT}
       fontSize={fontSize}
       fontWeight="bold"
       dominantBaseline="middle"
@@ -496,20 +447,12 @@ const CustomLabelsLayer = ({
 }: {
   nodes: readonly SankeyNodeWithPosition[];
 }) => {
-  const [isMobile, setIsMobile] = React.useState(false);
-
-  React.useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < BREAKPOINT.MOBILE);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  const isMobile = useMobileDetection();
+  const { getNodeColor } = useNodeColors();
 
   // 全体の合計値を計算（合計ノードの値を使用）
   const totalValue =
-    nodes.find((node) => node.id === TEXT.TOTAL_NODE_ID)?.value || 0;
+    nodes.find((node) => node.id === TEXT_CONFIG.TOTAL_NODE_ID)?.value || 0;
 
   return (
     <g>
@@ -530,7 +473,7 @@ const CustomLabelsLayer = ({
         const textAnchor = isLeft ? "end" : "start";
         const percentageY = node.y - DIMENSIONS.PERCENTAGE_OFFSET;
         const percentageText = calculatePercentageText(node.value, totalValue);
-        const boxColor = getBoxColor(node.nodeType, node.id);
+        const boxColor = getNodeColor(node.id, node.nodeType, "box");
         const elements = [];
 
         if (node.nodeType === "total") {
@@ -561,16 +504,9 @@ const CustomLabelsLayer = ({
 };
 
 export default function SankeyChart({ data }: SankeyChartProps) {
-  const [isMobile, setIsMobile] = React.useState(false);
-
-  React.useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < BREAKPOINT.MOBILE);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  const isMobile = useMobileDetection();
+  const { getNodeColor } = useNodeColors();
+  const { processLinksWithColors } = useLinkColors(data);
   // ノードの金額を計算する関数（リンクから合計値を算出）
   const calculateNodeValue = (
     nodeId: string,
@@ -594,7 +530,10 @@ export default function SankeyChart({ data }: SankeyChartProps) {
   ) => {
     return [...nodes].sort((a, b) => {
       // 合計ノードは中央に配置されるので除外
-      if (a.id === TEXT.TOTAL_NODE_ID || b.id === TEXT.TOTAL_NODE_ID) {
+      if (
+        a.id === TEXT_CONFIG.TOTAL_NODE_ID ||
+        b.id === TEXT_CONFIG.TOTAL_NODE_ID
+      ) {
         return 0;
       }
 
@@ -629,79 +568,19 @@ export default function SankeyChart({ data }: SankeyChartProps) {
     });
   };
 
-  // ノードの色を取得する関数
-  const getNodeLightColor = (nodeId: string, nodeType?: string): string => {
-    if (nodeId.endsWith("繰越し")) {
-      return COLORS.CARRYOVER_LIGHT;
-    }
-    if (nodeId.endsWith("処理中")) {
-      return "#FEE2E2"; // 薄いピンク
-    }
-    if (nodeType === "total") {
-      return COLORS.TOTAL_LIGHT;
-    }
-    if (nodeType === "income" || nodeType === "income-sub") {
-      return COLORS.INCOME_LIGHT;
-    }
-    return COLORS.EXPENSE_LIGHT;
-  };
-
-  // リンクの色を取得する関数
-  const getLinkColors = (link: { source: string; target: string }) => {
-    const sourceNode = data.nodes.find((n) => n.id === link.source);
-    const targetNode = data.nodes.find((n) => n.id === link.target);
-
-    const sourceColor = getNodeLightColor(link.source, sourceNode?.nodeType);
-    const targetColor = getNodeLightColor(link.target, targetNode?.nodeType);
-
-    // 繰越しへのリンクは完全にグレー、他は単色
-    if (link.target.endsWith("繰越し")) {
-      return {
-        startColor: targetColor,
-        endColor: targetColor,
-      };
-    }
-
-    return {
-      startColor: sourceColor,
-      endColor: sourceColor,
-    };
-  };
-
   // リンクに色情報を追加したデータを作成
   const processedData = {
     ...data,
     nodes: sortNodesByValue(data.nodes),
-    links: data.links.map((link) => ({
-      ...link,
-      ...getLinkColors(link),
-    })),
+    links: processLinksWithColors(),
   };
 
   // HACK: リンクの色制御のための回避策
   // Nivoはリンクの色をソースノードの色に依存させるため、
   // getNodeColor()では薄い色を返してリンクを薄く表示し、
   // CustomNodesLayerでは濃い色でノードを描画している
-
-  const getNodeColor = (node: { id: string; nodeType?: string }) => {
-    if (node.id.endsWith("繰越し")) {
-      return COLORS.CARRYOVER_LIGHT;
-    }
-
-    if (node.id.endsWith("処理中")) {
-      return "#FEE2E2"; // 薄いピンク
-    }
-
-    if (node.nodeType === "total") {
-      return COLORS.TOTAL_LIGHT;
-    }
-
-    if (node.nodeType === "income" || node.nodeType === "income-sub") {
-      return COLORS.INCOME_LIGHT;
-    }
-
-    return COLORS.EXPENSE_LIGHT;
-  };
+  const nivoNodeColor = (node: { id: string; nodeType?: string }) =>
+    getNodeColor(node.id, node.nodeType, "light");
 
   return (
     <div
@@ -744,7 +623,7 @@ export default function SankeyChart({ data }: SankeyChartProps) {
             : CHART_CONFIG.MARGIN_HORIZONTAL_MOBILE,
         }}
         align="center"
-        colors={getNodeColor}
+        colors={nivoNodeColor}
         valueFormat={(v) =>
           `¥${Math.round(v as number).toLocaleString("ja-JP")}`
         }
