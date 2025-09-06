@@ -61,25 +61,51 @@ export class GetBalanceSheetUsecase {
     ]);
     const fixedLiabilities = borrowingIncome - borrowingExpense;
 
-    // TODO: 他の項目の実装
-    // 5. 固定資産の計算
-    // 6. 流動負債の計算
-    // 7. 純資産の計算
-    // 8. 債務超過の場合の処理
+    // 5. 固定資産と流動負債は決め打ちでゼロ
+    const fixedAssets = 0;
+    const currentLiabilities = 0;
+
+    // 6. 純資産と債務超過を計算
+    const [netAssets, debtExcess] = this.calculateNetAssetsAndDebtExcess(
+      currentAssets,
+      fixedAssets,
+      currentLiabilities,
+      fixedLiabilities,
+    );
 
     const balanceSheetData: BalanceSheetData = {
       left: {
         currentAssets,
-        fixedAssets: 0, // TODO: 実装
-        debtExcess: 0, // TODO: 計算
+        fixedAssets,
+        debtExcess,
       },
       right: {
-        currentLiabilities: 0, // TODO: 実装
+        currentLiabilities,
         fixedLiabilities,
-        netAssets: 0, // TODO: 実装
+        netAssets,
       },
     };
 
     return balanceSheetData;
+  }
+
+  private calculateNetAssetsAndDebtExcess(
+    currentAssets: number,
+    fixedAssets: number,
+    currentLiabilities: number,
+    fixedLiabilities: number,
+  ): [netAssets: number, debtExcess: number] {
+    const totalAssets = currentAssets + fixedAssets;
+    const totalLiabilities = currentLiabilities + fixedLiabilities;
+
+    const balance = totalAssets - totalLiabilities;
+
+    if (balance >= 0) {
+      // 資産が負債を上回る場合：純資産あり、債務超過なし
+      return [balance, 0];
+    } else {
+      // 負債が資産を上回る場合：純資産なし、債務超過あり
+      return [0, Math.abs(balance)];
+    }
   }
 }
