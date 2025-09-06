@@ -207,32 +207,27 @@ export function convertCategoryAggregationToSankeyData(
     0,
   );
 
-  // 収入 > 支出の場合、「収支」を追加
-  if (totalIncome > totalExpense) {
-    const currentBalance = totalIncome - totalExpense;
-    expenseByCategory.set("収支", currentBalance);
+  // latestBalanceが提供されている場合、「繰越し」として支出側に追加
+  if (latestBalance !== undefined && latestBalance > 0) {
+    expenseByCategory.set("繰越し", latestBalance);
 
-    // 支出データに「収支」レコードを追加（UI用）
+    // 支出データに「繰越し」レコードを追加（UI用）
     processedAggregation.expense.push({
-      category: "収支",
-      totalAmount: currentBalance,
+      category: "繰越し",
+      totalAmount: latestBalance,
     });
   }
 
-  // latestBalanceが提供されている場合、辻褄の合わない部分を「未仕分け」として追加
-  if (latestBalance !== undefined) {
-    const calculatedBalance = totalIncome - totalExpense;
-    const unclassifiedAmount = latestBalance - calculatedBalance;
+  // 収入 > 支出の場合、「未仕分け」を追加
+  if (totalIncome > totalExpense) {
+    const currentBalance = totalIncome - totalExpense;
+    expenseByCategory.set("未仕分け", currentBalance);
 
-    if (unclassifiedAmount !== 0) {
-      expenseByCategory.set("未仕分け", Math.abs(unclassifiedAmount));
-
-      // 支出データに「未仕分け」レコードを追加（UI用）
-      processedAggregation.expense.push({
-        category: "未仕分け",
-        totalAmount: Math.abs(unclassifiedAmount),
-      });
-    }
+    // 支出データに「未仕分け」レコードを追加（UI用）
+    processedAggregation.expense.push({
+      category: "未仕分け",
+      totalAmount: currentBalance,
+    });
   }
 
   for (const category of expenseByCategory.keys()) {
