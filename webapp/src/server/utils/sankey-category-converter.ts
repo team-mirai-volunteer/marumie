@@ -45,8 +45,8 @@ function consolidateSmallItems(
   }
 
   // サブカテゴリが10個になるように閾値を動的計算
-  const incomeThreshold = calculateDynamicThreshold(aggregation.income, 8);
-  const expenseThreshold = calculateDynamicThreshold(aggregation.expense, 8);
+  const incomeThreshold = calculateDynamicThreshold(aggregation.income, 10);
+  const expenseThreshold = calculateDynamicThreshold(aggregation.expense, 10);
 
   // 収入の処理 - カテゴリ別に閾値以下を集計
   const consolidatedIncome: typeof aggregation.income = [];

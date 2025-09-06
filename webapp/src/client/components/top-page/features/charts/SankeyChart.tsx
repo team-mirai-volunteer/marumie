@@ -32,6 +32,7 @@ const DIMENSIONS = {
   TOTAL_LABEL_TOP_OFFSET_DESKTOP: 18,
   TOTAL_LABEL_TOP_OFFSET_MOBILE: 12,
   LINE_HEIGHT: 12,
+  MULTI_LINE_OFFSET: 6,
 
   // フォントサイズ
   FONT_SIZE_DESKTOP: "14.5px",
@@ -308,15 +309,31 @@ const renderTotalNodeLabels = (
 };
 
 // ラベルを複数行に分割する関数
-const splitLabel = (label: string, maxChars: number): string[] => {
-  if (label.length <= maxChars) return [label];
+const splitLabel = (label: string, maxCharsPerLine: number): string[] => {
+  const N = maxCharsPerLine;
 
-  // 長い場合は2行に分割（長すぎる場合は省略）
-  const text =
-    label.length > maxChars * 2
-      ? `${label.substring(0, maxChars * 2 - 1)}…`
-      : label;
-  return [text.substring(0, maxChars), text.substring(maxChars)];
+  // N文字以下の場合は1行で表示
+  if (label.length <= N) {
+    return [label];
+  }
+
+  // 特殊ケース：N+1文字（7文字）の場合は N-2, 3 に分割
+  if (label.length === N + 1) {
+    return [label.substring(0, N - 2), label.substring(N - 2)];
+  }
+
+  // 特殊ケース：N+2文字（8文字）の場合は N-1, 3 に分割
+  if (label.length === N + 2) {
+    return [label.substring(0, N - 1), label.substring(N - 1)];
+  }
+
+  // 残りのケースは2行に分割
+  const textToSplit =
+    label.length >= N * 2 + 1
+      ? `${label.substring(0, N * 2 - 1)}…` // 長すぎる場合は省略
+      : label; // 通常ケース
+
+  return [textToSplit.substring(0, N), textToSplit.substring(N)];
 };
 
 const renderPercentageLabel = (
