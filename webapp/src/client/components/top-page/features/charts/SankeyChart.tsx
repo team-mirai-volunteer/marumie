@@ -15,12 +15,13 @@ const BREAKPOINT = {
 const COLORS = {
   TOTAL: "#4F566B", // グレー
   INCOME: "#2AA693", // 緑（収入）
-  EXPENSE: "#EF4444", // 赤（支出）
+  EXPENSE: "#DC2626", // 赤（支出）
   TEXT: "#1F2937", // テキスト色
   // リンク色用（薄い色）
   TOTAL_LIGHT: "#FBE2E7", // 薄い赤
   INCOME_LIGHT: "#E5F7F4", // 薄い緑
   EXPENSE_LIGHT: "#FBE2E7", // 薄い赤
+  CARRYOVER_LIGHT: "#E5E7EB", // 薄いグレー（繰越し用）
 } as const;
 
 const DIMENSIONS = {
@@ -109,7 +110,13 @@ const getNodeWidth = (nodeType: string | undefined, isMobile: boolean) => {
     : DIMENSIONS.REGULAR_WIDTH_MOBILE;
 };
 
-const getNodeFillColor = (nodeType: string | undefined) => {
+const getNodeFillColor = (nodeType: string | undefined, nodeId?: string) => {
+  if (nodeId?.endsWith("繰越し")) {
+    return "#6B7280";
+  }
+  if (nodeId?.endsWith("処理中")) {
+    return "#FCA5A5";
+  }
   if (nodeType === "total") {
     return COLORS.TOTAL;
   }
@@ -195,7 +202,7 @@ const CustomNodesLayer = ({
         {nodes.map((node: SankeyNodeWithPosition) => {
           const width = getNodeWidth(node.nodeType, isMobile);
           const x = node.x - (width - DIMENSIONS.NODE_BASE_WIDTH) / 2;
-          const color = getNodeFillColor(node.nodeType);
+          const color = getNodeFillColor(node.nodeType, node.id);
 
           return (
             <InteractiveRect
@@ -272,7 +279,13 @@ const calculatePercentageText = (nodeValue?: number, totalValue?: number) => {
     : `${Math.round(percentage)}%`;
 };
 
-const getBoxColor = (nodeType?: string) => {
+const getBoxColor = (nodeType?: string, nodeId?: string) => {
+  if (nodeId?.endsWith("繰越し")) {
+    return "#6B7280";
+  }
+  if (nodeId?.endsWith("処理中")) {
+    return "#FCA5A5";
+  }
   if (nodeType === "total") {
     return COLORS.TOTAL;
   }
@@ -384,6 +397,9 @@ const renderPercentageLabel = (
     return null;
   }
 
+  // 処理中ノードの場合は特別な色を使用
+  const textColor = node.id.endsWith("処理中") ? "#CA8A04" : boxColor;
+
   return (
     <text
       key={`${node.id}-percentage`}
@@ -391,7 +407,7 @@ const renderPercentageLabel = (
       y={percentageY}
       textAnchor="middle"
       dominantBaseline="text-after-edge"
-      fill={boxColor}
+      fill={textColor}
       fontSize={!isMobile ? "14.5px" : "8px"}
       fontWeight="bold"
     >
@@ -514,7 +530,7 @@ const CustomLabelsLayer = ({
         const textAnchor = isLeft ? "end" : "start";
         const percentageY = node.y - DIMENSIONS.PERCENTAGE_OFFSET;
         const percentageText = calculatePercentageText(node.value, totalValue);
-        const boxColor = getBoxColor(node.nodeType);
+        const boxColor = getBoxColor(node.nodeType, node.id);
         const elements = [];
 
         if (node.nodeType === "total") {
@@ -613,17 +629,69 @@ export default function SankeyChart({ data }: SankeyChartProps) {
     });
   };
 
-  // ソート済みデータを作成
-  const sortedData = {
+  // ノードの色を取得する関数
+  const getNodeLightColor = (nodeId: string, nodeType?: string): string => {
+    if (nodeId.endsWith("繰越し")) {
+      return COLORS.CARRYOVER_LIGHT;
+    }
+    if (nodeId.endsWith("処理中")) {
+      return "#FEE2E2"; // 薄いピンク
+    }
+    if (nodeType === "total") {
+      return COLORS.TOTAL_LIGHT;
+    }
+    if (nodeType === "income" || nodeType === "income-sub") {
+      return COLORS.INCOME_LIGHT;
+    }
+    return COLORS.EXPENSE_LIGHT;
+  };
+
+  // リンクの色を取得する関数
+  const getLinkColors = (link: { source: string; target: string }) => {
+    const sourceNode = data.nodes.find((n) => n.id === link.source);
+    const targetNode = data.nodes.find((n) => n.id === link.target);
+
+    const sourceColor = getNodeLightColor(link.source, sourceNode?.nodeType);
+    const targetColor = getNodeLightColor(link.target, targetNode?.nodeType);
+
+    // 繰越しへのリンクは完全にグレー、他は単色
+    if (link.target.endsWith("繰越し")) {
+      return {
+        startColor: targetColor,
+        endColor: targetColor,
+      };
+    }
+
+    return {
+      startColor: sourceColor,
+      endColor: sourceColor,
+    };
+  };
+
+  // リンクに色情報を追加したデータを作成
+  const processedData = {
     ...data,
     nodes: sortNodesByValue(data.nodes),
+    links: data.links.map((link) => ({
+      ...link,
+      ...getLinkColors(link),
+    })),
   };
 
   // HACK: リンクの色制御のための回避策
   // Nivoはリンクの色をソースノードの色に依存させるため、
   // getNodeColor()では薄い色を返してリンクを薄く表示し、
   // CustomNodesLayerでは濃い色でノードを描画している
+
   const getNodeColor = (node: { id: string; nodeType?: string }) => {
+    if (node.id.endsWith("繰越し")) {
+      return COLORS.CARRYOVER_LIGHT;
+    }
+
+    if (node.id.endsWith("処理中")) {
+      return "#FEE2E2"; // 薄いピンク
+    }
+
     if (node.nodeType === "total") {
       return COLORS.TOTAL_LIGHT;
     }
@@ -659,7 +727,7 @@ export default function SankeyChart({ data }: SankeyChartProps) {
         }
       `}</style>
       <ResponsiveSankey
-        data={sortedData}
+        data={processedData}
         label={(node: { id: string; label?: string }) => {
           return node.label || node.id;
         }}
@@ -691,7 +759,7 @@ export default function SankeyChart({ data }: SankeyChartProps) {
         sort="auto"
         linkOpacity={CHART_CONFIG.LINK_OPACITY}
         linkHoverOpacity={CHART_CONFIG.LINK_OPACITY}
-        enableLinkGradient={false}
+        enableLinkGradient={true}
         enableLabels={false}
         isInteractive={false}
         layers={["links", CustomNodesLayer, CustomLabelsLayer]}

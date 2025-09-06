@@ -218,14 +218,14 @@ export function convertCategoryAggregationToSankeyData(
     });
   }
 
-  // 収入 > 支出の場合、「未仕分け」を追加
+  // 収入 > 支出の場合、「処理中」を追加
   if (totalIncome > totalExpense) {
     const currentBalance = totalIncome - totalExpense;
-    expenseByCategory.set("未仕分け", currentBalance);
+    expenseByCategory.set("処理中", currentBalance);
 
-    // 支出データに「未仕分け」レコードを追加（UI用）
+    // 支出データに「処理中」レコードを追加（UI用）
     processedAggregation.expense.push({
-      category: "未仕分け",
+      category: "処理中",
       totalAmount: currentBalance,
     });
   }
