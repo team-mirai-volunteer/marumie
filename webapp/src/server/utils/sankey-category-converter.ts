@@ -1,12 +1,18 @@
 import type { SankeyData, SankeyLink, SankeyNode } from "@/types/sankey";
 import type { SankeyCategoryAggregationResult } from "../repositories/interfaces/transaction-repository.interface";
 
+// サブカテゴリ表示の上限設定
+const SUBCATEGORY_LIMITS = {
+  INCOME: 8,
+  EXPENSE: 10,
+} as const;
+
 /**
  * サブカテゴリが10個になるように閾値を動的計算する処理
  */
 function calculateDynamicThreshold(
   items: Array<{ subcategory?: string; totalAmount: number }>,
-  targetCount: number = 10,
+  targetCount: number,
 ): number {
   // サブカテゴリのみを対象とする
   const subcategoryItems = items.filter((item) => item.subcategory);
@@ -44,9 +50,15 @@ function consolidateSmallItems(
     return aggregation;
   }
 
-  // サブカテゴリが10個になるように閾値を動的計算
-  const incomeThreshold = calculateDynamicThreshold(aggregation.income, 8);
-  const expenseThreshold = calculateDynamicThreshold(aggregation.expense, 8);
+  // サブカテゴリが設定個数になるように閾値を動的計算
+  const incomeThreshold = calculateDynamicThreshold(
+    aggregation.income,
+    SUBCATEGORY_LIMITS.INCOME,
+  );
+  const expenseThreshold = calculateDynamicThreshold(
+    aggregation.expense,
+    SUBCATEGORY_LIMITS.EXPENSE,
+  );
 
   // 収入の処理 - カテゴリ別に閾値以下を集計
   const consolidatedIncome: typeof aggregation.income = [];
@@ -90,7 +102,7 @@ function consolidateSmallItems(
     if (total > 0) {
       consolidatedExpense.push({
         category,
-        subcategory: `その他(${category})`,
+        subcategory: `その他（${category}）`,
         totalAmount: total,
       });
     }
@@ -128,6 +140,7 @@ function renameOtherCategories(
 export function convertCategoryAggregationToSankeyData(
   aggregation: SankeyCategoryAggregationResult,
   isFriendlyCategory: boolean = false,
+  latestBalance?: number,
 ): SankeyData {
   // 「その他」カテゴリをリネーム
   const renamedAggregation = renameOtherCategories(aggregation);
@@ -197,6 +210,18 @@ export function convertCategoryAggregationToSankeyData(
   }
 
   // 収入と支出の合計を計算
+
+  // latestBalanceが提供されている場合、「繰越し」として支出側に追加
+  if (latestBalance !== undefined && latestBalance > 0) {
+    expenseByCategory.set("繰越し", latestBalance);
+
+    // 支出データに「繰越し」レコードを追加（UI用）
+    processedAggregation.expense.push({
+      category: "繰越し",
+      totalAmount: latestBalance,
+    });
+  }
+
   const totalIncome = Array.from(incomeByCategory.values()).reduce(
     (sum, amount) => sum + amount,
     0,

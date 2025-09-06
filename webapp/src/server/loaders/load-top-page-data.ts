@@ -51,6 +51,7 @@ export const loadTopPageData = unstable_cache(
     const sankeyUsecase = new GetSankeyAggregationUsecase(
       transactionRepository,
       politicalOrganizationRepository,
+      balanceSnapshotRepository,
     );
 
     const donationUsecase = new GetDailyDonationUsecase(

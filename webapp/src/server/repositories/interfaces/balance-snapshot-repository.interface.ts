@@ -8,5 +8,5 @@ export interface BalanceSnapshotData {
 }
 
 export interface IBalanceSnapshotRepository {
-  findLatestByOrgIds(orgIds: string[]): Promise<BalanceSnapshotData[]>;
+  getTotalLatestBalanceByOrgIds(orgIds: string[]): Promise<number>;
 }
