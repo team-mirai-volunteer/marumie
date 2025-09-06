@@ -37,11 +37,11 @@ export interface MonthlyAggregation {
   expense: number;
 }
 
-// 日次寄付データの型定義
+// 日次寄附データの型定義
 export interface DailyDonationData {
   date: string; // "YYYY-MM-DD" 形式
-  dailyAmount: number; // その日の寄付額
-  cumulativeAmount: number; // 累積寄付額
+  dailyAmount: number; // その日の寄附額
+  cumulativeAmount: number; // 累積寄附額
 }
 
 export interface SortOptions {

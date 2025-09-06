@@ -63,7 +63,7 @@ export default function DonationChart({
       >
         <div className="text-center text-gray-500">
           <div className="text-lg font-medium mb-2">
-            直近3ヶ月の寄付金額の推移
+            直近3ヶ月の寄附金額の推移
           </div>
           <div className="text-sm">データがありません</div>
         </div>
@@ -76,16 +76,16 @@ export default function DonationChart({
       className="bg-white rounded-lg "
       style={{ height }}
       role="img"
-      aria-label="直近3ヶ月の寄付金額の推移グラフ"
+      aria-label="直近3ヶ月の寄附金額の推移グラフ"
       aria-describedby="donation-chart-description"
     >
       <div className="text-center">
         <h4 className="text-[13px] font-bold leading-[1.31] text-gray-600">
-          直近3ヶ月の寄付金額の推移
+          直近3ヶ月の寄附金額の推移
         </h4>
       </div>
       <div id="donation-chart-description" className="sr-only">
-        直近90日間の累計寄付金額の推移を示す折れ線グラフです。
+        直近90日間の累計寄附金額の推移を示す折れ線グラフです。
       </div>
       <div
         style={{ height: height }}
@@ -130,7 +130,7 @@ export default function DonationChart({
                 const man = Math.floor((value % 100000000) / 10000);
                 const en = value % 10000;
                 const amountStr = `${oku > 0 ? `${oku}億` : ""}${man > 0 ? `${man}万` : ""}${en > 0 ? `${en}` : ""}円`;
-                return [amountStr, "累計寄付金額"];
+                return [amountStr, "累計寄附金額"];
               }}
               labelFormatter={(label: string) => {
                 const [year, month, day] = label.split("-");

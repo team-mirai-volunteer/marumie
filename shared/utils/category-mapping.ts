@@ -22,42 +22,42 @@ export const ACCOUNT_CATEGORY_MAPPING: Record<string, CategoryMapping> = {
   },
   "個人からの寄附": {
     key: "individual-donations",
-    category: "寄付",
-    subcategory: "個人からの寄付",
+    category: "寄附",
+    subcategory: "個人からの寄附",
     color: "#BBF7D0",
-    shortLabel: "個人寄付",
+    shortLabel: "個人寄附",
     type: "income"
   },
-  "個人からの寄附（特定寄付）": {
+  "個人からの寄附（特定寄附）": {
     key: "specific-individual-donations",
-    category: "寄付",
-    subcategory: "個人からの寄付",
+    category: "寄附",
+    subcategory: "個人からの寄附",
     color: "#BBF7D0",
-    shortLabel: "個人寄付（特定）",
+    shortLabel: "個人寄附（特定）",
     type: "income"
   },
   "法人その他の団体からの寄附": {
     key: "corporate-donations",
-    category: "寄付",
+    category: "寄附",
     subcategory: "法人その他の団体からの寄附",
     color: "#FECACA",
-    shortLabel: "法人寄付",
+    shortLabel: "法人寄附",
     type: "income"
   },
   "政治団体からの寄附": {
     key: "political-donations",
-    category: "寄付",
+    category: "寄附",
     subcategory: "政治団体からの寄附",
     color: "#A5F3FC",
-    shortLabel: "政党寄付",
+    shortLabel: "政党寄附",
     type: "income"
   },
-  "政党匿名寄付": {
+  "政党匿名寄附": {
     key: "anonymous-donations",
-    category: "寄付",
-    subcategory: "政党匿名寄付",
+    category: "寄附",
+    subcategory: "政党匿名寄附",
     color: "#E0F6C9",
-    shortLabel: "政党匿名寄付",
+    shortLabel: "政党匿名寄附",
     type: "income"
   },
   "機関紙誌の発行その他の事業による収入": {
@@ -183,7 +183,7 @@ export const ACCOUNT_CATEGORY_MAPPING: Record<string, CategoryMapping> = {
     category: "政治活動費",
     subcategory: "寄附・交付金",
     color: "#BE185D",
-    shortLabel: "寄付・交付金",
+    shortLabel: "寄附・交付金",
     type: "expense"
   },
   "その他の経費": {
