@@ -28,8 +28,8 @@ export default function DonationSummaryCards({
         <BaseCard className="!p-3">
           <div className="flex flex-row justify-between items-center">
             <div className="text-[#4B5563] font-bold text-sm">累計寄附金額</div>
-            <div className="flex flex-col items-end gap-2">
-              <div className="flex items-baseline gap-[2px]">
+            <div className="flex flex-col items-end gap-0">
+              <div className="flex items-baseline gap-[2px] p-2">
                 {totalOku > 0 && (
                   <>
                     <span className="font-bold text-2xl leading-5 text-gray-800">
@@ -78,18 +78,18 @@ export default function DonationSummaryCards({
           <BaseCard className="flex-1 !p-3">
             <div className="flex flex-row justify-between items-center gap-3">
               <div className="text-[#4B5563] font-bold text-sm">寄附件数</div>
-              <div className="flex flex-col items-end gap-2">
-                <div className="flex items-baseline gap-[2px]">
+              <div className="flex flex-col items-end gap-0">
+                <div className="flex items-baseline gap-[2px] p-2">
                   <span className="font-bold text-2xl leading-5 text-gray-800">
                     {totalDonationDays}
                   </span>
                   <span className="font-bold text-xs text-[#4B5563]">件</span>
                 </div>
-                <div className="flex items-center gap-[1.5px]">
+                <div className="flex items-center gap-[2px] h-4">
                   <span className="text-[#238778] font-normal text-[11px]">
                     前日比
                   </span>
-                  <div className="flex items-center gap-[2px]">
+                  <div className="flex items-center">
                     <span className="font-bold text-[#238778] text-[13px]">
                       {donationCountChange}
                     </span>
@@ -101,7 +101,7 @@ export default function DonationSummaryCards({
                       alt="上向き矢印"
                       width={13}
                       height={13}
-                      className="flex-shrink-0"
+                      className="flex-shrink-0 ml-[2px]"
                     />
                   </div>
                 </div>
