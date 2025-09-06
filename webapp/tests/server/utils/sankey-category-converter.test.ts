@@ -238,17 +238,17 @@ describe("convertCategoryAggregationToSankeyData", () => {
 
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
-    // 「収支」ノードが追加されることを確認
-    const currentBalanceNode = result.nodes.find(node => node.id === "expense-収支");
-    expect(currentBalanceNode).toBeDefined();
-    expect(currentBalanceNode?.label).toBe("収支");
+    // 「処理中」ノードが追加されることを確認
+    const processingNode = result.nodes.find(node => node.id === "expense-処理中");
+    expect(processingNode).toBeDefined();
+    expect(processingNode?.label).toBe("処理中");
 
-    // 「収支」へのリンクが追加されることを確認
-    const linkToCurrentBalance = result.links.find(
-      link => link.source === "合計" && link.target === "expense-収支"
+    // 「処理中」へのリンクが追加されることを確認
+    const linkToProcessing = result.links.find(
+      link => link.source === "合計" && link.target === "expense-処理中"
     );
-    expect(linkToCurrentBalance).toBeDefined();
-    expect(linkToCurrentBalance?.value).toBe(800000); // 200万 - 120万 = 80万
+    expect(linkToProcessing).toBeDefined();
+    expect(linkToProcessing?.value).toBe(800000); // 200万 - 120万 = 80万
   });
 
   it("should not add '収支' when income <= expense", () => {
@@ -300,15 +300,15 @@ describe("convertCategoryAggregationToSankeyData", () => {
 
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
-    // 「収支」ノードが追加されることを確認
-    const currentBalanceNode = result.nodes.find(node => node.id === "expense-収支");
-    expect(currentBalanceNode).toBeDefined();
+    // 「処理中」ノードが追加されることを確認
+    const processingNode = result.nodes.find(node => node.id === "expense-処理中");
+    expect(processingNode).toBeDefined();
 
-    // 「収支」のリンクが正しく追加されることを確認
-    const linkToCurrentBalance = result.links.find(
-      link => link.source === "合計" && link.target === "expense-収支"
+    // 「処理中」のリンクが正しく追加されることを確認
+    const linkToProcessing = result.links.find(
+      link => link.source === "合計" && link.target === "expense-処理中"
     );
-    expect(linkToCurrentBalance?.value).toBe(1500000); // 300万 - 150万 = 150万
+    expect(linkToProcessing?.value).toBe(1500000); // 300万 - 150万 = 150万
 
     // 既存のサブカテゴリ構造は維持されることを確認
     const subToCategory = result.links.find(
