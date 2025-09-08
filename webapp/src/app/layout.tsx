@@ -53,6 +53,28 @@ export const metadata: Metadata = {
     index: false,
     follow: false,
   },
+  openGraph: {
+    title: "みらい まる見え政治資金 - チームみらいの政治資金をオープンに",
+    description:
+      "チームみらいの政治資金の流れを透明性を持って公開するプラットフォームです。",
+    images: [
+      {
+        url: "/social/og_image.png",
+        width: 1200,
+        height: 630,
+        alt: "みらい まる見え政治資金",
+      },
+    ],
+    type: "website",
+    locale: "ja_JP",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "みらい まる見え政治資金 - チームみらいの政治資金をオープンに",
+    description:
+      "チームみらいの政治資金の流れを透明性を持って公開するプラットフォームです。",
+    images: ["/social/og_image.png"],
+  },
 };
 
 export default function RootLayout({
