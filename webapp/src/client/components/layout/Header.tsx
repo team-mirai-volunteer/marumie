@@ -40,7 +40,7 @@ export default function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-40 px-2.5 py-3 lg:px-6 lg:py-4">
       {/* Main Header Container with rounded background */}
-      <div className="bg-white rounded-[30px] lg:rounded-[100px] px-3 py-3 lg:px-6 lg:py-0 relative z-10">
+      <div className="bg-white rounded-[20px] px-3 py-3 lg:px-6 lg:py-0 relative z-10">
         <div className="flex justify-between items-center gap-2 lg:h-16">
           {/* Logo and Title Section */}
           <Link
@@ -49,7 +49,7 @@ export default function Header() {
           >
             {/* Logo */}
             <div className="flex items-center">
-              <div className="w-10 h-8 lg:w-14 lg:h-12 relative">
+              <div className="w-10 h-8 lg:w-12 lg:h-11 relative">
                 {/* Team Mirai Logo */}
                 <Image
                   src="/logos/team-mirai-logo.svg"
@@ -64,7 +64,7 @@ export default function Header() {
             <div className="flex flex-col gap-1.5 lg:flex-row lg:items-end lg:gap-2">
               <div className="h-[15px] lg:h-6 relative w-[160px] lg:w-[257px]">
                 <Image
-                  src="/logos/mirai-open-data-title.png"
+                  src="/logos/service-logo.svg"
                   alt="みらいオープンデータ"
                   fill
                   className="object-contain object-left"
