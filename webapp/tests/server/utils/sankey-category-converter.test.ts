@@ -262,15 +262,15 @@ describe("convertCategoryAggregationToSankeyData", () => {
 
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
-    // 「処理中」ノードが追加されることを確認
-    const processingNode = result.nodes.find(node => node.label === "処理中");
+    // 「(仕訳中)」ノードが追加されることを確認
+    const processingNode = result.nodes.find(node => node.label === "(仕訳中)");
     expect(processingNode).toBeDefined();
-    expect(processingNode?.label).toBe("処理中");
+    expect(processingNode?.label).toBe("(仕訳中)");
 
-    // 「処理中」へのリンクが追加されることを確認
+    // 「(仕訳中)」へのリンクが追加されることを確認
     const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
     const totalId = getNodeIdByLabel("合計");
-    const processingId = getNodeIdByLabel("処理中");
+    const processingId = getNodeIdByLabel("(仕訳中)");
     
     const linkToProcessing = result.links.find(
       link => link.source === totalId && link.target === processingId
@@ -297,12 +297,12 @@ describe("convertCategoryAggregationToSankeyData", () => {
 
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
-    // 「処理中」ノードが追加されないことを確認
-    const processingNode = result.nodes.find(node => node.label === "処理中");
+    // 「(仕訳中)」ノードが追加されないことを確認
+    const processingNode = result.nodes.find(node => node.label === "(仕訳中)");
     expect(processingNode).toBeUndefined();
 
-    // 「処理中」へのリンクが追加されないことを確認
-    const processingId = result.nodes.find(n => n.label === "処理中")?.id;
+    // 「(仕訳中)」へのリンクが追加されないことを確認
+    const processingId = result.nodes.find(n => n.label === "(仕訳中)")?.id;
     const linkToProcessing = result.links.find(
       link => link.target === processingId
     );
@@ -329,14 +329,14 @@ describe("convertCategoryAggregationToSankeyData", () => {
 
     const result = convertCategoryAggregationToSankeyData(aggregation);
 
-    // 「処理中」ノードが追加されることを確認
-    const processingNode = result.nodes.find(node => node.label === "処理中");
+    // 「(仕訳中)」ノードが追加されることを確認
+    const processingNode = result.nodes.find(node => node.label === "(仕訳中)");
     expect(processingNode).toBeDefined();
 
-    // 「処理中」のリンクが正しく追加されることを確認
+    // 「(仕訳中)」のリンクが正しく追加されることを確認
     const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
     const totalId = getNodeIdByLabel("合計");
-    const processingId = getNodeIdByLabel("処理中");
+    const processingId = getNodeIdByLabel("(仕訳中)");
     const donationId = getNodeIdByLabel("寄附");
     const politicalActivityId = getNodeIdByLabel("政治活動費");
     const individualDonationId = getNodeIdByLabel("個人からの寄附");

@@ -352,8 +352,8 @@ const renderPercentageLabel = (
     return null;
   }
 
-  // 処理中ノードの場合は特別な色を使用
-  const textColor = node.label === "処理中" ? "#CA8A04" : boxColor;
+  // (仕訳中)ノードの場合は特別な色を使用
+  const textColor = node.label === "(仕訳中)" ? "#DC2626" : boxColor;
 
   return (
     <text
