@@ -322,6 +322,11 @@ const splitLabel = (label: string, maxCharsPerLine: number): string[] => {
     return [label];
   }
 
+  // 「その他」から始まるケースの特別対応：「その他」が1行目、それ以降が2行目
+  if (label.startsWith("その他")) {
+    return ["その他", label.substring(3)];
+  }
+
   // 特殊ケース：N+1文字（7文字）の場合は N-2, 3 に分割
   if (label.length === N + 1) {
     return [label.substring(0, N - 2), label.substring(N - 2)];
