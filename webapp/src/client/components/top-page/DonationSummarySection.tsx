@@ -90,7 +90,7 @@ export default function DonationSummarySection({
         <Link
           href="https://team-mir.ai/support/donation"
           target="_blank"
-          rel="noopener noreferrer"
+          rel="noopener"
         >
           <MainButton>ご寄附はこちら</MainButton>
         </Link>
