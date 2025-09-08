@@ -21,7 +21,7 @@ export default function ExplanationSection() {
             </a>
             にて無償公開中であり、政党や所属を問わず利用可能な形で提供しております。開発コミュニティにご興味のある方は
             <a
-              href="/#"
+              href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-3dap6i768-1nztzb2S2SNDLX8DzzJ9Hg"
               target="_blank"
               rel="noopener noreferrer"
               className="font-bold text-[#238778] underline hover:no-underline"
@@ -34,15 +34,11 @@ export default function ExplanationSection() {
 
         <div>
           <h3 className="text-lg font-bold text-gray-800 mb-3 font-japanese">
-            データ
+            データの出典
           </h3>
-          <div className="text-[15px] leading-[1.87] tracking-[0.01em] text-gray-800 font-japanese">
-            「チームみらい」と「デジ民（安野個人政治団体）」
-            <br />
-            2025年5月以降のデータが反映されている
-            <br />
-            「政治資金」と「選挙資金」が両方含まれていることを明記したほうがよさそう
-          </div>
+          <p className="text-[15px] leading-[1.87] tracking-[0.01em] text-gray-800 font-japanese">
+            本サイトに含まれる政治資金収支データは、政党「チームみらい」並びに党首・安野貴博の政治団体である「デジタル民主主義を考える会」の収支を合算したもので、結党した2025年5月以降の仕訳けが完了した収支を掲載しています。なお収支データには、政治資金規制法で定義された政治活動に使うお金である「政治資金」と、公職選挙法で定義された選挙運動に使うお金である「選挙資金」の双方が含まれています。
+          </p>
         </div>
 
         <div>
@@ -50,7 +46,7 @@ export default function ExplanationSection() {
             免責事項
           </h3>
           <p className="text-[15px] leading-[1.87] tracking-[0.01em] text-gray-800 font-japanese">
-            本サイトで公開するデータは、可能な限り正確かつ最新の情報を反映するよう努めていますが、現時点においてはその正確性・完全性・即時性について保証するものではありません。最終的な収支は、別途公開される「政治資金収支報告書」をご確認ください。また、現時点では政党「チームみらい」の収支であり、安野たかひろや他の候補者の政治資金は含んでおりません。今後追って公開してまいります。
+            本サイトで公開するデータは、可能な限り正確かつ最新の情報を反映するよう努めていますが、現時点においてはその正確性・完全性・即時性について保証するものではありません。今後は、これらの側面について一層踏み込んだ公開を目指してまいります。現時点での最終的な収支は、別途公開される「政治資金収支報告書」並びに「選挙運動費用収支報告書」をご確認ください。
           </p>
         </div>
       </div>
