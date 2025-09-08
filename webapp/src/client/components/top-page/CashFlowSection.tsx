@@ -56,7 +56,7 @@ export default function CashFlowSection({
               : "border-transparent text-[#9CA3AF] hover:text-gray-600"
           }`}
         >
-          チームみらいの区分
+          詳細の区分
         </button>
         <button
           type="button"
