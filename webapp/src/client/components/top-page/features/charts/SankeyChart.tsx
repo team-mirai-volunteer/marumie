@@ -271,7 +271,7 @@ const renderTotalNodeLabels = (
       }
       textAnchor="middle"
       dominantBaseline="text-after-edge"
-      fill={boxColor}
+      fill={TEXT}
       fontSize={!isMobile ? "14.5px" : "8px"}
       fontWeight="bold"
     >
@@ -301,7 +301,7 @@ const renderTotalNodeLabels = (
         y={node.y + node.height + DIMENSIONS.AMOUNT_LABEL_OFFSET}
         textAnchor="middle"
         dominantBaseline="text-before-edge"
-        fill={boxColor}
+        fill={TEXT}
         fontSize={!isMobile ? "14.5px" : "8px"}
         fontWeight="bold"
       >
@@ -352,8 +352,13 @@ const renderPercentageLabel = (
     return null;
   }
 
-  // 処理中ノードの場合は特別な色を使用
-  const textColor = node.label === "処理中" ? "#CA8A04" : boxColor;
+  // (仕訳中)ノードの場合は特別な色を使用、繰越しの場合もTEXT色を使用
+  const textColor =
+    node.label === "(仕訳中)"
+      ? "#DC2626"
+      : node.label === "繰越し"
+        ? TEXT
+        : boxColor;
 
   return (
     <text

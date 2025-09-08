@@ -69,7 +69,6 @@ describe("GetDailyDonationUsecase", () => {
 
     // その他のサマリー情報も確認
     expect(result.donationSummary.totalAmount).toBe(4500);
-    expect(result.donationSummary.totalDays).toBe(2); // 寄附があった日数
   });
 
   it("should handle case when today is not found in data", async () => {

@@ -7,9 +7,7 @@ import type {
 export interface DonationSummaryData {
   dailyDonationData: DailyDonationData[];
   totalAmount: number; // 累計寄附金額
-  totalDays: number; // 寄附日数
   amountDayOverDay: number; // 寄附金額の前日比
-  countDayOverDay: number; // 寄附件数の前日比
   lastNonZeroDonationDate: string | null; // 最後に0以外の寄附があった日
 }
 
@@ -162,9 +160,6 @@ export class GetDailyDonationUsecase {
     // 統計情報を計算
     const totalAmount =
       recentDailyData[recentDailyData.length - 1]?.cumulativeAmount || 0;
-    const totalDays = recentDailyData.filter(
-      (item) => item.dailyAmount > 0,
-    ).length;
 
     // 今日と昨日の日付を文字列で準備
     const todayStr = today.toISOString().split("T")[0];
@@ -183,11 +178,6 @@ export class GetDailyDonationUsecase {
     const yesterdayDonation = yesterdayData?.dailyAmount || 0;
     const amountDayOverDay = todayDonation - yesterdayDonation;
 
-    // 寄附件数の前日比（寄附があった日をカウント）
-    const todayHasDonation = todayDonation > 0 ? 1 : 0;
-    const yesterdayHasDonation = yesterdayDonation > 0 ? 1 : 0;
-    const countDayOverDay = todayHasDonation - yesterdayHasDonation;
-
     // 最後に0以外の寄附があった日を検索（逆順で検索）
     const lastNonZeroDonationDate =
       recentDailyData
@@ -198,9 +188,7 @@ export class GetDailyDonationUsecase {
     return {
       dailyDonationData: recentDailyData,
       totalAmount,
-      totalDays,
       amountDayOverDay,
-      countDayOverDay,
       lastNonZeroDonationDate,
     };
   }

@@ -19,7 +19,7 @@ export default function BalanceSheetSection({
       <CardHeader
         icon={
           <Image
-            src="/icons/icon-heart-handshake.svg"
+            src="/icons/balance.svg"
             alt="Balance sheet icon"
             width={30}
             height={30}

@@ -232,14 +232,14 @@ export function convertCategoryAggregationToSankeyData(
     0,
   );
 
-  // 収入 > 支出の場合、「処理中」を追加
+  // 収入 > 支出の場合、「(仕訳中)」を追加
   if (totalIncome > totalExpense) {
     const currentBalance = totalIncome - totalExpense;
-    expenseByCategory.set("処理中", currentBalance);
+    expenseByCategory.set("(仕訳中)", currentBalance);
 
-    // 支出データに「処理中」レコードを追加（UI用）
+    // 支出データに「(仕訳中)」レコードを追加（UI用）
     processedAggregation.expense.push({
-      category: "処理中",
+      category: "(仕訳中)",
       totalAmount: currentBalance,
     });
   }

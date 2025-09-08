@@ -45,11 +45,13 @@ export function useNodeColors() {
     ): string => {
       // 特別なノードの判定（labelベース）
       if (nodeLabel === "繰越し") {
-        return variant === "light" ? "#D2D4D8" : "#6B7280";
+        if (variant === "light") return "#D2D4D8";
+        if (variant === "box" || variant === "fill") return "#6B7280"; // ボックス色はグレーのまま
+        return COLORS.TEXT; // テキスト色は#1F2937
       }
 
-      if (nodeLabel === "処理中") {
-        return variant === "light" ? "#FFF2F2" : "#FCA5A5";
+      if (nodeLabel === "(仕訳中)") {
+        return variant === "light" ? "#FFF2F2" : "#F87171";
       }
 
       // 通常のノードタイプ判定
@@ -144,16 +146,16 @@ export function useSankeySorting(data: SankeyData) {
           if (a.nodeType === "expense") {
             const aIsCarryover = a.label === "繰越し";
             const bIsCarryover = b.label === "繰越し";
-            const aIsProcessing = a.label === "処理中";
-            const bIsProcessing = b.label === "処理中";
+            const aIsProcessing = a.label === "(仕訳中)";
+            const bIsProcessing = b.label === "(仕訳中)";
 
             // 繰越し vs その他
             if (aIsCarryover && !bIsCarryover) return 1; // 繰越しを最後に
             if (bIsCarryover && !aIsCarryover) return -1; // 繰越しを最後に
 
-            // 処理中 vs その他（繰越し以外）
-            if (aIsProcessing && !bIsProcessing && !bIsCarryover) return 1; // 処理中を後に
-            if (bIsProcessing && !aIsProcessing && !aIsCarryover) return -1; // 処理中を後に
+            // (仕訳中) vs その他（繰越し以外）
+            if (aIsProcessing && !bIsProcessing && !bIsCarryover) return 1; // (仕訳中)を後に
+            if (bIsProcessing && !aIsProcessing && !aIsCarryover) return -1; // (仕訳中)を後に
           }
 
           return bValue - aValue; // 大きい順

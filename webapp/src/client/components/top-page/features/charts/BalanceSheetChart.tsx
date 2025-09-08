@@ -53,7 +53,7 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
       nodes.push({
         name: BALANCE_SHEET_LABELS.currentAssets,
         value: balanceSheet.left.currentAssets,
-        color: "#99F6E4",
+        color: "#5EEAD4",
         x: 0,
         y: currentY,
         width: leftWidth - MARGIN / 2,

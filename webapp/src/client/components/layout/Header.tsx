@@ -38,18 +38,18 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 px-2.5 py-3 lg:px-6 lg:py-4">
+    <header className="fixed top-0 left-0 right-0 z-40 px-2.5 py-3 xl:px-6 xl:py-4">
       {/* Main Header Container with rounded background */}
-      <div className="bg-white rounded-[30px] lg:rounded-[100px] px-3 py-3 lg:px-6 lg:py-0 relative z-10">
-        <div className="flex justify-between items-center gap-2 lg:h-16">
+      <div className="bg-white rounded-[20px] px-3 py-3 xl:px-6 xl:py-0 relative z-10">
+        <div className="flex justify-between items-center gap-2 xl:h-16">
           {/* Logo and Title Section */}
           <Link
             href="/"
-            className="flex items-center gap-2 lg:gap-4 hover:opacity-80 transition-opacity cursor-pointer"
+            className="flex items-center gap-2 xl:gap-4 hover:opacity-80 transition-opacity cursor-pointer"
           >
             {/* Logo */}
             <div className="flex items-center">
-              <div className="w-10 h-8 lg:w-14 lg:h-12 relative">
+              <div className="w-10 h-8 xl:w-12 xl:h-11 relative">
                 {/* Team Mirai Logo */}
                 <Image
                   src="/logos/team-mirai-logo.svg"
@@ -61,17 +61,17 @@ export default function Header() {
             </div>
 
             {/* Title and Subtitle - Mobile: Vertical Stack, Desktop: Horizontal with baseline alignment */}
-            <div className="flex flex-col gap-1.5 lg:flex-row lg:items-end lg:gap-2">
-              <div className="h-[15px] lg:h-6 relative w-[160px] lg:w-[257px]">
+            <div className="flex flex-col gap-1.5 xl:flex-row xl:items-end xl:gap-2">
+              <div className="h-[15px] xl:h-6 relative w-[160px] xl:w-[257px]">
                 <Image
-                  src="/logos/mirai-open-data-title.png"
+                  src="/logos/service-logo.svg"
                   alt="みらいオープンデータ"
                   fill
                   className="object-contain object-left"
                   priority
                 />
               </div>
-              <div className="text-gray-800 leading-none text-[11px] lg:text-sm">
+              <div className="text-gray-800 leading-none text-[11px] xl:text-sm xl:font-normal">
                 政治資金をまるごと公開
               </div>
             </div>
