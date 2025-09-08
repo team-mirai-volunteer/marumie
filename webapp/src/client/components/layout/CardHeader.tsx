@@ -1,4 +1,4 @@
-import { Label, Subtitle, Title } from "@/client/components/ui/Typography";
+import { Subtitle, Title } from "@/client/components/ui/Typography";
 
 interface CardHeaderProps {
   icon: React.ReactNode;

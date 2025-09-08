@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-gradient-to-br from-[#BCECD3] to-[#64D8C6] px-4 md:px-[117px] pt-[72px] pb-[10px]">
+    <footer className="w-full bg-gradient-to-tl from-[#BCECD3] to-[#64D8C6] px-4 md:px-[117px] pt-[72px] pb-[10px]">
       <div className="max-w-[1278px] mx-auto flex flex-col items-center gap-9">
         {/* Logo */}
         <div className="w-[150px] h-[127px] relative">

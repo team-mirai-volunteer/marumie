@@ -26,7 +26,7 @@ export default function MainButton({
         h-[48px]
         px-6
         py-2
-        bg-gradient-to-r
+        bg-gradient-to-l
         from-[#BCECD3]
         to-[#64D8C6]
         border
