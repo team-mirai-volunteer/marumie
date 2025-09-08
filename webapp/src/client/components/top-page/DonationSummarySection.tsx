@@ -17,9 +17,7 @@ export default function DonationSummarySection({
 }: DonationSummarySectionProps) {
   // サーバーサイドで計算された統計情報を使用
   const totalDonationAmount = donationSummary?.totalAmount || 0;
-  const totalDonationDays = donationSummary?.totalDays || 0;
   const dayOverDayChange = donationSummary?.amountDayOverDay || 0;
-  const donationCountChange = donationSummary?.countDayOverDay || 0;
   const dailyDonationData = donationSummary?.dailyDonationData || [];
 
   // DonationSection専用のupdatedAt表示フォーマット
@@ -74,9 +72,7 @@ export default function DonationSummarySection({
         totalOku={totalOku}
         totalMan={totalMan}
         totalEn={totalEn}
-        totalDonationDays={totalDonationDays}
         dayOverDayChange={dayOverDayChange}
-        donationCountChange={donationCountChange}
       />
 
       {/* 寄附推移グラフ */}
