@@ -50,10 +50,10 @@ export default function AboutSection() {
     <MainColumnCard>
       <div className="space-y-9">
         <div className="space-y-3">
-          <h3 className="text-lg font-bold text-gray-800 mb-3">
+          <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-3">
             チームみらいについて
           </h3>
-          <p className="text-[15px] leading-[1.87] tracking-[0.01em] text-gray-700 font-japanese">
+          <p className="text-[11px] sm:text-[15px] leading-[1.82] sm:leading-[1.87] tracking-[0.01em] text-gray-500 sm:text-gray-700 font-medium font-japanese">
             チームみらいは、AIエンジニアの安野たかひろが立ち上げた政党です。2025年参議院選挙にて1議席を獲得して国政政党となりました。テクノロジーで政治の課題を解決することを目指して、既存の枠組みにとらわれることなく活動していきます。
             テクノロジーで政治を変え、国民の皆さまとともに日本の未来をつくることを目指しています。
           </p>

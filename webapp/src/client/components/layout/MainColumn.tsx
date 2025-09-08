@@ -9,7 +9,7 @@ export default function MainColumn({
 }: MainColumnProps) {
   return (
     <main
-      className={`mx-auto max-w-[1032px] px-5 sm:px-6 py-6 space-y-12 ${className}`}
+      className={`mx-auto max-w-[1032px] px-5 sm:px-6 pt-6 pb-[60px] sm:pb-6 space-y-12 ${className}`}
     >
       {children}
     </main>

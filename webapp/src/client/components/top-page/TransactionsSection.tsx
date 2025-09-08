@@ -39,7 +39,7 @@ export default function TransactionsSection({
         }
         title="すべての出入金"
         updatedAt={updatedAt}
-        subtitle="今年のすべての出入金のリスト"
+        subtitle="これまでにデータ連携された出入金の明細"
       />
 
       {transactionData ? (
