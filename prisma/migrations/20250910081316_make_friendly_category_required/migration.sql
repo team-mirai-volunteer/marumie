@@ -5,7 +5,7 @@
 
 */
 -- Update NULL values to empty string before making column required
-UPDATE "public"."transactions" SET "friendly_category" = '' WHERE "friendly_category" IS NULL;
+UPDATE "transactions" SET "friendly_category" = '' WHERE "friendly_category" IS NULL;
 
 -- AlterTable
-ALTER TABLE "public"."transactions" ALTER COLUMN "friendly_category" SET NOT NULL;
+ALTER TABLE "transactions" ALTER COLUMN "friendly_category" SET NOT NULL;
