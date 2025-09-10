@@ -187,7 +187,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
           creditAmount: input.credit_amount,
           description: input.description || null,
           label: input.label || "",
-          friendlyCategory: input.friendly_category || null,
+          friendlyCategory: input.friendly_category,
           memo: input.memo || null,
           categoryKey: input.category_key,
         };

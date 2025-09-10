@@ -15,7 +15,7 @@ export interface PreviewTransaction {
   credit_amount: number;
   description: string | undefined;
   label: string | undefined;
-  friendly_category: string | undefined;
+  friendly_category: string;
   category_key: string;
   status: "valid" | "invalid" | "skip";
   errors: string[];
