@@ -138,8 +138,8 @@ describe("SavePreviewTransactionsUsecase", () => {
     it("should reject invalid account labels and not call repository", async () => {
       // 有効と無効のアカウントラベルを含む2行のCSV
       const csvContent = `取引No,取引日,借方勘定科目,借方補助科目,借方部門,借方取引先,借方税区分,借方インボイス,借方金額,貸方勘定科目,貸方補助科目,貸方部門,貸方取引先,貸方税区分,貸方インボイス,貸方金額,摘要,仕訳メモ,タグ
-1,2025/6/1,人件費,,,,,,1000,普通預金,,,,,,1000,給与支払,,
-2,2025/6/2,無効な科目,,,,,,2000,普通預金,,,,,,2000,無効な取引,,`;
+1,2025/6/1,人件費,,,,,,1000,普通預金,,,,,,1000,給与支払,,人件費
+2,2025/6/2,無効な科目,,,,,,2000,普通預金,,,,,,2000,無効な取引,,その他`;
 
       // PreviewUsecaseでvalidTransactionsを取得（エラーを含む）
       const previewInput: PreviewMfCsvInput = {
@@ -177,7 +177,7 @@ describe("SavePreviewTransactionsUsecase", () => {
             credit_tax_category: '',
             credit_amount: t.credit_amount,
             description: t.description || '',
-            friendly_category: t.friendly_category || '',
+            friendly_category: t.friendly_category,
             memo: '',
             category_key: t.category_key,
             label: '',
@@ -204,8 +204,8 @@ describe("SavePreviewTransactionsUsecase", () => {
     it("should handle duplicate transaction_no within same political organization", async () => {
       // 同じtransaction_noを持つCSVデータ
       const csvContent = `取引No,取引日,借方勘定科目,借方補助科目,借方部門,借方取引先,借方税区分,借方インボイス,借方金額,貸方勘定科目,貸方補助科目,貸方部門,貸方取引先,貸方税区分,貸方インボイス,貸方金額,摘要,仕訳メモ,タグ
-TXN-001,2025/6/1,人件費,,,,,,1000,普通預金,,,,,,1000,給与支払1,,
-TXN-001,2025/6/2,人件費,,,,,,2000,普通預金,,,,,,2000,給与支払2,,`;
+TXN-001,2025/6/1,人件費,,,,,,1000,普通預金,,,,,,1000,給与支払1,,人件費
+TXN-001,2025/6/2,人件費,,,,,,2000,普通預金,,,,,,2000,給与支払2,,人件費`;
 
       // 既存データとして同じtransaction_noが存在することをモック
       mockRepository.checkDuplicateTransactionNos.mockResolvedValue(['TXN-001']);
@@ -240,7 +240,7 @@ TXN-001,2025/6/2,人件費,,,,,,2000,普通預金,,,,,,2000,給与支払2,,`;
 
     it("should allow same transaction_no for different political organizations", async () => {
       const csvContent = `取引No,取引日,借方勘定科目,借方補助科目,借方部門,借方取引先,借方税区分,借方インボイス,借方金額,貸方勘定科目,貸方補助科目,貸方部門,貸方取引先,貸方税区分,貸方インボイス,貸方金額,摘要,仕訳メモ,タグ
-TXN-001,2025/6/1,人件費,,,,,,1000,普通預金,,,,,,1000,給与支払,,`;
+TXN-001,2025/6/1,人件費,,,,,,1000,普通預金,,,,,,1000,給与支払,,人件費`;
 
       // 異なる政治団体では重複なし
       mockRepository.checkDuplicateTransactionNos.mockResolvedValue([]);
