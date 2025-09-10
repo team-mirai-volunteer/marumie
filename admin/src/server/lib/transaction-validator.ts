@@ -34,6 +34,10 @@ export class TransactionValidator {
         invalidAccountLabels.add(record.credit_account);
       }
 
+      if (!record.friendly_category || record.friendly_category.trim() === "") {
+        recordErrors.push("独自のカテゴリが設定されていません");
+      }
+
       if (recordErrors.length > 0) {
         errors.push({
           record,
