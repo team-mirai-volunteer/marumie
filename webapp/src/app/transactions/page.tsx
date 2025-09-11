@@ -55,7 +55,7 @@ export default async function TransactionsPage({
       : searchParamsResolved.page || "1",
     10,
   );
-  const perPage = 20; // Fixed value
+  const perPage = 50; // Fixed value
 
   const filterType = Array.isArray(searchParamsResolved.filterType)
     ? searchParamsResolved.filterType[0]
