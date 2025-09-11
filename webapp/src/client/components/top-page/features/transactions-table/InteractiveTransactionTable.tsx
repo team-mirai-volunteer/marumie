@@ -8,6 +8,7 @@ import TransactionTable from "./TransactionTable";
 import TransactionTableMobileHeader, {
   type SortOption,
 } from "./TransactionTableMobileHeader";
+import PCPaginator from "./PCPaginator";
 
 interface SortConfig {
   sort: "date" | "amount";
@@ -149,8 +150,27 @@ export default function InteractiveTransactionTable({
         selectedCategories={selectedCategories}
       />
 
-      {/* Figmaデザインに基づくページネーション */}
-      <div className="flex items-center justify-between py-3.5">
+      {/* ページネーション */}
+
+      {/* PC版レイアウト（768px以上で表示） */}
+      <div className="hidden md:block py-3.5">
+        {/* ページャーを中央配置 */}
+        <div className="flex justify-center">
+          <PCPaginator
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            maxVisiblePages={7}
+          />
+        </div>
+        {/* 件数表示を下に配置 */}
+        <div className="text-center text-sm font-medium text-[#6A7383] leading-5 tracking-[0.5%] mt-3">
+          {total}件中 {startItem}-{endItem}件を表示
+        </div>
+      </div>
+
+      {/* モバイル版レイアウト（768px未満で表示） */}
+      <div className="flex items-center justify-between py-3.5 md:hidden">
         <div className="text-sm font-medium text-[#6A7383] leading-5 tracking-[0.5%]">
           {total}件中 {startItem}-{endItem}件を表示
         </div>
