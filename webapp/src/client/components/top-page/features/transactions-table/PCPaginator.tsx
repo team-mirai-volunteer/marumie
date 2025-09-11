@@ -53,7 +53,7 @@ export default function PCPaginator({
         type="button"
         onClick={() => onPageChange(Math.max(1, currentPage - 1))}
         disabled={currentPage === 1}
-        className="flex items-center justify-center w-8 h-8 border border-[rgba(60,66,87,0.12)] rounded shadow-[0px_1px_1px_0px_rgba(0,0,0,0.08)] bg-white hover:bg-gray-50 disabled:bg-[#F4F4F5] disabled:cursor-not-allowed transition-colors"
+        className="flex items-center justify-center w-8 h-8 border border-[rgba(60,66,87,0.12)] rounded shadow-[0px_1px_1px_0px_rgba(0,0,0,0.08)] bg-white hover:bg-gray-50 disabled:bg-[#F4F4F5] disabled:cursor-not-allowed cursor-pointer transition-colors"
         aria-label="前のページ"
       >
         <Image
@@ -74,7 +74,7 @@ export default function PCPaginator({
           type="button"
           onClick={() => onPageChange(pageNum)}
           className={`
-            flex items-center justify-center w-8 h-8 border rounded shadow-[0px_1px_1px_0px_rgba(0,0,0,0.08)] transition-colors
+            flex items-center justify-center w-8 h-8 border rounded shadow-[0px_1px_1px_0px_rgba(0,0,0,0.08)] transition-colors cursor-pointer
             ${
               pageNum === currentPage
                 ? "bg-[#E5E7EB] border-[#E5E7EB] text-[#1F2937] font-medium"
@@ -93,7 +93,7 @@ export default function PCPaginator({
         type="button"
         onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
         disabled={currentPage === totalPages}
-        className="flex items-center justify-center w-8 h-8 border border-[rgba(60,66,87,0.12)] rounded shadow-[0px_1px_1px_0px_rgba(0,0,0,0.08)] bg-white hover:bg-gray-50 disabled:bg-[#F4F4F5] disabled:cursor-not-allowed transition-colors"
+        className="flex items-center justify-center w-8 h-8 border border-[rgba(60,66,87,0.12)] rounded shadow-[0px_1px_1px_0px_rgba(0,0,0,0.08)] bg-white hover:bg-gray-50 disabled:bg-[#F4F4F5] disabled:cursor-not-allowed cursor-pointer transition-colors"
         aria-label="次のページ"
       >
         <Image
