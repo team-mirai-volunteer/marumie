@@ -71,18 +71,9 @@ export class PreviewMfCsvUsecase {
         };
       }
 
-      const validationResult = this.validator.validateRecords(csvRecords);
-
-      const previewTransactions: PreviewTransaction[] = csvRecords.map(
-        (record) =>
-          this.recordConverter.convertRow(
-            record,
-            input.politicalOrganizationId,
-          ),
-      );
-
-      const transactionNos = previewTransactions
-        .map((t) => t.transaction_no)
+      // Get existing transaction numbers first
+      const transactionNos = csvRecords
+        .map((record) => record.transaction_no)
         .filter(Boolean) as string[];
 
       const duplicateTransactionNos =
@@ -91,9 +82,22 @@ export class PreviewMfCsvUsecase {
           transactionNos,
         );
 
-      const existingTransactionNosSet = new Set(duplicateTransactionNos);
+      // Validate records including duplicate check
+      const validationResult = this.validator.validateRecords(
+        csvRecords,
+        duplicateTransactionNos,
+      );
 
-      // Apply validation and duplicate check
+      // Convert records to preview transactions
+      const previewTransactions: PreviewTransaction[] = csvRecords.map(
+        (record) =>
+          this.recordConverter.convertRow(
+            record,
+            input.politicalOrganizationId,
+          ),
+      );
+
+      // Apply validation results to transactions
       previewTransactions.forEach((transaction, index) => {
         const csvRecord = csvRecords[index];
         const validationError = validationResult.errors.find(
@@ -101,11 +105,13 @@ export class PreviewMfCsvUsecase {
         );
 
         if (validationError) {
-          transaction.status = "invalid";
+          if (validationError.isDuplicate) {
+            transaction.status = "skip";
+            transaction.skipReason = "重複データのためスキップされます";
+          } else {
+            transaction.status = "invalid";
+          }
           transaction.errors = validationError.errors;
-        } else if (existingTransactionNosSet.has(transaction.transaction_no)) {
-          transaction.status = "skip";
-          transaction.skipReason = "重複データのためスキップされます";
         }
       });
 
