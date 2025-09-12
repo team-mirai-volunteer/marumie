@@ -9,7 +9,6 @@ import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumn from "@/client/components/layout/MainColumn";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 import InteractiveTransactionTable from "@/client/components/top-page/features/transactions-table/InteractiveTransactionTable";
-import CsvDownloadButton from "@/client/components/transactions/CsvDownloadButton";
 import { loadTransactionsPageData } from "@/server/loaders/load-transactions-page-data";
 import { formatUpdatedAt } from "@/server/utils/format-date";
 
@@ -121,10 +120,6 @@ export default async function TransactionsPage({
             totalPages={data.totalPages}
             selectedCategories={categories}
           />
-
-          <div className="mt-6 flex justify-center">
-            <CsvDownloadButton />
-          </div>
         </MainColumnCard>
 
         <TransparencySection title="党内の機密データの流出事故ではありません☺️" />

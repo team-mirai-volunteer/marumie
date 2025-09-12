@@ -1,7 +1,6 @@
 "use client";
 import "client-only";
 
-import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { DisplayTransaction } from "@/types/display-transaction";
 import TransactionTable from "./TransactionTable";
@@ -9,6 +8,8 @@ import TransactionTableMobileHeader, {
   type SortOption,
 } from "./TransactionTableMobileHeader";
 import PCPaginator from "./PCPaginator";
+import MobilePaginator from "./MobilePaginator";
+import CsvDownloadLink from "@/client/components/transactions/CsvDownloadLink";
 
 interface SortConfig {
   sort: "date" | "amount";
@@ -171,13 +172,7 @@ export default function InteractiveTransactionTable({
 
           {/* 右側のCSVダウンロードリンク */}
           <div className="flex-1 flex justify-end">
-            <button
-              type="button"
-              className="px-4 py-3 text-sm font-bold text-[#238778] bg-white hover:bg-gray-50 transition-colors cursor-pointer"
-              style={{ fontFamily: "Noto Sans JP" }}
-            >
-              全件CSVダウンロード
-            </button>
+            <CsvDownloadLink className="px-4 py-3 text-sm font-bold text-[#238778] bg-white hover:bg-gray-50 transition-colors cursor-pointer" />
           </div>
         </div>
         {/* 件数表示を下に配置 */}
@@ -193,50 +188,16 @@ export default function InteractiveTransactionTable({
             {total}件中 {startItem}-{endItem}件を表示
           </div>
 
-          <div className="flex items-center gap-2 px-0.5">
-            <button
-              type="button"
-              onClick={() => handlePageChange(Math.max(1, page - 1))}
-              disabled={page === 1}
-              className="flex items-center justify-center w-8 h-8 border border-[rgba(60,66,87,0.12)] rounded shadow-[0px_1px_1px_0px_rgba(0,0,0,0.08)] bg-white hover:bg-gray-50 disabled:bg-[#F4F4F5] disabled:cursor-not-allowed transition-colors"
-              aria-label="前のページ"
-            >
-              <Image
-                src="/icons/icon-chevron-down.svg"
-                alt="前のページ"
-                width={20}
-                height={20}
-                className={`transform rotate-90 ${page === 1 ? "opacity-30" : "opacity-100"}`}
-              />
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
-              disabled={page === totalPages}
-              className="flex items-center justify-center w-8 h-8 border border-[rgba(60,66,87,0.12)] rounded shadow-[0px_1px_1px_0px_rgba(0,0,0,0.08)] bg-white hover:bg-gray-50 disabled:bg-[#F4F4F5] disabled:cursor-not-allowed transition-colors"
-              aria-label="次のページ"
-            >
-              <Image
-                src="/icons/icon-chevron-down.svg"
-                alt="次のページ"
-                width={20}
-                height={20}
-                className={`transform -rotate-90 ${page === totalPages ? "opacity-30" : "opacity-100"}`}
-              />
-            </button>
-          </div>
+          <MobilePaginator
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </div>
 
         {/* SP版CSVダウンロードリンク */}
         <div className="mt-3 text-right">
-          <button
-            type="button"
-            className="text-sm font-bold text-[#238778] hover:bg-gray-50 transition-all cursor-pointer"
-            style={{ fontFamily: "Noto Sans JP" }}
-          >
-            全件CSVダウンロード
-          </button>
+          <CsvDownloadLink className="text-sm font-bold text-[#238778] hover:bg-gray-50 transition-all cursor-pointer" />
         </div>
       </div>
     </>
