@@ -1,6 +1,10 @@
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 import type { MfCsvRecord } from "./mf-csv-loader";
 
+const REGULAR_DEPOSIT_ACCOUNT = "普通預金";
+const OFFSET_EXPENSE_ACCOUNT = "相殺項目（費用）";
+const OFFSET_INCOME_ACCOUNT = "相殺項目（収入）";
+
 export interface ValidationError {
   record: MfCsvRecord;
   errors: string[];
@@ -20,10 +24,12 @@ export class TransactionValidator {
     existingTransactionNos: string[] = [],
   ): ValidationResult {
     const invalidAccountLabels = new Set<string>();
-    const validAccountLabels = new Set(Object.keys(ACCOUNT_CATEGORY_MAPPING));
-    validAccountLabels.add("普通預金");
-    validAccountLabels.add("相殺項目（費用）");
-    validAccountLabels.add("相殺項目（収入）");
+    const validAccountLabels = new Set([
+      ...Object.keys(ACCOUNT_CATEGORY_MAPPING),
+      REGULAR_DEPOSIT_ACCOUNT,
+      OFFSET_EXPENSE_ACCOUNT,
+      OFFSET_INCOME_ACCOUNT,
+    ]);
 
     const existingTransactionNosSet = new Set(existingTransactionNos);
 
@@ -67,7 +73,13 @@ export class TransactionValidator {
       invalidAccountLabels.add(record.credit_account);
     }
 
-    if (!record.friendly_category || record.friendly_category.trim() === "") {
+    const isOffsetTransaction =
+      record.debit_account === OFFSET_EXPENSE_ACCOUNT ||
+      record.credit_account === OFFSET_INCOME_ACCOUNT;
+    if (
+      !isOffsetTransaction &&
+      (!record.friendly_category || record.friendly_category.trim() === "")
+    ) {
       recordErrors.push("独自のカテゴリが設定されていません");
     }
 
