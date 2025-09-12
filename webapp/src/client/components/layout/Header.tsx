@@ -45,7 +45,7 @@ export default function Header() {
           {/* Logo and Title Section */}
           <Link
             href="/"
-            className="flex items-center gap-2 xl:gap-4 hover:opacity-80 transition-opacity cursor-pointer"
+            className="flex items-center gap-2 xl:gap-6 hover:opacity-80 transition-opacity cursor-pointer"
           >
             {/* Logo */}
             <div className="flex items-center">

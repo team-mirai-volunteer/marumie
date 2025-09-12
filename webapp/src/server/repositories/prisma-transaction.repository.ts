@@ -531,7 +531,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       credit_tax_category: prismaTransaction.creditTaxCategory ?? undefined,
       credit_amount: Number(prismaTransaction.creditAmount),
       description: prismaTransaction.description ?? undefined,
-      friendly_category: prismaTransaction.friendlyCategory ?? undefined,
+      friendly_category: prismaTransaction.friendlyCategory ?? "",
       memo: prismaTransaction.memo ?? undefined,
       category_key: prismaTransaction.categoryKey,
       label: prismaTransaction.label,
