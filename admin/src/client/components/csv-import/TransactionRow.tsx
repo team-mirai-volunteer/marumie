@@ -125,13 +125,14 @@ export default function TransactionRow({
           {getStatusText(record.status)}
         </span>
         {record.errors.length > 0 && (
-          <div className="text-xs text-red-500 mt-1">
-            {record.errors.join(", ")}
-          </div>
-        )}
-        {record.skipReason && (
-          <div className="text-xs text-yellow-500 mt-1">
-            {record.skipReason}
+          <div
+            className={`text-xs mt-1 ${
+              record.status === "skip" ? "text-yellow-500" : "text-red-500"
+            }`}
+          >
+            {record.errors.map((error, errorIndex) => (
+              <div key={`error-${errorIndex}-${error}`}>{error}</div>
+            ))}
           </div>
         )}
       </td>
