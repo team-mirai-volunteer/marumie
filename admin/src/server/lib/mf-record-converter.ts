@@ -1,7 +1,6 @@
 import type { MfCsvRecord } from "./mf-csv-loader";
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 import type { TransactionType } from "@/shared/models/transaction";
-import type { ValidationError } from "./transaction-validator";
 
 export interface PreviewTransaction {
   political_organization_id: string;
@@ -26,7 +25,6 @@ export class MfRecordConverter {
   public convertRow(
     record: MfCsvRecord,
     politicalOrganizationId: string,
-    validationError?: ValidationError,
   ): PreviewTransaction {
     const debitAmount = this.parseAmount(record.debit_amount);
     const creditAmount = this.parseAmount(record.credit_amount);
@@ -43,19 +41,11 @@ export class MfRecordConverter {
       ? record.description
       : undefined;
 
-    // Determine status and errors based on validation and conversion
+    // Determine status and errors based on conversion
     let status: "valid" | "invalid" | "skip" = "valid";
     let errors: string[] = [];
 
-    if (validationError) {
-      if (validationError.isDuplicate) {
-        status = "skip";
-        errors = validationError.errors;
-      } else {
-        status = "invalid";
-        errors = validationError.errors;
-      }
-    } else if (transactionType === null) {
+    if (transactionType === null) {
       status = "invalid";
       errors = [
         `Invalid account combination: debit=${record.debit_account}, credit=${record.credit_account}`,

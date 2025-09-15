@@ -82,24 +82,19 @@ export class PreviewMfCsvUsecase {
           transactionNos,
         );
 
-      // Validate records including duplicate check
-      const validationResult = this.validator.validateRecords(
-        csvRecords,
-        duplicateTransactionNos,
-      );
-
       // Convert records to preview transactions
-      const previewTransactions: PreviewTransaction[] = csvRecords.map(
-        (record) => {
-          const validationError = validationResult.errors.find(
-            (e) => e.record === record,
-          );
-          return this.recordConverter.convertRow(
+      const convertedTransactions: PreviewTransaction[] = csvRecords.map(
+        (record) =>
+          this.recordConverter.convertRow(
             record,
             input.politicalOrganizationId,
-            validationError,
-          );
-        },
+          ),
+      );
+
+      // Validate converted transactions including duplicate check
+      const previewTransactions = this.validator.validatePreviewTransactions(
+        convertedTransactions,
+        duplicateTransactionNos,
       );
 
       const summary = {
