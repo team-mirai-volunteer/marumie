@@ -90,30 +90,17 @@ export class PreviewMfCsvUsecase {
 
       // Convert records to preview transactions
       const previewTransactions: PreviewTransaction[] = csvRecords.map(
-        (record) =>
-          this.recordConverter.convertRow(
+        (record) => {
+          const validationError = validationResult.errors.find(
+            (e) => e.record === record,
+          );
+          return this.recordConverter.convertRow(
             record,
             input.politicalOrganizationId,
-          ),
+            validationError,
+          );
+        },
       );
-
-      // Apply validation results to transactions
-      previewTransactions.forEach((transaction, index) => {
-        const csvRecord = csvRecords[index];
-        const validationError = validationResult.errors.find(
-          (e) => e.record === csvRecord,
-        );
-
-        if (validationError) {
-          if (validationError.isDuplicate) {
-            transaction.status = "skip";
-            transaction.skipReason = "重複データのためスキップされます";
-          } else {
-            transaction.status = "invalid";
-          }
-          transaction.errors = validationError.errors;
-        }
-      });
 
       const summary = {
         totalCount: previewTransactions.length,

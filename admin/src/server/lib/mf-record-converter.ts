@@ -1,6 +1,7 @@
 import type { MfCsvRecord } from "./mf-csv-loader";
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 import type { TransactionType } from "@/shared/models/transaction";
+import type { ValidationError } from "./transaction-validator";
 
 export interface PreviewTransaction {
   political_organization_id: string;
@@ -19,13 +20,13 @@ export interface PreviewTransaction {
   category_key: string;
   status: "valid" | "invalid" | "skip";
   errors: string[];
-  skipReason?: string;
 }
 
 export class MfRecordConverter {
   public convertRow(
     record: MfCsvRecord,
     politicalOrganizationId: string,
+    validationError?: ValidationError,
   ): PreviewTransaction {
     const debitAmount = this.parseAmount(record.debit_amount);
     const creditAmount = this.parseAmount(record.credit_amount);
@@ -42,6 +43,25 @@ export class MfRecordConverter {
       ? record.description
       : undefined;
 
+    // Determine status and errors based on validation and conversion
+    let status: "valid" | "invalid" | "skip" = "valid";
+    let errors: string[] = [];
+
+    if (validationError) {
+      if (validationError.isDuplicate) {
+        status = "skip";
+        errors = validationError.errors;
+      } else {
+        status = "invalid";
+        errors = validationError.errors;
+      }
+    } else if (transactionType === null) {
+      status = "invalid";
+      errors = [
+        `Invalid account combination: debit=${record.debit_account}, credit=${record.credit_account}`,
+      ];
+    }
+
     return {
       political_organization_id: politicalOrganizationId,
       transaction_no: record.transaction_no,
@@ -57,13 +77,8 @@ export class MfRecordConverter {
       label: label,
       friendly_category: record.friendly_category,
       category_key: categoryKey,
-      status: transactionType === null ? "invalid" : "valid",
-      errors:
-        transactionType === null
-          ? [
-              `Invalid account combination: debit=${record.debit_account}, credit=${record.credit_account}`,
-            ]
-          : [],
+      status,
+      errors,
     };
   }
 
