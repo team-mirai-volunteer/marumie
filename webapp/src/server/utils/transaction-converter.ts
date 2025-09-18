@@ -7,7 +7,7 @@ import type {
   DisplayTransaction,
   DisplayTransactionType,
 } from "@/types/display-transaction";
-import type { TransactionWithOrganization } from "@/server/repositories/prisma-transaction.repository";
+import type { TransactionWithOrganization } from "@/shared/models/transaction";
 
 /**
  * アカウント名からカテゴリマッピングを取得する関数
@@ -82,9 +82,6 @@ export function convertToDisplayTransaction(
     friendly_category: transaction.friendly_category,
     absAmount,
     amount,
-    politicalOrganizationName:
-      (transaction as TransactionWithOrganization)
-        .political_organization_name || "",
   };
 }
 

@@ -4,7 +4,7 @@ import type {
   TransactionFilters,
   UpdateTransactionInput,
 } from "@/shared/models/transaction";
-import type { TransactionWithOrganization } from "@/server/usecases/get-transactions-usecase";
+import type { TransactionWithOrganization } from "@/shared/models/transaction";
 
 export interface PaginatedResult<T> {
   items: T[];

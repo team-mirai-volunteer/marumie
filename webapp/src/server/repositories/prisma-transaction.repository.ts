@@ -7,6 +7,7 @@ import type {
   Transaction,
   TransactionFilters,
   TransactionType,
+  TransactionWithOrganization,
 } from "@/shared/models/transaction";
 import type { DisplayTransactionType } from "@/types/display-transaction";
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
@@ -20,10 +21,6 @@ import type {
   SortOptions,
   TransactionCategoryAggregation,
 } from "./interfaces/transaction-repository.interface";
-
-export interface TransactionWithOrganization extends Transaction {
-  political_organization_name?: string;
-}
 
 export class PrismaTransactionRepository implements ITransactionRepository {
   constructor(private prisma: PrismaClient) {}

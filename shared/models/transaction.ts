@@ -72,3 +72,7 @@ export interface TransactionFilters {
   financial_year?: number;
   category_keys?: string[];
 }
+
+export interface TransactionWithOrganization extends Transaction {
+  political_organization_name?: string;
+}

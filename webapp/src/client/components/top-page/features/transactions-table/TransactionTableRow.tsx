@@ -3,9 +3,10 @@ import "client-only";
 
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 import type { DisplayTransaction } from "@/types/display-transaction";
+import type { TransactionWithOrganization } from "@/shared/models/transaction";
 
 interface TransactionTableRowProps {
-  transaction: DisplayTransaction;
+  transaction: DisplayTransaction & TransactionWithOrganization;
 }
 
 export default function TransactionTableRow({
@@ -175,7 +176,7 @@ export default function TransactionTableRow({
       {/* Political Organization column - 180px width */}
       <td className="hidden md:table-cell pl-4 h-16 w-[180px]">
         <span className="leading-4 font-medium text-sm text-gray-800">
-          {transaction.politicalOrganizationName || "-"}
+          {transaction.political_organization_name || "-"}
         </span>
       </td>
     </tr>
