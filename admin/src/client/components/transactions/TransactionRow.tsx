@@ -1,7 +1,7 @@
 "use client";
 import "client-only";
 
-import type { TransactionWithOrganization } from "@/server/usecases/get-transactions-usecase";
+import type { TransactionWithOrganization } from "@/shared/models/transaction";
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 
 interface TransactionRowProps {
