@@ -109,7 +109,7 @@ export default async function TransactionsPage({
             }
             title="すべての出入金"
             updatedAt={updatedAt}
-            subtitle="どこから政治資金を得て、何に使っているのか"
+            subtitle="これまでにデータ連携された出入金の明細"
           />
 
           <InteractiveTransactionTable

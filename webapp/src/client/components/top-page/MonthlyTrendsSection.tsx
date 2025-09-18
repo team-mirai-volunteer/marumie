@@ -30,7 +30,7 @@ export default function MonthlyTrendsSection({
             height={30}
           />
         }
-        title="１年間の収支の推移"
+        title="月ごとの収支の推移"
         updatedAt={updatedAt}
         subtitle="今年の年始から月ごとの収入と支出"
       />
