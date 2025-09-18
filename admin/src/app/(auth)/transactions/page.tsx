@@ -1,6 +1,7 @@
 import { TransactionRow } from "@/client/components/transactions/TransactionRow";
 import { StaticPagination } from "@/client/components/ui/StaticPagination";
 import { DeleteAllButton } from "@/client/components/transactions/DeleteAllButton";
+import { CsvDownloadButton } from "@/client/components/transactions/CsvDownloadButton";
 import { loadTransactionsData } from "@/server/loaders/load-transactions-data";
 
 interface TransactionsPageProps {
@@ -23,7 +24,10 @@ export default async function TransactionsPage({
     <div className="bg-primary-panel rounded-xl p-4">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold text-white">取引一覧</h1>
-        <DeleteAllButton disabled={data.total === 0} />
+        <div className="flex gap-2">
+          <CsvDownloadButton disabled={data.total === 0} />
+          <DeleteAllButton disabled={data.total === 0} />
+        </div>
       </div>
 
       <div className="mt-5 mb-4">

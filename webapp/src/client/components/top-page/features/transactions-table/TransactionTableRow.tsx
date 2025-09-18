@@ -77,7 +77,7 @@ export default function TransactionTableRow({
   return (
     <tr className="w-full border-b border-[#D5DBE1]">
       {/* SP Layout - Mobile Card Layout */}
-      <td colSpan={4} className="md:hidden p-0">
+      <td colSpan={5} className="md:hidden p-0">
         <div className="flex flex-col bg-white gap-1 px-0 py-2">
           {/* Date section */}
           <div className="flex">
@@ -170,6 +170,13 @@ export default function TransactionTableRow({
             </span>
           </div>
         </div>
+      </td>
+
+      {/* Political Organization column - 180px width */}
+      <td className="hidden md:table-cell pl-4 h-16 w-[180px]">
+        <span className="leading-4 font-medium text-sm text-gray-800">
+          {transaction.politicalOrganizationName || "-"}
+        </span>
       </td>
     </tr>
   );

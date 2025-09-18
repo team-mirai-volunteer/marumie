@@ -65,6 +65,24 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     return transactions.map((t) => this.mapToTransaction(t));
   }
 
+  async findAllWithOrganization(
+    filters?: TransactionFilters,
+  ): Promise<TransactionWithOrganization[]> {
+    const where = this.buildWhereClause(filters);
+
+    const transactions = await this.prisma.transaction.findMany({
+      where,
+      include: {
+        politicalOrganization: true,
+      },
+      orderBy: { transactionDate: "desc" },
+    });
+
+    return transactions.map(
+      (t) => this.mapToTransaction(t, true) as TransactionWithOrganization,
+    );
+  }
+
   async findWithPagination(
     filters?: TransactionFilters,
     pagination?: PaginationOptions,

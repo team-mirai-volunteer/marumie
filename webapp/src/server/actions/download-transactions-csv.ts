@@ -19,6 +19,7 @@ export async function downloadTransactionsCsv() {
       "科目",
       "チームみらい区分",
       "ラベル",
+      "政治団体名",
     ];
 
     // CSVデータを作成
@@ -33,6 +34,7 @@ export async function downloadTransactionsCsv() {
           `"${transaction.account.replace(/"/g, '""')}"`, // CSVエスケープ
           `"${(transaction.friendly_category || "").replace(/"/g, '""')}"`,
           `"${transaction.label.replace(/"/g, '""')}"`,
+          `"${transaction.politicalOrganizationName.replace(/"/g, '""')}"`,
         ];
         return row.join(",");
       }),

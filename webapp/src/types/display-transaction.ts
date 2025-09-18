@@ -21,4 +21,5 @@ export interface DisplayTransaction {
   friendly_category: string; // フレンドリーカテゴリ情報をそのまま保持
   absAmount: number; // 金額（絶対値）
   amount: number; // 金額（支出時はマイナス値）
+  politicalOrganizationName: string; // 政治団体名
 }

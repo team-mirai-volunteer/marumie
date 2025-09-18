@@ -5,10 +5,8 @@ import type {
   DisplayTransactionType,
 } from "@/types/display-transaction";
 import type { IPoliticalOrganizationRepository } from "../repositories/interfaces/political-organization-repository.interface";
-import type {
-  ITransactionRepository,
-  PaginationOptions,
-} from "../repositories/interfaces/transaction-repository.interface";
+import type { PaginationOptions } from "../repositories/interfaces/transaction-repository.interface";
+import type { PrismaTransactionRepository } from "../repositories/prisma-transaction.repository";
 import { convertToDisplayTransactions } from "../utils/transaction-converter";
 
 export interface GetTransactionsBySlugParams {
@@ -22,6 +20,7 @@ export interface GetTransactionsBySlugParams {
   sortBy?: "date" | "amount";
   order?: "asc" | "desc";
   categories?: string[];
+  organizations?: string[];
 }
 
 export interface GetTransactionsBySlugResult {
@@ -36,7 +35,7 @@ export interface GetTransactionsBySlugResult {
 
 export class GetTransactionsBySlugUsecase {
   constructor(
-    private transactionRepository: ITransactionRepository,
+    private transactionRepository: PrismaTransactionRepository,
     private politicalOrganizationRepository: IPoliticalOrganizationRepository,
   ) {}
 
@@ -73,6 +72,9 @@ export class GetTransactionsBySlugUsecase {
       if (params.categories && params.categories.length > 0) {
         filters.category_keys = params.categories;
       }
+      if (params.organizations && params.organizations.length > 0) {
+        filters.political_organization_ids = params.organizations;
+      }
       filters.financial_year = params.financialYear;
 
       const pagination: PaginationOptions = {
@@ -83,7 +85,10 @@ export class GetTransactionsBySlugUsecase {
       };
 
       const [transactionResult, lastUpdatedAt] = await Promise.all([
-        this.transactionRepository.findWithPagination(filters, pagination),
+        this.transactionRepository.findWithPaginationIncludeOrganization(
+          filters,
+          pagination,
+        ),
         this.transactionRepository.getLastUpdatedAt(),
       ]);
 

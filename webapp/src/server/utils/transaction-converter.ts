@@ -7,6 +7,7 @@ import type {
   DisplayTransaction,
   DisplayTransactionType,
 } from "@/types/display-transaction";
+import type { TransactionWithOrganization } from "@/server/repositories/prisma-transaction.repository";
 
 /**
  * アカウント名からカテゴリマッピングを取得する関数
@@ -29,7 +30,7 @@ export function getCategoryMapping(account: string): CategoryMapping {
  * @returns 表示用に変換されたDisplayTransactionオブジェクト
  */
 export function convertToDisplayTransaction(
-  transaction: Transaction,
+  transaction: Transaction | TransactionWithOrganization,
 ): DisplayTransaction {
   // offset系のトランザクションタイプが渡された場合は警告を出力
   if (
@@ -81,6 +82,9 @@ export function convertToDisplayTransaction(
     friendly_category: transaction.friendly_category,
     absAmount,
     amount,
+    politicalOrganizationName:
+      (transaction as TransactionWithOrganization)
+        .political_organization_name || "",
   };
 }
 
@@ -88,7 +92,7 @@ export function convertToDisplayTransaction(
  * Transaction配列をDisplayTransaction配列に変換する関数
  */
 export function convertToDisplayTransactions(
-  transactions: Transaction[],
+  transactions: (Transaction | TransactionWithOrganization)[],
 ): DisplayTransaction[] {
   return transactions.map(convertToDisplayTransaction);
 }

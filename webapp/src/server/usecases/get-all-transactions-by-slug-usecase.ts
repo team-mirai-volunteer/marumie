@@ -5,7 +5,7 @@ import type {
   DisplayTransactionType,
 } from "@/types/display-transaction";
 import type { IPoliticalOrganizationRepository } from "../repositories/interfaces/political-organization-repository.interface";
-import type { ITransactionRepository } from "../repositories/interfaces/transaction-repository.interface";
+import type { PrismaTransactionRepository } from "../repositories/prisma-transaction.repository";
 import { convertToDisplayTransactions } from "../utils/transaction-converter";
 
 export interface GetAllTransactionsBySlugParams {
@@ -28,7 +28,7 @@ export interface GetAllTransactionsBySlugResult {
 
 export class GetAllTransactionsBySlugUsecase {
   constructor(
-    private transactionRepository: ITransactionRepository,
+    private transactionRepository: PrismaTransactionRepository,
     private politicalOrganizationRepository: IPoliticalOrganizationRepository,
   ) {}
 
@@ -66,7 +66,7 @@ export class GetAllTransactionsBySlugUsecase {
 
       // 全件取得（ページネーションなし）
       const [transactionResult, lastUpdatedAt] = await Promise.all([
-        this.transactionRepository.findAll(filters, {
+        this.transactionRepository.findAllIncludeOrganization(filters, {
           sortBy: params.sortBy,
           order: params.order,
         }),

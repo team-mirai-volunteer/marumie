@@ -79,6 +79,13 @@ export default async function TransactionsPage({
         .filter(Boolean)
     : undefined;
 
+  // organizations: multiple organization IDs for filtering (comma-separated)
+  const organizations = searchParamsResolved.organizations
+    ? decodeURIComponent(String(searchParamsResolved.organizations))
+        .split(",")
+        .filter(Boolean)
+    : undefined;
+
   const financialYear = 2025; // 固定値
 
   try {
@@ -91,6 +98,7 @@ export default async function TransactionsPage({
       sortBy: sortBy as "date" | "amount" | undefined,
       order: order as "asc" | "desc" | undefined,
       categories,
+      organizations,
     });
 
     const updatedAt = formatUpdatedAt(data.lastUpdatedAt ?? null);
@@ -119,6 +127,10 @@ export default async function TransactionsPage({
             perPage={data.perPage}
             totalPages={data.totalPages}
             selectedCategories={categories}
+            availableOrganizations={data.politicalOrganizations.map((org) => ({
+              id: org.id,
+              name: org.name,
+            }))}
           />
         </MainColumnCard>
 

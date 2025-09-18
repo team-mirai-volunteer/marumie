@@ -17,8 +17,13 @@ import type {
   PaginatedResult,
   PaginationOptions,
   SankeyCategoryAggregationResult,
+  SortOptions,
   TransactionCategoryAggregation,
 } from "./interfaces/transaction-repository.interface";
+
+export interface TransactionWithOrganization extends Transaction {
+  political_organization_name?: string;
+}
 
 export class PrismaTransactionRepository implements ITransactionRepository {
   constructor(private prisma: PrismaClient) {}
@@ -40,6 +45,29 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     });
 
     return transactions.map(this.mapToTransaction);
+  }
+
+  async findAllIncludeOrganization(
+    filters?: TransactionFilters,
+    sortOptions?: SortOptions,
+  ): Promise<TransactionWithOrganization[]> {
+    const where = this.buildWhereClause(filters);
+
+    // Build orderBy based on sortBy and order parameters
+    const orderBy = this.buildOrderByClause(
+      sortOptions?.sortBy,
+      sortOptions?.order,
+    );
+
+    const transactions = await this.prisma.transaction.findMany({
+      where,
+      include: {
+        politicalOrganization: true,
+      },
+      orderBy,
+    });
+
+    return transactions.map((t) => this.mapToTransactionWithOrganization(t));
   }
 
   async findWithPagination(
@@ -72,6 +100,46 @@ export class PrismaTransactionRepository implements ITransactionRepository {
 
     return {
       items: transactions.map(this.mapToTransaction),
+      total,
+      page,
+      perPage,
+      totalPages,
+    };
+  }
+
+  async findWithPaginationIncludeOrganization(
+    filters?: TransactionFilters,
+    pagination?: PaginationOptions,
+  ): Promise<PaginatedResult<TransactionWithOrganization>> {
+    const where = this.buildWhereClause(filters);
+
+    const page = pagination?.page || 1;
+    const perPage = pagination?.perPage || 50;
+    const skip = (page - 1) * perPage;
+
+    // Build orderBy based on sortBy and order parameters
+    const orderBy = this.buildOrderByClause(
+      pagination?.sortBy,
+      pagination?.order,
+    );
+
+    const [transactions, total] = await Promise.all([
+      this.prisma.transaction.findMany({
+        where,
+        include: {
+          politicalOrganization: true,
+        },
+        orderBy,
+        skip,
+        take: perPage,
+      }),
+      this.prisma.transaction.count({ where }),
+    ]);
+
+    const totalPages = Math.ceil(total / perPage);
+
+    return {
+      items: transactions.map((t) => this.mapToTransactionWithOrganization(t)),
       total,
       page,
       perPage,
@@ -537,6 +605,18 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       label: prismaTransaction.label,
       created_at: prismaTransaction.createdAt,
       updated_at: prismaTransaction.updatedAt,
+    };
+  }
+
+  private mapToTransactionWithOrganization(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    prismaTransaction: any,
+  ): TransactionWithOrganization {
+    const base = this.mapToTransaction(prismaTransaction);
+    return {
+      ...base,
+      political_organization_name:
+        prismaTransaction.politicalOrganization?.name,
     };
   }
 }

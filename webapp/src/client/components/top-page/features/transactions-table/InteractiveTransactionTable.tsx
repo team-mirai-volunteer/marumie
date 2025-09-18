@@ -33,6 +33,7 @@ interface InteractiveTransactionTableProps {
   perPage: number;
   totalPages: number;
   selectedCategories?: string[];
+  availableOrganizations?: Array<{ id: string; name: string }>;
 }
 
 export default function InteractiveTransactionTable({
@@ -42,6 +43,7 @@ export default function InteractiveTransactionTable({
   perPage,
   totalPages,
   selectedCategories,
+  availableOrganizations = [],
 }: InteractiveTransactionTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -53,6 +55,12 @@ export default function InteractiveTransactionTable({
     | "income"
     | "expense"
     | null;
+
+  const organizations = searchParams.get("organizations")
+    ? decodeURIComponent(searchParams.get("organizations")!)
+        .split(",")
+        .filter(Boolean)
+    : undefined;
 
   const handlePageChange = (newPage: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -109,6 +117,20 @@ export default function InteractiveTransactionTable({
     router.push(`?${params.toString()}`);
   };
 
+  const handleApplyOrganizationFilter = (selectedIds: string[]) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (selectedIds.length > 0) {
+      params.set("organizations", selectedIds.join(","));
+    } else {
+      params.delete("organizations");
+    }
+
+    // Reset to page 1 when filtering changes
+    params.set("page", "1");
+    router.push(`?${params.toString()}`);
+  };
+
   const getCurrentSortOption = (): SortOption => {
     const sort = currentSort || "date";
     const order = currentOrder || "desc";
@@ -149,6 +171,9 @@ export default function InteractiveTransactionTable({
         currentOrder={currentOrder}
         onApplyFilter={handleApplyFilter}
         selectedCategories={selectedCategories}
+        onApplyOrganizationFilter={handleApplyOrganizationFilter}
+        selectedOrganizations={organizations}
+        availableOrganizations={availableOrganizations}
       />
 
       {/* ページネーション */}
