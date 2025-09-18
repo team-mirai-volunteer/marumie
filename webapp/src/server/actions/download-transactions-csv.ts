@@ -34,7 +34,7 @@ export async function downloadTransactionsCsv() {
           `"${transaction.account.replace(/"/g, '""')}"`, // CSVエスケープ
           `"${(transaction.friendly_category || "").replace(/"/g, '""')}"`,
           `"${transaction.label.replace(/"/g, '""')}"`,
-          `"${transaction.political_organization_name.replace(/"/g, '""')}"`,
+          `"${(transaction.political_organization_name || "").replace(/"/g, '""')}"`,
         ];
         return row.join(",");
       }),

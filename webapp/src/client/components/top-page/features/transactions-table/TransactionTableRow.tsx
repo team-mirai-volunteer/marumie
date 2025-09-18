@@ -3,10 +3,9 @@ import "client-only";
 
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 import type { DisplayTransaction } from "@/types/display-transaction";
-import type { TransactionWithOrganization } from "@/shared/models/transaction";
 
 interface TransactionTableRowProps {
-  transaction: DisplayTransaction & TransactionWithOrganization;
+  transaction: DisplayTransaction & { political_organization_name?: string };
 }
 
 export default function TransactionTableRow({

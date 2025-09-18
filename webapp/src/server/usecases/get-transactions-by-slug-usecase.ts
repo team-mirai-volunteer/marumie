@@ -24,7 +24,9 @@ export interface GetTransactionsBySlugParams {
 }
 
 export interface GetTransactionsBySlugResult {
-  transactions: DisplayTransaction[];
+  transactions: (DisplayTransaction & {
+    political_organization_name?: string;
+  })[];
   total: number;
   page: number;
   perPage: number;

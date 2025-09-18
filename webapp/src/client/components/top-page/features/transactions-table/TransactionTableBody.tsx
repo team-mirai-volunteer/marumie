@@ -2,7 +2,9 @@ import type { DisplayTransaction } from "@/types/display-transaction";
 import TransactionTableRow from "./TransactionTableRow";
 
 interface TransactionTableBodyProps {
-  transactions: DisplayTransaction[];
+  transactions: (DisplayTransaction & {
+    political_organization_name?: string;
+  })[];
 }
 
 export default function TransactionTableBody({

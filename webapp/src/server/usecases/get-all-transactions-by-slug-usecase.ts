@@ -20,7 +20,9 @@ export interface GetAllTransactionsBySlugParams {
 }
 
 export interface GetAllTransactionsBySlugResult {
-  transactions: DisplayTransaction[];
+  transactions: (DisplayTransaction & {
+    political_organization_name?: string;
+  })[];
   total: number;
   politicalOrganizations: PoliticalOrganization[];
   lastUpdatedAt: string | null;

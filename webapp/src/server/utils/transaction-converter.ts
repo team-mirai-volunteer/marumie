@@ -31,7 +31,7 @@ export function getCategoryMapping(account: string): CategoryMapping {
  */
 export function convertToDisplayTransaction(
   transaction: Transaction | TransactionWithOrganization,
-): DisplayTransaction {
+): DisplayTransaction & { political_organization_name?: string } {
   // offset系のトランザクションタイプが渡された場合は警告を出力
   if (
     transaction.transaction_type === "offset_income" ||
@@ -82,6 +82,9 @@ export function convertToDisplayTransaction(
     friendly_category: transaction.friendly_category,
     absAmount,
     amount,
+    political_organization_name:
+      (transaction as TransactionWithOrganization)
+        .political_organization_name || "",
   };
 }
 
@@ -90,6 +93,6 @@ export function convertToDisplayTransaction(
  */
 export function convertToDisplayTransactions(
   transactions: (Transaction | TransactionWithOrganization)[],
-): DisplayTransaction[] {
+): (DisplayTransaction & { political_organization_name?: string })[] {
   return transactions.map(convertToDisplayTransaction);
 }
