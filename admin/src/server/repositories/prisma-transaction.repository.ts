@@ -41,6 +41,9 @@ export class PrismaTransactionRepository implements ITransactionRepository {
         memo: input.memo || null,
         categoryKey: input.category_key,
       },
+      include: {
+        politicalOrganization: true,
+      },
     });
 
     return this.mapToTransaction(transaction);
@@ -49,6 +52,9 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   async findById(id: string): Promise<Transaction | null> {
     const transaction = await this.prisma.transaction.findUnique({
       where: { id: BigInt(id) },
+      include: {
+        politicalOrganization: true,
+      },
     });
 
     return transaction ? this.mapToTransaction(transaction) : null;
@@ -60,6 +66,9 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     const transactions = await this.prisma.transaction.findMany({
       where,
       orderBy: { transactionDate: "desc" },
+      include: {
+        politicalOrganization: true,
+      },
     });
 
     return transactions.map((t) => this.mapToTransaction(t));
@@ -212,6 +221,9 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       },
       orderBy: { createdAt: "desc" },
       take: inputs.length,
+      include: {
+        politicalOrganization: true,
+      },
     });
 
     return createdTransactions.map((t) => this.mapToTransaction(t));
@@ -272,6 +284,9 @@ export class PrismaTransactionRepository implements ITransactionRepository {
         transactionNo: {
           in: transactionNos,
         },
+      },
+      include: {
+        politicalOrganization: true,
       },
     });
 
@@ -335,13 +350,16 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       label: prismaTransaction.label,
       created_at: prismaTransaction.createdAt,
       updated_at: prismaTransaction.updatedAt,
+      political_organization_name:
+        prismaTransaction.politicalOrganization?.name || "Unknown Organization",
     };
 
     if (includeOrganization) {
       return {
         ...base,
         political_organization_name:
-          prismaTransaction.politicalOrganization?.name,
+          prismaTransaction.politicalOrganization?.name ||
+          "Unknown Organization",
       } as TransactionWithOrganization;
     }
 

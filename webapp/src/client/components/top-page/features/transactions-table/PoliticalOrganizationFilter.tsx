@@ -4,12 +4,6 @@ import "client-only";
 import { useState } from "react";
 import Image from "next/image";
 
-interface PoliticalOrgItem {
-  id: string;
-  label: string;
-  checked: boolean;
-}
-
 interface PoliticalOrganizationFilterProps {
   isOpen: boolean;
   onClose: () => void;

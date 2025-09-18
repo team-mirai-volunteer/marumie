@@ -7,9 +7,7 @@ import type {
   PaginationOptions,
 } from "../repositories/interfaces/transaction-repository.interface";
 
-export interface TransactionWithOrganization extends Transaction {
-  political_organization_name?: string;
-}
+export type TransactionWithOrganization = Transaction;
 
 export interface GetTransactionsParams {
   page?: number;
