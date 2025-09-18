@@ -77,7 +77,7 @@ export default function TransactionTableRow({
   return (
     <tr className="w-full border-b border-[#D5DBE1]">
       {/* SP Layout - Mobile Card Layout */}
-      <td colSpan={4} className="md:hidden p-0">
+      <td colSpan={5} className="md:hidden p-0">
         <div className="flex flex-col bg-white gap-1 px-0 py-2">
           {/* Date section */}
           <div className="flex">
@@ -98,6 +98,13 @@ export default function TransactionTableRow({
             >
               {isIncome ? "+" : "-"}
               {formatCurrency(Math.abs(transaction.amount))}
+            </span>
+          </div>
+
+          {/* Political Organization section */}
+          <div className="flex items-center">
+            <span className="text-xs text-[#4B5563] font-normal">
+              {transaction.politicalOrganizationName}
             </span>
           </div>
 
@@ -147,6 +154,13 @@ export default function TransactionTableRow({
         >
           {isIncome ? "+" : "-"}
           {formatCurrency(Math.abs(transaction.amount))}
+        </span>
+      </td>
+
+      {/* Political Organization column - 140px width */}
+      <td className="hidden md:table-cell pl-4 h-16 w-[140px]">
+        <span className="leading-5 font-medium text-sm text-gray-800">
+          {transaction.politicalOrganizationName}
         </span>
       </td>
 

@@ -13,6 +13,9 @@ interface TransactionTableProps {
   perPage?: number;
   onApplyFilter?: (selectedKeys: string[]) => void;
   selectedCategories?: string[];
+  onApplyPoliticalOrganizationFilter?: (selectedKeys: string[]) => void;
+  selectedPoliticalOrganizations?: string[];
+  availablePoliticalOrganizations?: { id: string; name: string }[];
 }
 
 export default function TransactionTable({
@@ -23,6 +26,9 @@ export default function TransactionTable({
   currentOrder,
   onApplyFilter,
   selectedCategories,
+  onApplyPoliticalOrganizationFilter,
+  selectedPoliticalOrganizations,
+  availablePoliticalOrganizations,
 }: TransactionTableProps) {
   return (
     <div className="space-y-6">
@@ -36,6 +42,11 @@ export default function TransactionTable({
             currentOrder={currentOrder}
             onApplyFilter={onApplyFilter}
             selectedCategories={selectedCategories}
+            onApplyPoliticalOrganizationFilter={
+              onApplyPoliticalOrganizationFilter
+            }
+            selectedPoliticalOrganizations={selectedPoliticalOrganizations}
+            availablePoliticalOrganizations={availablePoliticalOrganizations}
           />
           <TransactionTableBody transactions={transactions} />
         </table>

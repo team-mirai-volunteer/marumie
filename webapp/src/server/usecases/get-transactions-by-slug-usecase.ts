@@ -22,6 +22,7 @@ export interface GetTransactionsBySlugParams {
   sortBy?: "date" | "amount";
   order?: "asc" | "desc";
   categories?: string[];
+  politicalOrganizations?: string[];
 }
 
 export interface GetTransactionsBySlugResult {
@@ -56,7 +57,16 @@ export class GetTransactionsBySlugUsecase {
       const page = Math.max(params.page || 1, 1);
       const perPage = Math.min(Math.max(params.perPage || 50, 1), 100);
 
-      const organizationIds = politicalOrganizations.map((org) => org.id);
+      let organizationIds = politicalOrganizations.map((org) => org.id);
+
+      // If politicalOrganizations filter is provided, only use those specific IDs
+      if (
+        params.politicalOrganizations &&
+        params.politicalOrganizations.length > 0
+      ) {
+        organizationIds = params.politicalOrganizations;
+      }
+
       const filters: TransactionFilters = {
         political_organization_ids: organizationIds,
       };

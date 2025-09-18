@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import CategoryFilter from "./CategoryFilter";
+import PoliticalOrganizationFilter from "./PoliticalOrganizationFilter";
 
 interface TransactionTableHeaderProps {
   allowControl?: boolean;
@@ -9,6 +10,9 @@ interface TransactionTableHeaderProps {
   currentOrder?: "asc" | "desc" | null;
   onApplyFilter?: (selectedKeys: string[]) => void;
   selectedCategories?: string[];
+  onApplyPoliticalOrganizationFilter?: (selectedKeys: string[]) => void;
+  selectedPoliticalOrganizations?: string[];
+  availablePoliticalOrganizations?: { id: string; name: string }[];
 }
 
 export default function TransactionTableHeader({
@@ -18,8 +22,13 @@ export default function TransactionTableHeader({
   currentOrder,
   onApplyFilter,
   selectedCategories,
+  onApplyPoliticalOrganizationFilter,
+  selectedPoliticalOrganizations,
+  availablePoliticalOrganizations,
 }: TransactionTableHeaderProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isPoliticalOrgFilterOpen, setIsPoliticalOrgFilterOpen] =
+    useState(false);
   return (
     <thead className="hidden md:table-header-group bg-white">
       <tr className="h-12 border-b border-[#D5DBE1]">
@@ -105,6 +114,53 @@ export default function TransactionTableHeader({
                 金額
               </span>
             </div>
+          )}
+        </th>
+
+        {/* 政治組織 - 140px width */}
+        <th
+          className="text-left pl-4 h-12 font-normal w-[140px] relative overflow-visible"
+          scope="col"
+        >
+          {allowControl &&
+          onApplyPoliticalOrganizationFilter &&
+          availablePoliticalOrganizations ? (
+            <button
+              type="button"
+              onClick={() =>
+                setIsPoliticalOrgFilterOpen(!isPoliticalOrgFilterOpen)
+              }
+              className="flex items-center gap-1 h-12 hover:opacity-70 transition-opacity cursor-pointer"
+              aria-label="政治組織フィルター"
+            >
+              <span className="text-gray-800 text-sm font-bold leading-[1.5]">
+                政治組織
+              </span>
+              <div className="w-3 h-2 flex items-center justify-center">
+                <Image
+                  src="/icons/icon-filter.svg"
+                  alt="Filter political organization"
+                  width={12}
+                  height={8}
+                  className="w-3 h-2"
+                />
+              </div>
+            </button>
+          ) : (
+            <div className="flex items-center gap-1 h-12">
+              <span className="text-gray-800 text-sm font-bold leading-[1.5]">
+                政治組織
+              </span>
+            </div>
+          )}
+          {availablePoliticalOrganizations && (
+            <PoliticalOrganizationFilter
+              isOpen={isPoliticalOrgFilterOpen}
+              onClose={() => setIsPoliticalOrgFilterOpen(false)}
+              onApplyFilter={onApplyPoliticalOrganizationFilter || (() => {})}
+              selectedPoliticalOrganizations={selectedPoliticalOrganizations}
+              availablePoliticalOrganizations={availablePoliticalOrganizations}
+            />
           )}
         </th>
 

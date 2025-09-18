@@ -31,6 +31,7 @@ export interface Transaction {
   label: string;
   created_at: Date;
   updated_at: Date;
+  political_organization_name: string;
 }
 
 export interface CreateTransactionInput {

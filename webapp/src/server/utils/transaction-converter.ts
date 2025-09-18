@@ -81,6 +81,8 @@ export function convertToDisplayTransaction(
     friendly_category: transaction.friendly_category,
     absAmount,
     amount,
+    politicalOrganizationId: transaction.political_organization_id,
+    politicalOrganizationName: transaction.political_organization_name,
   };
 }
 

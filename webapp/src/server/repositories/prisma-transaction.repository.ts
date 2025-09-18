@@ -2,7 +2,12 @@ import {
   Prisma,
   type PrismaClient,
   type Transaction as PrismaTransaction,
+  type PoliticalOrganization as PrismaPoliticalOrganization,
 } from "@prisma/client";
+
+type TransactionWithPoliticalOrganization = PrismaTransaction & {
+  politicalOrganization: PrismaPoliticalOrganization;
+};
 import type {
   Transaction,
   TransactionFilters,
@@ -26,6 +31,9 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   async findById(id: string): Promise<Transaction | null> {
     const transaction = await this.prisma.transaction.findUnique({
       where: { id: BigInt(id) },
+      include: {
+        politicalOrganization: true,
+      },
     });
 
     return transaction ? this.mapToTransaction(transaction) : null;
@@ -37,6 +45,9 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     const transactions = await this.prisma.transaction.findMany({
       where,
       orderBy: { transactionDate: "desc" },
+      include: {
+        politicalOrganization: true,
+      },
     });
 
     return transactions.map(this.mapToTransaction);
@@ -64,6 +75,9 @@ export class PrismaTransactionRepository implements ITransactionRepository {
         orderBy,
         skip,
         take: perPage,
+        include: {
+          politicalOrganization: true,
+        },
       }),
       this.prisma.transaction.count({ where }),
     ]);
@@ -509,7 +523,9 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     return { transactionDate: sortOrder };
   }
 
-  private mapToTransaction(prismaTransaction: PrismaTransaction): Transaction {
+  private mapToTransaction(
+    prismaTransaction: TransactionWithPoliticalOrganization,
+  ): Transaction {
     return {
       id: prismaTransaction.id.toString(),
       political_organization_id:
@@ -537,6 +553,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       label: prismaTransaction.label,
       created_at: prismaTransaction.createdAt,
       updated_at: prismaTransaction.updatedAt,
+      political_organization_name: prismaTransaction.politicalOrganization.name,
     };
   }
 }

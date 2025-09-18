@@ -33,6 +33,8 @@ interface InteractiveTransactionTableProps {
   perPage: number;
   totalPages: number;
   selectedCategories?: string[];
+  availablePoliticalOrganizations?: { id: string; name: string }[];
+  selectedPoliticalOrganizations?: string[];
 }
 
 export default function InteractiveTransactionTable({
@@ -42,6 +44,8 @@ export default function InteractiveTransactionTable({
   perPage,
   totalPages,
   selectedCategories,
+  availablePoliticalOrganizations,
+  selectedPoliticalOrganizations,
 }: InteractiveTransactionTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -109,6 +113,20 @@ export default function InteractiveTransactionTable({
     router.push(`?${params.toString()}`);
   };
 
+  const handleApplyPoliticalOrganizationFilter = (selectedKeys: string[]) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (selectedKeys.length > 0) {
+      params.set("politicalOrganizations", selectedKeys.join(","));
+    } else {
+      params.delete("politicalOrganizations");
+    }
+
+    // Reset to page 1 when filtering changes
+    params.set("page", "1");
+    router.push(`?${params.toString()}`);
+  };
+
   const getCurrentSortOption = (): SortOption => {
     const sort = currentSort || "date";
     const order = currentOrder || "desc";
@@ -149,6 +167,11 @@ export default function InteractiveTransactionTable({
         currentOrder={currentOrder}
         onApplyFilter={handleApplyFilter}
         selectedCategories={selectedCategories}
+        onApplyPoliticalOrganizationFilter={
+          handleApplyPoliticalOrganizationFilter
+        }
+        selectedPoliticalOrganizations={selectedPoliticalOrganizations}
+        availablePoliticalOrganizations={availablePoliticalOrganizations}
       />
 
       {/* ページネーション */}
