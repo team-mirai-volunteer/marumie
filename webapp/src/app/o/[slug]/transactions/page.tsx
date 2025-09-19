@@ -1,7 +1,7 @@
 import "server-only";
 import type { Metadata } from "next";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import AboutSection from "@/client/components/common/AboutSection";
 import ExplanationSection from "@/client/components/common/ExplanationSection";
 import TransparencySection from "@/client/components/common/TransparencySection";
@@ -10,14 +10,24 @@ import MainColumn from "@/client/components/layout/MainColumn";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 import InteractiveTransactionTable from "@/client/components/top-page/features/transactions-table/InteractiveTransactionTable";
 import { loadTransactionsPageData } from "@/server/loaders/load-transactions-page-data";
+import { loadValidOrgSlug } from "@/server/loaders/load-valid-org-slug";
 import { formatUpdatedAt } from "@/server/utils/format-date";
 
 interface TransactionsPageProps {
+  params: Promise<{
+    slug: string;
+  }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export async function generateMetadata(): Promise<Metadata> {
-  const slugs = ["team-mirai", "digimin"];
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const validSlug = await loadValidOrgSlug(slug);
+  const slugs = [validSlug];
 
   // financialYearのデフォルト値を設定
   const currentFinancialYear = 2025;
@@ -43,9 +53,18 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function TransactionsPage({
+  params,
   searchParams,
 }: TransactionsPageProps) {
-  const slugs = ["team-mirai", "digimin"];
+  const { slug } = await params;
+
+  // slugの妥当性をチェックし、必要に応じてリダイレクト
+  const validSlug = await loadValidOrgSlug(slug);
+  if (validSlug !== slug) {
+    redirect(`/o/${validSlug}`);
+  }
+
+  const slugs = [validSlug];
   const searchParamsResolved = await searchParams;
 
   const page = parseInt(
@@ -109,7 +128,7 @@ export default async function TransactionsPage({
             }
             title="すべての出入金"
             updatedAt={updatedAt}
-            subtitle="どこから政治資金を得て、何に使っているのか"
+            subtitle="これまでにデータ連携された出入金の明細"
           />
 
           <InteractiveTransactionTable

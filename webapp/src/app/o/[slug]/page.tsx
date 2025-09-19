@@ -1,4 +1,5 @@
 import "server-only";
+import { redirect } from "next/navigation";
 import AboutSection from "@/client/components/common/AboutSection";
 import ExplanationSection from "@/client/components/common/ExplanationSection";
 import TransparencySection from "@/client/components/common/TransparencySection";
@@ -10,20 +11,38 @@ import MonthlyTrendsSection from "@/client/components/top-page/MonthlyTrendsSect
 import ProgressSection from "@/client/components/top-page/ProgressSection";
 import TransactionsSection from "@/client/components/top-page/TransactionsSection";
 import { loadTopPageData } from "@/server/loaders/load-top-page-data";
+import { loadValidOrgSlug } from "@/server/loaders/load-valid-org-slug";
 import { formatUpdatedAt } from "@/server/utils/format-date";
 
 export const revalidate = 300; // 5 minutes
 
-export default async function Home() {
-  const slugs = ["team-mirai", "digimin"];
+interface OrgPageProps {
+  params: Promise<{
+    slug: string;
+  }>;
+}
+
+export default async function OrgPage({ params }: OrgPageProps) {
+  const { slug } = await params;
+
+  // slugの妥当性をチェックし、必要に応じてリダイレクト
+  const validSlug = await loadValidOrgSlug(slug);
+  if (validSlug !== slug) {
+    redirect(`/o/${validSlug}`);
+  }
+
+  const slugs = [validSlug];
 
   // 統合アクションで全データを取得
   const data = await loadTopPageData({
     slugs,
     page: 1,
-    perPage: 6, // 表示用に7件のみ取得
+    perPage: 6, // 表示用に6件のみ取得
     financialYear: 2025, // デフォルト値
-  }).catch(() => null);
+  }).catch((error) => {
+    console.error("loadTopPageData error:", error);
+    return null;
+  });
 
   const updatedAt = formatUpdatedAt(
     data?.transactionData?.lastUpdatedAt ?? null,
@@ -49,6 +68,7 @@ export default async function Home() {
       <TransactionsSection
         transactionData={data?.transactionData ?? null}
         updatedAt={updatedAt}
+        slug={validSlug}
       />
       <ProgressSection />
       <ExplanationSection />

@@ -1,5 +1,5 @@
 import { TransactionValidator } from "@/server/lib/transaction-validator";
-import { MfCsvRecord } from "@/server/lib/mf-csv-loader";
+import { PreviewTransaction } from "@/server/lib/mf-record-converter";
 
 describe("TransactionValidator", () => {
   let validator: TransactionValidator;
@@ -8,261 +8,187 @@ describe("TransactionValidator", () => {
     validator = new TransactionValidator();
   });
 
-  const createMockRecord = (
-    overrides: Partial<MfCsvRecord> = {},
-  ): MfCsvRecord => ({
+  const createMockTransaction = (
+    overrides: Partial<PreviewTransaction> = {},
+  ): PreviewTransaction => ({
+    political_organization_id: "org1",
     transaction_no: "1",
-    transaction_date: "2025/6/6",
+    transaction_date: new Date("2025-06-06"),
+    transaction_type: "expense",
     debit_account: "人件費",
-    debit_sub_account: "",
-    debit_department: "",
-    debit_partner: "",
-    debit_tax_category: "",
-    debit_invoice: "",
-    debit_amount: "1000",
+    debit_sub_account: undefined,
+    debit_amount: 1000,
     credit_account: "普通預金",
-    credit_sub_account: "",
-    credit_department: "",
-    credit_partner: "",
-    credit_tax_category: "",
-    credit_invoice: "",
-    credit_amount: "1000",
-    description: "",
+    credit_sub_account: undefined,
+    credit_amount: 1000,
+    description: undefined,
+    label: undefined,
     friendly_category: "テストカテゴリ",
-    memo: "",
+    category_key: "personnel",
+    status: "valid",
+    errors: [],
     ...overrides,
   });
 
-  describe("validateRecords", () => {
-    it("should return valid result for valid account labels", () => {
-      const records = [
-        createMockRecord({
+  describe("validatePreviewTransactions", () => {
+    it("should not modify valid transactions", () => {
+      const transactions = [
+        createMockTransaction({
           debit_account: "人件費",
           credit_account: "普通預金",
         }),
-        createMockRecord({
+        createMockTransaction({
           debit_account: "普通預金",
           credit_account: "個人からの寄附",
-        }),
-        createMockRecord({
-          debit_account: "事務所費",
-          credit_account: "普通預金",
+          transaction_type: "income",
         }),
       ];
 
-      const result = validator.validateRecords(records);
+      const result = validator.validatePreviewTransactions(transactions);
 
-      expect(result.isValid).toBe(true);
-      expect(result.errors).toHaveLength(0);
-      expect(result.invalidAccountLabels).toHaveLength(0);
+      expect(result[0].status).toBe("valid");
+      expect(result[0].errors).toHaveLength(0);
+      expect(result[1].status).toBe("valid");
+      expect(result[1].errors).toHaveLength(0);
     });
 
-    it("should allow 普通預金 as both debit and credit account", () => {
-      const records = [
-        createMockRecord({
-          debit_account: "普通預金",
-          credit_account: "人件費",
-        }),
-        createMockRecord({
-          debit_account: "光熱水費",
-          credit_account: "普通預金",
-        }),
-        createMockRecord({
-          debit_account: "普通預金",
-          credit_account: "普通預金",
+    it("should mark transactions as skip when duplicate", () => {
+      const transactions = [
+        createMockTransaction({
+          transaction_no: "DUP001",
         }),
       ];
 
-      const result = validator.validateRecords(records);
+      const result = validator.validatePreviewTransactions(transactions, ["DUP001"]);
 
-      expect(result.isValid).toBe(true);
-      expect(result.errors).toHaveLength(0);
-      expect(result.invalidAccountLabels).toHaveLength(0);
+      expect(result[0].status).toBe("skip");
+      expect(result[0].errors).toContain("重複データのためスキップされます");
     });
 
-    it("should return invalid result for invalid debit account", () => {
-      const records = [
-        createMockRecord({
-          transaction_no: "TXN001",
+    it("should mark transactions as invalid for invalid debit account", () => {
+      const transactions = [
+        createMockTransaction({
           debit_account: "無効な借方科目",
-          credit_account: "普通預金",
         }),
       ];
 
-      const result = validator.validateRecords(records);
+      const result = validator.validatePreviewTransactions(transactions);
 
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toHaveLength(1);
-      expect(result.errors[0].record.transaction_no).toBe("TXN001");
-      expect(result.errors[0].errors).toContain('無効な借方科目: "無効な借方科目"');
-      expect(result.invalidAccountLabels).toContain("無効な借方科目");
+      expect(result[0].status).toBe("invalid");
+      expect(result[0].errors).toContain('無効な借方科目: "無効な借方科目"');
     });
 
-    it("should return invalid result for invalid credit account", () => {
-      const records = [
-        createMockRecord({
-          transaction_no: "TXN002",
-          debit_account: "人件費",
+    it("should mark transactions as invalid for invalid credit account", () => {
+      const transactions = [
+        createMockTransaction({
           credit_account: "無効な貸方科目",
         }),
       ];
 
-      const result = validator.validateRecords(records);
+      const result = validator.validatePreviewTransactions(transactions);
 
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toHaveLength(1);
-      expect(result.errors[0].record.transaction_no).toBe("TXN002");
-      expect(result.errors[0].errors).toContain('無効な貸方科目: "無効な貸方科目"');
-      expect(result.invalidAccountLabels).toContain("無効な貸方科目");
+      expect(result[0].status).toBe("invalid");
+      expect(result[0].errors).toContain('無効な貸方科目: "無効な貸方科目"');
     });
 
-    it("should return invalid result for both invalid accounts", () => {
-      const records = [
-        createMockRecord({
-          transaction_no: "TXN003",
+    it("should mark transactions as invalid for missing friendly_category", () => {
+      const transactions = [
+        createMockTransaction({
+          friendly_category: "",
+        }),
+      ];
+
+      const result = validator.validatePreviewTransactions(transactions);
+
+      expect(result[0].status).toBe("invalid");
+      expect(result[0].errors).toContain("独自のカテゴリが設定されていません");
+    });
+
+    it("should allow empty friendly_category for offset transactions", () => {
+      const transactions = [
+        createMockTransaction({
+          debit_account: "相殺項目（費用）",
+          friendly_category: "",
+          transaction_type: "offset_expense",
+        }),
+        createMockTransaction({
+          credit_account: "相殺項目（収入）",
+          friendly_category: "",
+          transaction_type: "offset_income",
+        }),
+      ];
+
+      const result = validator.validatePreviewTransactions(transactions);
+
+      expect(result[0].status).toBe("valid");
+      expect(result[0].errors).toHaveLength(0);
+      expect(transactions[1].status).toBe("valid");
+      expect(transactions[1].errors).toHaveLength(0);
+    });
+
+    it("should preserve existing errors and add validation errors", () => {
+      const transactions = [
+        createMockTransaction({
+          debit_account: "無効な借方科目",
+          status: "invalid",
+          errors: ["既存のエラー"],
+        }),
+      ];
+
+      const result = validator.validatePreviewTransactions(transactions);
+
+      expect(result[0].status).toBe("invalid");
+      expect(result[0].errors).toContain("既存のエラー");
+      expect(result[0].errors).toContain('無効な借方科目: "無効な借方科目"');
+    });
+
+    it("should handle multiple validation errors", () => {
+      const transactions = [
+        createMockTransaction({
           debit_account: "無効な借方科目",
           credit_account: "無効な貸方科目",
+          friendly_category: "",
         }),
       ];
 
-      const result = validator.validateRecords(records);
+      const result = validator.validatePreviewTransactions(transactions);
 
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toHaveLength(1);
-      expect(result.errors[0].record.transaction_no).toBe("TXN003");
-      expect(result.errors[0].errors).toHaveLength(2);
-      expect(result.errors[0].errors).toContain('無効な借方科目: "無効な借方科目"');
-      expect(result.errors[0].errors).toContain('無効な貸方科目: "無効な貸方科目"');
-      expect(result.invalidAccountLabels).toContain("無効な借方科目");
-      expect(result.invalidAccountLabels).toContain("無効な貸方科目");
+      expect(result[0].status).toBe("invalid");
+      expect(result[0].errors).toContain('無効な借方科目: "無効な借方科目"');
+      expect(result[0].errors).toContain('無効な貸方科目: "無効な貸方科目"');
+      expect(result[0].errors).toContain("独自のカテゴリが設定されていません");
     });
 
-    it("should handle multiple records with mixed valid and invalid accounts", () => {
-      const records = [
-        createMockRecord({
-          transaction_no: "TXN004",
-          debit_account: "人件費",
-          credit_account: "普通預金",
-        }),
-        createMockRecord({
-          transaction_no: "TXN005",
-          debit_account: "無効な科目1",
-          credit_account: "普通預金",
-        }),
-        createMockRecord({
-          transaction_no: "TXN006",
-          debit_account: "光熱水費",
-          credit_account: "無効な科目2",
+    it("should add validation errors even if already invalid from conversion", () => {
+      const transactions = [
+        createMockTransaction({
+          debit_account: "無効な借方科目",
+          status: "invalid",
+          errors: ["変換エラー"],
         }),
       ];
 
-      const result = validator.validateRecords(records);
+      const result = validator.validatePreviewTransactions(transactions);
 
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toHaveLength(2);
-      
-      const error1 = result.errors.find(e => e.record.transaction_no === "TXN005");
-      const error2 = result.errors.find(e => e.record.transaction_no === "TXN006");
-      
-      expect(error1?.errors).toContain('無効な借方科目: "無効な科目1"');
-      expect(error2?.errors).toContain('無効な貸方科目: "無効な科目2"');
-      
-      expect(result.invalidAccountLabels).toContain("無効な科目1");
-      expect(result.invalidAccountLabels).toContain("無効な科目2");
-      expect(result.invalidAccountLabels).toHaveLength(2);
+      expect(result[0].status).toBe("invalid");
+      expect(result[0].errors).toContain("変換エラー");
+      expect(result[0].errors).toContain('無効な借方科目: "無効な借方科目"');
     });
 
-    it("should return valid result for empty records array", () => {
-      const result = validator.validateRecords([]);
-
-      expect(result.isValid).toBe(true);
-      expect(result.errors).toHaveLength(0);
-      expect(result.invalidAccountLabels).toHaveLength(0);
-    });
-
-    it("should validate all account labels from ACCOUNT_CATEGORY_MAPPING", () => {
-      // Test all income accounts
-      const incomeRecords = [
-        createMockRecord({
-          debit_account: "普通預金",
-          credit_account: "個人の負担する党費又は会費",
-        }),
-        createMockRecord({
-          debit_account: "普通預金",
-          credit_account: "個人からの寄附",
-        }),
-        createMockRecord({
-          debit_account: "普通預金",
-          credit_account: "法人その他の団体からの寄附",
-        }),
-        createMockRecord({
-          debit_account: "普通預金",
-          credit_account: "政治団体からの寄附",
-        }),
-        createMockRecord({
-          debit_account: "普通預金",
-          credit_account: "機関紙誌の発行その他の事業による収入",
+    it("should prioritize duplicate status over validation errors", () => {
+      const transactions = [
+        createMockTransaction({
+          transaction_no: "DUP001",
+          debit_account: "無効な借方科目",
         }),
       ];
 
-      // Test all expense accounts
-      const expenseRecords = [
-        createMockRecord({
-          debit_account: "人件費",
-          credit_account: "普通預金",
-        }),
-        createMockRecord({
-          debit_account: "光熱水費",
-          credit_account: "普通預金",
-        }),
-        createMockRecord({
-          debit_account: "組織活動費",
-          credit_account: "普通預金",
-        }),
-        createMockRecord({
-          debit_account: "選挙関係費",
-          credit_account: "普通預金",
-        }),
-        createMockRecord({
-          debit_account: "調査研究費",
-          credit_account: "普通預金",
-        }),
-      ];
+      const result = validator.validatePreviewTransactions(transactions, ["DUP001"]);
 
-      const allRecords = [...incomeRecords, ...expenseRecords];
-      const result = validator.validateRecords(allRecords);
-
-      expect(result.isValid).toBe(true);
-      expect(result.errors).toHaveLength(0);
-      expect(result.invalidAccountLabels).toHaveLength(0);
-    });
-
-    it("should collect all unique invalid account labels", () => {
-      const records = [
-        createMockRecord({
-          transaction_no: "TXN007",
-          debit_account: "重複する無効科目",
-          credit_account: "普通預金",
-        }),
-        createMockRecord({
-          transaction_no: "TXN008",
-          debit_account: "重複する無効科目", // Same invalid account as above
-          credit_account: "別の無効科目",
-        }),
-        createMockRecord({
-          transaction_no: "TXN009",
-          debit_account: "人件費",
-          credit_account: "別の無効科目", // Same invalid account as above
-        }),
-      ];
-
-      const result = validator.validateRecords(records);
-
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toHaveLength(3);
-      expect(result.invalidAccountLabels).toHaveLength(2); // Only unique invalid labels
-      expect(result.invalidAccountLabels).toContain("重複する無効科目");
-      expect(result.invalidAccountLabels).toContain("別の無効科目");
+      expect(result[0].status).toBe("skip");
+      expect(result[0].errors).toContain("重複データのためスキップされます");
+      // Should not contain validation errors since duplicate takes priority
+      expect(result[0].errors).not.toContain('無効な借方科目: "無効な借方科目"');
     });
   });
 });

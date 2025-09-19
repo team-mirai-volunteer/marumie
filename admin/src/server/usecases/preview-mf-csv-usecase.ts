@@ -82,14 +82,8 @@ export class PreviewMfCsvUsecase {
           transactionNos,
         );
 
-      // Validate records including duplicate check
-      const validationResult = this.validator.validateRecords(
-        csvRecords,
-        duplicateTransactionNos,
-      );
-
       // Convert records to preview transactions
-      const previewTransactions: PreviewTransaction[] = csvRecords.map(
+      const convertedTransactions: PreviewTransaction[] = csvRecords.map(
         (record) =>
           this.recordConverter.convertRow(
             record,
@@ -97,23 +91,11 @@ export class PreviewMfCsvUsecase {
           ),
       );
 
-      // Apply validation results to transactions
-      previewTransactions.forEach((transaction, index) => {
-        const csvRecord = csvRecords[index];
-        const validationError = validationResult.errors.find(
-          (e) => e.record === csvRecord,
-        );
-
-        if (validationError) {
-          if (validationError.isDuplicate) {
-            transaction.status = "skip";
-            transaction.skipReason = "重複データのためスキップされます";
-          } else {
-            transaction.status = "invalid";
-          }
-          transaction.errors = validationError.errors;
-        }
-      });
+      // Validate converted transactions including duplicate check
+      const previewTransactions = this.validator.validatePreviewTransactions(
+        convertedTransactions,
+        duplicateTransactionNos,
+      );
 
       const summary = {
         totalCount: previewTransactions.length,

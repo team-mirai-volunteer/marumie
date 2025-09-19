@@ -1,29 +1,59 @@
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
-import type { MfCsvRecord } from "./mf-csv-loader";
+import type { PreviewTransaction } from "./mf-record-converter";
 
 const REGULAR_DEPOSIT_ACCOUNT = "普通預金";
 const OFFSET_EXPENSE_ACCOUNT = "相殺項目（費用）";
 const OFFSET_INCOME_ACCOUNT = "相殺項目（収入）";
 
-export interface ValidationError {
-  record: MfCsvRecord;
-  errors: string[];
-  isDuplicate?: boolean;
-}
-
-export interface ValidationResult {
-  isValid: boolean;
-  errors: ValidationError[];
-  invalidAccountLabels: string[];
-  duplicateCount: number;
-}
-
 export class TransactionValidator {
-  public validateRecords(
-    records: MfCsvRecord[],
+  public validatePreviewTransactions(
+    transactions: PreviewTransaction[],
     existingTransactionNos: string[] = [],
-  ): ValidationResult {
-    const invalidAccountLabels = new Set<string>();
+  ): PreviewTransaction[] {
+    const existingTransactionNosSet = new Set(existingTransactionNos);
+
+    return transactions.map((transaction) =>
+      this.validateSingleTransaction(transaction, existingTransactionNosSet),
+    );
+  }
+
+  private validateSingleTransaction(
+    transaction: PreviewTransaction,
+    existingTransactionNos: Set<string>,
+  ): PreviewTransaction {
+    // Check for duplicates first
+    if (existingTransactionNos.has(transaction.transaction_no)) {
+      return {
+        ...transaction,
+        status: "skip",
+        errors: [...transaction.errors, "重複データのためスキップされます"],
+      };
+    }
+
+    const errors: string[] = [];
+
+    // Validate accounts
+    const accountValidationErrors = this.validateAccounts(transaction);
+    errors.push(...accountValidationErrors);
+
+    // Validate friendly_category
+    const categoryValidationError = this.validateFriendlyCategory(transaction);
+    if (categoryValidationError) {
+      errors.push(categoryValidationError);
+    }
+
+    // Determine final status based on validation results
+    const status = errors.length > 0 ? "invalid" : transaction.status;
+
+    return {
+      ...transaction,
+      status,
+      errors: [...transaction.errors, ...errors],
+    };
+  }
+
+  private validateAccounts(transaction: PreviewTransaction): string[] {
+    const errors: string[] = [];
     const validAccountLabels = new Set([
       ...Object.keys(ACCOUNT_CATEGORY_MAPPING),
       REGULAR_DEPOSIT_ACCOUNT,
@@ -31,64 +61,32 @@ export class TransactionValidator {
       OFFSET_INCOME_ACCOUNT,
     ]);
 
-    const existingTransactionNosSet = new Set(existingTransactionNos);
+    if (!validAccountLabels.has(transaction.debit_account)) {
+      errors.push(`無効な借方科目: "${transaction.debit_account}"`);
+    }
 
-    const errors = records
-      .map((record) =>
-        this.validateRecord(
-          record,
-          validAccountLabels,
-          invalidAccountLabels,
-          existingTransactionNosSet,
-        ),
-      )
-      .filter((error): error is ValidationError => error !== null);
+    if (!validAccountLabels.has(transaction.credit_account)) {
+      errors.push(`無効な貸方科目: "${transaction.credit_account}"`);
+    }
 
-    const duplicateCount = errors.filter((error) => error.isDuplicate).length;
-
-    return {
-      isValid: errors.length === 0,
-      errors,
-      invalidAccountLabels: Array.from(invalidAccountLabels),
-      duplicateCount,
-    };
+    return errors;
   }
 
-  private validateRecord(
-    record: MfCsvRecord,
-    validAccountLabels: Set<string>,
-    invalidAccountLabels: Set<string>,
-    existingTransactionNos: Set<string>,
-  ): ValidationError | null {
-    const recordErrors: string[] = [];
-    const isDuplicate = existingTransactionNos.has(record.transaction_no);
-
-    if (!validAccountLabels.has(record.debit_account)) {
-      recordErrors.push(`無効な借方科目: "${record.debit_account}"`);
-      invalidAccountLabels.add(record.debit_account);
-    }
-
-    if (!validAccountLabels.has(record.credit_account)) {
-      recordErrors.push(`無効な貸方科目: "${record.credit_account}"`);
-      invalidAccountLabels.add(record.credit_account);
-    }
-
+  private validateFriendlyCategory(
+    transaction: PreviewTransaction,
+  ): string | null {
     const isOffsetTransaction =
-      record.debit_account === OFFSET_EXPENSE_ACCOUNT ||
-      record.credit_account === OFFSET_INCOME_ACCOUNT;
+      transaction.debit_account === OFFSET_EXPENSE_ACCOUNT ||
+      transaction.credit_account === OFFSET_INCOME_ACCOUNT;
+
     if (
       !isOffsetTransaction &&
-      (!record.friendly_category || record.friendly_category.trim() === "")
+      (!transaction.friendly_category ||
+        transaction.friendly_category.trim() === "")
     ) {
-      recordErrors.push("独自のカテゴリが設定されていません");
+      return "独自のカテゴリが設定されていません";
     }
 
-    if (isDuplicate) {
-      recordErrors.push("重複データのためスキップされます");
-    }
-
-    return recordErrors.length > 0 || isDuplicate
-      ? { record, errors: recordErrors, isDuplicate }
-      : null;
+    return null;
   }
 }
