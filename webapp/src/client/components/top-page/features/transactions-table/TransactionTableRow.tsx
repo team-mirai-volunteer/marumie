@@ -98,6 +98,7 @@ export default function TransactionTableRow({
             >
               {isIncome ? "+" : "-"}
               {formatCurrency(Math.abs(transaction.amount))}
+              <span className="text-[10px] text-gray-600 font-normal"> 円</span>
             </span>
           </div>
 
@@ -147,6 +148,7 @@ export default function TransactionTableRow({
         >
           {isIncome ? "+" : "-"}
           {formatCurrency(Math.abs(transaction.amount))}
+          <span className="text-[12px] text-gray-600 font-normal"> 円</span>
         </span>
       </td>
 
