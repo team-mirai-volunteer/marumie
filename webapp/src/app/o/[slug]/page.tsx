@@ -68,6 +68,7 @@ export default async function OrgPage({ params }: OrgPageProps) {
       <TransactionsSection
         transactionData={data?.transactionData ?? null}
         updatedAt={updatedAt}
+        slug={validSlug}
       />
       <ProgressSection />
       <ExplanationSection />
