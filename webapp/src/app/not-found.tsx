@@ -1,7 +1,8 @@
 import "server-only";
 import { redirect } from "next/navigation";
+import { loadValidOrgSlugs } from "@/server/loaders/load-valid-org-slugs";
 
-export default function NotFound() {
-  // 遷移先で適切なslugを取得できるのでここではdummy_valueで固定
-  redirect("/o/dummy_value");
+export default async function NotFound() {
+  const { default: defaultSlug } = await loadValidOrgSlugs();
+  redirect(`/o/${defaultSlug}`);
 }
