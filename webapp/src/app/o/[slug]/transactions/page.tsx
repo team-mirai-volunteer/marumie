@@ -9,7 +9,6 @@ import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumn from "@/client/components/layout/MainColumn";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 import InteractiveTransactionTable from "@/client/components/top-page/features/transactions-table/InteractiveTransactionTable";
-import CsvDownloadButton from "@/client/components/transactions/CsvDownloadButton";
 import { loadTransactionsPageData } from "@/server/loaders/load-transactions-page-data";
 import { loadValidOrgSlug } from "@/server/loaders/load-valid-org-slug";
 import { formatUpdatedAt } from "@/server/utils/format-date";
@@ -74,7 +73,7 @@ export default async function TransactionsPage({
       : searchParamsResolved.page || "1",
     10,
   );
-  const perPage = 20; // Fixed value
+  const perPage = 50; // Fixed value
 
   const filterType = Array.isArray(searchParamsResolved.filterType)
     ? searchParamsResolved.filterType[0]
@@ -129,7 +128,7 @@ export default async function TransactionsPage({
             }
             title="すべての出入金"
             updatedAt={updatedAt}
-            subtitle="どこから政治資金を得て、何に使っているのか"
+            subtitle="これまでにデータ連携された出入金の明細"
           />
 
           <InteractiveTransactionTable
@@ -140,10 +139,6 @@ export default async function TransactionsPage({
             totalPages={data.totalPages}
             selectedCategories={categories}
           />
-
-          <div className="mt-6 flex justify-center">
-            <CsvDownloadButton />
-          </div>
         </MainColumnCard>
 
         <TransparencySection title="党内の機密データの流出事故ではありません☺️" />

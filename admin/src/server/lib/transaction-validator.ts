@@ -1,55 +1,92 @@
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
-import type { MfCsvRecord } from "./mf-csv-loader";
+import type { PreviewTransaction } from "./mf-record-converter";
 
-export interface ValidationError {
-  record: MfCsvRecord;
-  errors: string[];
-}
-
-export interface ValidationResult {
-  isValid: boolean;
-  errors: ValidationError[];
-  invalidAccountLabels: string[];
-}
+const REGULAR_DEPOSIT_ACCOUNT = "普通預金";
+const OFFSET_EXPENSE_ACCOUNT = "相殺項目（費用）";
+const OFFSET_INCOME_ACCOUNT = "相殺項目（収入）";
 
 export class TransactionValidator {
-  public validateRecords(records: MfCsvRecord[]): ValidationResult {
-    const errors: ValidationError[] = [];
-    const invalidAccountLabels = new Set<string>();
-    const validAccountLabels = new Set(Object.keys(ACCOUNT_CATEGORY_MAPPING));
-    validAccountLabels.add("普通預金");
-    validAccountLabels.add("相殺項目（費用）");
-    validAccountLabels.add("相殺項目（収入）");
+  public validatePreviewTransactions(
+    transactions: PreviewTransaction[],
+    existingTransactionNos: string[] = [],
+  ): PreviewTransaction[] {
+    const existingTransactionNosSet = new Set(existingTransactionNos);
 
-    for (const record of records) {
-      const recordErrors: string[] = [];
+    return transactions.map((transaction) =>
+      this.validateSingleTransaction(transaction, existingTransactionNosSet),
+    );
+  }
 
-      if (!validAccountLabels.has(record.debit_account)) {
-        recordErrors.push(`無効な借方科目: "${record.debit_account}"`);
-        invalidAccountLabels.add(record.debit_account);
-      }
-
-      if (!validAccountLabels.has(record.credit_account)) {
-        recordErrors.push(`無効な貸方科目: "${record.credit_account}"`);
-        invalidAccountLabels.add(record.credit_account);
-      }
-
-      if (!record.friendly_category || record.friendly_category.trim() === "") {
-        recordErrors.push("独自のカテゴリが設定されていません");
-      }
-
-      if (recordErrors.length > 0) {
-        errors.push({
-          record,
-          errors: recordErrors,
-        });
-      }
+  private validateSingleTransaction(
+    transaction: PreviewTransaction,
+    existingTransactionNos: Set<string>,
+  ): PreviewTransaction {
+    // Check for duplicates first
+    if (existingTransactionNos.has(transaction.transaction_no)) {
+      return {
+        ...transaction,
+        status: "skip",
+        errors: [...transaction.errors, "重複データのためスキップされます"],
+      };
     }
 
+    const errors: string[] = [];
+
+    // Validate accounts
+    const accountValidationErrors = this.validateAccounts(transaction);
+    errors.push(...accountValidationErrors);
+
+    // Validate friendly_category
+    const categoryValidationError = this.validateFriendlyCategory(transaction);
+    if (categoryValidationError) {
+      errors.push(categoryValidationError);
+    }
+
+    // Determine final status based on validation results
+    const status = errors.length > 0 ? "invalid" : transaction.status;
+
     return {
-      isValid: errors.length === 0,
-      errors,
-      invalidAccountLabels: Array.from(invalidAccountLabels),
+      ...transaction,
+      status,
+      errors: [...transaction.errors, ...errors],
     };
+  }
+
+  private validateAccounts(transaction: PreviewTransaction): string[] {
+    const errors: string[] = [];
+    const validAccountLabels = new Set([
+      ...Object.keys(ACCOUNT_CATEGORY_MAPPING),
+      REGULAR_DEPOSIT_ACCOUNT,
+      OFFSET_EXPENSE_ACCOUNT,
+      OFFSET_INCOME_ACCOUNT,
+    ]);
+
+    if (!validAccountLabels.has(transaction.debit_account)) {
+      errors.push(`無効な借方科目: "${transaction.debit_account}"`);
+    }
+
+    if (!validAccountLabels.has(transaction.credit_account)) {
+      errors.push(`無効な貸方科目: "${transaction.credit_account}"`);
+    }
+
+    return errors;
+  }
+
+  private validateFriendlyCategory(
+    transaction: PreviewTransaction,
+  ): string | null {
+    const isOffsetTransaction =
+      transaction.debit_account === OFFSET_EXPENSE_ACCOUNT ||
+      transaction.credit_account === OFFSET_INCOME_ACCOUNT;
+
+    if (
+      !isOffsetTransaction &&
+      (!transaction.friendly_category ||
+        transaction.friendly_category.trim() === "")
+    ) {
+      return "独自のカテゴリが設定されていません";
+    }
+
+    return null;
   }
 }

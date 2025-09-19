@@ -71,18 +71,9 @@ export class PreviewMfCsvUsecase {
         };
       }
 
-      const validationResult = this.validator.validateRecords(csvRecords);
-
-      const previewTransactions: PreviewTransaction[] = csvRecords.map(
-        (record) =>
-          this.recordConverter.convertRow(
-            record,
-            input.politicalOrganizationId,
-          ),
-      );
-
-      const transactionNos = previewTransactions
-        .map((t) => t.transaction_no)
+      // Get existing transaction numbers first
+      const transactionNos = csvRecords
+        .map((record) => record.transaction_no)
         .filter(Boolean) as string[];
 
       const duplicateTransactionNos =
@@ -91,23 +82,20 @@ export class PreviewMfCsvUsecase {
           transactionNos,
         );
 
-      const existingTransactionNosSet = new Set(duplicateTransactionNos);
+      // Convert records to preview transactions
+      const convertedTransactions: PreviewTransaction[] = csvRecords.map(
+        (record) =>
+          this.recordConverter.convertRow(
+            record,
+            input.politicalOrganizationId,
+          ),
+      );
 
-      // Apply validation and duplicate check
-      previewTransactions.forEach((transaction, index) => {
-        const csvRecord = csvRecords[index];
-        const validationError = validationResult.errors.find(
-          (e) => e.record === csvRecord,
-        );
-
-        if (validationError) {
-          transaction.status = "invalid";
-          transaction.errors = validationError.errors;
-        } else if (existingTransactionNosSet.has(transaction.transaction_no)) {
-          transaction.status = "skip";
-          transaction.skipReason = "重複データのためスキップされます";
-        }
-      });
+      // Validate converted transactions including duplicate check
+      const previewTransactions = this.validator.validatePreviewTransactions(
+        convertedTransactions,
+        duplicateTransactionNos,
+      );
 
       const summary = {
         totalCount: previewTransactions.length,
