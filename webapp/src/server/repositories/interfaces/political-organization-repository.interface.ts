@@ -5,5 +5,4 @@ export interface IPoliticalOrganizationRepository {
   findBySlugs(slugs: string[]): Promise<PoliticalOrganization[]>;
   findById(id: string): Promise<PoliticalOrganization | null>;
   findAll(): Promise<PoliticalOrganization[]>;
-  findFirstByIdAsc(): Promise<PoliticalOrganization | null>;
 }
