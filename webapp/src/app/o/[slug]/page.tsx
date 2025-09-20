@@ -32,6 +32,9 @@ export default async function OrgPage({ params }: OrgPageProps) {
 
   const slugs = [slug];
 
+  // 現在のslugに対応する組織を取得
+  const currentOrganization = organizations.find((org) => org.slug === slug);
+
   // 統合アクションで全データを取得
   const data = await loadTopPageData({
     slugs,
@@ -53,20 +56,24 @@ export default async function OrgPage({ params }: OrgPageProps) {
         political={data?.political ?? null}
         friendly={data?.friendly ?? null}
         updatedAt={updatedAt}
+        organizationName={currentOrganization?.displayName}
       />
       <MonthlyTrendsSection
         monthlyData={data?.monthlyData}
         updatedAt={updatedAt}
+        organizationName={currentOrganization?.displayName}
       />
       <TransparencySection title="党首も毎日これを見て、お金をやりくりしています👀" />
       <BalanceSheetSection
         data={data?.balanceSheetData}
         updatedAt={updatedAt}
+        organizationName={currentOrganization?.displayName}
       />
       <TransactionsSection
         transactionData={data?.transactionData ?? null}
         updatedAt={updatedAt}
         slug={slug}
+        organizationName={currentOrganization?.displayName}
       />
       <ProgressSection />
       <ExplanationSection />
