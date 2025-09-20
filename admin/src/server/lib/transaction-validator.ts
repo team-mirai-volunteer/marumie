@@ -60,7 +60,7 @@ export class TransactionValidator {
       return {
         ...transaction,
         status: "skip",
-        errors: [],
+        errors: ["重複のためスキップされます"],
       };
     }
 
