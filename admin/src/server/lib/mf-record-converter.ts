@@ -1,6 +1,7 @@
 import type { MfCsvRecord } from "./mf-csv-loader";
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 import type { TransactionType } from "@/shared/models/transaction";
+import { generateTransactionHash } from "./transaction-hash";
 
 export interface PreviewTransaction {
   political_organization_id: string;
@@ -17,6 +18,7 @@ export interface PreviewTransaction {
   label: string | undefined;
   friendly_category: string;
   category_key: string;
+  hash: string;
   status: "valid" | "invalid" | "skip";
   errors: string[];
 }
@@ -52,7 +54,7 @@ export class MfRecordConverter {
       ];
     }
 
-    return {
+    const transaction = {
       political_organization_id: politicalOrganizationId,
       transaction_no: record.transaction_no,
       transaction_date: new Date(record.transaction_date),
@@ -67,9 +69,15 @@ export class MfRecordConverter {
       label: label,
       friendly_category: record.friendly_category,
       category_key: categoryKey,
+      hash: "",
       status,
       errors,
     };
+
+    // hash値を計算して設定
+    transaction.hash = generateTransactionHash(transaction);
+
+    return transaction;
   }
 
   private parseAmount(amountStr: string): number {

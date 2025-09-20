@@ -44,7 +44,7 @@ describe("SavePreviewTransactionsUsecase", () => {
       mockRepository.createMany.mockImplementation(
         async (transactions) => {
           capturedTransactions.push(...transactions);
-          return transactions.map(t => ({ ...t, id: 'test-id', label: t.label || '', created_at: new Date(), updated_at: new Date() }));
+          return transactions.map(t => ({ ...t, id: 'test-id', label: t.label || '', hash: t.hash, created_at: new Date(), updated_at: new Date() }));
         }
       );
 
@@ -181,6 +181,7 @@ describe("SavePreviewTransactionsUsecase", () => {
             memo: '',
             category_key: t.category_key,
             label: '',
+            hash: '',
             created_at: new Date(),
             updated_at: new Date()
           }))
@@ -271,6 +272,7 @@ TXN-001,2025/6/1,人件費,,,,,,1000,普通預金,,,,,,1000,給与支払,,人件
           memo: '',
           category_key: '人件費',
           label: '',
+          hash: '',
           created_at: new Date(),
           updated_at: new Date()
         }

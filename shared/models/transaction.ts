@@ -29,6 +29,7 @@ export interface Transaction {
   memo?: string;
   category_key: string;
   label: string;
+  hash: string;
   created_at: Date;
   updated_at: Date;
 }
@@ -56,6 +57,7 @@ export interface CreateTransactionInput {
   memo?: string;
   category_key: string;
   label?: string;
+  hash: string;
 }
 
 export interface UpdateTransactionInput
