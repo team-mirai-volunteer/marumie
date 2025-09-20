@@ -1,8 +1,8 @@
 import "server-only";
 import { redirect } from "next/navigation";
-import { loadValidOrgSlugs } from "@/server/loaders/load-valid-org-slugs";
+import { loadOrganizations } from "@/server/loaders/load-organizations";
 
 export default async function NotFound() {
-  const { default: defaultSlug } = await loadValidOrgSlugs();
+  const { default: defaultSlug } = await loadOrganizations();
   redirect(`/o/${defaultSlug}`);
 }
