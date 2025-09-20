@@ -64,7 +64,7 @@ export default function Selector({
             {/* Header */}
             <button
               type="button"
-              className="flex items-center justify-between w-full hover:bg-gray-50 rounded text-gray-600 text-xs lg:text-sm font-bold px-2 py-1 lg:px-4 lg:py-2.5 cursor-pointer"
+              className="flex items-center justify-between w-full px-4 py-2.5 bg-white rounded-md text-gray-600 text-sm font-bold hover:bg-gray-50 transition-colors cursor-pointer"
               onClick={() => setIsOpen(false)}
             >
               <span className="text-left truncate">{title}</span>
