@@ -39,7 +39,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
       ],
     };
 
-    const result = convertCategoryAggregationToSankeyData(aggregation);
+    const result = convertCategoryAggregationToSankeyData(aggregation, false, 0, 0);
 
     // ノードの検証（labelベースで検証、IDはハッシュ化されている）
     const nodeLabels = result.nodes.map(node => ({ label: node.label, nodeType: node.nodeType }));
@@ -115,7 +115,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
       ],
     };
 
-    const result = convertCategoryAggregationToSankeyData(aggregation);
+    const result = convertCategoryAggregationToSankeyData(aggregation, false, 0, 0);
 
     // ノードの検証（サブカテゴリなし、現残高なし）
     const nodeLabels = result.nodes.map(node => ({ label: node.label, nodeType: node.nodeType }));
@@ -150,7 +150,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
       expense: [],
     };
 
-    const result = convertCategoryAggregationToSankeyData(aggregation);
+    const result = convertCategoryAggregationToSankeyData(aggregation, false, 0, 0);
 
     // 合計ノードのみ
     expect(result.nodes).toHaveLength(1);
@@ -185,7 +185,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
       ],
     };
 
-    const result = convertCategoryAggregationToSankeyData(aggregation);
+    const result = convertCategoryAggregationToSankeyData(aggregation, false, 0, 0);
 
     // ノードIDの重複がないことを確認
     const nodeIds = result.nodes.map(node => node.id);
@@ -224,7 +224,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
       ],
     };
 
-    const result = convertCategoryAggregationToSankeyData(aggregation);
+    const result = convertCategoryAggregationToSankeyData(aggregation, false, 0, 0);
 
     // 寄附カテゴリの合計値の検証（1000000 + 200000 = 1200000）
     const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
@@ -260,7 +260,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
       ],
     };
 
-    const result = convertCategoryAggregationToSankeyData(aggregation);
+    const result = convertCategoryAggregationToSankeyData(aggregation, false, 0, 0);
 
     // 「(仕訳中)」ノードが追加されることを確認
     const processingNode = result.nodes.find(node => node.label === "(仕訳中)");
@@ -295,7 +295,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
       ],
     };
 
-    const result = convertCategoryAggregationToSankeyData(aggregation);
+    const result = convertCategoryAggregationToSankeyData(aggregation, false, 0, 0);
 
     // 「(仕訳中)」ノードが追加されないことを確認
     const processingNode = result.nodes.find(node => node.label === "(仕訳中)");
@@ -327,7 +327,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
       ],
     };
 
-    const result = convertCategoryAggregationToSankeyData(aggregation);
+    const result = convertCategoryAggregationToSankeyData(aggregation, false, 0, 0);
 
     // 「(仕訳中)」ノードが追加されることを確認
     const processingNode = result.nodes.find(node => node.label === "(仕訳中)");
@@ -357,5 +357,162 @@ describe("convertCategoryAggregationToSankeyData", () => {
       link => link.source === politicalActivityId && link.target === advertisingId
     );
     expect(categoryToSub).toBeDefined();
+  });
+
+  it("should handle currentYearBalance (繰越し)", () => {
+    const aggregation: SankeyCategoryAggregationResult = {
+      income: [
+        {
+          category: "寄附",
+          totalAmount: 1000000,
+        },
+      ],
+      expense: [
+        {
+          category: "政治活動費",
+          totalAmount: 500000,
+        },
+      ],
+    };
+
+    const currentYearBalance = 300000;
+    const result = convertCategoryAggregationToSankeyData(aggregation, false, currentYearBalance, 0);
+
+    // 「繰越し」ノードが追加されることを確認
+    const carryoverNode = result.nodes.find(node => node.label === "繰越し");
+    expect(carryoverNode).toBeDefined();
+    expect(carryoverNode?.nodeType).toBe("expense");
+
+    // 「繰越し」へのリンクが追加されることを確認
+    const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
+    const totalId = getNodeIdByLabel("合計");
+    const carryoverId = getNodeIdByLabel("繰越し");
+
+    const linkToCarryover = result.links.find(
+      link => link.source === totalId && link.target === carryoverId
+    );
+    expect(linkToCarryover).toBeDefined();
+    expect(linkToCarryover?.value).toBe(300000);
+  });
+
+  it("should handle previousYearBalance (昨年からの繰越し)", () => {
+    const aggregation: SankeyCategoryAggregationResult = {
+      income: [
+        {
+          category: "寄附",
+          totalAmount: 1000000,
+        },
+      ],
+      expense: [
+        {
+          category: "政治活動費",
+          totalAmount: 1000000,
+        },
+      ],
+    };
+
+    const previousYearBalance = 150000;
+    const result = convertCategoryAggregationToSankeyData(aggregation, false, 0, previousYearBalance);
+
+    // 「昨年からの繰越し」ノードが追加されることを確認
+    const previousCarryoverNode = result.nodes.find(node => node.label === "昨年からの繰越し");
+    expect(previousCarryoverNode).toBeDefined();
+    expect(previousCarryoverNode?.nodeType).toBe("income");
+
+    // 「昨年からの繰越し」からのリンクが追加されることを確認
+    const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
+    const previousCarryoverId = getNodeIdByLabel("昨年からの繰越し");
+    const totalId = getNodeIdByLabel("合計");
+
+    const linkFromPreviousCarryover = result.links.find(
+      link => link.source === previousCarryoverId && link.target === totalId
+    );
+    expect(linkFromPreviousCarryover).toBeDefined();
+    expect(linkFromPreviousCarryover?.value).toBe(150000);
+  });
+
+  it("should handle both currentYear and previousYear balances", () => {
+    const aggregation: SankeyCategoryAggregationResult = {
+      income: [
+        {
+          category: "寄附",
+          totalAmount: 1000000,
+        },
+      ],
+      expense: [
+        {
+          category: "政治活動費",
+          totalAmount: 800000,
+        },
+      ],
+    };
+
+    const currentYearBalance = 200000;
+    const previousYearBalance = 100000;
+    const result = convertCategoryAggregationToSankeyData(aggregation, false, currentYearBalance, previousYearBalance);
+
+    // 両方のノードが追加されることを確認
+    const carryoverNode = result.nodes.find(node => node.label === "繰越し");
+    const previousCarryoverNode = result.nodes.find(node => node.label === "昨年からの繰越し");
+
+    expect(carryoverNode).toBeDefined();
+    expect(previousCarryoverNode).toBeDefined();
+
+    // リンクの検証
+    const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
+    const totalId = getNodeIdByLabel("合計");
+    const carryoverId = getNodeIdByLabel("繰越し");
+    const previousCarryoverId = getNodeIdByLabel("昨年からの繰越し");
+
+    // 今年の繰越し
+    const linkToCarryover = result.links.find(
+      link => link.source === totalId && link.target === carryoverId
+    );
+    expect(linkToCarryover?.value).toBe(200000);
+
+    // 昨年からの繰越し
+    const linkFromPreviousCarryover = result.links.find(
+      link => link.source === previousCarryoverId && link.target === totalId
+    );
+    expect(linkFromPreviousCarryover?.value).toBe(100000);
+
+    // 収支バランスの確認（収入1000000 + 昨年100000 = 支出800000 + 今年200000 + (仕訳中)100000）
+    const processingNode = result.nodes.find(node => node.label === "(仕訳中)");
+    expect(processingNode).toBeDefined();
+
+    const linkToProcessing = result.links.find(
+      link => link.source === totalId && link.target === getNodeIdByLabel("(仕訳中)")
+    );
+    expect(linkToProcessing?.value).toBe(100000); // 1100000 - 800000 - 200000 = 100000
+  });
+
+  it("should not add carryover nodes when balances are zero", () => {
+    const aggregation: SankeyCategoryAggregationResult = {
+      income: [
+        {
+          category: "寄附",
+          totalAmount: 1000000,
+        },
+      ],
+      expense: [
+        {
+          category: "政治活動費",
+          totalAmount: 1000000,
+        },
+      ],
+    };
+
+    const result = convertCategoryAggregationToSankeyData(aggregation, false, 0, 0);
+
+    // 繰越しノードが追加されないことを確認
+    const carryoverNode = result.nodes.find(node => node.label === "繰越し");
+    const previousCarryoverNode = result.nodes.find(node => node.label === "昨年からの繰越し");
+
+    expect(carryoverNode).toBeUndefined();
+    expect(previousCarryoverNode).toBeUndefined();
+
+    // 基本の3ノードのみ存在することを確認
+    expect(result.nodes).toHaveLength(3);
+    expect(result.links).toHaveLength(2);
   });
 });

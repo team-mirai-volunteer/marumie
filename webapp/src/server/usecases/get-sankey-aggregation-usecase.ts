@@ -44,13 +44,14 @@ export class GetSankeyAggregationUsecase {
           params.categoryType,
         );
 
-      // 最新の残高データを取得（合計値）
+      // 今年と昨年の最新残高データを取得（合計値）
       const organizationIdsAsString = organizationIds.map((id) =>
         id.toString(),
       );
-      const totalLatestBalance =
-        await this.balanceSnapshotRepository.getTotalLatestBalanceByOrgIds(
+      const balancesByYear =
+        await this.balanceSnapshotRepository.getTotalLatestBalancesByYear(
           organizationIdsAsString,
+          params.financialYear,
         );
 
       // Sankeyデータに変換
@@ -58,7 +59,8 @@ export class GetSankeyAggregationUsecase {
       const sankeyData = convertCategoryAggregationToSankeyData(
         aggregatedResult,
         isFriendlyCategory,
-        totalLatestBalance,
+        balancesByYear.currentYear,
+        balancesByYear.previousYear,
       );
 
       return { sankeyData };
