@@ -55,10 +55,18 @@ export class MfRecordConverter {
       ];
     }
 
+    // Parse transaction date with validation
+    const { date: transactionDate, isValid: isDateValid } =
+      this.parseTransactionDate(record.transaction_date);
+    if (!isDateValid) {
+      status = "invalid";
+      errors.push(`Invalid date format: ${record.transaction_date}`);
+    }
+
     const transaction = {
       political_organization_id: politicalOrganizationId,
       transaction_no: record.transaction_no,
-      transaction_date: new Date(record.transaction_date),
+      transaction_date: transactionDate,
       transaction_type: transactionType,
       debit_account: record.debit_account,
       debit_sub_account: record.debit_sub_account,
@@ -79,6 +87,21 @@ export class MfRecordConverter {
     transaction.hash = generateTransactionHash(transaction);
 
     return transaction;
+  }
+
+  private parseTransactionDate(dateStr: string): {
+    date: Date;
+    isValid: boolean;
+  } {
+    try {
+      const date = new Date(dateStr);
+      if (Number.isNaN(date.getTime())) {
+        return { date: new Date("1970-01-01"), isValid: false };
+      }
+      return { date, isValid: true };
+    } catch (_error) {
+      return { date: new Date("1970-01-01"), isValid: false };
+    }
   }
 
   private parseAmount(amountStr: string): number {

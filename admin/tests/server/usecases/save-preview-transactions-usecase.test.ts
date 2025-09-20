@@ -14,13 +14,12 @@ import type { CreateTransactionInput } from "@/shared/models/transaction";
 describe("SavePreviewTransactionsUsecase", () => {
   let usecase: SavePreviewTransactionsUsecase;
   let previewUsecase: PreviewMfCsvUsecase;
-  let mockRepository: jest.Mocked<Pick<ITransactionRepository, 'createMany' | 'findByTransactionNos' | 'checkDuplicateTransactionNos'>>;
+  let mockRepository: jest.Mocked<Pick<ITransactionRepository, 'createMany' | 'findByTransactionNos'>>;
 
   beforeEach(() => {
     mockRepository = {
       createMany: jest.fn(),
       findByTransactionNos: jest.fn().mockResolvedValue([]),
-      checkDuplicateTransactionNos: jest.fn().mockResolvedValue([]),
     };
     usecase = new SavePreviewTransactionsUsecase(mockRepository as unknown as ITransactionRepository);
     previewUsecase = new PreviewMfCsvUsecase(mockRepository as unknown as ITransactionRepository);
@@ -209,7 +208,34 @@ TXN-001,2025/6/1,人件費,,,,,,1000,普通預金,,,,,,1000,給与支払1,,人�
 TXN-001,2025/6/2,人件費,,,,,,2000,普通預金,,,,,,2000,給与支払2,,人件費`;
 
       // 既存データとして同じtransaction_noが存在することをモック
-      mockRepository.checkDuplicateTransactionNos.mockResolvedValue(['TXN-001']);
+      mockRepository.findByTransactionNos.mockResolvedValue([{
+        id: 'existing-id',
+        political_organization_id: 'test-org-id',
+        transaction_no: 'TXN-001',
+        transaction_date: new Date('2025-06-01'),
+        financial_year: 2025,
+        transaction_type: 'expense',
+        debit_account: '人件費',
+        debit_sub_account: '',
+        debit_department: '',
+        debit_partner: '',
+        debit_tax_category: '',
+        debit_amount: 1000,
+        credit_account: '普通預金',
+        credit_sub_account: '',
+        credit_department: '',
+        credit_partner: '',
+        credit_tax_category: '',
+        credit_amount: 1000,
+        description: '給与支払1',
+        friendly_category: '',
+        memo: '',
+        category_key: '人件費',
+        label: '',
+        hash: '',
+        created_at: new Date(),
+        updated_at: new Date()
+      }]);
 
       const previewInput: PreviewMfCsvInput = {
         csvContent,
@@ -232,9 +258,8 @@ TXN-001,2025/6/2,人件費,,,,,,2000,普通預金,,,,,,2000,給与支払2,,人�
       // repositoryのcreateMany呼び出しを確認（有効な取引がないので呼ばれない）
       expect(mockRepository.createMany).not.toHaveBeenCalled();
       
-      // checkDuplicateTransactionNosが正しい引数で呼ばれることを確認
-      expect(mockRepository.checkDuplicateTransactionNos).toHaveBeenCalledWith(
-        "test-org-id",
+      // findByTransactionNosが正しい引数で呼ばれることを確認
+      expect(mockRepository.findByTransactionNos).toHaveBeenCalledWith(
         ["TXN-001", "TXN-001"]
       );
     });
@@ -244,7 +269,7 @@ TXN-001,2025/6/2,人件費,,,,,,2000,普通預金,,,,,,2000,給与支払2,,人�
 TXN-001,2025/6/1,人件費,,,,,,1000,普通預金,,,,,,1000,給与支払,,人件費`;
 
       // 異なる政治団体では重複なし
-      mockRepository.checkDuplicateTransactionNos.mockResolvedValue([]);
+      mockRepository.findByTransactionNos.mockResolvedValue([]);
       
       // createManyのモック設定
       mockRepository.createMany.mockResolvedValue([
@@ -299,8 +324,7 @@ TXN-001,2025/6/1,人件費,,,,,,1000,普通預金,,,,,,1000,給与支払,,人件
       
       // repositoryが呼ばれることを確認
       expect(mockRepository.createMany).toHaveBeenCalledTimes(1);
-      expect(mockRepository.checkDuplicateTransactionNos).toHaveBeenCalledWith(
-        "different-org-id",
+      expect(mockRepository.findByTransactionNos).toHaveBeenCalledWith(
         ["TXN-001"]
       );
     });

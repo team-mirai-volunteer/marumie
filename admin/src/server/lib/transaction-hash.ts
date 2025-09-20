@@ -35,7 +35,16 @@ export function generateTransactionHash(
  */
 function normalizeDate(date: Date | string): string {
   if (typeof date === "string") {
-    return new Date(date).toISOString().split("T")[0];
+    const parsedDate = new Date(date);
+    if (Number.isNaN(parsedDate.getTime())) {
+      throw new Error(`Invalid date string: ${date}`);
+    }
+    return parsedDate.toISOString().split("T")[0];
   }
+
+  if (Number.isNaN(date.getTime())) {
+    throw new Error(`Invalid Date object: ${date}`);
+  }
+
   return date.toISOString().split("T")[0];
 }
