@@ -42,7 +42,7 @@ export default function Selector({
       {/* Closed State Button */}
       <button
         type="button"
-        className="flex items-center justify-between w-full px-2 py-1 lg:px-4 lg:py-2.5 bg-white border border-gray-600 rounded-md text-gray-600 text-xs lg:text-sm font-bold hover:bg-gray-50 transition-colors"
+        className="flex items-center justify-between w-full px-2 py-1 lg:px-4 lg:py-2.5 bg-white border border-gray-600 rounded-md text-gray-600 text-xs lg:text-sm font-bold hover:bg-gray-50 transition-colors cursor-pointer"
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="text-left truncate">
@@ -59,12 +59,12 @@ export default function Selector({
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute top-0 left-0 min-w-[217px] w-full bg-white border border-gray-600 rounded-md shadow-lg z-50">
-          <div className="space-y-4">
+        <div className="absolute top-0 right-0 min-w-[217px] w-full bg-white border border-gray-600 rounded-md shadow-lg z-50">
+          <div className="space-y-0">
             {/* Header */}
             <button
               type="button"
-              className="flex items-center justify-between w-full px-2 py-1 lg:px-4 lg:py-2.5 cursor-pointer hover:bg-gray-50 rounded text-gray-600 text-xs lg:text-sm font-bold"
+              className="flex items-center justify-between w-full hover:bg-gray-50 rounded text-gray-600 text-xs lg:text-sm font-bold px-2 py-1 lg:px-4 lg:py-2.5 cursor-pointer"
               onClick={() => setIsOpen(false)}
             >
               <span className="text-left truncate">{title}</span>
@@ -78,12 +78,12 @@ export default function Selector({
             </button>
 
             {/* Options List */}
-            <div className="px-2 lg:px-4 pb-2 lg:pb-2.5 space-y-2.5">
+            <div className="px-2 lg:px-4 space-y-1">
               {options.map((option) => (
                 <button
                   key={option.value}
                   type="button"
-                  className="flex items-start gap-2 w-full cursor-pointer hover:bg-gray-50 p-1 -m-1 rounded"
+                  className="flex items-start gap-2 w-full cursor-pointer hover:bg-gray-50 px-1 py-2 rounded"
                   onClick={() => handleSelect(option.value)}
                 >
                   {/* Checkbox */}
@@ -104,7 +104,7 @@ export default function Selector({
                       {option.label}
                     </div>
                     {option.subtitle && (
-                      <div className="text-xs text-gray-600 leading-tight mt-1">
+                      <div className="text-[9px] text-gray-600 leading-tight mt-1">
                         {option.subtitle}
                       </div>
                     )}
