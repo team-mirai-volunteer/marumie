@@ -10,7 +10,7 @@ import MainColumn from "@/client/components/layout/MainColumn";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 import InteractiveTransactionTable from "@/client/components/top-page/features/transactions-table/InteractiveTransactionTable";
 import { loadTransactionsPageData } from "@/server/loaders/load-transactions-page-data";
-import { loadValidOrgSlugs } from "@/server/loaders/load-valid-org-slugs";
+import { loadOrganizations } from "@/server/loaders/load-organizations";
 import { formatUpdatedAt } from "@/server/utils/format-date";
 
 interface TransactionsPageProps {
@@ -26,8 +26,10 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const { default: defaultSlug, validSlugs } = await loadValidOrgSlugs();
-  const validSlug = validSlugs.includes(slug) ? slug : defaultSlug;
+  const { default: defaultSlug, organizations } = await loadOrganizations();
+  const validSlug = organizations.some((org) => org.slug === slug)
+    ? slug
+    : defaultSlug;
   const slugs = [validSlug];
 
   // financialYearのデフォルト値を設定
@@ -60,8 +62,8 @@ export default async function TransactionsPage({
   const { slug } = await params;
 
   // slugの妥当性をチェックし、必要に応じてリダイレクト
-  const { default: defaultSlug, validSlugs } = await loadValidOrgSlugs();
-  if (!validSlugs.includes(slug)) {
+  const { default: defaultSlug, organizations } = await loadOrganizations();
+  if (!organizations.some((org) => org.slug === slug)) {
     redirect(`/o/${defaultSlug}/transactions`);
   }
 

@@ -11,7 +11,7 @@ import MonthlyTrendsSection from "@/client/components/top-page/MonthlyTrendsSect
 import ProgressSection from "@/client/components/top-page/ProgressSection";
 import TransactionsSection from "@/client/components/top-page/TransactionsSection";
 import { loadTopPageData } from "@/server/loaders/load-top-page-data";
-import { loadValidOrgSlugs } from "@/server/loaders/load-valid-org-slugs";
+import { loadOrganizations } from "@/server/loaders/load-organizations";
 import { formatUpdatedAt } from "@/server/utils/format-date";
 
 export const revalidate = 300; // 5 minutes
@@ -26,8 +26,8 @@ export default async function OrgPage({ params }: OrgPageProps) {
   const { slug } = await params;
 
   // slugの妥当性をチェックし、必要に応じてリダイレクト
-  const { default: defaultSlug, validSlugs } = await loadValidOrgSlugs();
-  if (!validSlugs.includes(slug)) {
+  const { default: defaultSlug, organizations } = await loadOrganizations();
+  if (!organizations.some((org) => org.slug === slug)) {
     redirect(`/o/${defaultSlug}`);
   }
 
