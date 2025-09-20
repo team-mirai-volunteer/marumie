@@ -1,4 +1,3 @@
-import "server-only";
 import { createHash } from "crypto";
 import type { PreviewTransaction } from "./mf-record-converter";
 
