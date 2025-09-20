@@ -20,12 +20,19 @@ export interface PreviewMfCsvResult {
   transactions: PreviewTransaction[];
   summary: {
     totalCount: number;
-    validCount: number;
+    insertCount: number;
+    updateCount: number;
     invalidCount: number;
     skipCount: number;
   };
   statistics: {
-    valid: {
+    insert: {
+      income: TransactionTypeStats;
+      expense: TransactionTypeStats;
+      offset_income: TransactionTypeStats;
+      offset_expense: TransactionTypeStats;
+    };
+    update: {
       income: TransactionTypeStats;
       expense: TransactionTypeStats;
       offset_income: TransactionTypeStats;
@@ -63,7 +70,8 @@ export class PreviewMfCsvUsecase {
           transactions: [],
           summary: {
             totalCount: 0,
-            validCount: 0,
+            insertCount: 0,
+            updateCount: 0,
             invalidCount: 0,
             skipCount: 0,
           },
@@ -99,8 +107,9 @@ export class PreviewMfCsvUsecase {
 
       const summary = {
         totalCount: previewTransactions.length,
-        validCount: previewTransactions.filter((t) => t.status === "valid")
+        insertCount: previewTransactions.filter((t) => t.status === "insert")
           .length,
+        updateCount: 0,
         invalidCount: previewTransactions.filter((t) => t.status === "invalid")
           .length,
         skipCount: previewTransactions.filter((t) => t.status === "skip")
@@ -119,7 +128,8 @@ export class PreviewMfCsvUsecase {
         transactions: [],
         summary: {
           totalCount: 0,
-          validCount: 0,
+          insertCount: 0,
+          updateCount: 0,
           invalidCount: 0,
           skipCount: 0,
         },
@@ -130,7 +140,13 @@ export class PreviewMfCsvUsecase {
 
   private createEmptyStatistics() {
     return {
-      valid: {
+      insert: {
+        income: { count: 0, amount: 0 },
+        expense: { count: 0, amount: 0 },
+        offset_income: { count: 0, amount: 0 },
+        offset_expense: { count: 0, amount: 0 },
+      },
+      update: {
         income: { count: 0, amount: 0 },
         expense: { count: 0, amount: 0 },
         offset_income: { count: 0, amount: 0 },
@@ -157,11 +173,6 @@ export class PreviewMfCsvUsecase {
     for (const transaction of transactions) {
       const status = transaction.status;
       const transactionType = transaction.transaction_type;
-
-      // statusが有効な値かチェック
-      if (status !== "valid" && status !== "invalid" && status !== "skip") {
-        continue;
-      }
 
       // transactionTypeがnullの場合はスキップ
       if (transactionType === null) {

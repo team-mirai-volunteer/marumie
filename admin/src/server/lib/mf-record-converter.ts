@@ -19,7 +19,7 @@ export interface PreviewTransaction {
   friendly_category: string;
   category_key: string;
   hash: string;
-  status: "valid" | "invalid" | "skip";
+  status: "insert" | "update" | "invalid" | "skip";
   errors: string[];
 }
 
@@ -44,7 +44,7 @@ export class MfRecordConverter {
       : undefined;
 
     // Determine status and errors based on conversion
-    let status: "valid" | "invalid" | "skip" = "valid";
+    let status: "insert" | "update" | "invalid" | "skip" = "insert";
     let errors: string[] = [];
 
     if (transactionType === null) {
