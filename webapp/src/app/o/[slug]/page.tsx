@@ -6,7 +6,6 @@ import TransparencySection from "@/client/components/common/TransparencySection"
 import MainColumn from "@/client/components/layout/MainColumn";
 import BalanceSheetSection from "@/client/components/top-page/BalanceSheetSection";
 import CashFlowSection from "@/client/components/top-page/CashFlowSection";
-import DonationSummarySection from "@/client/components/top-page/DonationSummarySection";
 import MonthlyTrendsSection from "@/client/components/top-page/MonthlyTrendsSection";
 import ProgressSection from "@/client/components/top-page/ProgressSection";
 import TransactionsSection from "@/client/components/top-page/TransactionsSection";
@@ -60,7 +59,6 @@ export default async function OrgPage({ params }: OrgPageProps) {
         updatedAt={updatedAt}
       />
       <TransparencySection title="党首も毎日これを見て、お金をやりくりしています👀" />
-      <DonationSummarySection donationSummary={data?.donationSummary} />
       <BalanceSheetSection
         data={data?.balanceSheetData}
         updatedAt={updatedAt}
