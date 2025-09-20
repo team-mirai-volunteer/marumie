@@ -32,7 +32,7 @@ export default function OrganizationSelector({
           height="7"
           viewBox="0 0 10 7"
           fill="none"
-          className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
+          className={isOpen ? "rotate-180" : ""}
         >
           <path
             d="M1 1L5 5L9 1"
@@ -46,19 +46,20 @@ export default function OrganizationSelector({
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 min-w-[217px] w-full bg-white border border-gray-600 rounded-md shadow-lg z-50">
-          <div className="p-4 space-y-4">
+        <div className="absolute top-0 left-0 min-w-[217px] w-full bg-white border border-gray-600 rounded-md shadow-lg z-50">
+          <div className="space-y-4">
             {/* Header */}
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-bold text-gray-600">
-                政治団体の区別
-              </span>
+            <div
+              className="flex items-center justify-between w-full px-2 py-1 lg:px-4 lg:py-2.5 cursor-pointer hover:bg-gray-50 rounded text-gray-600 text-xs lg:text-sm font-bold"
+              onClick={() => setIsOpen(false)}
+            >
+              <span className="text-left truncate">政治団体の区別</span>
               <svg
                 width="10"
                 height="7"
                 viewBox="0 0 10 7"
                 fill="none"
-                className="text-gray-600"
+                className="transition-transform rotate-180"
               >
                 <path
                   d="M1 1L5 5L9 1"
@@ -71,11 +72,11 @@ export default function OrganizationSelector({
             </div>
 
             {/* Organization List */}
-            <div className="space-y-2.5">
+            <div className="px-2 lg:px-4 pb-2 lg:pb-2.5 space-y-2.5">
               {organizations.organizations.map((org) => (
-                <div key={org.slug} className="flex items-center gap-2">
+                <div key={org.slug} className="flex items-start gap-2">
                   {/* Checkbox */}
-                  <div className="flex items-center justify-center w-[18px] h-[18px] bg-white rounded border">
+                  <div className="flex items-center justify-center w-[18px] h-[18px] mt-0.5">
                     {selectedSlug === org.slug && (
                       <svg
                         width="13"
@@ -96,12 +97,12 @@ export default function OrganizationSelector({
                   </div>
 
                   {/* Organization Info */}
-                  <div className="flex-1">
-                    <div className="text-sm font-bold text-gray-600">
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-bold text-gray-600 leading-5">
                       {org.displayName}
                     </div>
                     {org.orgName && (
-                      <div className="text-xs text-gray-600 leading-tight">
+                      <div className="text-xs text-gray-600 leading-tight mt-1">
                         {org.orgName}
                       </div>
                     )}
