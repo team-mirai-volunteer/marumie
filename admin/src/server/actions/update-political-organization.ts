@@ -6,7 +6,8 @@ import { revalidatePath } from "next/cache";
 const prisma = new PrismaClient();
 
 export interface UpdatePoliticalOrganizationData {
-  name: string;
+  displayName: string;
+  orgName?: string;
   slug: string;
   description?: string;
 }
@@ -22,10 +23,10 @@ export async function updatePoliticalOrganization(
       throw new Error("Invalid organization ID");
     }
 
-    const { name, slug, description } = data;
+    const { displayName, orgName, slug, description } = data;
 
-    if (!name.trim()) {
-      throw new Error("政治団体名は必須です");
+    if (!displayName.trim()) {
+      throw new Error("表示名は必須です");
     }
 
     if (!slug.trim()) {
@@ -35,7 +36,8 @@ export async function updatePoliticalOrganization(
     await prisma.politicalOrganization.update({
       where: { id: organizationId },
       data: {
-        name: name.trim(),
+        displayName: displayName.trim(),
+        orgName: orgName?.trim() || null,
         slug: slug.trim(),
         description: description?.trim() || null,
       },

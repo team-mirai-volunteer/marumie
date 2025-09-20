@@ -39,7 +39,7 @@ export default async function PoliticalOrganizationsPage() {
                 <div className="flex justify-between items-start gap-4">
                   <div className="flex-1">
                     <h3 className="text-lg font-medium text-white mb-2 mt-0">
-                      {org.name}
+                      {org.displayName}
                     </h3>
                     {org.description && (
                       <p className="text-primary-muted mb-3 mt-0">
@@ -60,7 +60,7 @@ export default async function PoliticalOrganizationsPage() {
                     </Link>
                     <DeletePoliticalOrganizationButton
                       orgId={BigInt(org.id)}
-                      orgName={org.name}
+                      orgName={org.displayName}
                     />
                   </div>
                 </div>

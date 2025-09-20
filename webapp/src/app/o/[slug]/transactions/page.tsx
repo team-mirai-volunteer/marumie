@@ -42,8 +42,8 @@ export async function generateMetadata({
     });
 
     return {
-      title: `みらいオープンデータ - すべての入出金（${result.politicalOrganizations[0]?.name || "Unknown"}）`,
-      description: `${result.politicalOrganizations[0]?.name || "Unknown"}の政治資金取引一覧を表示しています。`,
+      title: `みらいオープンデータ - すべての入出金（${result.politicalOrganizations[0]?.displayName || "Unknown"}）`,
+      description: `${result.politicalOrganizations[0]?.displayName || "Unknown"}の政治資金取引一覧を表示しています。`,
     };
   } catch {
     return {

@@ -341,7 +341,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       return {
         ...base,
         political_organization_name:
-          prismaTransaction.politicalOrganization?.name,
+          prismaTransaction.politicalOrganization?.displayName,
       } as TransactionWithOrganization;
     }
 

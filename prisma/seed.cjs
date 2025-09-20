@@ -7,27 +7,8 @@ const prisma = new PrismaClient();
 async function main() {
     console.log('Seeding database...');
 
-    // チームみらいの政治組織データを作成
-    // 既存のデータがあるかチェック
-    const existingTeamMirai = await prisma.politicalOrganization.findFirst({
-        where: { slug: 'team-mirai' }
-    });
-
-    let teamMirai;
-    if (!existingTeamMirai) {
-        teamMirai = await prisma.politicalOrganization.create({
-            data: {
-                name: 'チームみらい',
-                slug: 'team-mirai',
-                description: 'チームみらい（Team Mirai）は、日本の政党。2024年東京都知事選挙でAIエンジニアの安野貴博のもとに集まった「チーム安野」を前身として、2025年5月8日に設立された。安野が党首を務めている。第27回参議院議員通常選挙において政党要件を満たし、国政政党となった。公職選挙法における略称は「みらい」。',
-            },
-        });
-    } else {
-        console.log('Political organization already exists:', existingTeamMirai);
-        teamMirai = existingTeamMirai;
-    }
-
-    console.log('Created political organization:', teamMirai);
+    // Create political organizations
+    await seedPoliticalOrganizations();
 
     // Create admin user for local development
     await seedAdminUser();
@@ -43,6 +24,43 @@ main()
     .finally(async () => {
         await prisma.$disconnect();
     });
+
+// Political organizations seeding function
+async function seedPoliticalOrganizations() {
+    console.log('Creating political organizations...');
+
+    // 政治組織データの定義
+    const organizations = [
+        {
+            displayName: 'チームみらい',
+            orgName: null,
+            slug: 'team-mirai',
+            description: 'チームみらい（Team Mirai）は、日本の政党。2024年東京都知事選挙でAIエンジニアの安野貴博のもとに集まった「チーム安野」を前身として、2025年5月8日に設立された。安野が党首を務めている。第27回参議院議員通常選挙において政党要件を満たし、国政政党となった。公職選挙法における略称は「みらい」。',
+        },
+        {
+            displayName: '党首・安野たかひろの政治団体',
+            orgName: 'デジタル民主主義を考える会',
+            slug: 'digimin',
+            description: '安野たかひろの政治団体です',
+        }
+    ];
+
+    // 政治組織を作成（既存チェック付き）
+    for (const orgData of organizations) {
+        const existing = await prisma.politicalOrganization.findFirst({
+            where: { slug: orgData.slug }
+        });
+
+        if (!existing) {
+            const created = await prisma.politicalOrganization.create({
+                data: orgData
+            });
+            console.log('Created political organization:', created);
+        } else {
+            console.log('Political organization already exists:', existing);
+        }
+    }
+}
 
 // Admin user seeding function
 async function seedAdminUser() {
@@ -87,7 +105,7 @@ async function seedAdminUser() {
         // Create admin user
         if (existingAdmin) {
             console.log(`✅ Admin user '${ADMIN_EMAIL}' already exists in Supabase`);
-            
+
             const existingDbAdmin = await prisma.user.findUnique({
                 where: { authId: existingAdmin.id }
             });
@@ -126,7 +144,7 @@ async function seedAdminUser() {
         // Create regular user
         if (existingUser) {
             console.log(`✅ Regular user '${USER_EMAIL}' already exists in Supabase`);
-            
+
             const existingDbUser = await prisma.user.findUnique({
                 where: { authId: existingUser.id }
             });

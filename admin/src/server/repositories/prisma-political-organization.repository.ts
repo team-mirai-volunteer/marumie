@@ -8,16 +8,23 @@ export class PrismaPoliticalOrganizationRepository
   constructor(private prisma: PrismaClient) {}
 
   async create(
-    name: string,
+    displayName: string,
     slug: string,
+    orgName?: string,
     description?: string,
   ): Promise<PoliticalOrganization> {
-    const cleanName = name.trim();
+    const cleanDisplayName = displayName.trim();
     const cleanSlug = slug.trim();
+    const cleanOrgName = orgName?.trim() || undefined;
     const cleanDescription = description?.trim() || undefined;
 
     const organization = await this.prisma.politicalOrganization.create({
-      data: { name: cleanName, slug: cleanSlug, description: cleanDescription },
+      data: {
+        displayName: cleanDisplayName,
+        slug: cleanSlug,
+        orgName: cleanOrgName,
+        description: cleanDescription,
+      },
     });
 
     return {
