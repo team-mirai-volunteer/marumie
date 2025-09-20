@@ -164,8 +164,6 @@ export function convertCategoryAggregationToSankeyData(
 
   // previousYearBalanceが0より大きい場合、「昨年からの繰越し」として収入側に追加
   if (previousYearBalance > 0) {
-    incomeByCategory.set("昨年からの繰越し", previousYearBalance);
-
     // 収入データに「昨年からの繰越し」レコードを追加（UI用）
     processedAggregation.income.push({
       category: "昨年からの繰越し",
