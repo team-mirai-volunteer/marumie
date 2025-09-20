@@ -13,11 +13,13 @@ interface MonthlyData {
 interface MonthlyTrendsSectionProps {
   monthlyData?: MonthlyData[];
   updatedAt: string;
+  organizationName?: string;
 }
 
 export default function MonthlyTrendsSection({
   monthlyData,
   updatedAt,
+  organizationName,
 }: MonthlyTrendsSectionProps) {
   return (
     <MainColumnCard id="monthly-trends">
@@ -30,7 +32,7 @@ export default function MonthlyTrendsSection({
             height={30}
           />
         }
-        title="月ごとの収支の推移"
+        title={`${organizationName || "未登録の政治団体"}｜月ごとの収支の推移`}
         updatedAt={updatedAt}
         subtitle="今年の年始から月ごとの収入と支出"
       />

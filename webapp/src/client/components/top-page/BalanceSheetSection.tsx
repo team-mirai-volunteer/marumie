@@ -8,11 +8,13 @@ import BalanceSheetChart from "./features/charts/BalanceSheetChart";
 interface BalanceSheetSectionProps {
   data?: BalanceSheetData;
   updatedAt: string;
+  organizationName?: string;
 }
 
 export default function BalanceSheetSection({
   data,
   updatedAt,
+  organizationName,
 }: BalanceSheetSectionProps) {
   return (
     <MainColumnCard id="balance-sheet">
@@ -25,9 +27,9 @@ export default function BalanceSheetSection({
             height={30}
           />
         }
-        title="現時点での貸借対照表"
+        title={`${organizationName || "未登録の政治団体"}｜現時点での貸借対照表`}
         updatedAt={updatedAt}
-        subtitle="現在のチームみらいの財産と負債の状況"
+        subtitle={`現在の${organizationName || "未登録の政治団体"}の財産と負債の状況`}
       />
 
       {data ? (

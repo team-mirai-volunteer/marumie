@@ -21,12 +21,14 @@ interface TransactionsSectionProps {
   transactionData: TransactionData | null;
   updatedAt: string;
   slug: string;
+  organizationName?: string;
 }
 
 export default function TransactionsSection({
   transactionData,
   updatedAt,
   slug,
+  organizationName,
 }: TransactionsSectionProps) {
   return (
     <MainColumnCard id="transactions">
@@ -39,7 +41,7 @@ export default function TransactionsSection({
             height={30}
           />
         }
-        title="すべての出入金"
+        title={`${organizationName || "未登録の政治団体"}｜すべての出入金`}
         updatedAt={updatedAt}
         subtitle="これまでにデータ連携された出入金の明細"
       />

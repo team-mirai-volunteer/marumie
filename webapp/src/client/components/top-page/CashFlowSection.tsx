@@ -13,12 +13,14 @@ interface CashFlowSectionProps {
   political?: SankeyData | null;
   friendly?: SankeyData | null;
   updatedAt: string;
+  organizationName?: string;
 }
 
 export default function CashFlowSection({
   political,
   friendly,
   updatedAt,
+  organizationName,
 }: CashFlowSectionProps) {
   const [activeTab, setActiveTab] = useState<"political" | "friendly">(
     "friendly",
@@ -37,7 +39,7 @@ export default function CashFlowSection({
             height={31}
           />
         }
-        title="チームみらいの収支の流れ"
+        title={`${organizationName || "未登録の政治団体"}｜収支の流れ`}
         updatedAt={updatedAt}
         subtitle="どこからお金を得て、何に使っているか"
       />
