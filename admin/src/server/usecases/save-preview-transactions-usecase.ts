@@ -120,6 +120,7 @@ export class SavePreviewTransactionsUsecase {
       friendly_category: previewTransaction.friendly_category || "",
       memo: "",
       category_key: previewTransaction.category_key,
+      hash: previewTransaction.hash,
     };
   }
 

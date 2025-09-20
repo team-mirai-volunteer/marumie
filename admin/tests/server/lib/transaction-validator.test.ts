@@ -25,6 +25,7 @@ describe("TransactionValidator", () => {
     label: undefined,
     friendly_category: "テストカテゴリ",
     category_key: "personnel",
+    hash: "test-hash",
     status: "valid",
     errors: [],
     ...overrides,
