@@ -145,10 +145,71 @@ export class PrismaTransactionRepository implements ITransactionRepository {
   }
 
   async update(
-    _id: string,
-    _input: UpdateTransactionInput,
+    id: string,
+    input: UpdateTransactionInput,
   ): Promise<Transaction> {
-    throw new Error("Transaction update is not implemented");
+    const updated = await this.prisma.transaction.update({
+      where: { id: BigInt(id) },
+      data: {
+        politicalOrganizationId: input.political_organization_id
+          ? BigInt(input.political_organization_id)
+          : undefined,
+        transactionNo: input.transaction_no,
+        transactionDate: input.transaction_date,
+        financialYear: input.financial_year,
+        transactionType: input.transaction_type,
+        debitAccount: input.debit_account,
+        debitSubAccount: input.debit_sub_account || null,
+        debitDepartment: input.debit_department || null,
+        debitPartner: input.debit_partner || null,
+        debitTaxCategory: input.debit_tax_category || null,
+        debitAmount: input.debit_amount,
+        creditAccount: input.credit_account,
+        creditSubAccount: input.credit_sub_account || null,
+        creditDepartment: input.credit_department || null,
+        creditPartner: input.credit_partner || null,
+        creditTaxCategory: input.credit_tax_category || null,
+        creditAmount: input.credit_amount,
+        description: input.description || "",
+        label: input.label || "",
+        friendlyCategory: input.friendly_category || "",
+        memo: input.memo || null,
+        categoryKey: input.category_key,
+        hash: input.hash,
+        updatedAt: new Date(),
+      },
+    });
+
+    return this.mapToTransaction(updated);
+  }
+
+  async updateMany(
+    data: Array<{
+      where: { politicalOrganizationId: bigint; transactionNo: string };
+      update: UpdateTransactionInput;
+    }>,
+  ): Promise<Transaction[]> {
+    if (data.length === 0) return [];
+
+    // 個別updateを並列実行
+    const updatePromises = data.map(async (item) => {
+      const existingTransaction = await this.prisma.transaction.findUnique({
+        where: {
+          politicalOrganizationId_transactionNo: {
+            politicalOrganizationId: item.where.politicalOrganizationId,
+            transactionNo: item.where.transactionNo,
+          },
+        },
+      });
+
+      if (!existingTransaction) {
+        throw new Error(`Transaction not found: ${item.where.transactionNo}`);
+      }
+
+      return this.update(existingTransaction.id.toString(), item.update);
+    });
+
+    return Promise.all(updatePromises);
   }
 
   async delete(_id: string): Promise<void> {

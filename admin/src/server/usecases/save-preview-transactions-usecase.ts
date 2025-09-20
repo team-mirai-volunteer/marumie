@@ -1,4 +1,7 @@
-import type { CreateTransactionInput } from "@/shared/models/transaction";
+import type {
+  CreateTransactionInput,
+  UpdateTransactionInput,
+} from "@/shared/models/transaction";
 import type { ITransactionRepository } from "../repositories/interfaces/transaction-repository.interface";
 import {
   type PreviewTransaction,
@@ -45,8 +48,10 @@ export class SavePreviewTransactionsUsecase {
         return result;
       }
 
-      const validTransactions = input.validTransactions.filter(
-        (t) => t.status === "insert" && t.transaction_type !== null,
+      const saveableTransactions = input.validTransactions.filter(
+        (t) =>
+          (t.status === "insert" || t.status === "update") &&
+          t.transaction_type !== null,
       );
 
       result.processedCount = input.validTransactions.length;
@@ -54,21 +59,44 @@ export class SavePreviewTransactionsUsecase {
         (t) => t.status === "skip",
       ).length;
 
-      if (validTransactions.length === 0) {
-        return result;
-      }
+      // insertとupdateに分けて処理
+      const insertTransactions = saveableTransactions.filter(
+        (t) => t.status === "insert",
+      );
+      const updateTransactions = saveableTransactions.filter(
+        (t) => t.status === "update",
+      );
 
-      const transactionInputs: CreateTransactionInput[] = validTransactions.map(
-        (transaction) =>
+      let savedCount = 0;
+
+      // bulk insert
+      if (insertTransactions.length > 0) {
+        const createInputs = insertTransactions.map((transaction) =>
           this.convertPreviewToCreateInput(
             transaction,
             input.politicalOrganizationId,
           ),
-      );
+        );
+        const createdTransactions =
+          await this.transactionRepository.createMany(createInputs);
+        savedCount += createdTransactions.length;
+      }
 
-      const createResult =
-        await this.transactionRepository.createMany(transactionInputs);
-      result.savedCount = createResult.length;
+      // bulk update
+      if (updateTransactions.length > 0) {
+        const updateData = updateTransactions.map((transaction) => ({
+          where: {
+            politicalOrganizationId: BigInt(input.politicalOrganizationId),
+            transactionNo: transaction.transaction_no,
+          },
+          update: this.convertPreviewToUpdateInput(transaction),
+        }));
+        const updatedTransactions =
+          await this.transactionRepository.updateMany(updateData);
+        savedCount += updatedTransactions.length;
+      }
+
+      result.savedCount = savedCount;
 
       // Refresh webapp cache after successful save
       if (result.savedCount > 0) {
@@ -95,6 +123,46 @@ export class SavePreviewTransactionsUsecase {
 
     return {
       political_organization_id: politicalOrganizationId,
+      transaction_no: previewTransaction.transaction_no,
+      transaction_date: new Date(previewTransaction.transaction_date),
+      financial_year: this.recordConverter.extractFinancialYear(
+        typeof previewTransaction.transaction_date === "string"
+          ? previewTransaction.transaction_date
+          : previewTransaction.transaction_date.toISOString(),
+      ),
+      transaction_type: previewTransaction.transaction_type,
+      debit_account: previewTransaction.debit_account,
+      debit_sub_account: previewTransaction.debit_sub_account || "",
+      debit_department: "",
+      debit_partner: "",
+      debit_tax_category: "",
+      debit_amount: previewTransaction.debit_amount,
+      credit_account: previewTransaction.credit_account,
+      credit_sub_account: previewTransaction.credit_sub_account || "",
+      credit_department: "",
+      credit_partner: "",
+      credit_tax_category: "",
+      credit_amount: previewTransaction.credit_amount,
+      description: previewTransaction.description || "",
+      label: previewTransaction.label || "",
+      friendly_category: previewTransaction.friendly_category || "",
+      memo: "",
+      category_key: previewTransaction.category_key,
+      hash: previewTransaction.hash,
+    };
+  }
+
+  private convertPreviewToUpdateInput(
+    previewTransaction: PreviewTransaction,
+  ): UpdateTransactionInput {
+    // transaction_typeがnullの場合はエラー
+    if (previewTransaction.transaction_type === null) {
+      throw new Error(
+        `Invalid transaction type: ${previewTransaction.transaction_type}`,
+      );
+    }
+
+    return {
       transaction_no: previewTransaction.transaction_no,
       transaction_date: new Date(previewTransaction.transaction_date),
       financial_year: this.recordConverter.extractFinancialYear(

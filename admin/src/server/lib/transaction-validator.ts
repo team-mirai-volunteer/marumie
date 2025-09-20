@@ -69,6 +69,7 @@ export class TransactionValidator {
       ...transaction,
       status: "update",
       errors: [],
+      existingTransactionId: duplicateByTransactionNo.id,
     };
   }
 

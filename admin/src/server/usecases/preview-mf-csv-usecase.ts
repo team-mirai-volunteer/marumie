@@ -106,7 +106,8 @@ export class PreviewMfCsvUsecase {
         totalCount: previewTransactions.length,
         insertCount: previewTransactions.filter((t) => t.status === "insert")
           .length,
-        updateCount: 0,
+        updateCount: previewTransactions.filter((t) => t.status === "update")
+          .length,
         invalidCount: previewTransactions.filter((t) => t.status === "invalid")
           .length,
         skipCount: previewTransactions.filter((t) => t.status === "skip")

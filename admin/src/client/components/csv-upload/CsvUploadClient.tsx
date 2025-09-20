@@ -50,10 +50,10 @@ export default function CsvUploadClient({
       }
 
       const validTransactions = previewResult.transactions.filter(
-        (t) => t.status === "insert",
+        (t) => t.status === "insert" || t.status === "update",
       );
       if (validTransactions.length === 0) {
-        setMessage("有効なデータがありません");
+        setMessage("保存可能なデータがありません");
         return;
       }
 
@@ -124,7 +124,9 @@ export default function CsvUploadClient({
           !file ||
           !politicalOrganizationId ||
           !previewResult ||
-          previewResult.summary.insertCount === 0 ||
+          previewResult.summary.insertCount +
+            previewResult.summary.updateCount ===
+            0 ||
           uploading;
 
         return (

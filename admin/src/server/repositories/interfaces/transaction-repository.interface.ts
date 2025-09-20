@@ -28,6 +28,12 @@ export interface ITransactionRepository {
     pagination?: PaginationOptions,
   ): Promise<PaginatedResult<TransactionWithOrganization>>;
   update(id: string, input: UpdateTransactionInput): Promise<Transaction>;
+  updateMany(
+    data: Array<{
+      where: { politicalOrganizationId: bigint; transactionNo: string };
+      update: UpdateTransactionInput;
+    }>,
+  ): Promise<Transaction[]>;
   delete(id: string): Promise<void>;
   deleteAll(filters?: TransactionFilters): Promise<number>;
   createMany(inputs: CreateTransactionInput[]): Promise<Transaction[]>;

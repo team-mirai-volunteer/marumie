@@ -21,6 +21,7 @@ export interface PreviewTransaction {
   hash: string;
   status: "insert" | "update" | "invalid" | "skip";
   errors: string[];
+  existingTransactionId?: string;
 }
 
 export class MfRecordConverter {
