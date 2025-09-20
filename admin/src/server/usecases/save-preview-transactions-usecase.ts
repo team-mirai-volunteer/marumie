@@ -46,7 +46,7 @@ export class SavePreviewTransactionsUsecase {
       }
 
       const validTransactions = input.validTransactions.filter(
-        (t) => t.status === "valid" && t.transaction_type !== null,
+        (t) => t.status === "insert" && t.transaction_type !== null,
       );
 
       result.processedCount = input.validTransactions.length;

@@ -156,7 +156,7 @@ describe("SavePreviewTransactionsUsecase", () => {
       // createManyのモック設定を追加
       mockRepository.createMany.mockResolvedValue(
         previewResult.transactions
-          .filter(t => t.status === 'valid')
+          .filter(t => t.status === 'insert')
           .map(t => ({
             id: 'test-id',
             political_organization_id: t.political_organization_id,
@@ -190,7 +190,7 @@ describe("SavePreviewTransactionsUsecase", () => {
       const result = await usecase.execute(input);
 
       // 無効な取引があるため有効な取引のみ処理される
-      const validTransactionCount = previewResult.transactions.filter(t => t.status === 'valid').length;
+      const validTransactionCount = previewResult.transactions.filter(t => t.status === 'insert').length;
       expect(result.processedCount).toBe(previewResult.transactions.length);
       expect(result.savedCount).toBe(validTransactionCount);
 

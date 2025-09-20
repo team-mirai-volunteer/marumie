@@ -79,16 +79,13 @@ export class PreviewMfCsvUsecase {
         };
       }
 
-      // Get existing transaction numbers first
+      // Get existing transactions first
       const transactionNos = csvRecords
         .map((record) => record.transaction_no)
         .filter(Boolean) as string[];
 
-      const duplicateTransactionNos =
-        await this.transactionRepository.checkDuplicateTransactionNos(
-          input.politicalOrganizationId,
-          transactionNos,
-        );
+      const existingTransactions =
+        await this.transactionRepository.findByTransactionNos(transactionNos);
 
       // Convert records to preview transactions
       const convertedTransactions: PreviewTransaction[] = csvRecords.map(
@@ -102,7 +99,7 @@ export class PreviewMfCsvUsecase {
       // Validate converted transactions including duplicate check
       const previewTransactions = this.validator.validatePreviewTransactions(
         convertedTransactions,
-        duplicateTransactionNos,
+        existingTransactions,
       );
 
       const summary = {

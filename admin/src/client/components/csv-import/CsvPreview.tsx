@@ -68,12 +68,19 @@ export default function CsvPreview({
           transactions: [],
           summary: {
             totalCount: 0,
-            validCount: 0,
+            insertCount: 0,
+            updateCount: 0,
             invalidCount: 0,
             skipCount: 0,
           },
           statistics: {
-            valid: {
+            insert: {
+              income: { count: 0, amount: 0 },
+              expense: { count: 0, amount: 0 },
+              offset_income: { count: 0, amount: 0 },
+              offset_expense: { count: 0, amount: 0 },
+            },
+            update: {
               income: { count: 0, amount: 0 },
               expense: { count: 0, amount: 0 },
               offset_income: { count: 0, amount: 0 },
@@ -132,7 +139,7 @@ export default function CsvPreview({
   const getSortedTransactions = (): PreviewTransaction[] => {
     if (!previewResult) return [];
 
-    const statusOrder = { valid: 1, invalid: 2, skip: 3 };
+    const statusOrder = { insert: 1, update: 2, invalid: 3, skip: 4 };
     return [...previewResult.transactions].sort((a, b) => {
       const aOrder = statusOrder[a.status] || 4;
       const bOrder = statusOrder[b.status] || 4;

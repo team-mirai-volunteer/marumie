@@ -50,7 +50,7 @@ export default function CsvUploadClient({
       }
 
       const validTransactions = previewResult.transactions.filter(
-        (t) => t.status === "valid",
+        (t) => t.status === "insert",
       );
       if (validTransactions.length === 0) {
         setMessage("有効なデータがありません");
@@ -124,7 +124,7 @@ export default function CsvUploadClient({
           !file ||
           !politicalOrganizationId ||
           !previewResult ||
-          previewResult.summary.validCount === 0 ||
+          previewResult.summary.insertCount === 0 ||
           uploading;
 
         return (
