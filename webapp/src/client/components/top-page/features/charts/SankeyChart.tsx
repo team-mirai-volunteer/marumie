@@ -327,6 +327,11 @@ const splitLabel = (label: string, maxCharsPerLine: number): string[] => {
     return ["その他", label.substring(3)];
   }
 
+  // 「昨年からの繰越し」の特別対応：「昨年からの」と「繰越し」に分割
+  if (label === "昨年からの繰越し") {
+    return ["昨年からの", "繰越し"];
+  }
+
   // 特殊ケース：N+1文字（7文字）の場合は N-2, 3 に分割
   if (label.length === N + 1) {
     return [label.substring(0, N - 2), label.substring(N - 2)];
@@ -428,7 +433,9 @@ const renderPrimaryLabel = (
     ? isMobile
       ? DIMENSIONS.LINE_HEIGHT_SUB_MOBILE
       : DIMENSIONS.LINE_HEIGHT
-    : DIMENSIONS.LINE_HEIGHT;
+    : isMobile
+      ? 10 // モバイルでのメインカテゴリ行間
+      : 16; // デスクトップでのメインカテゴリ行間
   const totalTextHeight = (lines.length - 1) * lineHeight;
 
   return (

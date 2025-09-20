@@ -50,6 +50,12 @@ export function useNodeColors() {
         return COLORS.TEXT; // テキスト色は#1F2937
       }
 
+      if (nodeLabel === "昨年からの繰越し") {
+        if (variant === "light") return "#D2D4D8";
+        if (variant === "box" || variant === "fill") return "#6B7280"; // ボックス色はグレーのまま
+        return COLORS.TEXT; // テキスト色は#1F2937
+      }
+
       if (nodeLabel === "(仕訳中)") {
         return variant === "light" ? "#FFF2F2" : "#F87171";
       }
@@ -141,6 +147,17 @@ export function useSankeySorting(data: SankeyData) {
         if (a.nodeType === "income" || a.nodeType === "expense") {
           const aValue = calculateNodeValue(a.id, data.links);
           const bValue = calculateNodeValue(b.id, data.links);
+
+          // income カテゴリでの特別処理
+          if (a.nodeType === "income") {
+            const aIsPreviousYearCarryover = a.label === "昨年からの繰越し";
+            const bIsPreviousYearCarryover = b.label === "昨年からの繰越し";
+
+            // 昨年からの繰越し vs その他
+            if (aIsPreviousYearCarryover && !bIsPreviousYearCarryover) return 1; // 昨年からの繰越しを最後に
+            if (bIsPreviousYearCarryover && !aIsPreviousYearCarryover)
+              return -1; // 昨年からの繰越しを最後に
+          }
 
           // expense カテゴリでの特別処理
           if (a.nodeType === "expense") {

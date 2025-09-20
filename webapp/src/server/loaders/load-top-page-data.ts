@@ -4,7 +4,6 @@ import { PrismaPoliticalOrganizationRepository } from "@/server/repositories/pri
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
 import { PrismaBalanceSnapshotRepository } from "@/server/repositories/prisma-balance-snapshot.repository";
 import { GetBalanceSheetUsecase } from "@/server/usecases/get-balance-sheet-usecase";
-import { GetDailyDonationUsecase } from "@/server/usecases/get-daily-donation-usecase";
 import { GetMockTransactionPageDataUsecase } from "@/server/usecases/get-mock-transaction-page-data-usecase";
 import { GetMonthlyTransactionAggregationUsecase } from "@/server/usecases/get-monthly-transaction-aggregation-usecase";
 import { GetSankeyAggregationUsecase } from "@/server/usecases/get-sankey-aggregation-usecase";
@@ -54,24 +53,18 @@ export const loadTopPageData = unstable_cache(
       balanceSnapshotRepository,
     );
 
-    const donationUsecase = new GetDailyDonationUsecase(
-      transactionRepository,
-      politicalOrganizationRepository,
-    );
-
     const balanceSheetUsecase = new GetBalanceSheetUsecase(
       transactionRepository,
       balanceSnapshotRepository,
       politicalOrganizationRepository,
     );
 
-    // 6つのUsecaseを並列実行（sankeyは2回実行）
+    // 5つのUsecaseを並列実行（sankeyは2回実行）
     const [
       transactionData,
       monthlyData,
       sankeyPoliticalCategoryData,
       sankeyFriendlyCategoryData,
-      donationData,
       balanceSheetData,
     ] = await Promise.all([
       transactionUsecase.execute(params),
@@ -89,12 +82,6 @@ export const loadTopPageData = unstable_cache(
         financialYear: params.financialYear,
         categoryType: "friendly-category",
       }),
-      donationUsecase.execute({
-        slugs: params.slugs,
-        financialYear: params.financialYear,
-        today: new Date(),
-        days: 90,
-      }),
       balanceSheetUsecase.execute({
         slugs: params.slugs,
         financialYear: params.financialYear,
@@ -106,7 +93,6 @@ export const loadTopPageData = unstable_cache(
       monthlyData: monthlyData.monthlyData,
       political: sankeyPoliticalCategoryData.sankeyData,
       friendly: sankeyFriendlyCategoryData.sankeyData,
-      donationSummary: donationData.donationSummary,
       balanceSheetData: balanceSheetData.balanceSheetData,
     };
   },
