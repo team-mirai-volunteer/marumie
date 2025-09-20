@@ -26,7 +26,7 @@ describe("TransactionValidator", () => {
     friendly_category: "テストカテゴリ",
     category_key: "personnel",
     hash: "test-hash",
-    status: "valid",
+    status: "insert",
     errors: [],
     ...overrides,
   });
@@ -47,9 +47,9 @@ describe("TransactionValidator", () => {
 
       const result = validator.validatePreviewTransactions(transactions);
 
-      expect(result[0].status).toBe("valid");
+      expect(result[0].status).toBe("insert");
       expect(result[0].errors).toHaveLength(0);
-      expect(result[1].status).toBe("valid");
+      expect(result[1].status).toBe("insert");
       expect(result[1].errors).toHaveLength(0);
     });
 
@@ -57,13 +57,35 @@ describe("TransactionValidator", () => {
       const transactions = [
         createMockTransaction({
           transaction_no: "DUP001",
+          hash: "test-hash", // 同じハッシュに設定
         }),
       ];
 
-      const result = validator.validatePreviewTransactions(transactions, ["DUP001"]);
+      const existingTransactions = [{
+        id: "existing-1",
+        political_organization_id: "org-1",
+        transaction_no: "DUP001",
+        transaction_date: new Date(),
+        financial_year: 2024,
+        transaction_type: "expense" as const,
+        debit_account: "人件費",
+        debit_amount: 100000,
+        credit_account: "普通預金",
+        credit_amount: 100000,
+        description: "existing transaction",
+        friendly_category: "既存カテゴリ",
+        memo: "",
+        category_key: "personnel",
+        label: "",
+        hash: "test-hash", // 同じハッシュに設定
+        created_at: new Date(),
+        updated_at: new Date(),
+      }];
+
+      const result = validator.validatePreviewTransactions(transactions, existingTransactions);
 
       expect(result[0].status).toBe("skip");
-      expect(result[0].errors).toContain("重複データのためスキップされます");
+      expect(result[0].errors).toContain("重複のためスキップされます");
     });
 
     it("should mark transactions as invalid for invalid debit account", () => {
@@ -121,9 +143,9 @@ describe("TransactionValidator", () => {
 
       const result = validator.validatePreviewTransactions(transactions);
 
-      expect(result[0].status).toBe("valid");
+      expect(result[0].status).toBe("insert");
       expect(result[0].errors).toHaveLength(0);
-      expect(transactions[1].status).toBe("valid");
+      expect(transactions[1].status).toBe("insert");
       expect(transactions[1].errors).toHaveLength(0);
     });
 
@@ -176,7 +198,7 @@ describe("TransactionValidator", () => {
       expect(result[0].errors).toContain('無効な借方科目: "無効な借方科目"');
     });
 
-    it("should prioritize duplicate status over validation errors", () => {
+    it("should prioritize validation errors over duplicate check", () => {
       const transactions = [
         createMockTransaction({
           transaction_no: "DUP001",
@@ -184,12 +206,33 @@ describe("TransactionValidator", () => {
         }),
       ];
 
-      const result = validator.validatePreviewTransactions(transactions, ["DUP001"]);
+      const existingTransactions = [{
+        id: "existing-2",
+        political_organization_id: "org-1",
+        transaction_no: "DUP001",
+        transaction_date: new Date(),
+        financial_year: 2024,
+        transaction_type: "expense" as const,
+        debit_account: "人件費",
+        debit_amount: 100000,
+        credit_account: "普通預金",
+        credit_amount: 100000,
+        description: "existing transaction 2",
+        friendly_category: "既存カテゴリ",
+        memo: "",
+        category_key: "personnel",
+        label: "",
+        hash: "existing-hash-2",
+        created_at: new Date(),
+        updated_at: new Date(),
+      }];
 
-      expect(result[0].status).toBe("skip");
-      expect(result[0].errors).toContain("重複データのためスキップされます");
-      // Should not contain validation errors since duplicate takes priority
-      expect(result[0].errors).not.toContain('無効な借方科目: "無効な借方科目"');
+      const result = validator.validatePreviewTransactions(transactions, existingTransactions);
+
+      expect(result[0].status).toBe("invalid");
+      expect(result[0].errors).toContain('無効な借方科目: "無効な借方科目"');
+      // Should not contain duplicate messages since validation takes priority
+      expect(result[0].errors).not.toContain("重複のためスキップされます");
     });
   });
 });

@@ -14,13 +14,13 @@ import type { CreateTransactionInput } from "@/shared/models/transaction";
 describe("SavePreviewTransactionsUsecase", () => {
   let usecase: SavePreviewTransactionsUsecase;
   let previewUsecase: PreviewMfCsvUsecase;
-  let mockRepository: jest.Mocked<Pick<ITransactionRepository, 'createMany' | 'findByTransactionNos' | 'checkDuplicateTransactionNos'>>;
+  let mockRepository: jest.Mocked<Pick<ITransactionRepository, 'createMany' | 'updateMany' | 'findByTransactionNos'>>;
 
   beforeEach(() => {
     mockRepository = {
       createMany: jest.fn(),
+      updateMany: jest.fn(),
       findByTransactionNos: jest.fn().mockResolvedValue([]),
-      checkDuplicateTransactionNos: jest.fn().mockResolvedValue([]),
     };
     usecase = new SavePreviewTransactionsUsecase(mockRepository as unknown as ITransactionRepository);
     previewUsecase = new PreviewMfCsvUsecase(mockRepository as unknown as ITransactionRepository);
@@ -156,7 +156,7 @@ describe("SavePreviewTransactionsUsecase", () => {
       // createManyのモック設定を追加
       mockRepository.createMany.mockResolvedValue(
         previewResult.transactions
-          .filter(t => t.status === 'valid')
+          .filter(t => t.status === 'insert')
           .map(t => ({
             id: 'test-id',
             political_organization_id: t.political_organization_id,
@@ -190,7 +190,7 @@ describe("SavePreviewTransactionsUsecase", () => {
       const result = await usecase.execute(input);
 
       // 無効な取引があるため有効な取引のみ処理される
-      const validTransactionCount = previewResult.transactions.filter(t => t.status === 'valid').length;
+      const validTransactionCount = previewResult.transactions.filter(t => t.status === 'insert').length;
       expect(result.processedCount).toBe(previewResult.transactions.length);
       expect(result.savedCount).toBe(validTransactionCount);
 
@@ -203,38 +203,110 @@ describe("SavePreviewTransactionsUsecase", () => {
     });
 
     it("should handle duplicate transaction_no within same political organization", async () => {
-      // 同じtransaction_noを持つCSVデータ
+      // 同じtransaction_noを持つが内容が異なるCSVデータ（updateとinsertの組み合わせ）
       const csvContent = `取引No,取引日,借方勘定科目,借方補助科目,借方部門,借方取引先,借方税区分,借方インボイス,借方金額,貸方勘定科目,貸方補助科目,貸方部門,貸方取引先,貸方税区分,貸方インボイス,貸方金額,摘要,仕訳メモ,タグ
 TXN-001,2025/6/1,人件費,,,,,,1000,普通預金,,,,,,1000,給与支払1,,人件費
 TXN-001,2025/6/2,人件費,,,,,,2000,普通預金,,,,,,2000,給与支払2,,人件費`;
 
       // 既存データとして同じtransaction_noが存在することをモック
-      mockRepository.checkDuplicateTransactionNos.mockResolvedValue(['TXN-001']);
+      mockRepository.findByTransactionNos.mockResolvedValue([{
+        id: 'existing-id',
+        political_organization_id: '1',
+        transaction_no: 'TXN-001',
+        transaction_date: new Date('2025-06-01'),
+        financial_year: 2025,
+        transaction_type: 'expense',
+        debit_account: '人件費',
+        debit_sub_account: '',
+        debit_department: '',
+        debit_partner: '',
+        debit_tax_category: '',
+        debit_amount: 1000,
+        credit_account: '普通預金',
+        credit_sub_account: '',
+        credit_department: '',
+        credit_partner: '',
+        credit_tax_category: '',
+        credit_amount: 1000,
+        description: '給与支払1',
+        friendly_category: '',
+        memo: '',
+        category_key: '人件費',
+        label: '',
+        hash: 'different-hash', // 異なるハッシュを設定してupdateになるようにする
+        created_at: new Date(),
+        updated_at: new Date()
+      }]);
+
+      // Mock repository methods
+      mockRepository.createMany.mockImplementation(
+        async (transactions) => {
+          return transactions.map((t, index) => ({
+            ...t,
+            id: `new-id-${index}`,
+            label: t.label || '',
+            hash: t.hash,
+            created_at: new Date(),
+            updated_at: new Date()
+          }));
+        }
+      );
+
+      mockRepository.updateMany.mockImplementation(
+        async (updateData) => {
+          return updateData.map((_, index) => ({
+            id: `updated-id-${index}`,
+            political_organization_id: '1',
+            transaction_no: 'TXN-001',
+            transaction_date: new Date(),
+            financial_year: 2025,
+            transaction_type: 'expense' as const,
+            debit_account: '人件費',
+            debit_sub_account: '',
+            debit_amount: 1000,
+            credit_account: '普通預金',
+            credit_sub_account: '',
+            credit_amount: 1000,
+            description: 'updated',
+            friendly_category: '',
+            memo: '',
+            category_key: '人件費',
+            label: '',
+            hash: 'updated-hash',
+            created_at: new Date(),
+            updated_at: new Date()
+          }));
+        }
+      );
+
+      // Mock the refreshWebappCache method to prevent HTTP requests in tests
+      jest.spyOn(usecase as any, 'refreshWebappCache').mockResolvedValue(undefined);
 
       const previewInput: PreviewMfCsvInput = {
         csvContent,
-        politicalOrganizationId: "test-org-id",
+        politicalOrganizationId: "1",
       };
       const previewResult = await previewUsecase.execute(previewInput);
 
       const input: SavePreviewTransactionsInput = {
         validTransactions: previewResult.transactions,
-        politicalOrganizationId: "test-org-id",
+        politicalOrganizationId: "1",
       };
 
       const result = await usecase.execute(input);
 
-      // 重複により全てスキップされるはず
+
+      // 両方ともupdateステータス（同じtransaction_noに対して複数のupdateが発生）
       expect(result.processedCount).toBe(2);
-      expect(result.savedCount).toBe(0);
-      expect(result.skippedCount).toBe(2);
-      
-      // repositoryのcreateMany呼び出しを確認（有効な取引がないので呼ばれない）
+      expect(result.savedCount).toBe(2);
+      expect(result.skippedCount).toBe(0);
+
+      // 両方ともupdateなので、updateManyのみが呼ばれる
+      expect(mockRepository.updateMany).toHaveBeenCalled();
       expect(mockRepository.createMany).not.toHaveBeenCalled();
       
-      // checkDuplicateTransactionNosが正しい引数で呼ばれることを確認
-      expect(mockRepository.checkDuplicateTransactionNos).toHaveBeenCalledWith(
-        "test-org-id",
+      // findByTransactionNosが正しい引数で呼ばれることを確認
+      expect(mockRepository.findByTransactionNos).toHaveBeenCalledWith(
         ["TXN-001", "TXN-001"]
       );
     });
@@ -244,7 +316,7 @@ TXN-001,2025/6/2,人件費,,,,,,2000,普通預金,,,,,,2000,給与支払2,,人�
 TXN-001,2025/6/1,人件費,,,,,,1000,普通預金,,,,,,1000,給与支払,,人件費`;
 
       // 異なる政治団体では重複なし
-      mockRepository.checkDuplicateTransactionNos.mockResolvedValue([]);
+      mockRepository.findByTransactionNos.mockResolvedValue([]);
       
       // createManyのモック設定
       mockRepository.createMany.mockResolvedValue([
@@ -299,8 +371,7 @@ TXN-001,2025/6/1,人件費,,,,,,1000,普通預金,,,,,,1000,給与支払,,人件
       
       // repositoryが呼ばれることを確認
       expect(mockRepository.createMany).toHaveBeenCalledTimes(1);
-      expect(mockRepository.checkDuplicateTransactionNos).toHaveBeenCalledWith(
-        "different-org-id",
+      expect(mockRepository.findByTransactionNos).toHaveBeenCalledWith(
         ["TXN-001"]
       );
     });

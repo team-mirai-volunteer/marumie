@@ -20,24 +20,17 @@ export interface PaginationOptions {
 }
 
 export interface ITransactionRepository {
-  create(input: CreateTransactionInput): Promise<Transaction>;
-  findById(id: string): Promise<Transaction | null>;
-  findAll(filters?: TransactionFilters): Promise<Transaction[]>;
   findWithPagination(
     filters?: TransactionFilters,
     pagination?: PaginationOptions,
   ): Promise<PaginatedResult<TransactionWithOrganization>>;
-  update(id: string, input: UpdateTransactionInput): Promise<Transaction>;
-  delete(id: string): Promise<void>;
+  updateMany(
+    data: Array<{
+      where: { politicalOrganizationId: bigint; transactionNo: string };
+      update: UpdateTransactionInput;
+    }>,
+  ): Promise<Transaction[]>;
   deleteAll(filters?: TransactionFilters): Promise<number>;
   createMany(inputs: CreateTransactionInput[]): Promise<Transaction[]>;
-  createManySkipDuplicates(inputs: CreateTransactionInput[]): Promise<{
-    created: Transaction[];
-    skipped: number;
-  }>;
   findByTransactionNos(transactionNos: string[]): Promise<Transaction[]>;
-  checkDuplicateTransactionNos(
-    politicalOrgId: string,
-    transactionNos: string[],
-  ): Promise<string[]>;
 }

@@ -47,30 +47,59 @@ export default function StatisticsTable({ statistics }: StatisticsTableProps) {
           <tbody>
             <tr>
               <td className="border border-primary-border px-4 py-2 text-xs text-green-500 font-medium">
-                有効
+                挿入
               </td>
               <td className="border border-primary-border px-4 py-2 text-xs text-white text-center">
                 {formatCell(
-                  statistics.valid.income.count,
-                  statistics.valid.income.amount,
+                  statistics.insert.income.count,
+                  statistics.insert.income.amount,
                 )}
               </td>
               <td className="border border-primary-border px-4 py-2 text-xs text-white text-center">
                 {formatCell(
-                  statistics.valid.expense.count,
-                  statistics.valid.expense.amount,
+                  statistics.insert.expense.count,
+                  statistics.insert.expense.amount,
                 )}
               </td>
               <td className="border border-primary-border px-4 py-2 text-xs text-white text-center">
                 {formatCell(
-                  statistics.valid.offset_income.count,
-                  statistics.valid.offset_income.amount,
+                  statistics.insert.offset_income.count,
+                  statistics.insert.offset_income.amount,
                 )}
               </td>
               <td className="border border-primary-border px-4 py-2 text-xs text-white text-center">
                 {formatCell(
-                  statistics.valid.offset_expense.count,
-                  statistics.valid.offset_expense.amount,
+                  statistics.insert.offset_expense.count,
+                  statistics.insert.offset_expense.amount,
+                )}
+              </td>
+            </tr>
+            <tr>
+              <td className="border border-primary-border px-4 py-2 text-xs text-blue-500 font-medium">
+                更新
+              </td>
+              <td className="border border-primary-border px-4 py-2 text-xs text-white text-center">
+                {formatCell(
+                  statistics.update.income.count,
+                  statistics.update.income.amount,
+                )}
+              </td>
+              <td className="border border-primary-border px-4 py-2 text-xs text-white text-center">
+                {formatCell(
+                  statistics.update.expense.count,
+                  statistics.update.expense.amount,
+                )}
+              </td>
+              <td className="border border-primary-border px-4 py-2 text-xs text-white text-center">
+                {formatCell(
+                  statistics.update.offset_income.count,
+                  statistics.update.offset_income.amount,
+                )}
+              </td>
+              <td className="border border-primary-border px-4 py-2 text-xs text-white text-center">
+                {formatCell(
+                  statistics.update.offset_expense.count,
+                  statistics.update.offset_expense.amount,
                 )}
               </td>
             </tr>
