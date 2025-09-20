@@ -5,20 +5,26 @@ export class CreatePoliticalOrganizationUsecase {
   constructor(private repository: IPoliticalOrganizationRepository) {}
 
   async execute(
-    name: string,
+    displayName: string,
     slug: string,
+    orgName?: string,
     description?: string,
   ): Promise<PoliticalOrganization> {
     try {
-      if (!name || name.trim().length === 0) {
-        throw new Error("Organization name is required");
+      if (!displayName || displayName.trim().length === 0) {
+        throw new Error("Organization display name is required");
       }
 
       if (!slug || slug.trim().length === 0) {
         throw new Error("Organization slug is required");
       }
 
-      return await this.repository.create(name, slug, description);
+      return await this.repository.create(
+        displayName,
+        slug,
+        orgName,
+        description,
+      );
     } catch (error) {
       throw new Error(
         `Failed to create organization: ${error instanceof Error ? error.message : "Unknown error"}`,

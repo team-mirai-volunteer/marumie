@@ -6,7 +6,8 @@ import { revalidatePath } from "next/cache";
 const prisma = new PrismaClient();
 
 export interface CreatePoliticalOrganizationData {
-  name: string;
+  displayName: string;
+  orgName?: string;
   slug: string;
   description?: string;
 }
@@ -15,10 +16,10 @@ export async function createPoliticalOrganization(
   data: CreatePoliticalOrganizationData,
 ) {
   try {
-    const { name, slug, description } = data;
+    const { displayName, orgName, slug, description } = data;
 
-    if (!name.trim()) {
-      throw new Error("政治団体名は必須です");
+    if (!displayName.trim()) {
+      throw new Error("表示名は必須です");
     }
 
     if (!slug.trim()) {
@@ -27,7 +28,8 @@ export async function createPoliticalOrganization(
 
     await prisma.politicalOrganization.create({
       data: {
-        name: name.trim(),
+        displayName: displayName.trim(),
+        orgName: orgName?.trim() || null,
         slug: slug.trim(),
         description: description?.trim() || null,
       },

@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface PoliticalOrganizationFormData {
-  name: string;
+  displayName: string;
+  orgName: string;
   slug: string;
   description: string;
 }
@@ -21,14 +22,15 @@ interface PoliticalOrganizationFormProps {
 }
 
 export function PoliticalOrganizationForm({
-  initialData = { name: "", slug: "", description: "" },
+  initialData = { displayName: "", orgName: "", slug: "", description: "" },
   onSubmit,
   submitButtonText,
   title,
 }: PoliticalOrganizationFormProps) {
   const router = useRouter();
   const [formData, setFormData] = useState<PoliticalOrganizationFormData>({
-    name: initialData.name || "",
+    displayName: initialData.displayName || "",
+    orgName: initialData.orgName || "",
     slug: initialData.slug || "",
     description: initialData.description || "",
   });
@@ -37,7 +39,7 @@ export function PoliticalOrganizationForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name.trim() || !formData.slug.trim()) return;
+    if (!formData.displayName.trim() || !formData.slug.trim()) return;
 
     try {
       setIsLoading(true);
@@ -84,19 +86,41 @@ export function PoliticalOrganizationForm({
 
       <form onSubmit={handleSubmit} className="mt-5 space-y-5">
         <div>
-          <label htmlFor="name" className="block mb-2 font-medium text-white">
-            政治団体名 <span className="text-red-500">*</span>
+          <label
+            htmlFor="displayName"
+            className="block mb-2 font-medium text-white"
+          >
+            表示名 <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
-            id="name"
-            name="name"
-            value={formData.name}
+            id="displayName"
+            name="displayName"
+            value={formData.displayName}
             onChange={handleInputChange}
             className="bg-primary-input text-white border border-primary-border rounded-lg px-3 py-2.5 w-full max-w-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-accent focus:border-primary-accent"
-            placeholder="政治団体名を入力してください"
+            placeholder="表示名を入力してください"
             disabled={isLoading}
             required
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="orgName"
+            className="block mb-2 font-medium text-white"
+          >
+            正式名称（任意）
+          </label>
+          <input
+            type="text"
+            id="orgName"
+            name="orgName"
+            value={formData.orgName}
+            onChange={handleInputChange}
+            className="bg-primary-input text-white border border-primary-border rounded-lg px-3 py-2.5 w-full max-w-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-accent focus:border-primary-accent"
+            placeholder="正式名称を入力してください"
+            disabled={isLoading}
           />
         </div>
 
@@ -139,10 +163,10 @@ export function PoliticalOrganizationForm({
           <button
             type="submit"
             disabled={
-              isLoading || !formData.name.trim() || !formData.slug.trim()
+              isLoading || !formData.displayName.trim() || !formData.slug.trim()
             }
             className={`bg-primary-accent text-white border-0 rounded-lg px-4 py-2.5 font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-accent ${
-              isLoading || !formData.name.trim() || !formData.slug.trim()
+              isLoading || !formData.displayName.trim() || !formData.slug.trim()
                 ? "opacity-60 cursor-not-allowed"
                 : "hover:bg-blue-600 cursor-pointer"
             }`}

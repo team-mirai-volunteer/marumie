@@ -45,7 +45,7 @@ export default function PoliticalOrganizationSelector({
         <option value="">-- 政治団体を選択してください --</option>
         {organizations.map((org) => (
           <option key={org.id} value={org.id}>
-            {org.name}
+            {org.displayName}
           </option>
         ))}
       </select>
