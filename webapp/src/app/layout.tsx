@@ -10,7 +10,7 @@ import "./globals.css";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Footer from "@/client/components/layout/Footer";
-import Header from "@/client/components/layout/Header";
+import Header from "@/client/components/layout/header/Header";
 
 // Noto Sans JP for Japanese text with proper weights
 const notoSansJP = Noto_Sans_JP({
