@@ -1,5 +1,6 @@
 "use client";
 import "client-only";
+import { useRouter, usePathname } from "next/navigation";
 import Selector from "@/client/components/ui/Selector";
 import type { OrganizationsResponse } from "@/types/organization";
 
@@ -10,21 +11,37 @@ interface OrganizationSelectorProps {
 export default function OrganizationSelector({
   organizations,
 }: OrganizationSelectorProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const options = organizations.organizations.map((org) => ({
     value: org.slug,
     label: org.displayName,
     subtitle: org.orgName || undefined,
   }));
 
+  const getCurrentSlugFromPath = () => {
+    const pathSegments = pathname.split("/");
+    if (pathSegments[1] === "o" && pathSegments[2]) {
+      return pathSegments[2];
+    }
+    return organizations.default;
+  };
+
   const handleSelect = (value: string) => {
-    // TODO: 選択された政治団体の処理を実装
-    console.log("Selected organization:", value);
+    const pathSegments = pathname.split("/");
+
+    if (pathSegments[1] === "o" && pathSegments[2]) {
+      pathSegments[2] = value;
+      const newPath = pathSegments.join("/");
+      router.push(newPath);
+    }
   };
 
   return (
     <Selector
       options={options}
-      defaultValue={organizations.default}
+      defaultValue={getCurrentSlugFromPath()}
       placeholder="チームみらい計"
       title="政治団体の区別"
       onSelect={handleSelect}
