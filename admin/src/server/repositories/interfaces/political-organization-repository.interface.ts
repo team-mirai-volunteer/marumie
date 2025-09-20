@@ -2,8 +2,9 @@ import type { PoliticalOrganization } from "@/shared/models/political-organizati
 
 export interface IPoliticalOrganizationRepository {
   create(
-    name: string,
+    displayName: string,
     slug: string,
+    orgName?: string,
     description?: string,
   ): Promise<PoliticalOrganization>;
   delete(id: bigint): Promise<void>;

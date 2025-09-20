@@ -3,7 +3,9 @@ import "client-only";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import HamburgerMenuButton from "../ui/HamburgerMenuButton";
+import HamburgerMenuButton from "@/client/components/ui/HamburgerMenuButton";
+import OrganizationSelector from "./OrganizationSelector";
+import type { OrganizationsResponse } from "@/types/organization";
 
 const navigationItems = [
   { href: "/", label: "トップ", desktopLabel: null },
@@ -34,7 +36,11 @@ const navigationItems = [
   },
 ];
 
-export default function Header() {
+interface HeaderClientProps {
+  organizations: OrganizationsResponse;
+}
+
+export default function HeaderClient({ organizations }: HeaderClientProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -48,7 +54,7 @@ export default function Header() {
             className="flex items-center gap-2 xl:gap-6 hover:opacity-80 transition-opacity cursor-pointer"
           >
             {/* Logo */}
-            <div className="flex items-center">
+            <div className="hidden lg:flex items-center">
               <div className="w-10 h-8 xl:w-12 xl:h-11 relative">
                 {/* Team Mirai Logo */}
                 <Image
@@ -61,7 +67,7 @@ export default function Header() {
             </div>
 
             {/* Title and Subtitle - Mobile: Vertical Stack, Desktop: Horizontal with baseline alignment */}
-            <div className="flex flex-col gap-1.5 xl:flex-row xl:items-end xl:gap-2">
+            <div className="flex flex-col gap-1.5 2xl:flex-row 2xl:items-end 2xl:gap-2">
               <div className="h-[15px] xl:h-6 relative w-[160px] xl:w-[257px]">
                 <Image
                   src="/logos/service-logo.svg"
@@ -72,13 +78,13 @@ export default function Header() {
                 />
               </div>
               <div className="text-gray-800 leading-none text-[11px] xl:text-sm xl:font-normal">
-                政治資金をまるごと公開
+                政治とカネ、隠さず公開します
               </div>
             </div>
           </Link>
 
-          {/* Desktop: Navigation Menu + Year Selector */}
-          <div className="hidden lg:flex items-center gap-10">
+          {/* Desktop: Navigation Menu + Organization Selector */}
+          <div className="hidden lg:flex items-center gap-8">
             <nav
               className="flex items-center gap-6"
               aria-label="メインナビゲーション"
@@ -95,10 +101,12 @@ export default function Header() {
                   </Link>
                 ))}
             </nav>
+            <OrganizationSelector organizations={organizations} />
           </div>
 
-          {/* Mobile Menu */}
+          {/* Mobile: Organization Selector + Menu */}
           <div className="lg:hidden flex items-center gap-2">
+            <OrganizationSelector organizations={organizations} />
             <HamburgerMenuButton
               isOpen={isMobileMenuOpen}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

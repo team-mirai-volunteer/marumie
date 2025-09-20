@@ -37,13 +37,14 @@ export default async function EditPoliticalOrganizationPage({
   return (
     <PoliticalOrganizationForm
       initialData={{
-        name: organization.name,
+        displayName: organization.displayName,
+        orgName: organization.orgName || "",
         slug: organization.slug,
         description: organization.description || "",
       }}
       onSubmit={handleSubmit}
       submitButtonText="更新"
-      title={`「${organization.name}」を編集`}
+      title={`「${organization.displayName}」を編集`}
     />
   );
 }

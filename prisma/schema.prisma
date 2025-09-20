@@ -36,7 +36,8 @@ model User {
 
 model PoliticalOrganization {
   id              BigInt            @id @default(autoincrement())
-  name            String            @db.VarChar(255)
+  displayName     String            @map("display_name") @db.VarChar(255)
+  orgName         String?           @map("org_name") @db.VarChar(255)
   slug            String            @unique @db.VarChar(255)
   description     String?           @db.Text
   createdAt       DateTime          @default(now()) @map("created_at")

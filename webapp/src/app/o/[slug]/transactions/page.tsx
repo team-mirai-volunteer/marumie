@@ -10,7 +10,7 @@ import MainColumn from "@/client/components/layout/MainColumn";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 import InteractiveTransactionTable from "@/client/components/top-page/features/transactions-table/InteractiveTransactionTable";
 import { loadTransactionsPageData } from "@/server/loaders/load-transactions-page-data";
-import { loadValidOrgSlug } from "@/server/loaders/load-valid-org-slug";
+import { loadOrganizations } from "@/server/loaders/load-organizations";
 import { formatUpdatedAt } from "@/server/utils/format-date";
 
 interface TransactionsPageProps {
@@ -26,7 +26,10 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const validSlug = await loadValidOrgSlug(slug);
+  const { default: defaultSlug, organizations } = await loadOrganizations();
+  const validSlug = organizations.some((org) => org.slug === slug)
+    ? slug
+    : defaultSlug;
   const slugs = [validSlug];
 
   // financialYearのデフォルト値を設定
@@ -41,8 +44,8 @@ export async function generateMetadata({
     });
 
     return {
-      title: `みらいオープンデータ - すべての入出金（${result.politicalOrganizations[0]?.name || "Unknown"}）`,
-      description: `${result.politicalOrganizations[0]?.name || "Unknown"}の政治資金取引一覧を表示しています。`,
+      title: `みらいオープンデータ - すべての入出金（${result.politicalOrganizations[0]?.displayName || "Unknown"}）`,
+      description: `${result.politicalOrganizations[0]?.displayName || "Unknown"}の政治資金取引一覧を表示しています。`,
     };
   } catch {
     return {
@@ -59,12 +62,12 @@ export default async function TransactionsPage({
   const { slug } = await params;
 
   // slugの妥当性をチェックし、必要に応じてリダイレクト
-  const validSlug = await loadValidOrgSlug(slug);
-  if (validSlug !== slug) {
-    redirect(`/o/${validSlug}`);
+  const { default: defaultSlug, organizations } = await loadOrganizations();
+  if (!organizations.some((org) => org.slug === slug)) {
+    redirect(`/o/${defaultSlug}/transactions`);
   }
 
-  const slugs = [validSlug];
+  const slugs = [slug];
   const searchParamsResolved = await searchParams;
 
   const page = parseInt(

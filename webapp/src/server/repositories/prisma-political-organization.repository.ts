@@ -23,7 +23,7 @@ export class PrismaPoliticalOrganizationRepository
       where: { slug: { in: slugs } },
     });
 
-    return organizations.map(this.mapToPoliticalOrganization);
+    return organizations.map((org) => this.mapToPoliticalOrganization(org));
   }
 
   async findById(id: string): Promise<PoliticalOrganization | null> {
@@ -36,10 +36,10 @@ export class PrismaPoliticalOrganizationRepository
 
   async findAll(): Promise<PoliticalOrganization[]> {
     const organizations = await this.prisma.politicalOrganization.findMany({
-      orderBy: { name: "asc" },
+      orderBy: { displayName: "asc" },
     });
 
-    return organizations.map(this.mapToPoliticalOrganization);
+    return organizations.map((org) => this.mapToPoliticalOrganization(org));
   }
 
   private mapToPoliticalOrganization(
@@ -47,7 +47,8 @@ export class PrismaPoliticalOrganizationRepository
   ): PoliticalOrganization {
     return {
       id: prismaOrganization.id.toString(),
-      name: prismaOrganization.name,
+      displayName: prismaOrganization.displayName,
+      orgName: prismaOrganization.orgName,
       slug: prismaOrganization.slug,
       description: prismaOrganization.description,
       createdAt: prismaOrganization.createdAt,
