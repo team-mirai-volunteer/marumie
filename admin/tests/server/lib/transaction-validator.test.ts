@@ -57,6 +57,7 @@ describe("TransactionValidator", () => {
       const transactions = [
         createMockTransaction({
           transaction_no: "DUP001",
+          hash: "test-hash", // 同じハッシュに設定
         }),
       ];
 
@@ -76,7 +77,7 @@ describe("TransactionValidator", () => {
         memo: "",
         category_key: "personnel",
         label: "",
-        hash: "existing-hash",
+        hash: "test-hash", // 同じハッシュに設定
         created_at: new Date(),
         updated_at: new Date(),
       }];
@@ -84,7 +85,7 @@ describe("TransactionValidator", () => {
       const result = validator.validatePreviewTransactions(transactions, existingTransactions);
 
       expect(result[0].status).toBe("skip");
-      expect(result[0].errors).toContain("重複データのためスキップされます");
+      expect(result[0].errors).toContain("重複のためスキップされます");
     });
 
     it("should mark transactions as invalid for invalid debit account", () => {
@@ -197,7 +198,7 @@ describe("TransactionValidator", () => {
       expect(result[0].errors).toContain('無効な借方科目: "無効な借方科目"');
     });
 
-    it("should prioritize duplicate status over validation errors", () => {
+    it("should prioritize validation errors over duplicate check", () => {
       const transactions = [
         createMockTransaction({
           transaction_no: "DUP001",
@@ -228,10 +229,10 @@ describe("TransactionValidator", () => {
 
       const result = validator.validatePreviewTransactions(transactions, existingTransactions);
 
-      expect(result[0].status).toBe("skip");
-      expect(result[0].errors).toContain("重複データのためスキップされます");
-      // Should not contain validation errors since duplicate takes priority
-      expect(result[0].errors).not.toContain('無効な借方科目: "無効な借方科目"');
+      expect(result[0].status).toBe("invalid");
+      expect(result[0].errors).toContain('無効な借方科目: "無効な借方科目"');
+      // Should not contain duplicate messages since validation takes priority
+      expect(result[0].errors).not.toContain("重複のためスキップされます");
     });
   });
 });
