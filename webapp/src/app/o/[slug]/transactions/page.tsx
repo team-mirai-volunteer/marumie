@@ -115,6 +115,9 @@ export default async function TransactionsPage({
       categories,
     });
 
+    const organization = data.politicalOrganizations.find(
+      (org) => org.slug === slug,
+    );
     const updatedAt = formatUpdatedAt(data.lastUpdatedAt ?? null);
 
     return (
@@ -129,7 +132,7 @@ export default async function TransactionsPage({
                 height={30}
               />
             }
-            title="すべての出入金"
+            title={`${organization?.displayName || "未登録の政治団体"}｜すべての出入金`}
             updatedAt={updatedAt}
             subtitle="これまでにデータ連携された出入金の明細"
           />
