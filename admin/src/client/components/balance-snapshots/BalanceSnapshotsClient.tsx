@@ -1,10 +1,10 @@
 "use client";
 import "client-only";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
 import type { BalanceSnapshot } from "@/shared/models/balance-snapshot";
-import { PoliticalOrganizationSelector } from "@/client/components/ui";
+import { Selector } from "@/client/components/ui";
 import BalanceSnapshotForm from "./BalanceSnapshotForm";
 import BalanceSnapshotList from "./BalanceSnapshotList";
 import CurrentBalance from "./CurrentBalance";
@@ -20,6 +20,11 @@ export default function BalanceSnapshotsClient({
   const [selectedOrgId, setSelectedOrgId] = useState<string>("");
   const [snapshots, setSnapshots] = useState<BalanceSnapshot[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const organizationOptions = organizations.map((org) => ({
+    value: org.id,
+    label: org.displayName,
+  }));
 
   const currentBalance = snapshots.length > 0 ? snapshots[0] : null;
 
@@ -45,6 +50,15 @@ export default function BalanceSnapshotsClient({
     setSelectedOrgId(orgId);
     loadSnapshots(orgId);
   };
+
+  // 最初の組織を自動選択
+  React.useEffect(() => {
+    if (organizations.length > 0 && !selectedOrgId) {
+      const firstOrgId = organizations[0].id;
+      setSelectedOrgId(firstOrgId);
+      loadSnapshots(firstOrgId);
+    }
+  }, [organizations, selectedOrgId]);
 
   const handleFormSubmit = async (data: {
     politicalOrganizationId: string;
@@ -72,11 +86,13 @@ export default function BalanceSnapshotsClient({
   return (
     <div className="space-y-6">
       <div>
-        <PoliticalOrganizationSelector
-          organizations={organizations}
+        <Selector
+          options={organizationOptions}
           value={selectedOrgId}
           onChange={handleOrgChange}
-          autoSelectFirst={true}
+          label="政治団体"
+          placeholder="-- 政治団体を選択してください --"
+          required={true}
         />
       </div>
 

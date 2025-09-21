@@ -29,7 +29,7 @@ export default function CsvPreview({
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState<
-    "all" | "valid" | "invalid" | "skip"
+    "all" | "insert" | "update" | "invalid" | "skip"
   >("all");
   const perPage = 10;
   const onPreviewCompleteRef = useRef(onPreviewComplete);
@@ -68,12 +68,19 @@ export default function CsvPreview({
           transactions: [],
           summary: {
             totalCount: 0,
-            validCount: 0,
+            insertCount: 0,
+            updateCount: 0,
             invalidCount: 0,
             skipCount: 0,
           },
           statistics: {
-            valid: {
+            insert: {
+              income: { count: 0, amount: 0 },
+              expense: { count: 0, amount: 0 },
+              offset_income: { count: 0, amount: 0 },
+              offset_expense: { count: 0, amount: 0 },
+            },
+            update: {
               income: { count: 0, amount: 0 },
               expense: { count: 0, amount: 0 },
               offset_income: { count: 0, amount: 0 },
@@ -110,7 +117,9 @@ export default function CsvPreview({
     }
   };
 
-  const handleTabChange = (tab: "all" | "valid" | "invalid" | "skip") => {
+  const handleTabChange = (
+    tab: "all" | "insert" | "update" | "invalid" | "skip",
+  ) => {
     setActiveTab(tab);
     setCurrentPage(1);
   };
@@ -132,7 +141,7 @@ export default function CsvPreview({
   const getSortedTransactions = (): PreviewTransaction[] => {
     if (!previewResult) return [];
 
-    const statusOrder = { valid: 1, invalid: 2, skip: 3 };
+    const statusOrder = { insert: 1, update: 2, invalid: 3, skip: 4 };
     return [...previewResult.transactions].sort((a, b) => {
       const aOrder = statusOrder[a.status] || 4;
       const bOrder = statusOrder[b.status] || 4;
@@ -176,15 +185,19 @@ export default function CsvPreview({
   const currentRecords = getCurrentPageRecords();
   const filteredTransactions = getFilteredTransactions();
 
-  const getTabCount = (tab: "all" | "valid" | "invalid" | "skip") => {
+  const getTabCount = (
+    tab: "all" | "insert" | "update" | "invalid" | "skip",
+  ) => {
     if (tab === "all") return previewResult.summary.totalCount;
     return previewResult.transactions.filter((t) => t.status === tab).length;
   };
 
-  const getTabLabel = (tab: "valid" | "invalid" | "skip") => {
+  const getTabLabel = (tab: "insert" | "update" | "invalid" | "skip") => {
     switch (tab) {
-      case "valid":
-        return "有効";
+      case "insert":
+        return "挿入";
+      case "update":
+        return "更新";
       case "invalid":
         return "無効";
       case "skip":
@@ -203,7 +216,8 @@ export default function CsvPreview({
         <div className="flex gap-2">
           {[
             { key: "all" as const, label: "全件", color: "text-white" },
-            { key: "valid" as const, label: "有効", color: "text-green-500" },
+            { key: "insert" as const, label: "挿入", color: "text-green-500" },
+            { key: "update" as const, label: "更新", color: "text-blue-500" },
             { key: "invalid" as const, label: "無効", color: "text-red-500" },
             {
               key: "skip" as const,

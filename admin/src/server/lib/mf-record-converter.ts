@@ -1,6 +1,7 @@
 import type { MfCsvRecord } from "./mf-csv-loader";
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 import type { TransactionType } from "@/shared/models/transaction";
+import { generateTransactionHash } from "./transaction-hash";
 
 export interface PreviewTransaction {
   political_organization_id: string;
@@ -17,8 +18,10 @@ export interface PreviewTransaction {
   label: string | undefined;
   friendly_category: string;
   category_key: string;
-  status: "valid" | "invalid" | "skip";
+  hash: string;
+  status: "insert" | "update" | "invalid" | "skip";
   errors: string[];
+  existingTransactionId?: string;
 }
 
 export class MfRecordConverter {
@@ -42,7 +45,7 @@ export class MfRecordConverter {
       : undefined;
 
     // Determine status and errors based on conversion
-    let status: "valid" | "invalid" | "skip" = "valid";
+    let status: "insert" | "update" | "invalid" | "skip" = "insert";
     let errors: string[] = [];
 
     if (transactionType === null) {
@@ -52,10 +55,18 @@ export class MfRecordConverter {
       ];
     }
 
-    return {
+    // Parse transaction date with validation
+    const { date: transactionDate, isValid: isDateValid } =
+      this.parseTransactionDate(record.transaction_date);
+    if (!isDateValid) {
+      status = "invalid";
+      errors.push(`Invalid date format: ${record.transaction_date}`);
+    }
+
+    const transaction = {
       political_organization_id: politicalOrganizationId,
       transaction_no: record.transaction_no,
-      transaction_date: new Date(record.transaction_date),
+      transaction_date: transactionDate,
       transaction_type: transactionType,
       debit_account: record.debit_account,
       debit_sub_account: record.debit_sub_account,
@@ -67,9 +78,30 @@ export class MfRecordConverter {
       label: label,
       friendly_category: record.friendly_category,
       category_key: categoryKey,
+      hash: "",
       status,
       errors,
     };
+
+    // hash値を計算して設定
+    transaction.hash = generateTransactionHash(transaction);
+
+    return transaction;
+  }
+
+  private parseTransactionDate(dateStr: string): {
+    date: Date;
+    isValid: boolean;
+  } {
+    try {
+      const date = new Date(dateStr);
+      if (Number.isNaN(date.getTime())) {
+        return { date: new Date("1970-01-01"), isValid: false };
+      }
+      return { date, isValid: true };
+    } catch (_error) {
+      return { date: new Date("1970-01-01"), isValid: false };
+    }
   }
 
   private parseAmount(amountStr: string): number {

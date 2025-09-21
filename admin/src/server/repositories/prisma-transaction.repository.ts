@@ -1,10 +1,10 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
+import type { Transaction } from "@/shared/models/transaction";
 import type {
-  CreateTransactionInput,
-  Transaction,
   TransactionFilters,
+  CreateTransactionInput,
   UpdateTransactionInput,
-} from "@/shared/models/transaction";
+} from "@/types/transaction";
 import type { TransactionWithOrganization } from "@/server/usecases/get-transactions-usecase";
 import type {
   ITransactionRepository,
@@ -14,56 +14,6 @@ import type {
 
 export class PrismaTransactionRepository implements ITransactionRepository {
   constructor(private prisma: PrismaClient) {}
-
-  async create(input: CreateTransactionInput): Promise<Transaction> {
-    const transaction = await this.prisma.transaction.create({
-      data: {
-        politicalOrganizationId: BigInt(input.political_organization_id),
-        transactionNo: input.transaction_no,
-        transactionDate: input.transaction_date,
-        financialYear: input.financial_year,
-        transactionType: input.transaction_type,
-        debitAccount: input.debit_account,
-        debitSubAccount: input.debit_sub_account || null,
-        debitDepartment: input.debit_department || null,
-        debitPartner: input.debit_partner || null,
-        debitTaxCategory: input.debit_tax_category || null,
-        debitAmount: input.debit_amount,
-        creditAccount: input.credit_account,
-        creditSubAccount: input.credit_sub_account || null,
-        creditDepartment: input.credit_department || null,
-        creditPartner: input.credit_partner || null,
-        creditTaxCategory: input.credit_tax_category || null,
-        creditAmount: input.credit_amount,
-        description: input.description || "",
-        label: input.label || "",
-        friendlyCategory: input.friendly_category || "",
-        memo: input.memo || null,
-        categoryKey: input.category_key,
-      },
-    });
-
-    return this.mapToTransaction(transaction);
-  }
-
-  async findById(id: string): Promise<Transaction | null> {
-    const transaction = await this.prisma.transaction.findUnique({
-      where: { id: BigInt(id) },
-    });
-
-    return transaction ? this.mapToTransaction(transaction) : null;
-  }
-
-  async findAll(filters?: TransactionFilters): Promise<Transaction[]> {
-    const where = this.buildWhereClause(filters);
-
-    const transactions = await this.prisma.transaction.findMany({
-      where,
-      orderBy: { transactionDate: "desc" },
-    });
-
-    return transactions.map((t) => this.mapToTransaction(t));
-  }
 
   async findWithPagination(
     filters?: TransactionFilters,
@@ -122,8 +72,13 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       };
     }
 
-    if (filters?.political_organization_id) {
-      where.politicalOrganizationId = BigInt(filters.political_organization_id);
+    if (
+      filters?.political_organization_ids &&
+      filters.political_organization_ids.length > 0
+    ) {
+      where.politicalOrganizationId = {
+        in: filters.political_organization_ids.map((id) => BigInt(id)),
+      };
     }
 
     if (filters?.financial_year) {
@@ -143,15 +98,72 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     return where;
   }
 
-  async update(
-    _id: string,
-    _input: UpdateTransactionInput,
+  private async update(
+    id: string,
+    input: UpdateTransactionInput,
   ): Promise<Transaction> {
-    throw new Error("Transaction update is not implemented");
+    const updated = await this.prisma.transaction.update({
+      where: { id: BigInt(id) },
+      data: {
+        politicalOrganizationId: input.political_organization_id
+          ? BigInt(input.political_organization_id)
+          : undefined,
+        transactionNo: input.transaction_no,
+        transactionDate: input.transaction_date,
+        financialYear: input.financial_year,
+        transactionType: input.transaction_type,
+        debitAccount: input.debit_account,
+        debitSubAccount: input.debit_sub_account || null,
+        debitDepartment: input.debit_department || null,
+        debitPartner: input.debit_partner || null,
+        debitTaxCategory: input.debit_tax_category || null,
+        debitAmount: input.debit_amount,
+        creditAccount: input.credit_account,
+        creditSubAccount: input.credit_sub_account || null,
+        creditDepartment: input.credit_department || null,
+        creditPartner: input.credit_partner || null,
+        creditTaxCategory: input.credit_tax_category || null,
+        creditAmount: input.credit_amount,
+        description: input.description || "",
+        label: input.label || "",
+        friendlyCategory: input.friendly_category || "",
+        memo: input.memo || null,
+        categoryKey: input.category_key,
+        hash: input.hash,
+        updatedAt: new Date(),
+      },
+    });
+
+    return this.mapToTransaction(updated);
   }
 
-  async delete(_id: string): Promise<void> {
-    throw new Error("Transaction delete is not implemented");
+  async updateMany(
+    data: Array<{
+      where: { politicalOrganizationId: bigint; transactionNo: string };
+      update: UpdateTransactionInput;
+    }>,
+  ): Promise<Transaction[]> {
+    if (data.length === 0) return [];
+
+    // 個別updateを並列実行
+    const updatePromises = data.map(async (item) => {
+      const existingTransaction = await this.prisma.transaction.findUnique({
+        where: {
+          politicalOrganizationId_transactionNo: {
+            politicalOrganizationId: item.where.politicalOrganizationId,
+            transactionNo: item.where.transactionNo,
+          },
+        },
+      });
+
+      if (!existingTransaction) {
+        throw new Error(`Transaction not found: ${item.where.transactionNo}`);
+      }
+
+      return this.update(existingTransaction.id.toString(), item.update);
+    });
+
+    return Promise.all(updatePromises);
   }
 
   async deleteAll(filters?: TransactionFilters): Promise<number> {
@@ -190,6 +202,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
           friendlyCategory: input.friendly_category,
           memo: input.memo || null,
           categoryKey: input.category_key,
+          hash: input.hash,
         };
       } catch (error) {
         throw new Error(
@@ -217,95 +230,35 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     return createdTransactions.map((t) => this.mapToTransaction(t));
   }
 
-  async createManySkipDuplicates(inputs: CreateTransactionInput[]): Promise<{
-    created: Transaction[];
-    skipped: number;
-  }> {
-    // 既存のtransaction_noを取得
-    const transactionNos = inputs
-      .map((input) => input.transaction_no)
-      .filter(Boolean) as string[];
-
-    const existingTransactions = await this.prisma.transaction.findMany({
-      where: {
-        transactionNo: {
-          in: transactionNos,
-        },
+  async findByTransactionNos(
+    transactionNos: string[],
+    politicalOrganizationIds?: string[],
+  ): Promise<Transaction[]> {
+    const where: Prisma.TransactionWhereInput = {
+      transactionNo: {
+        in: transactionNos,
       },
-      select: {
-        transactionNo: true,
-      },
-    });
+    };
 
-    const existingTransactionNos = new Set(
-      existingTransactions.map((t) => t.transactionNo).filter(Boolean),
-    );
-
-    // 重複していないものだけをフィルタリング
-    const newInputs = inputs.filter(
-      (input) =>
-        !input.transaction_no ||
-        !existingTransactionNos.has(input.transaction_no),
-    );
-
-    const skippedCount = inputs.length - newInputs.length;
-
-    if (newInputs.length === 0) {
-      return {
-        created: [],
-        skipped: skippedCount,
+    if (politicalOrganizationIds && politicalOrganizationIds.length > 0) {
+      where.politicalOrganizationId = {
+        in: politicalOrganizationIds.map((id) => BigInt(id)),
       };
     }
 
-    // 新しいレコードを作成
-    const createdTransactions = await this.createMany(newInputs);
-
-    return {
-      created: createdTransactions,
-      skipped: skippedCount,
-    };
-  }
-
-  async findByTransactionNos(transactionNos: string[]): Promise<Transaction[]> {
     const transactions = await this.prisma.transaction.findMany({
-      where: {
-        transactionNo: {
-          in: transactionNos,
-        },
-      },
+      where,
     });
 
     return transactions.map((t) => this.mapToTransaction(t));
   }
 
-  async checkDuplicateTransactionNos(
-    politicalOrgId: string,
-    transactionNos: string[],
-  ): Promise<string[]> {
-    if (transactionNos.length === 0) {
-      return [];
-    }
-
-    const existingTransactions = await this.prisma.transaction.findMany({
-      where: {
-        politicalOrganizationId: BigInt(politicalOrgId),
-        transactionNo: {
-          in: transactionNos,
-        },
-      },
-      select: {
-        transactionNo: true,
-      },
-    });
-
-    return existingTransactions
-      .map((t) => t.transactionNo)
-      .filter((no): no is string => no !== null);
-  }
-
   public mapToTransaction(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    prismaTransaction: any,
+    prismaTransaction: Prisma.TransactionGetPayload<{
+      include?: { politicalOrganization?: true };
+    }> & {
+      politicalOrganization?: { displayName: string } | null;
+    },
     includeOrganization = false,
   ): Transaction | TransactionWithOrganization {
     const base: Transaction = {
@@ -317,22 +270,23 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       financial_year: prismaTransaction.financialYear,
       transaction_type: prismaTransaction.transactionType,
       debit_account: prismaTransaction.debitAccount,
-      debit_sub_account: prismaTransaction.debitSubAccount,
-      debit_department: prismaTransaction.debitDepartment,
-      debit_partner: prismaTransaction.debitPartner,
-      debit_tax_category: prismaTransaction.debitTaxCategory,
+      debit_sub_account: prismaTransaction.debitSubAccount || undefined,
+      debit_department: prismaTransaction.debitDepartment || undefined,
+      debit_partner: prismaTransaction.debitPartner || undefined,
+      debit_tax_category: prismaTransaction.debitTaxCategory || undefined,
       debit_amount: Number(prismaTransaction.debitAmount),
       credit_account: prismaTransaction.creditAccount,
-      credit_sub_account: prismaTransaction.creditSubAccount,
-      credit_department: prismaTransaction.creditDepartment,
-      credit_partner: prismaTransaction.creditPartner,
-      credit_tax_category: prismaTransaction.creditTaxCategory,
+      credit_sub_account: prismaTransaction.creditSubAccount || undefined,
+      credit_department: prismaTransaction.creditDepartment || undefined,
+      credit_partner: prismaTransaction.creditPartner || undefined,
+      credit_tax_category: prismaTransaction.creditTaxCategory || undefined,
       credit_amount: Number(prismaTransaction.creditAmount),
-      description: prismaTransaction.description,
-      friendly_category: prismaTransaction.friendlyCategory,
-      memo: prismaTransaction.memo,
-      category_key: prismaTransaction.categoryKey,
+      description: prismaTransaction.description || "",
+      friendly_category: prismaTransaction.friendlyCategory || "",
+      memo: prismaTransaction.memo || undefined,
+      category_key: prismaTransaction.categoryKey || "",
       label: prismaTransaction.label,
+      hash: prismaTransaction.hash || "",
       created_at: prismaTransaction.createdAt,
       updated_at: prismaTransaction.updatedAt,
     };

@@ -7,7 +7,9 @@ import { DeleteAllTransactionsUsecase } from "../usecases/delete-all-transaction
 
 const prisma = new PrismaClient();
 
-export async function deleteAllTransactionsAction(): Promise<{
+export async function deleteAllTransactionsAction(
+  organizationId?: string,
+): Promise<{
   success: boolean;
   deletedCount?: number;
   error?: string;
@@ -16,7 +18,7 @@ export async function deleteAllTransactionsAction(): Promise<{
     const repository = new PrismaTransactionRepository(prisma);
     const usecase = new DeleteAllTransactionsUsecase(repository);
 
-    const result = await usecase.execute();
+    const result = await usecase.execute(organizationId);
 
     // データキャッシュを無効化してトランザクション一覧を更新
     revalidateTag("transactions-data");

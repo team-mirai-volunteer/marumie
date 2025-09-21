@@ -83,8 +83,10 @@ function getTypeBadgeClass(type: string): string {
 
 function getStatusBgClass(status: PreviewTransaction["status"]) {
   switch (status) {
-    case "valid":
+    case "insert":
       return "bg-green-600";
+    case "update":
+      return "bg-blue-600";
     case "invalid":
       return "bg-red-600";
     case "skip":
@@ -96,8 +98,10 @@ function getStatusBgClass(status: PreviewTransaction["status"]) {
 
 function getStatusText(status: PreviewTransaction["status"]) {
   switch (status) {
-    case "valid":
-      return "有効";
+    case "insert":
+      return "挿入";
+    case "update":
+      return "更新";
     case "invalid":
       return "無効";
     case "skip":

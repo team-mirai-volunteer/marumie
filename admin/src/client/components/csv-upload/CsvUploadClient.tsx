@@ -1,9 +1,9 @@
 "use client";
 import "client-only";
 
-import { useId, useState } from "react";
+import { useId, useState, useEffect } from "react";
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
-import { PoliticalOrganizationSelector } from "@/client/components/ui";
+import { Selector } from "@/client/components/ui";
 import CsvPreview from "@/client/components/csv-import/CsvPreview";
 import type { PreviewMfCsvResult } from "@/server/usecases/preview-mf-csv-usecase";
 import type {
@@ -33,6 +33,18 @@ export default function CsvUploadClient({
     null,
   );
 
+  const organizationOptions = organizations.map((org) => ({
+    value: org.id,
+    label: org.displayName,
+  }));
+
+  // 最初の組織を自動選択
+  useEffect(() => {
+    if (organizations.length > 0 && !politicalOrganizationId) {
+      setPoliticalOrganizationId(organizations[0].id);
+    }
+  }, [organizations, politicalOrganizationId]);
+
   const handlePreviewComplete = (result: PreviewMfCsvResult) => {
     setPreviewResult(result);
   };
@@ -50,10 +62,10 @@ export default function CsvUploadClient({
       }
 
       const validTransactions = previewResult.transactions.filter(
-        (t) => t.status === "valid",
+        (t) => t.status === "insert" || t.status === "update",
       );
       if (validTransactions.length === 0) {
-        setMessage("有効なデータがありません");
+        setMessage("保存可能なデータがありません");
         return;
       }
 
@@ -87,12 +99,13 @@ export default function CsvUploadClient({
   return (
     <form onSubmit={onSubmit} className="space-y-3">
       <div>
-        <PoliticalOrganizationSelector
-          organizations={organizations}
+        <Selector
+          options={organizationOptions}
           value={politicalOrganizationId}
           onChange={setPoliticalOrganizationId}
           label="Political Organization"
-          autoSelectFirst={true}
+          placeholder="-- 政治団体を選択してください --"
+          required={true}
         />
       </div>
       <div>
@@ -124,7 +137,9 @@ export default function CsvUploadClient({
           !file ||
           !politicalOrganizationId ||
           !previewResult ||
-          previewResult.summary.validCount === 0 ||
+          previewResult.summary.insertCount +
+            previewResult.summary.updateCount ===
+            0 ||
           uploading;
 
         return (

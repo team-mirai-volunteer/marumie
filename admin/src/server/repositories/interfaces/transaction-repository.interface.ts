@@ -1,9 +1,9 @@
+import type { Transaction } from "@/shared/models/transaction";
 import type {
-  CreateTransactionInput,
-  Transaction,
   TransactionFilters,
+  CreateTransactionInput,
   UpdateTransactionInput,
-} from "@/shared/models/transaction";
+} from "@/types/transaction";
 import type { TransactionWithOrganization } from "@/server/usecases/get-transactions-usecase";
 
 export interface PaginatedResult<T> {
@@ -20,24 +20,20 @@ export interface PaginationOptions {
 }
 
 export interface ITransactionRepository {
-  create(input: CreateTransactionInput): Promise<Transaction>;
-  findById(id: string): Promise<Transaction | null>;
-  findAll(filters?: TransactionFilters): Promise<Transaction[]>;
   findWithPagination(
     filters?: TransactionFilters,
     pagination?: PaginationOptions,
   ): Promise<PaginatedResult<TransactionWithOrganization>>;
-  update(id: string, input: UpdateTransactionInput): Promise<Transaction>;
-  delete(id: string): Promise<void>;
+  updateMany(
+    data: Array<{
+      where: { politicalOrganizationId: bigint; transactionNo: string };
+      update: UpdateTransactionInput;
+    }>,
+  ): Promise<Transaction[]>;
   deleteAll(filters?: TransactionFilters): Promise<number>;
   createMany(inputs: CreateTransactionInput[]): Promise<Transaction[]>;
-  createManySkipDuplicates(inputs: CreateTransactionInput[]): Promise<{
-    created: Transaction[];
-    skipped: number;
-  }>;
-  findByTransactionNos(transactionNos: string[]): Promise<Transaction[]>;
-  checkDuplicateTransactionNos(
-    politicalOrgId: string,
+  findByTransactionNos(
     transactionNos: string[],
-  ): Promise<string[]>;
+    politicalOrganizationIds?: string[],
+  ): Promise<Transaction[]>;
 }

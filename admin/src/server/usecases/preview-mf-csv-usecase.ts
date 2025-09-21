@@ -20,12 +20,19 @@ export interface PreviewMfCsvResult {
   transactions: PreviewTransaction[];
   summary: {
     totalCount: number;
-    validCount: number;
+    insertCount: number;
+    updateCount: number;
     invalidCount: number;
     skipCount: number;
   };
   statistics: {
-    valid: {
+    insert: {
+      income: TransactionTypeStats;
+      expense: TransactionTypeStats;
+      offset_income: TransactionTypeStats;
+      offset_expense: TransactionTypeStats;
+    };
+    update: {
       income: TransactionTypeStats;
       expense: TransactionTypeStats;
       offset_income: TransactionTypeStats;
@@ -63,7 +70,8 @@ export class PreviewMfCsvUsecase {
           transactions: [],
           summary: {
             totalCount: 0,
-            validCount: 0,
+            insertCount: 0,
+            updateCount: 0,
             invalidCount: 0,
             skipCount: 0,
           },
@@ -71,16 +79,15 @@ export class PreviewMfCsvUsecase {
         };
       }
 
-      // Get existing transaction numbers first
+      // Get existing transactions first
       const transactionNos = csvRecords
         .map((record) => record.transaction_no)
         .filter(Boolean) as string[];
 
-      const duplicateTransactionNos =
-        await this.transactionRepository.checkDuplicateTransactionNos(
+      const existingTransactions =
+        await this.transactionRepository.findByTransactionNos(transactionNos, [
           input.politicalOrganizationId,
-          transactionNos,
-        );
+        ]);
 
       // Convert records to preview transactions
       const convertedTransactions: PreviewTransaction[] = csvRecords.map(
@@ -92,25 +99,23 @@ export class PreviewMfCsvUsecase {
       );
 
       // Validate converted transactions including duplicate check
-      const previewTransactions = this.validator.validatePreviewTransactions(
+      const previews = this.validator.validatePreviewTransactions(
         convertedTransactions,
-        duplicateTransactionNos,
+        existingTransactions,
       );
 
       const summary = {
-        totalCount: previewTransactions.length,
-        validCount: previewTransactions.filter((t) => t.status === "valid")
-          .length,
-        invalidCount: previewTransactions.filter((t) => t.status === "invalid")
-          .length,
-        skipCount: previewTransactions.filter((t) => t.status === "skip")
-          .length,
+        totalCount: previews.length,
+        insertCount: previews.filter((t) => t.status === "insert").length,
+        updateCount: previews.filter((t) => t.status === "update").length,
+        invalidCount: previews.filter((t) => t.status === "invalid").length,
+        skipCount: previews.filter((t) => t.status === "skip").length,
       };
 
-      const statistics = this.calculateStatistics(previewTransactions);
+      const statistics = this.calculateStatistics(previews);
 
       return {
-        transactions: previewTransactions,
+        transactions: previews,
         summary,
         statistics,
       };
@@ -119,7 +124,8 @@ export class PreviewMfCsvUsecase {
         transactions: [],
         summary: {
           totalCount: 0,
-          validCount: 0,
+          insertCount: 0,
+          updateCount: 0,
           invalidCount: 0,
           skipCount: 0,
         },
@@ -130,7 +136,13 @@ export class PreviewMfCsvUsecase {
 
   private createEmptyStatistics() {
     return {
-      valid: {
+      insert: {
+        income: { count: 0, amount: 0 },
+        expense: { count: 0, amount: 0 },
+        offset_income: { count: 0, amount: 0 },
+        offset_expense: { count: 0, amount: 0 },
+      },
+      update: {
         income: { count: 0, amount: 0 },
         expense: { count: 0, amount: 0 },
         offset_income: { count: 0, amount: 0 },
@@ -157,11 +169,6 @@ export class PreviewMfCsvUsecase {
     for (const transaction of transactions) {
       const status = transaction.status;
       const transactionType = transaction.transaction_type;
-
-      // statusが有効な値かチェック
-      if (status !== "valid" && status !== "invalid" && status !== "skip") {
-        continue;
-      }
 
       // transactionTypeがnullの場合はスキップ
       if (transactionType === null) {

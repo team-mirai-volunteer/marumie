@@ -3,11 +3,8 @@ import {
   type PrismaClient,
   type Transaction as PrismaTransaction,
 } from "@prisma/client";
-import type {
-  Transaction,
-  TransactionFilters,
-  TransactionType,
-} from "@/shared/models/transaction";
+import type { Transaction, TransactionType } from "@/shared/models/transaction";
+import type { TransactionFilters } from "@/types/transaction-filters";
 import type { DisplayTransactionType } from "@/types/display-transaction";
 import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 import type {
@@ -461,11 +458,10 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       };
     }
 
-    if (filters?.political_organization_id) {
-      where.politicalOrganizationId = BigInt(filters.political_organization_id);
-    }
-
-    if (filters?.political_organization_ids) {
+    if (
+      filters?.political_organization_ids &&
+      filters.political_organization_ids.length > 0
+    ) {
       where.politicalOrganizationId = {
         in: filters.political_organization_ids.map((id) => BigInt(id)),
       };
@@ -535,6 +531,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       memo: prismaTransaction.memo ?? undefined,
       category_key: prismaTransaction.categoryKey,
       label: prismaTransaction.label,
+      hash: prismaTransaction.hash || "",
       created_at: prismaTransaction.createdAt,
       updated_at: prismaTransaction.updatedAt,
     };
