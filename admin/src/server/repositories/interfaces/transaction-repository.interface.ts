@@ -32,5 +32,8 @@ export interface ITransactionRepository {
   ): Promise<Transaction[]>;
   deleteAll(filters?: TransactionFilters): Promise<number>;
   createMany(inputs: CreateTransactionInput[]): Promise<Transaction[]>;
-  findByTransactionNos(transactionNos: string[]): Promise<Transaction[]>;
+  findByTransactionNos(
+    transactionNos: string[],
+    politicalOrganizationIds?: string[],
+  ): Promise<Transaction[]>;
 }

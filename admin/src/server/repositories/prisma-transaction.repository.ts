@@ -225,13 +225,24 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     return createdTransactions.map((t) => this.mapToTransaction(t));
   }
 
-  async findByTransactionNos(transactionNos: string[]): Promise<Transaction[]> {
-    const transactions = await this.prisma.transaction.findMany({
-      where: {
-        transactionNo: {
-          in: transactionNos,
-        },
+  async findByTransactionNos(
+    transactionNos: string[],
+    politicalOrganizationIds?: string[],
+  ): Promise<Transaction[]> {
+    const where: Prisma.TransactionWhereInput = {
+      transactionNo: {
+        in: transactionNos,
       },
+    };
+
+    if (politicalOrganizationIds && politicalOrganizationIds.length > 0) {
+      where.politicalOrganizationId = {
+        in: politicalOrganizationIds.map((id) => BigInt(id)),
+      };
+    }
+
+    const transactions = await this.prisma.transaction.findMany({
+      where,
     });
 
     return transactions.map((t) => this.mapToTransaction(t));
