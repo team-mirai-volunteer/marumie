@@ -1,9 +1,9 @@
+import type { Transaction } from "@/shared/models/transaction";
 import type {
+  TransactionFilters,
   CreateTransactionInput,
-  Transaction,
   UpdateTransactionInput,
-} from "@/shared/models/transaction";
-import type { TransactionFilters } from "@/types/transaction-filters";
+} from "@/types/transaction";
 import type { TransactionWithOrganization } from "@/server/usecases/get-transactions-usecase";
 
 export interface PaginatedResult<T> {

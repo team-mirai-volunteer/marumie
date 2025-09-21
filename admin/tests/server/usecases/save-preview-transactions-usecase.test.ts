@@ -9,7 +9,7 @@ import {
   type PreviewMfCsvInput,
 } from "@/server/usecases/preview-mf-csv-usecase";
 import type { ITransactionRepository } from "@/server/repositories/interfaces/transaction-repository.interface";
-import type { CreateTransactionInput } from "@/shared/models/transaction";
+import type { CreateTransactionInput } from "@/types/transaction";
 
 describe("SavePreviewTransactionsUsecase", () => {
   let usecase: SavePreviewTransactionsUsecase;
