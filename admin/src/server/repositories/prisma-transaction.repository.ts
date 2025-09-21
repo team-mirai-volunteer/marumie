@@ -2,9 +2,9 @@ import type { Prisma, PrismaClient } from "@prisma/client";
 import type {
   CreateTransactionInput,
   Transaction,
-  TransactionFilters,
   UpdateTransactionInput,
 } from "@/shared/models/transaction";
+import type { TransactionFilters } from "@/types/transaction-filters";
 import type { TransactionWithOrganization } from "@/server/usecases/get-transactions-usecase";
 import type {
   ITransactionRepository,

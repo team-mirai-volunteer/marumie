@@ -1,7 +1,5 @@
-import type {
-  Transaction,
-  TransactionFilters,
-} from "@/shared/models/transaction";
+import type { Transaction } from "@/shared/models/transaction";
+import type { TransactionFilters } from "@/types/transaction-filters";
 import type {
   ITransactionRepository,
   PaginationOptions,
