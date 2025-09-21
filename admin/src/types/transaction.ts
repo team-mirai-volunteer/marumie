@@ -37,5 +37,4 @@ export interface CreateTransactionInput {
   hash: string;
 }
 
-export interface UpdateTransactionInput
-  extends Partial<CreateTransactionInput> {}
+export type UpdateTransactionInput = Partial<CreateTransactionInput>;
