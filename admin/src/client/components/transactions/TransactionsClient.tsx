@@ -87,39 +87,46 @@ export function TransactionsClient({ organizations }: TransactionsClientProps) {
 
   return (
     <div className="bg-primary-panel rounded-xl p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold text-white">取引一覧</h1>
-        <DeleteAllButton disabled={data.total === 0} />
-      </div>
-
-      {/* Organization Filter */}
       <div className="mb-4">
-        <label
-          htmlFor="org-filter"
-          className="block text-sm font-medium text-white mb-2"
-        >
-          政治団体でフィルタ
-        </label>
-        <select
-          id="org-filter"
-          value={selectedOrgId}
-          onChange={(e) => handleOrgFilterChange(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-md bg-white text-black"
-        >
-          <option value="">全件</option>
-          {organizations.map((org) => (
-            <option key={org.id} value={org.id}>
-              {org.displayName}
-            </option>
-          ))}
-        </select>
+        <h1 className="text-2xl font-bold text-white mb-4">取引一覧</h1>
+
+        {/* Organization Filter */}
+        <div className="mb-4">
+          <label
+            htmlFor="org-filter"
+            className="block text-sm font-medium text-white mb-2"
+          >
+            政治団体でフィルタ
+          </label>
+          <select
+            id="org-filter"
+            value={selectedOrgId}
+            onChange={(e) => handleOrgFilterChange(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-md bg-white text-black"
+          >
+            <option value="">全件</option>
+            {organizations.map((org) => (
+              <option key={org.id} value={org.id}>
+                {org.displayName}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      <div className="mt-5 mb-4">
+      <div className="flex justify-between items-center mt-5 mb-4">
         <p className="text-primary-muted">
           全 {data.total} 件中 {(data.page - 1) * data.perPage + 1} -{" "}
           {Math.min(data.page * data.perPage, data.total)} 件を表示
         </p>
+        <DeleteAllButton
+          disabled={data.total === 0}
+          organizationId={selectedOrgId || undefined}
+          onDeleted={() => {
+            // データを再取得
+            window.location.reload();
+          }}
+        />
       </div>
 
       {data.transactions.length === 0 ? (
