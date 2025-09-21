@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
 import { GetTransactionsUsecase } from "@/server/usecases/get-transactions-usecase";
@@ -17,14 +18,13 @@ export async function GET(request: NextRequest) {
       | "income"
       | "expense"
       | undefined;
-    const dateFrom = searchParams.get("dateFrom")
-      ? new Date(searchParams.get("dateFrom")!)
-      : undefined;
-    const dateTo = searchParams.get("dateTo")
-      ? new Date(searchParams.get("dateTo")!)
-      : undefined;
-    const financialYear = searchParams.get("financialYear")
-      ? parseInt(searchParams.get("financialYear")!, 10)
+    const dateFromParam = searchParams.get("dateFrom");
+    const dateFrom = dateFromParam ? new Date(dateFromParam) : undefined;
+    const dateToParam = searchParams.get("dateTo");
+    const dateTo = dateToParam ? new Date(dateToParam) : undefined;
+    const financialYearParam = searchParams.get("financialYear");
+    const financialYear = financialYearParam
+      ? parseInt(financialYearParam, 10)
       : undefined;
 
     // Parse org IDs array from comma-separated string
