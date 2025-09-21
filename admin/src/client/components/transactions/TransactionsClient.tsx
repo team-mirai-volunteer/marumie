@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { TransactionRow } from "./TransactionRow";
 import { StaticPagination } from "@/client/components/ui/StaticPagination";
 import { DeleteAllButton } from "./DeleteAllButton";
+import { Selector } from "@/client/components/ui";
 import type { GetTransactionsResult } from "@/server/usecases/get-transactions-usecase";
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
 
@@ -17,16 +18,33 @@ export function TransactionsClient({ organizations }: TransactionsClientProps) {
   const router = useRouter();
   const [data, setData] = useState<GetTransactionsResult | null>(null);
   const [loading, setLoading] = useState(true);
+  const [fetching, setFetching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedOrgId, setSelectedOrgId] = useState<string>("");
+  const isInitialLoad = useRef(true);
 
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   const perPage = 50;
 
+  const organizationOptions = [
+    { value: "", label: "全件" },
+    ...organizations.map((org) => ({
+      value: org.id,
+      label: org.displayName,
+    })),
+  ];
+
   useEffect(() => {
     const fetchTransactions = async (orgId: string = "") => {
       try {
-        setLoading(true);
+        // 初回ロードはloading、以降はfetching
+        if (isInitialLoad.current) {
+          setLoading(true);
+          isInitialLoad.current = false;
+        } else {
+          setFetching(true);
+        }
+
         const params = new URLSearchParams({
           page: currentPage.toString(),
           perPage: perPage.toString(),
@@ -43,10 +61,12 @@ export function TransactionsClient({ organizations }: TransactionsClientProps) {
 
         const result: GetTransactionsResult = await response.json();
         setData(result);
+        setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
       } finally {
         setLoading(false);
+        setFetching(false);
       }
     };
 
@@ -92,25 +112,20 @@ export function TransactionsClient({ organizations }: TransactionsClientProps) {
 
         {/* Organization Filter */}
         <div className="mb-4">
-          <label
-            htmlFor="org-filter"
-            className="block text-sm font-medium text-white mb-2"
-          >
-            政治団体でフィルタ
-          </label>
-          <select
-            id="org-filter"
-            value={selectedOrgId}
-            onChange={(e) => handleOrgFilterChange(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-md bg-white text-black"
-          >
-            <option value="">全件</option>
-            {organizations.map((org) => (
-              <option key={org.id} value={org.id}>
-                {org.displayName}
-              </option>
-            ))}
-          </select>
+          <div className="flex items-center gap-2">
+            <div className="flex-1">
+              <Selector
+                options={organizationOptions}
+                value={selectedOrgId}
+                onChange={handleOrgFilterChange}
+                label="政治団体でフィルタ"
+                placeholder=""
+              />
+            </div>
+            {fetching && (
+              <div className="text-primary-muted text-sm">取得中...</div>
+            )}
+          </div>
         </div>
       </div>
 
