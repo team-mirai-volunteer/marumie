@@ -307,7 +307,8 @@ TXN-001,2025/6/2,人件費,,,,,,2000,普通預金,,,,,,2000,給与支払2,,人�
       
       // findByTransactionNosが正しい引数で呼ばれることを確認
       expect(mockRepository.findByTransactionNos).toHaveBeenCalledWith(
-        ["TXN-001", "TXN-001"]
+        ["TXN-001", "TXN-001"],
+        ["1"]
       );
     });
 
@@ -372,7 +373,8 @@ TXN-001,2025/6/1,人件費,,,,,,1000,普通預金,,,,,,1000,給与支払,,人件
       // repositoryが呼ばれることを確認
       expect(mockRepository.createMany).toHaveBeenCalledTimes(1);
       expect(mockRepository.findByTransactionNos).toHaveBeenCalledWith(
-        ["TXN-001"]
+        ["TXN-001"],
+        ["different-org-id"]
       );
     });
   });
