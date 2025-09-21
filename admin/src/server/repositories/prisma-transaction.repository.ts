@@ -72,8 +72,13 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       };
     }
 
-    if (filters?.political_organization_id) {
-      where.politicalOrganizationId = BigInt(filters.political_organization_id);
+    if (
+      filters?.political_organization_ids &&
+      filters.political_organization_ids.length > 0
+    ) {
+      where.politicalOrganizationId = {
+        in: filters.political_organization_ids.map((id) => BigInt(id)),
+      };
     }
 
     if (filters?.financial_year) {

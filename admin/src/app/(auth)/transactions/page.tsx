@@ -1,23 +1,70 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { TransactionRow } from "@/client/components/transactions/TransactionRow";
 import { StaticPagination } from "@/client/components/ui/StaticPagination";
 import { DeleteAllButton } from "@/client/components/transactions/DeleteAllButton";
-import { loadTransactionsData } from "@/server/loaders/load-transactions-data";
+import type { GetTransactionsResult } from "@/server/usecases/get-transactions-usecase";
 
-interface TransactionsPageProps {
-  searchParams: Promise<{ page?: string }>;
-}
+export default function TransactionsPage() {
+  const searchParams = useSearchParams();
+  const [data, setData] = useState<GetTransactionsResult | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-export default async function TransactionsPage({
-  searchParams,
-}: TransactionsPageProps) {
-  const params = await searchParams;
-  const currentPage = parseInt(params.page || "1", 10);
+  const currentPage = parseInt(searchParams.get("page") || "1", 10);
   const perPage = 50;
 
-  const data = await loadTransactionsData({
-    page: currentPage,
-    perPage,
-  });
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        setLoading(true);
+        const params = new URLSearchParams({
+          page: currentPage.toString(),
+          perPage: perPage.toString(),
+        });
+
+        const response = await fetch(`/api/transactions?${params}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch transactions");
+        }
+
+        const result: GetTransactionsResult = await response.json();
+        setData(result);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, [currentPage]);
+
+  if (loading) {
+    return (
+      <div className="bg-primary-panel rounded-xl p-4">
+        <div className="flex justify-center items-center py-10">
+          <p className="text-primary-muted">読み込み中...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-primary-panel rounded-xl p-4">
+        <div className="flex justify-center items-center py-10">
+          <p className="text-red-500">エラー: {error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return null;
+  }
 
   return (
     <div className="bg-primary-panel rounded-xl p-4">
