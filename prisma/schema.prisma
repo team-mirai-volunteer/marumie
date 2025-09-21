@@ -78,6 +78,7 @@ model Transaction {
   updatedAt               DateTime             @updatedAt @map("updated_at")
 
   @@unique([politicalOrganizationId, transactionNo])
+  @@index([politicalOrganizationId, financialYear, transactionType, transactionDate(sort: Desc)])
   @@map("transactions")
 }
 
