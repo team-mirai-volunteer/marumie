@@ -85,7 +85,9 @@ export class PreviewMfCsvUsecase {
         .filter(Boolean) as string[];
 
       const existingTransactions =
-        await this.transactionRepository.findByTransactionNos(transactionNos);
+        await this.transactionRepository.findByTransactionNos(transactionNos, [
+          input.politicalOrganizationId,
+        ]);
 
       // Convert records to preview transactions
       const convertedTransactions: PreviewTransaction[] = csvRecords.map(
@@ -97,27 +99,23 @@ export class PreviewMfCsvUsecase {
       );
 
       // Validate converted transactions including duplicate check
-      const previewTransactions = this.validator.validatePreviewTransactions(
+      const previews = this.validator.validatePreviewTransactions(
         convertedTransactions,
         existingTransactions,
       );
 
       const summary = {
-        totalCount: previewTransactions.length,
-        insertCount: previewTransactions.filter((t) => t.status === "insert")
-          .length,
-        updateCount: previewTransactions.filter((t) => t.status === "update")
-          .length,
-        invalidCount: previewTransactions.filter((t) => t.status === "invalid")
-          .length,
-        skipCount: previewTransactions.filter((t) => t.status === "skip")
-          .length,
+        totalCount: previews.length,
+        insertCount: previews.filter((t) => t.status === "insert").length,
+        updateCount: previews.filter((t) => t.status === "update").length,
+        invalidCount: previews.filter((t) => t.status === "invalid").length,
+        skipCount: previews.filter((t) => t.status === "skip").length,
       };
 
-      const statistics = this.calculateStatistics(previewTransactions);
+      const statistics = this.calculateStatistics(previews);
 
       return {
-        transactions: previewTransactions,
+        transactions: previews,
         summary,
         statistics,
       };

@@ -1,7 +1,5 @@
-import type {
-  Transaction,
-  TransactionFilters,
-} from "@/shared/models/transaction";
+import type { Transaction } from "@/shared/models/transaction";
+import type { TransactionFilters } from "@/types/transaction";
 import type {
   ITransactionRepository,
   PaginationOptions,
@@ -14,7 +12,7 @@ export interface TransactionWithOrganization extends Transaction {
 export interface GetTransactionsParams {
   page?: number;
   perPage?: number;
-  politicalOrganizationId?: string;
+  politicalOrganizationIds?: string[];
   transactionType?: "income" | "expense";
   dateFrom?: Date;
   dateTo?: Date;
@@ -40,8 +38,11 @@ export class GetTransactionsUsecase {
       const perPage = Math.min(Math.max(params.perPage || 50, 1), 100);
 
       const filters: TransactionFilters = {};
-      if (params.politicalOrganizationId) {
-        filters.political_organization_id = params.politicalOrganizationId;
+      if (
+        params.politicalOrganizationIds &&
+        params.politicalOrganizationIds.length > 0
+      ) {
+        filters.political_organization_ids = params.politicalOrganizationIds;
       }
       if (params.transactionType) {
         filters.transaction_type = params.transactionType;

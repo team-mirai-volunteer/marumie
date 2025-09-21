@@ -1,10 +1,10 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
+import type { Transaction } from "@/shared/models/transaction";
 import type {
-  CreateTransactionInput,
-  Transaction,
   TransactionFilters,
+  CreateTransactionInput,
   UpdateTransactionInput,
-} from "@/shared/models/transaction";
+} from "@/types/transaction";
 import type { TransactionWithOrganization } from "@/server/usecases/get-transactions-usecase";
 import type {
   ITransactionRepository,
@@ -72,8 +72,13 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       };
     }
 
-    if (filters?.political_organization_id) {
-      where.politicalOrganizationId = BigInt(filters.political_organization_id);
+    if (
+      filters?.political_organization_ids &&
+      filters.political_organization_ids.length > 0
+    ) {
+      where.politicalOrganizationId = {
+        in: filters.political_organization_ids.map((id) => BigInt(id)),
+      };
     }
 
     if (filters?.financial_year) {
@@ -225,13 +230,24 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     return createdTransactions.map((t) => this.mapToTransaction(t));
   }
 
-  async findByTransactionNos(transactionNos: string[]): Promise<Transaction[]> {
-    const transactions = await this.prisma.transaction.findMany({
-      where: {
-        transactionNo: {
-          in: transactionNos,
-        },
+  async findByTransactionNos(
+    transactionNos: string[],
+    politicalOrganizationIds?: string[],
+  ): Promise<Transaction[]> {
+    const where: Prisma.TransactionWhereInput = {
+      transactionNo: {
+        in: transactionNos,
       },
+    };
+
+    if (politicalOrganizationIds && politicalOrganizationIds.length > 0) {
+      where.politicalOrganizationId = {
+        in: politicalOrganizationIds.map((id) => BigInt(id)),
+      };
+    }
+
+    const transactions = await this.prisma.transaction.findMany({
+      where,
     });
 
     return transactions.map((t) => this.mapToTransaction(t));

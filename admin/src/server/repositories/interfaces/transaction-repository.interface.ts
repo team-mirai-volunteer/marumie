@@ -1,9 +1,9 @@
+import type { Transaction } from "@/shared/models/transaction";
 import type {
-  CreateTransactionInput,
-  Transaction,
   TransactionFilters,
+  CreateTransactionInput,
   UpdateTransactionInput,
-} from "@/shared/models/transaction";
+} from "@/types/transaction";
 import type { TransactionWithOrganization } from "@/server/usecases/get-transactions-usecase";
 
 export interface PaginatedResult<T> {
@@ -32,5 +32,8 @@ export interface ITransactionRepository {
   ): Promise<Transaction[]>;
   deleteAll(filters?: TransactionFilters): Promise<number>;
   createMany(inputs: CreateTransactionInput[]): Promise<Transaction[]>;
-  findByTransactionNos(transactionNos: string[]): Promise<Transaction[]>;
+  findByTransactionNos(
+    transactionNos: string[],
+    politicalOrganizationIds?: string[],
+  ): Promise<Transaction[]>;
 }
