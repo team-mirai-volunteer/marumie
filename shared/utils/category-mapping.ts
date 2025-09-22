@@ -193,5 +193,13 @@ export const ACCOUNT_CATEGORY_MAPPING: Record<string, CategoryMapping> = {
     color: "#334155",
     shortLabel: "その他経費",
     type: "expense"
+  },
+  "短期貸付金": {
+    key: "short-term-loans",
+    category: "貸付金",
+    subcategory: "短期貸付金",
+    color: "#7C2D12",
+    shortLabel: "短期貸付金",
+    type: "expense"
   }
 };
