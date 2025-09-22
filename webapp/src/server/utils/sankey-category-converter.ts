@@ -143,6 +143,7 @@ export function convertCategoryAggregationToSankeyData(
   isFriendlyCategory: boolean = false,
   currentYearBalance: number,
   previousYearBalance: number,
+  unrealizedExpensesTotal: number = 0,
 ): SankeyData {
   // 「その他」カテゴリをリネーム
   const renamedAggregation = renameOtherCategories(aggregation);
@@ -231,6 +232,28 @@ export function convertCategoryAggregationToSankeyData(
       category: "繰越し",
       totalAmount: currentYearBalance,
     });
+  }
+
+  // 未払費用が0より大きい場合、「繰越し」として支出側に追加
+  if (unrealizedExpensesTotal > 0) {
+    const existingCarryover = expenseByCategory.get("繰越し") || 0;
+    expenseByCategory.set(
+      "繰越し",
+      existingCarryover + unrealizedExpensesTotal,
+    );
+
+    // 既存の繰越しレコードを更新または新規追加
+    const existingCarryoverRecord = processedAggregation.expense.find(
+      (item) => item.category === "繰越し",
+    );
+    if (existingCarryoverRecord) {
+      existingCarryoverRecord.totalAmount += unrealizedExpensesTotal;
+    } else {
+      processedAggregation.expense.push({
+        category: "繰越し",
+        totalAmount: unrealizedExpensesTotal,
+      });
+    }
   }
 
   const totalIncome = Array.from(incomeByCategory.values()).reduce(

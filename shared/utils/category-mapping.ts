@@ -193,5 +193,27 @@ export const ACCOUNT_CATEGORY_MAPPING: Record<string, CategoryMapping> = {
     color: "#334155",
     shortLabel: "その他経費",
     type: "expense"
+  },
+  "未払費用": {
+    key: "accrued-expenses",
+    category: "繰越し",
+    color: "#6B7280",
+    shortLabel: "未払費用",
+    type: "expense"
+  },
+  "次回選挙費用積立金": {
+    key: "election-fund-reserves",
+    category: "繰越し",
+    color: "#6B7280",
+    shortLabel: "選挙積立金",
+    type: "expense"
+  },
+  "短期貸付金": {
+    key: "short-term-loans",
+    category: "政治活動費",
+    subcategory: "短期貸付金",
+    color: "#7C2D12",
+    shortLabel: "短期貸付金",
+    type: "expense"
   }
 };

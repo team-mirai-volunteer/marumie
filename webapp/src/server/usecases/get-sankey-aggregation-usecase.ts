@@ -54,6 +54,13 @@ export class GetSankeyAggregationUsecase {
           params.financialYear,
         );
 
+      // 未払費用の合計を取得
+      const unrealizedExpensesTotal =
+        await this.transactionRepository.getUnrealizedExpensesTotal(
+          organizationIdsAsString,
+          params.financialYear,
+        );
+
       // Sankeyデータに変換
       const isFriendlyCategory = params.categoryType === "friendly-category";
       const sankeyData = convertCategoryAggregationToSankeyData(
@@ -61,6 +68,7 @@ export class GetSankeyAggregationUsecase {
         isFriendlyCategory,
         balancesByYear.currentYear,
         balancesByYear.previousYear,
+        unrealizedExpensesTotal,
       );
 
       return { sankeyData };

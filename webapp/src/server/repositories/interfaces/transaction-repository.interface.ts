@@ -78,5 +78,9 @@ export interface ITransactionRepository {
     politicalOrganizationIds: string[],
     financialYear: number,
   ): Promise<number>;
+  getUnrealizedExpensesTotal(
+    politicalOrganizationIds: string[],
+    financialYear: number,
+  ): Promise<number>;
   getLastUpdatedAt(): Promise<Date | null>;
 }
