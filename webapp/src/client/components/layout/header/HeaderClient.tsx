@@ -21,9 +21,9 @@ const navigationItems = [
     desktopLabel: "1年間の推移",
   },
   {
-    href: "/#donation-summary",
-    label: "これまでの寄附金額",
-    desktopLabel: "寄附金額",
+    href: "/#balance-sheet",
+    label: "貸借対照表",
+    desktopLabel: "貸借対照表",
   },
   {
     href: "/#transactions",
