@@ -1,11 +1,9 @@
 "use server";
 
-import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { prisma } from "@/server/lib/prisma";
 import { PrismaBalanceSnapshotRepository } from "../repositories/prisma-balance-snapshot.repository";
 import { DeleteBalanceSnapshotUsecase } from "../usecases/delete-balance-snapshot-usecase";
-
-const prisma = new PrismaClient();
 
 export async function deleteBalanceSnapshot(id: string) {
   try {

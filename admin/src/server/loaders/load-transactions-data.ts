@@ -1,15 +1,13 @@
 import "server-only";
 
-import { PrismaClient } from "@prisma/client";
 import { unstable_cache } from "next/cache";
+import { prisma } from "@/server/lib/prisma";
 import { PrismaTransactionRepository } from "../repositories/prisma-transaction.repository";
 import {
   GetTransactionsUsecase,
   type GetTransactionsParams,
   type GetTransactionsResult,
 } from "../usecases/get-transactions-usecase";
-
-const prisma = new PrismaClient();
 const CACHE_REVALIDATE_SECONDS = 5;
 
 export const loadTransactionsData = unstable_cache(

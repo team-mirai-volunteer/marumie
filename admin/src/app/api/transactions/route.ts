@@ -1,10 +1,8 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/server/lib/prisma";
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
 import { GetTransactionsUsecase } from "@/server/usecases/get-transactions-usecase";
-
-const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {

@@ -2,10 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/server/auth/client";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/server/lib/prisma";
 import { PrismaUserRepository } from "@/server/repositories/prisma-user.repository";
-
-const prisma = new PrismaClient();
 const userRepository = new PrismaUserRepository(prisma);
 
 export async function loginWithPassword(formData: FormData) {
