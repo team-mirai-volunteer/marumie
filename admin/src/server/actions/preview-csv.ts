@@ -1,12 +1,10 @@
 "use server";
 
-import { PrismaClient } from "@prisma/client";
 import { EncodingConverter } from "@/server/lib/encoding-converter";
+import { prisma } from "@/server/lib/prisma";
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
 import { PreviewMfCsvUsecase } from "@/server/usecases/preview-mf-csv-usecase";
 import type { PreviewMfCsvResult } from "@/server/usecases/preview-mf-csv-usecase";
-
-const prisma = new PrismaClient();
 const transactionRepository = new PrismaTransactionRepository(prisma);
 const previewUsecase = new PreviewMfCsvUsecase(transactionRepository);
 

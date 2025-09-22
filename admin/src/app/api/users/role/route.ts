@@ -1,10 +1,9 @@
 import "server-only";
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/server/auth/roles";
-import { PrismaClient, UserRole } from "@prisma/client";
+import type { UserRole } from "@prisma/client";
+import { prisma } from "@/server/lib/prisma";
 import { PrismaUserRepository } from "@/server/repositories/prisma-user.repository";
-
-const prisma = new PrismaClient();
 const userRepository = new PrismaUserRepository(prisma);
 
 export async function PATCH(request: NextRequest) {

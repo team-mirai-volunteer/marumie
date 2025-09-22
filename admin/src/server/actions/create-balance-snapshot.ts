@@ -1,10 +1,8 @@
 "use server";
 
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/server/lib/prisma";
 import { PrismaBalanceSnapshotRepository } from "../repositories/prisma-balance-snapshot.repository";
 import { CreateBalanceSnapshotUsecase } from "../usecases/create-balance-snapshot-usecase";
-
-const prisma = new PrismaClient();
 
 export interface CreateBalanceSnapshotData {
   politicalOrganizationId: string;
