@@ -1,10 +1,8 @@
 import "server-only";
 
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../lib/prisma";
 import type { BalanceSnapshot } from "@/shared/models/balance-snapshot";
 import { PrismaBalanceSnapshotRepository } from "../repositories/prisma-balance-snapshot.repository";
-
-const prisma = new PrismaClient();
 
 export async function loadBalanceSnapshotsData(
   politicalOrganizationId: string,

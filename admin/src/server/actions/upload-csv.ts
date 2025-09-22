@@ -1,12 +1,11 @@
 import "server-only";
 
-import { PrismaClient } from "@prisma/client";
 import { revalidateTag } from "next/cache";
+import { prisma } from "@/server/lib/prisma";
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
 import { SavePreviewTransactionsUsecase } from "@/server/usecases/save-preview-transactions-usecase";
 import type { PreviewTransaction } from "@/server/lib/mf-record-converter";
 
-const prisma = new PrismaClient();
 const transactionRepository = new PrismaTransactionRepository(prisma);
 const uploadUsecase = new SavePreviewTransactionsUsecase(transactionRepository);
 
@@ -75,7 +74,5 @@ export async function uploadCsv(
     throw error instanceof Error
       ? error
       : new Error("サーバー内部エラーが発生しました");
-  } finally {
-    await prisma.$disconnect();
   }
 }

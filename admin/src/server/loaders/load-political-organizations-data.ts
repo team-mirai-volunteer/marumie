@@ -1,10 +1,8 @@
 import "server-only";
 
-import { PrismaClient } from "@prisma/client";
 import { unstable_cache } from "next/cache";
+import { prisma } from "../lib/prisma";
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
-
-const prisma = new PrismaClient();
 const CACHE_REVALIDATE_SECONDS = 60;
 
 export const loadPoliticalOrganizationsData = unstable_cache(

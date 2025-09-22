@@ -1,12 +1,11 @@
 "use server";
 
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/server/lib/prisma";
 import { EncodingConverter } from "@/server/lib/encoding-converter";
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
 import { PreviewMfCsvUsecase } from "@/server/usecases/preview-mf-csv-usecase";
 import type { PreviewMfCsvResult } from "@/server/usecases/preview-mf-csv-usecase";
 
-const prisma = new PrismaClient();
 const transactionRepository = new PrismaTransactionRepository(prisma);
 const previewUsecase = new PreviewMfCsvUsecase(transactionRepository);
 
@@ -45,7 +44,5 @@ export async function previewCsv(
     throw error instanceof Error
       ? error
       : new Error("サーバー内部エラーが発生しました");
-  } finally {
-    await prisma.$disconnect();
   }
 }

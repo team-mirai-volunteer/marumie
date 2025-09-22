@@ -1,11 +1,9 @@
 "use server";
 
 import { revalidateTag } from "next/cache";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../lib/prisma";
 import { PrismaTransactionRepository } from "../repositories/prisma-transaction.repository";
 import { DeleteAllTransactionsUsecase } from "../usecases/delete-all-transactions-usecase";
-
-const prisma = new PrismaClient();
 
 export async function deleteAllTransactionsAction(): Promise<{
   success: boolean;
