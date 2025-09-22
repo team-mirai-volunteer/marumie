@@ -1,8 +1,7 @@
 import { createClient } from "@/server/auth/client";
-import { PrismaClient, type UserRole } from "@prisma/client";
+import type { UserRole } from "@prisma/client";
+import { prisma } from "@/server/lib/prisma";
 import { PrismaUserRepository } from "@/server/repositories/prisma-user.repository";
-
-const prisma = new PrismaClient();
 const userRepository = new PrismaUserRepository(prisma);
 
 export type { UserRole } from "@prisma/client";

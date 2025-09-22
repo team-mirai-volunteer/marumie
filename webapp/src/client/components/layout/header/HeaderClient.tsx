@@ -8,30 +8,30 @@ import HamburgerMenuButton from "@/client/components/ui/HamburgerMenuButton";
 import OrganizationSelector from "./OrganizationSelector";
 import type { OrganizationsResponse } from "@/types/organization";
 
-const navigationItems = [
-  { href: "/", label: "トップ", desktopLabel: null },
+const getNavigationItems = (currentSlug: string) => [
+  { href: `/o/${currentSlug}/`, label: "トップ", desktopLabel: null },
   {
-    href: "/#cash-flow",
+    href: `/o/${currentSlug}/#cash-flow`,
     label: "チームみらいの収支の流れ",
     desktopLabel: "収支の流れ",
   },
   {
-    href: "/#monthly-trends",
+    href: `/o/${currentSlug}/#monthly-trends`,
     label: "１年間の収支推移",
     desktopLabel: "1年間の推移",
   },
   {
-    href: "/#donation-summary",
-    label: "これまでの寄附金額",
-    desktopLabel: "寄附金額",
+    href: `/o/${currentSlug}/#balance-sheet`,
+    label: "貸借対照表",
+    desktopLabel: "貸借対照表",
   },
   {
-    href: "/#transactions",
+    href: `/o/${currentSlug}/#transactions`,
     label: "すべての出入金",
     desktopLabel: "すべての出入金",
   },
   {
-    href: "/#explanation",
+    href: `/o/${currentSlug}/#explanation`,
     label: "データについて",
     desktopLabel: "データについて",
   },
@@ -50,6 +50,7 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
     ? pathname.split("/")[2]
     : organizations.default;
   const logoHref = `/o/${currentSlug}/`;
+  const navigationItems = getNavigationItems(currentSlug);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 px-2.5 py-3 xl:px-6 xl:py-4">
