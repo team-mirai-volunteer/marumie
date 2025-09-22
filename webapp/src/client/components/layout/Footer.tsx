@@ -32,10 +32,10 @@ export default function Footer() {
               1年の推移
             </Link>
             <Link
-              href="/#donation-summary"
+              href="/#balance-sheet"
               className="text-gray-800 text-sm font-bold leading-[1.36em] hover:opacity-80 transition-opacity"
             >
-              寄附金額
+              貸借対照表
             </Link>
           </div>
           {/* Mobile: Second row with 2 links */}
