@@ -81,30 +81,6 @@ export function TransactionsClient({ organizations }: TransactionsClientProps) {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="bg-primary-panel rounded-xl p-4">
-        <div className="flex justify-center items-center py-10">
-          <p className="text-primary-muted">読み込み中...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-primary-panel rounded-xl p-4">
-        <div className="flex justify-center items-center py-10">
-          <p className="text-red-500">エラー: {error}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!data) {
-    return null;
-  }
-
   return (
     <div className="bg-primary-panel rounded-xl p-4">
       <div className="mb-4">
@@ -112,39 +88,57 @@ export function TransactionsClient({ organizations }: TransactionsClientProps) {
 
         {/* Organization Filter */}
         <div className="mb-4">
-          <div className="flex items-center gap-2">
-            <div className="flex-1">
-              <Selector
-                options={organizationOptions}
-                value={selectedOrgId}
-                onChange={handleOrgFilterChange}
-                label="政治団体でフィルタ"
-                placeholder=""
-              />
-            </div>
-            {fetching && (
-              <div className="text-primary-muted text-sm">取得中...</div>
-            )}
+          <div className="flex-1">
+            <Selector
+              options={organizationOptions}
+              value={selectedOrgId}
+              onChange={handleOrgFilterChange}
+              label="政治団体でフィルタ"
+              placeholder=""
+            />
           </div>
         </div>
       </div>
 
-      <div className="flex justify-between items-center mt-5 mb-4">
-        <p className="text-primary-muted">
-          全 {data.total} 件中 {(data.page - 1) * data.perPage + 1} -{" "}
-          {Math.min(data.page * data.perPage, data.total)} 件を表示
-        </p>
-        <DeleteAllButton
-          disabled={data.total === 0}
-          organizationId={selectedOrgId || undefined}
-          onDeleted={() => {
-            // データを再取得
-            window.location.reload();
-          }}
-        />
-      </div>
+      {!loading && data && (
+        <div className="flex justify-between items-center mt-5 mb-4">
+          <p className="text-primary-muted">
+            全 {data.total} 件中 {(data.page - 1) * data.perPage + 1} -{" "}
+            {Math.min(data.page * data.perPage, data.total)} 件を表示
+          </p>
+          <DeleteAllButton
+            disabled={data.total === 0}
+            organizationId={selectedOrgId || undefined}
+            onDeleted={() => {
+              // データを再取得
+              window.location.reload();
+            }}
+          />
+        </div>
+      )}
 
-      {data.transactions.length === 0 ? (
+      {fetching && (
+        <div className="text-center py-2 mb-4">
+          <div className="flex items-center justify-center gap-2">
+            <div className="w-4 h-4 border-2 border-primary-muted border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-primary-muted text-sm">取得中...</p>
+          </div>
+        </div>
+      )}
+
+      {loading ? (
+        <div className="text-center py-10">
+          <p className="text-primary-muted">読み込み中...</p>
+        </div>
+      ) : error ? (
+        <div className="text-center py-10">
+          <p className="text-red-500">エラー: {error}</p>
+        </div>
+      ) : !data ? (
+        <div className="text-center py-10">
+          <p className="text-primary-muted">データがありません</p>
+        </div>
+      ) : data.transactions.length === 0 ? (
         <div className="text-center py-10">
           <p className="text-primary-muted">
             トランザクションが登録されていません
