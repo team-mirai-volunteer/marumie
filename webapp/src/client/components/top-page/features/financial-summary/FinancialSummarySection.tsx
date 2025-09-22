@@ -67,7 +67,7 @@ export default function FinancialSummarySection({
 
       <FinancialSummaryCard
         className="flex-1"
-        title="収支"
+        title="繰越し"
         amount={formatAmount(financialData.balance)}
         titleColor="#1F2937"
         amountColor="#1F2937"
