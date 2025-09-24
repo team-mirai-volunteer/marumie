@@ -14,6 +14,7 @@ interface CashFlowSectionProps {
   friendly?: SankeyData | null;
   updatedAt: string;
   organizationName?: string;
+  organizationSlug?: string;
 }
 
 export default function CashFlowSection({
@@ -21,12 +22,23 @@ export default function CashFlowSection({
   friendly,
   updatedAt,
   organizationName,
+  organizationSlug,
 }: CashFlowSectionProps) {
   const [activeTab, setActiveTab] = useState<"political" | "friendly">(
     "friendly",
   );
 
   const currentData = activeTab === "political" ? political : friendly;
+
+  // 免責文言を組織に応じて選択
+  const getDisclaimerText = () => {
+    if (organizationSlug === "team-mirai") {
+      return "*寄附金額は、政党「チームみらい」が受け取った寄附のみを対象としており、党首・安野や参院選公認候補者の政治団体への寄附は含んでおりません。";
+    } else if (organizationSlug === "digimin") {
+      return "*寄附金額は、党首・安野の政治団体が受け取った寄附のみを対象としており、政党「チームみらい」や参院選公認候補者の政治団体への寄附は含んでおりません。";
+    }
+    return null;
+  };
 
   return (
     <MainColumnCard id="cash-flow">
@@ -79,6 +91,13 @@ export default function CashFlowSection({
       ) : (
         <div className="text-gray-500">
           サンキー図データが取得できませんでした
+        </div>
+      )}
+
+      {/* 免責事項 */}
+      {getDisclaimerText() && (
+        <div className="mt-4 text-xs text-gray-600 leading-relaxed">
+          {getDisclaimerText()}
         </div>
       )}
     </MainColumnCard>
