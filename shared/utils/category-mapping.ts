@@ -8,9 +8,31 @@ export interface CategoryMapping {
 }
 
 /**
- * アカウント名から表示用カテゴリへのマッピング辞書
+ * 未払金カテゴリのマッピング辞書
  */
-export const ACCOUNT_CATEGORY_MAPPING: Record<string, CategoryMapping> = {
+export const UNREALIZED_EXPENSES_CATEGORIES: Record<string, CategoryMapping> = {
+  "未払費用": {
+    key: "unpaid-expenses",
+    category: "未払金",
+    subcategory: "未払費用",
+    color: "#94A3B8",
+    shortLabel: "未払費用",
+    type: "expense"
+  },
+  "未払金": {
+    key: "accounts-payable",
+    category: "未払金",
+    subcategory: "未払金",
+    color: "#64748B",
+    shortLabel: "未払金",
+    type: "expense"
+  }
+};
+
+/**
+ * 通常の金銭取引カテゴリのマッピング辞書
+ */
+export const MONETARY_CATEGORY_MAPPING: Record<string, CategoryMapping> = {
   // 収入項目
   "個人の負担する党費又は会費": {
     key: "membership-fees",
@@ -201,5 +223,21 @@ export const ACCOUNT_CATEGORY_MAPPING: Record<string, CategoryMapping> = {
     color: "#7C2D12",
     shortLabel: "短期貸付金",
     type: "expense"
+  },
+  "繰越利益剰余金": {
+    key: "retained-earnings",
+    category: "その他",
+    subcategory: "繰越利益剰余金",
+    color: "#64748B",
+    shortLabel: "繰越利益剰余金",
+    type: "expense"
   }
+};
+
+/**
+ * 全アカウントカテゴリのマッピング辞書（通常取引 + 未払金）
+ */
+export const ACCOUNT_CATEGORY_MAPPING: Record<string, CategoryMapping> = {
+  ...MONETARY_CATEGORY_MAPPING,
+  ...UNREALIZED_EXPENSES_CATEGORIES,
 };

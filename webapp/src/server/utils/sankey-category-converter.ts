@@ -222,14 +222,31 @@ export function convertCategoryAggregationToSankeyData(
 
   // 収入と支出の合計を計算
 
-  // currentYearBalanceが0より大きい場合、「繰越し」として支出側に追加
-  if (currentYearBalance > 0) {
-    expenseByCategory.set("繰越し", currentYearBalance);
+  const unrealizedExpenses = processedAggregation.expense.filter(
+    (item) => item.category === "未払金",
+  );
+
+  let unrealizedTotal = 0;
+  if (unrealizedExpenses.length > 0) {
+    unrealizedTotal = unrealizedExpenses.reduce(
+      (sum, item) => sum + item.totalAmount,
+      0,
+    );
+
+    processedAggregation.expense = processedAggregation.expense.filter(
+      (item) => item.category !== "未払金",
+    );
+  }
+
+  // currentYearBalanceと未払金を合わせて「繰越し」として支出側に追加
+  const totalCarryover = currentYearBalance + unrealizedTotal;
+  if (totalCarryover > 0) {
+    expenseByCategory.set("繰越し", totalCarryover);
 
     // 支出データに「繰越し」レコードを追加（UI用）
     processedAggregation.expense.push({
       category: "繰越し",
-      totalAmount: currentYearBalance,
+      totalAmount: totalCarryover,
     });
   }
 
