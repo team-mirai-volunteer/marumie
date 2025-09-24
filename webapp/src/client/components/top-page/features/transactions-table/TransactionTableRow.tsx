@@ -1,7 +1,7 @@
 "use client";
 import "client-only";
 
-import { TOTAL_CATEGORY_MAP } from "@/shared/utils/category-mapping";
+import { ALL_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
 import type { DisplayTransaction } from "@/types/display-transaction";
 
 interface TransactionTableRowProps {
@@ -42,7 +42,7 @@ export default function TransactionTableRow({
     const isIncome = transaction.amount > 0;
 
     // Find mapping based on account (original account name)
-    const mapping = TOTAL_CATEGORY_MAP[transaction.account];
+    const mapping = ALL_CATEGORY_MAPPING[transaction.account];
     const color = mapping?.color;
 
     if (color) {

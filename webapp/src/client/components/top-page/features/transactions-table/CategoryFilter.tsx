@@ -5,7 +5,7 @@ import { useState } from "react";
 import Image from "next/image";
 import {
   ACCOUNT_CATEGORY_MAPPING,
-  UNREALIZED_EXPENSES_CATEGORIES,
+  ACCRUED_EXPENSE_MAPPING,
   type CategoryMapping,
 } from "@/shared/utils/category-mapping";
 
@@ -17,7 +17,7 @@ interface CategoryItem {
 
 const INCOME_CATEGORIES: CategoryItem[] = Object.entries({
   ...ACCOUNT_CATEGORY_MAPPING,
-  ...UNREALIZED_EXPENSES_CATEGORIES,
+  ...ACCRUED_EXPENSE_MAPPING,
 })
   .filter(([, mapping]: [string, CategoryMapping]) => mapping.type === "income")
   .map(([, mapping]: [string, CategoryMapping]) => ({
@@ -28,7 +28,7 @@ const INCOME_CATEGORIES: CategoryItem[] = Object.entries({
 
 const EXPENSE_CATEGORIES: CategoryItem[] = Object.entries({
   ...ACCOUNT_CATEGORY_MAPPING,
-  ...UNREALIZED_EXPENSES_CATEGORIES,
+  ...ACCRUED_EXPENSE_MAPPING,
 })
   .filter(
     ([, mapping]: [string, CategoryMapping]) => mapping.type === "expense",

@@ -8,7 +8,7 @@ import type { TransactionFilters } from "@/types/transaction-filters";
 import type { DisplayTransactionType } from "@/types/display-transaction";
 import {
   ACCOUNT_CATEGORY_MAPPING,
-  UNREALIZED_EXPENSES_CATEGORIES,
+  ACCRUED_EXPENSE_MAPPING,
 } from "@/shared/utils/category-mapping";
 import type {
   DailyDonationData,
@@ -378,7 +378,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
 
     for (const item of accountData) {
       const mapping = ACCOUNT_CATEGORY_MAPPING[item.account] ||
-        UNREALIZED_EXPENSES_CATEGORIES[item.account] || {
+        ACCRUED_EXPENSE_MAPPING[item.account] || {
           category: item.account,
         };
       const key = mapping.subcategory
@@ -410,7 +410,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
 
     for (const item of accountData) {
       const mapping = ACCOUNT_CATEGORY_MAPPING[item.account] ||
-        UNREALIZED_EXPENSES_CATEGORIES[item.account] || {
+        ACCRUED_EXPENSE_MAPPING[item.account] || {
           category: item.account,
         };
       // friendlyカテゴリーの場合は、subcategoryをtagに置き換える

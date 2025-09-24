@@ -1,7 +1,7 @@
 import type { Transaction } from "@/shared/models/transaction";
 import {
   ACCOUNT_CATEGORY_MAPPING,
-  UNREALIZED_EXPENSES_CATEGORIES,
+  ACCRUED_EXPENSE_MAPPING,
   type CategoryMapping,
 } from "@/shared/utils/category-mapping";
 import type {
@@ -16,7 +16,7 @@ import type {
 export function getCategoryMapping(account: string): CategoryMapping {
   return (
     ACCOUNT_CATEGORY_MAPPING[account] ||
-    UNREALIZED_EXPENSES_CATEGORIES[account] || {
+    ACCRUED_EXPENSE_MAPPING[account] || {
       category: "unknown",
       subcategory: "unknown",
       color: "#99F6E4",
