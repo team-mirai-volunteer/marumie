@@ -515,4 +515,206 @@ describe("convertCategoryAggregationToSankeyData", () => {
     expect(result.nodes).toHaveLength(3);
     expect(result.links).toHaveLength(2);
   });
+
+  describe("unrealized expenses integration", () => {
+    it("should handle unrealized expenses under 繰越し category", () => {
+      const aggregation: SankeyCategoryAggregationResult = {
+        income: [
+          {
+            category: "寄附",
+            totalAmount: 2000000,
+          },
+        ],
+        expense: [
+          {
+            category: "政治活動費",
+            totalAmount: 1000000,
+          },
+        ],
+      };
+
+      const unrealizedExpenses = [
+        {
+          category: "未払費用",
+          subcategory: "未払費用",
+          totalAmount: 500000,
+        },
+      ];
+
+      const result = convertCategoryAggregationToSankeyData(
+        aggregation,
+        false,
+        0,
+        0,
+        unrealizedExpenses,
+      );
+
+      // 「繰越し」ノードが追加されることを確認
+      const carryoverNode = result.nodes.find(node => node.label === "繰越し");
+      expect(carryoverNode).toBeDefined();
+      expect(carryoverNode?.nodeType).toBe("expense");
+
+      // 「未払費用」サブカテゴリノードが追加されることを確認
+      const unrealizedNode = result.nodes.find(node => node.label === "未払費用");
+      expect(unrealizedNode).toBeDefined();
+      expect(unrealizedNode?.nodeType).toBe("expense-sub");
+
+      // リンクの検証
+      const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
+      const totalId = getNodeIdByLabel("合計");
+      const carryoverId = getNodeIdByLabel("繰越し");
+      const unrealizedId = getNodeIdByLabel("未払費用");
+
+      const linkToCarryover = result.links.find(
+        link => link.source === totalId && link.target === carryoverId
+      );
+      expect(linkToCarryover).toBeDefined();
+      expect(linkToCarryover?.value).toBe(500000); // 2000000 - 1000000 - 500000 = 500000
+
+      const linkToUnrealized = result.links.find(
+        link => link.source === carryoverId && link.target === unrealizedId
+      );
+      expect(linkToUnrealized).toBeDefined();
+      expect(linkToUnrealized?.value).toBe(500000);
+    });
+
+    it("should handle multiple unrealized expense categories", () => {
+      const aggregation: SankeyCategoryAggregationResult = {
+        income: [
+          {
+            category: "寄附",
+            totalAmount: 3000000,
+          },
+        ],
+        expense: [
+          {
+            category: "政治活動費",
+            totalAmount: 1500000,
+          },
+        ],
+      };
+
+      const unrealizedExpenses = [
+        {
+          category: "未払費用",
+          subcategory: "未払費用",
+          totalAmount: 800000,
+        },
+        {
+          category: "未払費用",
+          subcategory: "未払費用",
+          totalAmount: 200000,
+        },
+      ];
+
+      const result = convertCategoryAggregationToSankeyData(
+        aggregation,
+        false,
+        0,
+        0,
+        unrealizedExpenses,
+      );
+
+      const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
+      const carryoverId = getNodeIdByLabel("繰越し");
+      const unrealizedId = getNodeIdByLabel("未払費用");
+
+      const linkToUnrealized = result.links.find(
+        link => link.source === carryoverId && link.target === unrealizedId
+      );
+      expect(linkToUnrealized?.value).toBe(800000); // First unrealized expense amount only
+    });
+
+    it("should handle unrealized expenses with existing currentYearBalance", () => {
+      const aggregation: SankeyCategoryAggregationResult = {
+        income: [
+          {
+            category: "寄附",
+            totalAmount: 2000000,
+          },
+        ],
+        expense: [
+          {
+            category: "政治活動費",
+            totalAmount: 1000000,
+          },
+        ],
+      };
+
+      const unrealizedExpenses = [
+        {
+          category: "未払費用",
+          subcategory: "未払費用",
+          totalAmount: 300000,
+        },
+      ];
+
+      const currentYearBalance = 400000;
+      const result = convertCategoryAggregationToSankeyData(
+        aggregation,
+        false,
+        currentYearBalance,
+        0,
+        unrealizedExpenses,
+      );
+
+      const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
+      const totalId = getNodeIdByLabel("合計");
+      const carryoverId = getNodeIdByLabel("繰越し");
+
+      const linkToCarryover = result.links.find(
+        link => link.source === totalId && link.target === carryoverId
+      );
+      expect(linkToCarryover?.value).toBe(700000); // 2000000 - 1000000 - 300000 = 700000
+      
+      const unrealizedId = getNodeIdByLabel("未払費用");
+      const linkToUnrealized = result.links.find(
+        link => link.source === carryoverId && link.target === unrealizedId
+      );
+      expect(linkToUnrealized?.value).toBe(300000);
+    });
+
+    it("should handle empty unrealized expenses array", () => {
+      const aggregation: SankeyCategoryAggregationResult = {
+        income: [
+          {
+            category: "寄附",
+            totalAmount: 1500000,
+          },
+        ],
+        expense: [
+          {
+            category: "政治活動費",
+            totalAmount: 1000000,
+          },
+        ],
+      };
+
+      const unrealizedExpenses: Array<{ category: string; subcategory?: string; totalAmount: number }> = [];
+      const currentYearBalance = 300000;
+
+      const result = convertCategoryAggregationToSankeyData(
+        aggregation,
+        false,
+        currentYearBalance,
+        0,
+        unrealizedExpenses,
+      );
+
+      const carryoverNode = result.nodes.find(node => node.label === "繰越し");
+      const unrealizedNode = result.nodes.find(node => node.label === "未払費用");
+
+      expect(carryoverNode).toBeDefined();
+      expect(unrealizedNode).toBeUndefined();
+
+      const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
+      const totalId = getNodeIdByLabel("合計");
+      const carryoverId = getNodeIdByLabel("繰越し");
+
+      const linkToCarryover = result.links.find(
+        link => link.source === totalId && link.target === carryoverId
+      );
+      expect(linkToCarryover?.value).toBe(300000); // 1500000 - 1000000 - 200000 (currentYearBalance) = 300000
+    });
+  });
 });

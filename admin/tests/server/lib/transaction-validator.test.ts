@@ -234,5 +234,63 @@ describe("TransactionValidator", () => {
       // Should not contain duplicate messages since validation takes priority
       expect(result[0].errors).not.toContain("重複のためスキップされます");
     });
+
+    it("should accept unrealized expenses (未払費用) as valid account", () => {
+      const transactions = [
+        createMockTransaction({
+          debit_account: "未払費用",
+          credit_account: "普通預金",
+          transaction_type: "expense",
+          friendly_category: "人件費",
+        }),
+      ];
+
+      const result = validator.validatePreviewTransactions(transactions);
+
+      expect(result[0].status).toBe("insert");
+      expect(result[0].errors).toHaveLength(0);
+    });
+
+    it("should accept transactions with unrealized expenses in credit account", () => {
+      const transactions = [
+        createMockTransaction({
+          debit_account: "普通預金",
+          credit_account: "未払費用",
+          transaction_type: "income",
+          friendly_category: "人件費",
+        }),
+      ];
+
+      const result = validator.validatePreviewTransactions(transactions);
+
+      expect(result[0].status).toBe("insert");
+      expect(result[0].errors).toHaveLength(0);
+    });
+
+    it("should validate unrealized expenses with existing accounts", () => {
+      const transactions = [
+        createMockTransaction({
+          debit_account: "未払費用",
+          credit_account: "普通預金",
+        }),
+        createMockTransaction({
+          debit_account: "人件費",
+          credit_account: "未払費用",
+        }),
+        createMockTransaction({
+          debit_account: "未払費用",
+          credit_account: "個人からの寄附",
+        }),
+      ];
+
+      const result = validator.validatePreviewTransactions(transactions);
+
+      expect(result[0].status).toBe("insert");
+      expect(result[0].errors).toHaveLength(0);
+      expect(result[1].status).toBe("insert");
+      expect(result[1].errors).toHaveLength(0);
+      expect(result[2].status).toBe("insert");
+      expect(result[2].errors).toHaveLength(0);
+    });
   });
 });
