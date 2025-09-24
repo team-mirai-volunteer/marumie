@@ -1,5 +1,8 @@
 import type { MfCsvRecord } from "./mf-csv-loader";
-import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
+import {
+  ACCOUNT_CATEGORY_MAPPING,
+  UNREALIZED_EXPENSES_CATEGORIES,
+} from "@/shared/utils/category-mapping";
 import type { TransactionType } from "@/shared/models/transaction";
 import { generateTransactionHash } from "./transaction-hash";
 
@@ -120,10 +123,14 @@ export class MfRecordConverter {
     creditAccount: string,
   ): string {
     if (debitAccount === "普通預金") {
-      const mapping = ACCOUNT_CATEGORY_MAPPING[creditAccount];
+      const mapping =
+        ACCOUNT_CATEGORY_MAPPING[creditAccount] ||
+        UNREALIZED_EXPENSES_CATEGORIES[creditAccount];
       return mapping ? mapping.key : "undefined";
     } else if (creditAccount === "普通預金") {
-      const mapping = ACCOUNT_CATEGORY_MAPPING[debitAccount];
+      const mapping =
+        ACCOUNT_CATEGORY_MAPPING[debitAccount] ||
+        UNREALIZED_EXPENSES_CATEGORIES[debitAccount];
       return mapping ? mapping.key : "undefined";
     } else {
       return "undefined";

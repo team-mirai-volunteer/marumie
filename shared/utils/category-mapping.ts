@@ -203,3 +203,25 @@ export const ACCOUNT_CATEGORY_MAPPING: Record<string, CategoryMapping> = {
     type: "expense"
   }
 };
+
+/**
+ * 未払費用のカテゴリマッピング辞書
+ */
+export const UNREALIZED_EXPENSES_CATEGORIES: Record<string, CategoryMapping> = {
+  "未払費用": {
+    key: "unrealized-expenses",
+    category: "未払費用",
+    subcategory: "未払費用",
+    color: "#7C3AED",
+    shortLabel: "未払費用",
+    type: "expense"
+  }
+};
+
+/**
+ * 全カテゴリマッピング（通常の勘定科目 + 未払費用）
+ */
+export const TOTAL_CATEGORY_MAP: Record<string, CategoryMapping> = {
+  ...ACCOUNT_CATEGORY_MAPPING,
+  ...UNREALIZED_EXPENSES_CATEGORIES,
+};

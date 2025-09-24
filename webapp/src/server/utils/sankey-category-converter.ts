@@ -143,6 +143,11 @@ export function convertCategoryAggregationToSankeyData(
   isFriendlyCategory: boolean = false,
   currentYearBalance: number,
   previousYearBalance: number,
+  unrealizedExpenses: Array<{
+    category: string;
+    subcategory?: string;
+    totalAmount: number;
+  }> = [],
 ): SankeyData {
   // 「その他」カテゴリをリネーム
   const renamedAggregation = renameOtherCategories(aggregation);
@@ -231,6 +236,23 @@ export function convertCategoryAggregationToSankeyData(
       category: "繰越し",
       totalAmount: currentYearBalance,
     });
+  }
+
+  if (unrealizedExpenses.length > 0) {
+    const unrealizedTotal = unrealizedExpenses.reduce(
+      (sum, item) => sum + item.totalAmount,
+      0,
+    );
+    const currentCarryover = expenseByCategory.get("繰越し") || 0;
+    expenseByCategory.set("繰越し", currentCarryover + unrealizedTotal);
+
+    for (const item of unrealizedExpenses) {
+      processedAggregation.expense.push({
+        category: "繰越し",
+        subcategory: item.subcategory || item.category,
+        totalAmount: item.totalAmount,
+      });
+    }
   }
 
   const totalIncome = Array.from(incomeByCategory.values()).reduce(

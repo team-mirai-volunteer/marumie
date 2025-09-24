@@ -54,6 +54,9 @@ export class GetSankeyAggregationUsecase {
           params.financialYear,
         );
 
+      const unrealizedExpenses =
+        await this.getUnrealizedExpensesAggregation(params);
+
       // Sankeyデータに変換
       const isFriendlyCategory = params.categoryType === "friendly-category";
       const sankeyData = convertCategoryAggregationToSankeyData(
@@ -61,6 +64,7 @@ export class GetSankeyAggregationUsecase {
         isFriendlyCategory,
         balancesByYear.currentYear,
         balancesByYear.previousYear,
+        unrealizedExpenses,
       );
 
       return { sankeyData };
@@ -68,6 +72,50 @@ export class GetSankeyAggregationUsecase {
       throw new Error(
         `Failed to get sankey aggregation: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
+    }
+  }
+
+  private async getUnrealizedExpensesAggregation(
+    params: GetSankeyAggregationParams,
+  ): Promise<
+    Array<{ category: string; subcategory?: string; totalAmount: number }>
+  > {
+    try {
+      // 政治団体を取得
+      const politicalOrganizations =
+        await this.politicalOrganizationRepository.findBySlugs(params.slugs);
+
+      if (politicalOrganizations.length === 0) {
+        return [];
+      }
+
+      const organizationIds = politicalOrganizations.map((org) => org.id);
+
+      const unrealizedTransactions = await this.transactionRepository.findAll({
+        political_organization_ids: organizationIds.map((id) => id.toString()),
+        financial_year: params.financialYear,
+        debit_account: "未払費用",
+      });
+
+      const categoryMap = new Map<string, number>();
+
+      for (const transaction of unrealizedTransactions) {
+        const amount = transaction.debit_amount;
+        const category = "未払費用";
+        const current = categoryMap.get(category) || 0;
+        categoryMap.set(category, current + amount);
+      }
+
+      return Array.from(categoryMap.entries()).map(([, totalAmount]) => ({
+        category: "未払費用",
+        subcategory: "未払費用",
+        totalAmount,
+      }));
+    } catch (error) {
+      console.error(
+        `Failed to get unrealized expenses: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+      return [];
     }
   }
 }

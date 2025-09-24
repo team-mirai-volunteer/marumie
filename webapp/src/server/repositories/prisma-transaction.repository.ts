@@ -6,7 +6,10 @@ import {
 import type { Transaction, TransactionType } from "@/shared/models/transaction";
 import type { TransactionFilters } from "@/types/transaction-filters";
 import type { DisplayTransactionType } from "@/types/display-transaction";
-import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
+import {
+  ACCOUNT_CATEGORY_MAPPING,
+  UNREALIZED_EXPENSES_CATEGORIES,
+} from "@/shared/utils/category-mapping";
 import type {
   DailyDonationData,
   ITransactionRepository,
@@ -374,9 +377,10 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     >();
 
     for (const item of accountData) {
-      const mapping = ACCOUNT_CATEGORY_MAPPING[item.account] || {
-        category: item.account,
-      };
+      const mapping = ACCOUNT_CATEGORY_MAPPING[item.account] ||
+        UNREALIZED_EXPENSES_CATEGORIES[item.account] || {
+          category: item.account,
+        };
       const key = mapping.subcategory
         ? `${mapping.category}|${mapping.subcategory}`
         : mapping.category;
@@ -405,9 +409,10 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     >();
 
     for (const item of accountData) {
-      const mapping = ACCOUNT_CATEGORY_MAPPING[item.account] || {
-        category: item.account,
-      };
+      const mapping = ACCOUNT_CATEGORY_MAPPING[item.account] ||
+        UNREALIZED_EXPENSES_CATEGORIES[item.account] || {
+          category: item.account,
+        };
       // friendlyカテゴリーの場合は、subcategoryをtagに置き換える
       const subcategory = item.tag || undefined;
       const key = subcategory
