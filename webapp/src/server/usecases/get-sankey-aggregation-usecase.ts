@@ -48,11 +48,16 @@ export class GetSankeyAggregationUsecase {
       const organizationIdsAsString = organizationIds.map((id) =>
         id.toString(),
       );
-      const balancesByYear =
-        await this.balanceSnapshotRepository.getTotalLatestBalancesByYear(
+      const [balancesByYear, accruedExpensesAmount] = await Promise.all([
+        this.balanceSnapshotRepository.getTotalLatestBalancesByYear(
           organizationIdsAsString,
           params.financialYear,
-        );
+        ),
+        this.transactionRepository.getAccruedExpensesTotal(
+          organizationIdsAsString,
+          params.financialYear,
+        ),
+      ]);
 
       // Sankeyデータに変換
       const isFriendlyCategory = params.categoryType === "friendly-category";
@@ -61,6 +66,7 @@ export class GetSankeyAggregationUsecase {
         isFriendlyCategory,
         balancesByYear.currentYear,
         balancesByYear.previousYear,
+        accruedExpensesAmount,
       );
 
       return { sankeyData };

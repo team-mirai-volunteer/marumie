@@ -143,6 +143,7 @@ export function convertCategoryAggregationToSankeyData(
   isFriendlyCategory: boolean = false,
   currentYearBalance: number,
   previousYearBalance: number,
+  accruedExpensesAmount: number = 0,
 ): SankeyData {
   // 「その他」カテゴリをリネーム
   const renamedAggregation = renameOtherCategories(aggregation);
@@ -222,14 +223,15 @@ export function convertCategoryAggregationToSankeyData(
 
   // 収入と支出の合計を計算
 
-  // currentYearBalanceが0より大きい場合、「繰越し」として支出側に追加
-  if (currentYearBalance > 0) {
-    expenseByCategory.set("繰越し", currentYearBalance);
+  // currentYearBalanceが0より大きい場合、または未払費用がある場合、「繰越し」として支出側に追加
+  const totalCarryOverAmount = currentYearBalance + accruedExpensesAmount;
+  if (totalCarryOverAmount > 0) {
+    expenseByCategory.set("繰越し", totalCarryOverAmount);
 
     // 支出データに「繰越し」レコードを追加（UI用）
     processedAggregation.expense.push({
       category: "繰越し",
-      totalAmount: currentYearBalance,
+      totalAmount: totalCarryOverAmount,
     });
   }
 

@@ -354,6 +354,29 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     return Number(result._sum.debitAmount) || 0;
   }
 
+  async getAccruedExpensesTotal(
+    politicalOrganizationIds: string[],
+    financialYear: number,
+  ): Promise<number> {
+    // Use the same filtering approach as other methods
+    const filters: TransactionFilters = {
+      political_organization_ids: politicalOrganizationIds,
+      financial_year: financialYear,
+      category_keys: ["accrued-expenses"], // Key from ACCRUED_EXPENSES_CATEGORIES
+    };
+
+    const where = this.buildWhereClause(filters);
+
+    const result = await this.prisma.transaction.aggregate({
+      _sum: {
+        debitAmount: true, // For expense transactions, we sum the debit amount
+      },
+      where,
+    });
+
+    return Number(result._sum.debitAmount) || 0;
+  }
+
   async getLastUpdatedAt(): Promise<Date | null> {
     const result = await this.prisma.transaction.aggregate({
       _max: {

@@ -203,3 +203,25 @@ export const ACCOUNT_CATEGORY_MAPPING: Record<string, CategoryMapping> = {
     type: "expense"
   }
 };
+
+/**
+ * 未払費用（繰越し項目）のカテゴリマッピング辞書
+ */
+export const ACCRUED_EXPENSES_CATEGORIES: Record<string, CategoryMapping> = {
+  "未払費用": {
+    key: "accrued-expenses",
+    category: "繰越し",
+    subcategory: "未払費用",
+    color: "#78716C",
+    shortLabel: "未払費用",
+    type: "expense"
+  }
+};
+
+/**
+ * 全てのカテゴリ（アカウント + 未払費用）
+ */
+export const ALL_CATEGORIES: Record<string, CategoryMapping> = {
+  ...ACCOUNT_CATEGORY_MAPPING,
+  ...ACCRUED_EXPENSES_CATEGORIES,
+};
