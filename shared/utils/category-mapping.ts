@@ -223,14 +223,6 @@ export const MONETARY_CATEGORY_MAPPING: Record<string, CategoryMapping> = {
     color: "#7C2D12",
     shortLabel: "短期貸付金",
     type: "expense"
-  },
-  "繰越利益剰余金": {
-    key: "retained-earnings",
-    category: "その他",
-    subcategory: "繰越利益剰余金",
-    color: "#64748B",
-    shortLabel: "繰越利益剰余金",
-    type: "expense"
   }
 };
 
