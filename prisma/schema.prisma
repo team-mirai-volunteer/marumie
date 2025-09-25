@@ -16,6 +16,7 @@ enum TransactionType {
   expense
   offset_income
   offset_expense
+  current_liabilities
 }
 
 enum UserRole {
