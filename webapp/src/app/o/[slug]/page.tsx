@@ -1,6 +1,7 @@
 import "server-only";
 import { redirect } from "next/navigation";
 import AboutSection from "@/client/components/common/AboutSection";
+import LinkCardsSection from "@/client/components/sections/LinkCardsSection";
 import ExplanationSection from "@/client/components/common/ExplanationSection";
 import TransparencySection from "@/client/components/common/TransparencySection";
 import MainColumn from "@/client/components/layout/MainColumn";
@@ -79,6 +80,7 @@ export default async function OrgPage({ params }: OrgPageProps) {
       <ProgressSection />
       <ExplanationSection />
       <AboutSection />
+      <LinkCardsSection />
     </MainColumn>
   );
 }

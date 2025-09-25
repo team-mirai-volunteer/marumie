@@ -90,7 +90,7 @@ export default function RootLayout({
       >
         <Header />
         <div className="flex-grow">{children}</div>
-        <div className="mt-0 sm:mt-[120px]">
+        <div className="mt-0 sm:mt-16">
           <Footer />
         </div>
         <SpeedInsights />
