@@ -2,22 +2,21 @@ import Image from "next/image";
 
 interface LinkCard {
   title: string;
-  icon: string;
   href: string;
 }
 
 const linkCards: LinkCard[] = [
   {
     title: "チームみらいwebサイト",
-    icon: "/icons/website-icon.svg",
     href: "https://team-mir.ai",
   },
   {
     title: "ご寄付はこちらから",
-    icon: "/icons/donation-icon.svg",
     href: "https://team-mir.ai/support/donation",
   },
 ];
+
+const OUTERLINK_ICON = "/icons/icon-outerlink.svg";
 
 export default function LinkCardsSection() {
   return (
@@ -38,7 +37,7 @@ export default function LinkCardsSection() {
                 </h3>
                 <div className="w-4 h-4 md:w-[22px] md:h-[22px] flex-shrink-0">
                   <Image
-                    src={card.icon}
+                    src={OUTERLINK_ICON}
                     alt=""
                     width={22}
                     height={22}
