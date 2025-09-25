@@ -38,7 +38,7 @@ export default function Selector({
   };
 
   return (
-    <div className="relative flex-1 lg:flex-none lg:w-[217px]">
+    <div className="relative min-w-0 lg:flex-none lg:w-[217px]">
       {/* Closed State Button */}
       <button
         type="button"
@@ -49,7 +49,7 @@ export default function Selector({
         }}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="text-left truncate">
+        <span className="text-left truncate min-w-0 flex-shrink">
           {selectedOption?.label || placeholder}
         </span>
         <Image

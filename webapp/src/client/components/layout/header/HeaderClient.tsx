@@ -60,7 +60,7 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
             className="flex items-center gap-2 xl:gap-6 hover:opacity-80 transition-opacity cursor-pointer"
           >
             {/* Logo */}
-            <div className="hidden lg:flex items-center">
+            <div className="flex items-center">
               <div className="w-10 h-8 xl:w-12 xl:h-11 relative">
                 {/* Team Mirai Logo */}
                 <Image
@@ -73,7 +73,7 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
             </div>
 
             {/* Title and Subtitle - Mobile: Vertical Stack, Desktop: Horizontal with baseline alignment */}
-            <div className="flex flex-col gap-1.5 2xl:flex-row 2xl:items-end 2xl:gap-2">
+            <div className="flex flex-col gap-1.5 2xl:flex-row 2xl:items-end 2xl:gap-2 min-w-0">
               <div className="h-[15px] xl:h-6 relative w-[160px] xl:w-[257px]">
                 <Image
                   src="/logos/service-logo.svg"
@@ -82,9 +82,6 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
                   className="object-contain object-left"
                   priority
                 />
-              </div>
-              <div className="text-gray-800 leading-none text-[11px] xl:text-sm xl:font-normal">
-                政治とカネ、隠さず公開します
               </div>
             </div>
           </Link>
@@ -114,7 +111,7 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
           </div>
 
           {/* Mobile: Organization Selector */}
-          <div className="lg:hidden flex items-center">
+          <div className="lg:hidden flex items-center min-w-0 flex-shrink">
             <OrganizationSelector
               organizations={organizations}
               currentSlug={currentSlug}
