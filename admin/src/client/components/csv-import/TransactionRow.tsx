@@ -59,6 +59,8 @@ function getTypeLabel(type: string): string {
       return "相殺収入";
     case "offset_expense":
       return "相殺支出";
+    case "current_liabilities":
+      return "未払金（流動）";
     case "invalid":
       return "無効";
     default:
@@ -168,16 +170,11 @@ export default function TransactionRow({
           : "-"}
       </td>
       <td className="px-2 py-3 text-sm text-white">
-        {(() => {
-          const category = getTransactionCategory(record);
-          return (
-            <span
-              className={`px-2 py-1 rounded text-white text-xs font-medium ${getTypeBadgeClass(category.type)}`}
-            >
-              {getTypeLabel(category.type)}
-            </span>
-          );
-        })()}
+        <span
+          className={`px-2 py-1 rounded text-white text-xs font-medium ${getTypeBadgeClass(record.transaction_type || "unknown")}`}
+        >
+          {getTypeLabel(record.transaction_type || "unknown")}
+        </span>
       </td>
       <td className="px-2 py-3 text-sm text-white">
         {(() => {
@@ -195,7 +192,7 @@ export default function TransactionRow({
         })()}
       </td>
       <td className="px-2 py-3 text-sm text-white">
-        {record.description || "-"}
+        {record.description || "-"}, {record.transaction_type}
         {record.label && (
           <div className="text-blue-400 text-xs mt-1">
             ラベル: {record.label}
