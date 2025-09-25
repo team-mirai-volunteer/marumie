@@ -2,7 +2,7 @@ import "server-only";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function PoliticalLeaderSection() {
+export default function AnotherPageLinkSection() {
   return (
     <div className="w-full md:flex md:justify-end">
       <Link

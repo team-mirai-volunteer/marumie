@@ -1,8 +1,8 @@
 import "server-only";
 import { redirect } from "next/navigation";
 import AboutSection from "@/client/components/common/AboutSection";
-import LinkCardsSection from "@/client/components/sections/LinkCardsSection";
-import PoliticalLeaderSection from "@/client/components/sections/PoliticalLeaderSection";
+import LinkCardsSection from "@/client/components/common/LinkCardsSection";
+import AnotherPageLinkSection from "@/client/components/common/AnotherPageLinkSection";
 import ExplanationSection from "@/client/components/common/ExplanationSection";
 import TransparencySection from "@/client/components/common/TransparencySection";
 import MainColumn from "@/client/components/layout/MainColumn";
@@ -78,7 +78,7 @@ export default async function OrgPage({ params }: OrgPageProps) {
         slug={slug}
         organizationName={currentOrganization?.displayName}
       />
-      <PoliticalLeaderSection />
+      <AnotherPageLinkSection />
       <ProgressSection />
       <ExplanationSection />
       <AboutSection />
