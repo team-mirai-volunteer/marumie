@@ -49,7 +49,7 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
   const currentSlug = pathname.startsWith("/o/")
     ? pathname.split("/")[2]
     : organizations.default;
-  const logoHref = `/o/${currentSlug}/`;
+  const logoHref = `/o/${organizations.default}/`;
   const navigationItems = getNavigationItems(currentSlug);
 
   return (
