@@ -38,14 +38,18 @@ export default function Selector({
   };
 
   return (
-    <div className="relative flex-1 lg:flex-none lg:w-[217px]">
+    <div className="relative min-w-0 lg:flex-none lg:w-[217px]">
       {/* Closed State Button */}
       <button
         type="button"
-        className="flex items-center justify-between w-full px-2 py-1 lg:px-4 lg:py-2.5 bg-white border border-gray-600 rounded-md text-gray-600 text-xs lg:text-sm font-bold hover:bg-gray-50 transition-colors cursor-pointer"
+        className="flex items-center justify-between w-full px-2 py-1 lg:px-4 lg:py-2.5 border border-gray-600 rounded-md text-gray-800 text-xs lg:text-sm font-bold hover:opacity-90 transition-opacity cursor-pointer"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(226, 246, 243, 1) 0%, rgba(238, 246, 226, 1) 100%)",
+        }}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="text-left truncate">
+        <span className="text-left truncate min-w-0 flex-shrink">
           {selectedOption?.label || placeholder}
         </span>
         <Image

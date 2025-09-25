@@ -2,9 +2,7 @@
 import "client-only";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
 import { usePathname } from "next/navigation";
-import HamburgerMenuButton from "@/client/components/ui/HamburgerMenuButton";
 import OrganizationSelector from "./OrganizationSelector";
 import type { OrganizationsResponse } from "@/types/organization";
 
@@ -42,7 +40,6 @@ interface HeaderClientProps {
 }
 
 export default function HeaderClient({ organizations }: HeaderClientProps) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
   // 現在のslugを取得（/o/[slug]/... の形式の場合、なければdefaultを使用）
@@ -63,7 +60,7 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
             className="flex items-center gap-2 xl:gap-6 hover:opacity-80 transition-opacity cursor-pointer"
           >
             {/* Logo */}
-            <div className="hidden lg:flex items-center">
+            <div className="flex items-center">
               <div className="w-10 h-8 xl:w-12 xl:h-11 relative">
                 {/* Team Mirai Logo */}
                 <Image
@@ -76,7 +73,7 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
             </div>
 
             {/* Title and Subtitle - Mobile: Vertical Stack, Desktop: Horizontal with baseline alignment */}
-            <div className="flex flex-col gap-1.5 2xl:flex-row 2xl:items-end 2xl:gap-2">
+            <div className="flex flex-col gap-1.5 2xl:flex-row 2xl:items-end 2xl:gap-2 min-w-0">
               <div className="h-[15px] xl:h-6 relative w-[160px] xl:w-[257px]">
                 <Image
                   src="/logos/service-logo.svg"
@@ -85,9 +82,6 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
                   className="object-contain object-left"
                   priority
                 />
-              </div>
-              <div className="text-gray-800 leading-none text-[11px] xl:text-sm xl:font-normal">
-                政治とカネ、隠さず公開します
               </div>
             </div>
           </Link>
@@ -116,53 +110,15 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
             />
           </div>
 
-          {/* Mobile: Organization Selector + Menu */}
-          <div className="lg:hidden flex items-center gap-2">
+          {/* Mobile: Organization Selector */}
+          <div className="lg:hidden flex items-center min-w-0 flex-shrink">
             <OrganizationSelector
               organizations={organizations}
               currentSlug={currentSlug}
             />
-            <HamburgerMenuButton
-              isOpen={isMobileMenuOpen}
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            />
           </div>
         </div>
       </div>
-
-      {/* Mobile Navigation Menu */}
-      {isMobileMenuOpen && (
-        <nav
-          className="lg:hidden -mt-14 pt-[92px] bg-gradient-to-br from-[#BCECDB] to-[#64D8C6] rounded-[30px] px-9 pb-15 transition-all duration-300 ease-in-out animate-in fade-in-0 slide-in-from-top-1 zoom-in-95"
-          aria-label="モバイルナビゲーションメニュー"
-        >
-          <div className="flex flex-col">
-            {navigationItems.map((item, index) => (
-              <div key={item.href}>
-                <Link
-                  href={item.href}
-                  className="flex items-center justify-between py-3 px-1 hover:opacity-80 transition-opacity cursor-pointer"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <span className="text-sm font-bold text-black">
-                    {item.label}
-                  </span>
-                  <Image
-                    src="/icons/icon-chevron-right.svg"
-                    alt="右向き矢印"
-                    width={24}
-                    height={24}
-                    className="text-black"
-                  />
-                </Link>
-                {index < navigationItems.length - 1 && (
-                  <div className="h-px bg-white mx-1" />
-                )}
-              </div>
-            ))}
-          </div>
-        </nav>
-      )}
     </header>
   );
 }
