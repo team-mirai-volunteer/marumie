@@ -2,9 +2,7 @@
 import "client-only";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
 import { usePathname } from "next/navigation";
-import HamburgerMenuButton from "@/client/components/ui/HamburgerMenuButton";
 import OrganizationSelector from "./OrganizationSelector";
 import type { OrganizationsResponse } from "@/types/organization";
 
@@ -42,7 +40,6 @@ interface HeaderClientProps {
 }
 
 export default function HeaderClient({ organizations }: HeaderClientProps) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
   // 現在のslugを取得（/o/[slug]/... の形式の場合、なければdefaultを使用）
@@ -116,53 +113,15 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
             />
           </div>
 
-          {/* Mobile: Organization Selector + Menu */}
-          <div className="lg:hidden flex items-center gap-2">
+          {/* Mobile: Organization Selector */}
+          <div className="lg:hidden flex items-center">
             <OrganizationSelector
               organizations={organizations}
               currentSlug={currentSlug}
             />
-            <HamburgerMenuButton
-              isOpen={isMobileMenuOpen}
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            />
           </div>
         </div>
       </div>
-
-      {/* Mobile Navigation Menu */}
-      {isMobileMenuOpen && (
-        <nav
-          className="lg:hidden -mt-14 pt-[92px] bg-gradient-to-br from-[#BCECDB] to-[#64D8C6] rounded-[30px] px-9 pb-15 transition-all duration-300 ease-in-out animate-in fade-in-0 slide-in-from-top-1 zoom-in-95"
-          aria-label="モバイルナビゲーションメニュー"
-        >
-          <div className="flex flex-col">
-            {navigationItems.map((item, index) => (
-              <div key={item.href}>
-                <Link
-                  href={item.href}
-                  className="flex items-center justify-between py-3 px-1 hover:opacity-80 transition-opacity cursor-pointer"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <span className="text-sm font-bold text-black">
-                    {item.label}
-                  </span>
-                  <Image
-                    src="/icons/icon-chevron-right.svg"
-                    alt="右向き矢印"
-                    width={24}
-                    height={24}
-                    className="text-black"
-                  />
-                </Link>
-                {index < navigationItems.length - 1 && (
-                  <div className="h-px bg-white mx-1" />
-                )}
-              </div>
-            ))}
-          </div>
-        </nav>
-      )}
     </header>
   );
 }
