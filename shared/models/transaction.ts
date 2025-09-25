@@ -3,7 +3,8 @@ export type TransactionType =
   | "income"
   | "expense"
   | "offset_income"
-  | "offset_expense";
+  | "offset_expense"
+  | "current_liabilities";
 
 export interface Transaction {
   id: string;

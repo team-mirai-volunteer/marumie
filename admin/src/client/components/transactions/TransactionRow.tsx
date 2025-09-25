@@ -54,6 +54,8 @@ function getTypeLabel(type: string): string {
       return "相殺収入";
     case "offset_expense":
       return "相殺支出";
+    case "current_liabilities":
+      return "未払金（流動）";
     case "invalid":
       return "無効";
     default:
@@ -69,6 +71,8 @@ function getTypeBadgeClass(type: string): string {
     case "expense":
     case "offset_expense":
       return "bg-red-600";
+    case "current_liabilities":
+      return "bg-blue-600";
     case "invalid":
       return "bg-orange-600";
     default:
@@ -112,16 +116,11 @@ export function TransactionRow({ transaction }: TransactionRowProps) {
         ¥{transaction.credit_amount.toLocaleString()}
       </td>
       <td className="px-2 py-3 text-sm text-white">
-        {(() => {
-          const category = getTransactionCategory(transaction);
-          return (
-            <span
-              className={`px-2 py-1 rounded text-white text-xs font-medium ${getTypeBadgeClass(category.type)}`}
-            >
-              {getTypeLabel(category.type)}
-            </span>
-          );
-        })()}
+        <span
+          className={`px-2 py-1 rounded text-white text-xs font-medium ${getTypeBadgeClass(transaction.transaction_type)}`}
+        >
+          {getTypeLabel(transaction.transaction_type)}
+        </span>
       </td>
       <td className="px-2 py-3 text-sm text-white">
         {(() => {

@@ -141,24 +141,28 @@ export class PreviewMfCsvUsecase {
         expense: { count: 0, amount: 0 },
         offset_income: { count: 0, amount: 0 },
         offset_expense: { count: 0, amount: 0 },
+        current_liabilities: { count: 0, amount: 0 },
       },
       update: {
         income: { count: 0, amount: 0 },
         expense: { count: 0, amount: 0 },
         offset_income: { count: 0, amount: 0 },
         offset_expense: { count: 0, amount: 0 },
+        current_liabilities: { count: 0, amount: 0 },
       },
       invalid: {
         income: { count: 0, amount: 0 },
         expense: { count: 0, amount: 0 },
         offset_income: { count: 0, amount: 0 },
         offset_expense: { count: 0, amount: 0 },
+        current_liabilities: { count: 0, amount: 0 },
       },
       skip: {
         income: { count: 0, amount: 0 },
         expense: { count: 0, amount: 0 },
         offset_income: { count: 0, amount: 0 },
         offset_expense: { count: 0, amount: 0 },
+        current_liabilities: { count: 0, amount: 0 },
       },
     };
   }

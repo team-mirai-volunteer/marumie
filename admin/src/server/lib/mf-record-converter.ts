@@ -122,12 +122,12 @@ export class MfRecordConverter {
     if (debitAccount === "普通預金") {
       const mapping = ACCOUNT_CATEGORY_MAPPING[creditAccount];
       return mapping ? mapping.key : "undefined";
-    } else if (creditAccount === "普通預金") {
+    }
+    if (creditAccount === "普通預金" || creditAccount === "未払金（流動）") {
       const mapping = ACCOUNT_CATEGORY_MAPPING[debitAccount];
       return mapping ? mapping.key : "undefined";
-    } else {
-      return "undefined";
     }
+    return "undefined";
   }
 
   private determineTransactionType(
@@ -139,6 +139,9 @@ export class MfRecordConverter {
     }
     if (creditAccount === "相殺項目（収入）") {
       return "offset_income";
+    }
+    if (creditAccount === "未払金（流動）") {
+      return "current_liabilities";
     }
     if (debitAccount === "普通預金") {
       return "income";
