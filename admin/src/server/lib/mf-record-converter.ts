@@ -119,10 +119,10 @@ export class MfRecordConverter {
     debitAccount: string,
     creditAccount: string,
   ): string {
-    if (debitAccount === "普通預金") {
+    if (debitAccount === "普通預金" || debitAccount === "立替金") {
       const mapping = ACCOUNT_CATEGORY_MAPPING[creditAccount];
       return mapping ? mapping.key : "undefined";
-    } else if (creditAccount === "普通預金") {
+    } else if (creditAccount === "普通預金" || creditAccount === "立替金") {
       const mapping = ACCOUNT_CATEGORY_MAPPING[debitAccount];
       return mapping ? mapping.key : "undefined";
     } else {
@@ -140,10 +140,10 @@ export class MfRecordConverter {
     if (creditAccount === "相殺項目（収入）") {
       return "offset_income";
     }
-    if (debitAccount === "普通預金") {
+    if (debitAccount === "普通預金" || debitAccount === "立替金") {
       return "income";
     }
-    if (creditAccount === "普通預金") {
+    if (creditAccount === "普通預金" || creditAccount === "立替金") {
       return "expense";
     }
     return null;

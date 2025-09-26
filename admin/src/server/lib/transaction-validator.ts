@@ -3,6 +3,7 @@ import type { PreviewTransaction } from "./mf-record-converter";
 import type { Transaction } from "@/shared/models/transaction";
 
 const REGULAR_DEPOSIT_ACCOUNT = "普通預金";
+const REIMBURSABLE_EXPENSE_ACCOUNT = "立替金";
 const OFFSET_EXPENSE_ACCOUNT = "相殺項目（費用）";
 const OFFSET_INCOME_ACCOUNT = "相殺項目（収入）";
 
@@ -78,6 +79,7 @@ export class TransactionValidator {
     const validAccountLabels = new Set([
       ...Object.keys(ACCOUNT_CATEGORY_MAPPING),
       REGULAR_DEPOSIT_ACCOUNT,
+      REIMBURSABLE_EXPENSE_ACCOUNT,
       OFFSET_EXPENSE_ACCOUNT,
       OFFSET_INCOME_ACCOUNT,
     ]);

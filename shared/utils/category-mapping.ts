@@ -130,6 +130,14 @@ export const ACCOUNT_CATEGORY_MAPPING: Record<string, CategoryMapping> = {
     shortLabel: "組織活動費",
     type: "expense"
   },
+  "組織活動費-立替金": {
+    key: "organizational-activities-reimbursable_expense",
+    category: "政治活動費",
+    subcategory: "組織活動費",
+    color: "#C2410C",
+    shortLabel: "組織活動費（立替）",
+    type: "expense"
+  },
   "選挙関係費": {
     key: "election-expenses",
     category: "政治活動費",
