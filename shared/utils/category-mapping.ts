@@ -203,3 +203,12 @@ export const ACCOUNT_CATEGORY_MAPPING: Record<string, CategoryMapping> = {
     type: "expense"
   }
 };
+
+/**
+ * 貸借対照表科目のカテゴリ分類
+ */
+export const BS_CATEGORIES = {
+  ASSETS: ['普通預金'],
+  LIABILITIES: ['未払金'],
+  NET_ASSETS: []
+} as const;
