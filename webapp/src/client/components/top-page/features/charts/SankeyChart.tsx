@@ -252,7 +252,7 @@ const calculatePercentageText = (nodeValue?: number, totalValue?: number) => {
 
 const renderTotalNodeLabels = (
   node: SankeyNodeWithPosition,
-  boxColor: string,
+  _boxColor: string,
   percentageY: number,
   isMobile: boolean,
 ) => {
@@ -532,8 +532,35 @@ const CustomLabelsLayer = ({
 export default function SankeyChart({ data }: SankeyChartProps) {
   const isMobile = useMobileDetection();
   const { getNodeColor } = useNodeColors();
-  const { processLinksWithColors } = useLinkColors(data);
-  const { sortNodes, sortLinks } = useSankeySorting(data);
+
+  // 空データの場合はダミーデータを渡す
+  const safeData = data?.nodes && data?.links ? data : { nodes: [], links: [] };
+  const { processLinksWithColors } = useLinkColors(safeData);
+  const { sortNodes, sortLinks } = useSankeySorting(safeData);
+
+  // データが空または不正な場合の早期リターン
+  if (
+    !data ||
+    !data.nodes ||
+    !data.links ||
+    data.nodes.length === 0 ||
+    data.links.length === 0
+  ) {
+    return (
+      <div
+        style={{
+          height: 300,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#6B7280",
+          fontSize: "14px",
+        }}
+      >
+        データがありません
+      </div>
+    );
+  }
 
   // ソートされたデータを取得
   const sortedNodes = sortNodes(data.nodes);

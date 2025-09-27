@@ -6,7 +6,7 @@ import { generateTransactionHash } from "./transaction-hash";
 export interface PreviewTransaction {
   political_organization_id: string;
   transaction_no: string;
-  transaction_date: Date | string;
+  transaction_date: Date;
   transaction_type: TransactionType | null;
   debit_account: string;
   debit_sub_account: string | undefined;
@@ -152,10 +152,9 @@ export class MfRecordConverter {
     return null;
   }
 
-  public extractFinancialYear(dateString: string): number {
+  public extractFinancialYear(date: Date): number {
     const startOfFinancialYear = 1;
 
-    const date = new Date(dateString);
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
 

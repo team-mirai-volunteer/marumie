@@ -124,11 +124,9 @@ export class SavePreviewTransactionsUsecase {
     return {
       political_organization_id: politicalOrganizationId,
       transaction_no: previewTransaction.transaction_no,
-      transaction_date: new Date(previewTransaction.transaction_date),
+      transaction_date: previewTransaction.transaction_date,
       financial_year: this.recordConverter.extractFinancialYear(
-        typeof previewTransaction.transaction_date === "string"
-          ? previewTransaction.transaction_date
-          : previewTransaction.transaction_date.toISOString(),
+        previewTransaction.transaction_date,
       ),
       transaction_type: previewTransaction.transaction_type,
       debit_account: previewTransaction.debit_account,
@@ -164,11 +162,9 @@ export class SavePreviewTransactionsUsecase {
 
     return {
       transaction_no: previewTransaction.transaction_no,
-      transaction_date: new Date(previewTransaction.transaction_date),
+      transaction_date: previewTransaction.transaction_date,
       financial_year: this.recordConverter.extractFinancialYear(
-        typeof previewTransaction.transaction_date === "string"
-          ? previewTransaction.transaction_date
-          : previewTransaction.transaction_date.toISOString(),
+        previewTransaction.transaction_date,
       ),
       transaction_type: previewTransaction.transaction_type,
       debit_account: previewTransaction.debit_account,
