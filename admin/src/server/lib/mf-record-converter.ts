@@ -123,7 +123,7 @@ export class MfRecordConverter {
       const mapping = ACCOUNT_CATEGORY_MAPPING[creditAccount];
       return mapping ? mapping.key : "undefined";
     }
-    if (creditAccount === "普通預金" || creditAccount === "未払金（流動）") {
+    if (creditAccount === "普通預金" || creditAccount === "未払金") {
       const mapping = ACCOUNT_CATEGORY_MAPPING[debitAccount];
       return mapping ? mapping.key : "undefined";
     }
@@ -140,7 +140,7 @@ export class MfRecordConverter {
     if (creditAccount === "相殺項目（収入）") {
       return "offset_income";
     }
-    if (creditAccount === "未払金（流動）") {
+    if (creditAccount === "未払金") {
       return "current_liabilities";
     }
     if (debitAccount === "普通預金") {

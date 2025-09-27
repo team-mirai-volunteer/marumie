@@ -5,7 +5,7 @@ import type { Transaction } from "@/shared/models/transaction";
 const REGULAR_DEPOSIT_ACCOUNT = "普通預金";
 const OFFSET_EXPENSE_ACCOUNT = "相殺項目（費用）";
 const OFFSET_INCOME_ACCOUNT = "相殺項目（収入）";
-const CURRENT_LIABILITIES_ACCOUNT = "未払金（流動）";
+const CURRENT_LIABILITIES_ACCOUNT = "未払金";
 
 export class TransactionValidator {
   public validatePreviewTransactions(

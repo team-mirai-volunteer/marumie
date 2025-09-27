@@ -60,7 +60,7 @@ function getTypeLabel(type: string): string {
     case "offset_expense":
       return "相殺支出";
     case "current_liabilities":
-      return "未払金（流動）";
+      return "未払金";
     case "invalid":
       return "無効";
     default:
