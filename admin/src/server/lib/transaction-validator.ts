@@ -1,4 +1,4 @@
-import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
+import { PL_CATEGORIES } from "@/shared/utils/category-mapping";
 import type { PreviewTransaction } from "./mf-record-converter";
 import type { Transaction } from "@/shared/models/transaction";
 
@@ -77,7 +77,7 @@ export class TransactionValidator {
   private validateAccounts(transaction: PreviewTransaction): string[] {
     const errors: string[] = [];
     const validAccountLabels = new Set([
-      ...Object.keys(ACCOUNT_CATEGORY_MAPPING),
+      ...Object.keys(PL_CATEGORIES),
       REGULAR_DEPOSIT_ACCOUNT,
       OFFSET_EXPENSE_ACCOUNT,
       OFFSET_INCOME_ACCOUNT,

@@ -10,7 +10,7 @@ export interface CategoryMapping {
 /**
  * アカウント名から表示用カテゴリへのマッピング辞書
  */
-export const ACCOUNT_CATEGORY_MAPPING: Record<string, CategoryMapping> = {
+export const PL_CATEGORIES: Record<string, CategoryMapping> = {
   // 収入項目
   "個人の負担する党費又は会費": {
     key: "membership-fees",

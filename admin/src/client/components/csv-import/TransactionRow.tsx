@@ -2,7 +2,7 @@
 import "client-only";
 
 import type { PreviewTransaction } from "@/server/lib/mf-record-converter";
-import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
+import { PL_CATEGORIES } from "@/shared/utils/category-mapping";
 
 interface TransactionRowProps {
   record: PreviewTransaction;
@@ -14,7 +14,7 @@ interface TransactionRowProps {
 const DEFAULT_CATEGORY_COLOR = "#64748B"; // slate-500 as default fallback color
 
 function getCategoryInfoByAccount(accountName: string) {
-  return ACCOUNT_CATEGORY_MAPPING[accountName];
+  return PL_CATEGORIES[accountName];
 }
 
 function getCategoryColor(accountName: string): string {
