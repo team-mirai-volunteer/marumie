@@ -207,8 +207,11 @@ export const PL_CATEGORIES: Record<string, CategoryMapping> = {
 /**
  * 貸借対照表科目のカテゴリ分類
  */
-export const BS_CATEGORIES = {
-  ASSETS: ['普通預金'],
-  LIABILITIES: ['未払金'],
-  NET_ASSETS: []
-} as const;
+export const BS_CATEGORIES: Record<string, { type: "asset" | "liability" | "net_asset" }> = {
+  "普通預金": {
+    type: "asset"
+  },
+  "未払金": {
+    type: "liability"
+  }
+};
