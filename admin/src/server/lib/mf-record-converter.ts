@@ -40,6 +40,9 @@ export class MfRecordConverter {
       record.credit_account,
     );
 
+    const friendlyCategory =
+      transactionType === "transfer" ? "資金移動" : record.friendly_category;
+
     const label = record.description?.startsWith("デビット")
       ? record.description
       : undefined;
@@ -76,7 +79,7 @@ export class MfRecordConverter {
       credit_amount: creditAmount,
       description: record.description,
       label: label,
-      friendly_category: record.friendly_category,
+      friendly_category: friendlyCategory,
       category_key: categoryKey,
       hash: "",
       status,
@@ -119,11 +122,20 @@ export class MfRecordConverter {
     debitAccount: string,
     creditAccount: string,
   ): string {
-    if (debitAccount === "普通預金") {
+    const isDebitBS = debitAccount in BS_CATEGORIES;
+    const isCreditBS = creditAccount in BS_CATEGORIES;
+    const isDebitPL = debitAccount in PL_CATEGORIES;
+    const isCreditPL = creditAccount in PL_CATEGORIES;
+
+    if (isDebitBS && isCreditBS) {
+      return "transfer";
+    }
+
+    if (isDebitBS && isCreditPL) {
       const mapping = PL_CATEGORIES[creditAccount];
       return mapping ? mapping.key : "undefined";
     }
-    if (creditAccount === "普通預金" || creditAccount === "未払金") {
+    if (isDebitPL && isCreditBS) {
       const mapping = PL_CATEGORIES[debitAccount];
       return mapping ? mapping.key : "undefined";
     }

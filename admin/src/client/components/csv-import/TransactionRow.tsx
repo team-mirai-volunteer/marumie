@@ -28,6 +28,16 @@ function getCategoryLabel(accountName: string): string {
 }
 
 function getTransactionCategory(record: PreviewTransaction) {
+  // transfer取引の場合は friendly_category を使用
+  if (record.transaction_type === "transfer") {
+    return {
+      account: "transfer",
+      color: "#6B7280", // グレー
+      label: record.friendly_category || "資金移動",
+      type: "transfer" as const,
+    };
+  }
+
   // 借方（debit）が費用系の場合は借方のカテゴリを、そうでなければ貸方のカテゴリを表示
   const debitInfo = getCategoryInfoByAccount(record.debit_account);
   const creditInfo = getCategoryInfoByAccount(record.credit_account);
