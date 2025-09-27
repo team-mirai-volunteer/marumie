@@ -55,12 +55,12 @@ function getTypeLabel(type: string): string {
       return "収入";
     case "expense":
       return "支出";
+    case "transfer":
+      return "振替";
     case "offset_income":
       return "相殺収入";
     case "offset_expense":
       return "相殺支出";
-    case "current_liabilities":
-      return "未払金";
     case "invalid":
       return "無効";
     default:

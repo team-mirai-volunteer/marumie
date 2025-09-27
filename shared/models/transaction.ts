@@ -2,9 +2,9 @@
 export type TransactionType =
   | "income"
   | "expense"
+  | "transfer"
   | "offset_income"
-  | "offset_expense"
-  | "current_liabilities";
+  | "offset_expense";
 
 export interface Transaction {
   id: string;

@@ -1,5 +1,5 @@
 import type { MfCsvRecord } from "./mf-csv-loader";
-import { PL_CATEGORIES } from "@/shared/utils/category-mapping";
+import { PL_CATEGORIES, BS_CATEGORIES } from "@/shared/utils/category-mapping";
 import type { TransactionType } from "@/shared/models/transaction";
 import { generateTransactionHash } from "./transaction-hash";
 
@@ -140,15 +140,22 @@ export class MfRecordConverter {
     if (creditAccount === "相殺項目（収入）") {
       return "offset_income";
     }
-    if (creditAccount === "未払金") {
-      return "current_liabilities";
-    }
-    if (debitAccount === "普通預金") {
+
+    const isDebitBS = debitAccount in BS_CATEGORIES;
+    const isCreditBS = creditAccount in BS_CATEGORIES;
+    const isDebitPL = debitAccount in PL_CATEGORIES;
+    const isCreditPL = creditAccount in PL_CATEGORIES;
+
+    if (isDebitBS && isCreditPL) {
       return "income";
     }
-    if (creditAccount === "普通預金") {
+    if (isDebitPL && isCreditBS) {
       return "expense";
     }
+    if (isDebitBS && isCreditBS) {
+      return "transfer";
+    }
+
     return null;
   }
 
