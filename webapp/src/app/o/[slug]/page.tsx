@@ -78,7 +78,7 @@ export default async function OrgPage({ params }: OrgPageProps) {
         slug={slug}
         organizationName={currentOrganization?.displayName}
       />
-      <AnotherPageLinkSection />
+      <AnotherPageLinkSection currentSlug={slug} />
       <ProgressSection />
       <ExplanationSection />
       <AboutSection />
