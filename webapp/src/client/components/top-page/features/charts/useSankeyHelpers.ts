@@ -43,13 +43,13 @@ export function useNodeColors() {
       nodeLabel?: string,
     ): string => {
       // 特別なノードの判定（labelベース）
-      if (nodeLabel === "繰越し") {
+      if (nodeLabel === "現金残高") {
         if (variant === "light") return "#D2D4D8";
         if (variant === "box" || variant === "fill") return "#6B7280"; // ボックス色はグレーのまま
         return COLORS.TEXT; // テキスト色は#1F2937
       }
 
-      if (nodeLabel === "昨年からの繰越し") {
+      if (nodeLabel === "昨年からの現金残高") {
         if (variant === "light") return "#D2D4D8";
         if (variant === "box" || variant === "fill") return "#6B7280"; // ボックス色はグレーのまま
         return COLORS.TEXT; // テキスト色は#1F2937
@@ -148,9 +148,9 @@ export function useSankeySorting(data: SankeyData) {
         const aValue = calculateNodeValue(a.id, data.links);
         const bValue = calculateNodeValue(b.id, data.links);
 
-        // 昨年からの繰越しを最後に
-        const aIsPreviousYearCarryover = a.label === "昨年からの繰越し";
-        const bIsPreviousYearCarryover = b.label === "昨年からの繰越し";
+        // 昨年からの現金残高を最後に
+        const aIsPreviousYearCarryover = a.label === "昨年からの現金残高";
+        const bIsPreviousYearCarryover = b.label === "昨年からの現金残高";
 
         if (aIsPreviousYearCarryover && !bIsPreviousYearCarryover) return 1;
         if (bIsPreviousYearCarryover && !aIsPreviousYearCarryover) return -1;
@@ -168,16 +168,16 @@ export function useSankeySorting(data: SankeyData) {
         const aValue = calculateNodeValue(a.id, data.links);
         const bValue = calculateNodeValue(b.id, data.links);
 
-        const aIsCarryover = a.label === "繰越し";
-        const bIsCarryover = b.label === "繰越し";
+        const aIsCarryover = a.label === "現金残高";
+        const bIsCarryover = b.label === "現金残高";
         const aIsProcessing = a.label === "(仕訳中)";
         const bIsProcessing = b.label === "(仕訳中)";
 
-        // 繰越しを最後に
+        // 現金残高を最後に
         if (aIsCarryover && !bIsCarryover) return 1;
         if (bIsCarryover && !aIsCarryover) return -1;
 
-        // (仕訳中)を後に（繰越し以外）
+        // (仕訳中)を後に（現金残高以外）
         if (aIsProcessing && !bIsProcessing && !bIsCarryover) return 1;
         if (bIsProcessing && !aIsProcessing && !aIsCarryover) return -1;
 

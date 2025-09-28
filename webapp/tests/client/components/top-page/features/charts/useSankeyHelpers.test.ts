@@ -40,26 +40,26 @@ function sortNodesLogic(nodes: SankeyNode[], data: SankeyData): SankeyNode[] {
 
       // income カテゴリでの特別処理
       if (a.nodeType === "income") {
-        const aIsPreviousYearCarryover = a.label === "昨年からの繰越し";
-        const bIsPreviousYearCarryover = b.label === "昨年からの繰越し";
+        const aIsPreviousYearCarryover = a.label === "昨年からの現金残高";
+        const bIsPreviousYearCarryover = b.label === "昨年からの現金残高";
 
-        // 昨年からの繰越し vs その他
+        // 昨年からの現金残高 vs その他
         if (aIsPreviousYearCarryover && !bIsPreviousYearCarryover) return 1;
         if (bIsPreviousYearCarryover && !aIsPreviousYearCarryover) return -1;
       }
 
       // expense カテゴリでの特別処理
       if (a.nodeType === "expense") {
-        const aIsCarryover = a.label === "繰越し";
-        const bIsCarryover = b.label === "繰越し";
+        const aIsCarryover = a.label === "現金残高";
+        const bIsCarryover = b.label === "現金残高";
         const aIsProcessing = a.label === "(仕訳中)";
         const bIsProcessing = b.label === "(仕訳中)";
 
-        // 繰越し vs その他
+        // 現金残高 vs その他
         if (aIsCarryover && !bIsCarryover) return 1;
         if (bIsCarryover && !aIsCarryover) return -1;
 
-        // (仕訳中) vs その他（繰越し以外）
+        // (仕訳中) vs その他（現金残高以外）
         if (aIsProcessing && !bIsProcessing && !bIsCarryover) return 1;
         if (bIsProcessing && !aIsProcessing && !aIsCarryover) return -1;
       }
@@ -101,8 +101,8 @@ function sortNodesLogic(nodes: SankeyNode[], data: SankeyData): SankeyNode[] {
 
           // 親カテゴリに特別処理がある場合を考慮
           if (parentA.nodeType === "expense" && parentB.nodeType === "expense") {
-            const aIsCarryover = parentA.label === "繰越し";
-            const bIsCarryover = parentB.label === "繰越し";
+            const aIsCarryover = parentA.label === "現金残高";
+            const bIsCarryover = parentB.label === "現金残高";
             const aIsProcessing = parentA.label === "(仕訳中)";
             const bIsProcessing = parentB.label === "(仕訳中)";
 
@@ -113,8 +113,8 @@ function sortNodesLogic(nodes: SankeyNode[], data: SankeyData): SankeyNode[] {
           }
 
           if (parentA.nodeType === "income" && parentB.nodeType === "income") {
-            const aIsPreviousYearCarryover = parentA.label === "昨年からの繰越し";
-            const bIsPreviousYearCarryover = parentB.label === "昨年からの繰越し";
+            const aIsPreviousYearCarryover = parentA.label === "昨年からの現金残高";
+            const bIsPreviousYearCarryover = parentB.label === "昨年からの現金残高";
 
             if (aIsPreviousYearCarryover && !bIsPreviousYearCarryover) return 1;
             if (bIsPreviousYearCarryover && !aIsPreviousYearCarryover) return -1;
@@ -158,8 +158,8 @@ const createMockSankeyData = (): SankeyData => ({
       nodeType: "expense",
     },
     {
-      id: "expense-繰越し",
-      label: "繰越し",
+      id: "expense-現金残高",
+      label: "現金残高",
       nodeType: "expense",
     },
     {
@@ -191,7 +191,7 @@ const createMockSankeyData = (): SankeyData => ({
     },
     {
       source: "total",
-      target: "expense-繰越し",
+      target: "expense-現金残高",
       value: 600000,
     },
     {
@@ -200,7 +200,7 @@ const createMockSankeyData = (): SankeyData => ({
       value: 400000,
     },
     {
-      source: "expense-繰越し",
+      source: "expense-現金残高",
       target: "expense-sub-未払金",
       value: 100000,
     },
@@ -227,7 +227,7 @@ describe("SankeyHelpers Sorting Logic", () => {
       ]);
     });
 
-    it("should sort expense categories with special handling for 繰越し", () => {
+    it("should sort expense categories with special handling for 現金残高", () => {
       const mockData = createMockSankeyData();
       const sortedNodes = sortNodesLogic(mockData.nodes, mockData);
 
@@ -235,7 +235,7 @@ describe("SankeyHelpers Sorting Logic", () => {
       const expenseNodes = sortedNodes.filter((node) => node.nodeType === "expense");
       expect(expenseNodes.map((node) => node.label)).toEqual([
         "政治活動費",
-        "繰越し", // 繰越しが最後に来る
+        "現金残高", // 現金残高が最後に来る
       ]);
     });
 
@@ -247,25 +247,25 @@ describe("SankeyHelpers Sorting Logic", () => {
       const expenseSubNodes = sortedNodes.filter((node) => node.nodeType === "expense-sub");
       expect(expenseSubNodes.map((node) => node.label)).toEqual([
         "広告費", // 政治活動費の子（親が先に来るため）
-        "未払金", // 繰越しの子（親が後に来るため）
+        "未払金", // 現金残高の子（親が後に来るため）
       ]);
     });
 
-    it("should handle income categories with special handling for 昨年からの繰越し", () => {
+    it("should handle income categories with special handling for 昨年からの現金残高", () => {
       const mockDataWithCarryover: SankeyData = {
         ...createMockSankeyData(),
         nodes: [
           ...createMockSankeyData().nodes,
           {
-            id: "income-昨年からの繰越し",
-            label: "昨年からの繰越し",
+            id: "income-昨年からの現金残高",
+            label: "昨年からの現金残高",
             nodeType: "income",
           },
         ],
         links: [
           ...createMockSankeyData().links,
           {
-            source: "income-昨年からの繰越し",
+            source: "income-昨年からの現金残高",
             target: "total",
             value: 300000,
           },
@@ -278,7 +278,7 @@ describe("SankeyHelpers Sorting Logic", () => {
       const incomeNodes = sortedNodes.filter((node) => node.nodeType === "income");
       expect(incomeNodes.map((node) => node.label)).toEqual([
         "寄附", // 通常の収入が先
-        "昨年からの繰越し", // 昨年からの繰越しが最後
+        "昨年からの現金残高", // 昨年からの現金残高が最後
       ]);
     });
   });

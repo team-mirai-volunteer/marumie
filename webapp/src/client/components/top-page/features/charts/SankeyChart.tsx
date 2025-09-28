@@ -322,9 +322,9 @@ const splitLabel = (label: string, maxCharsPerLine: number): string[] => {
     return ["その他", label.substring(3)];
   }
 
-  // 「昨年からの繰越し」の特別対応：「昨年からの」と「繰越し」に分割
-  if (label === "昨年からの繰越し") {
-    return ["昨年からの", "繰越し"];
+  // 「昨年からの現金残高」の特別対応：「昨年からの」と「現金残高」に分割
+  if (label === "昨年からの現金残高") {
+    return ["昨年からの", "現金残高"];
   }
 
   // 特殊ケース：N+1文字（7文字）の場合は N-2, 3 に分割
@@ -357,11 +357,11 @@ const renderPercentageLabel = (
     return null;
   }
 
-  // (仕訳中)ノードの場合は特別な色を使用、繰越しの場合もTEXT色を使用
+  // (仕訳中)ノードの場合は特別な色を使用、現金残高の場合もTEXT色を使用
   const textColor =
     node.label === "(仕訳中)"
       ? "#DC2626"
-      : node.label === "繰越し"
+      : node.label === "現金残高"
         ? TEXT
         : boxColor;
 

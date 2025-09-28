@@ -157,7 +157,7 @@ export function convertCategoryAggregationToSankeyData(
   if (isFriendlyCategory) {
     // 未払金のモックデータ（10万円）
     const unpaidLiabilitiesMock = {
-      category: "繰越し",
+      category: "現金残高",
       subcategory: "未払金",
       totalAmount: 100000, // 10万円
     };
@@ -177,11 +177,11 @@ export function convertCategoryAggregationToSankeyData(
   // 収入データの処理: subcategoryがあるものとないものを分別
   const incomeByCategory = new Map<string, number>();
 
-  // previousYearBalanceが0より大きい場合、「昨年からの繰越し」として収入側に追加
+  // previousYearBalanceが0より大きい場合、「昨年からの現金残高」として収入側に追加
   if (previousYearBalance > 0) {
-    // 収入データに「昨年からの繰越し」レコードを追加（UI用）
+    // 収入データに「昨年からの現金残高」レコードを追加（UI用）
     processedAggregation.income.push({
-      category: "昨年からの繰越し",
+      category: "昨年からの現金残高",
       totalAmount: previousYearBalance,
     });
   }
@@ -237,13 +237,13 @@ export function convertCategoryAggregationToSankeyData(
 
   // 収入と支出の合計を計算
 
-  // currentYearBalanceが0より大きい場合、「繰越し」として支出側に追加
+  // currentYearBalanceが0より大きい場合、「現金残高」として支出側に追加
   if (currentYearBalance > 0) {
-    expenseByCategory.set("繰越し", currentYearBalance);
+    expenseByCategory.set("現金残高", currentYearBalance);
 
-    // 支出データに「繰越し」レコードを追加（UI用）
+    // 支出データに「現金残高」レコードを追加（UI用）
     processedAggregation.expense.push({
-      category: "繰越し",
+      category: "現金残高",
       totalAmount: currentYearBalance,
     });
   }

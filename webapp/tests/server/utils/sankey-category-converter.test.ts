@@ -359,7 +359,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
     expect(categoryToSub).toBeDefined();
   });
 
-  it("should handle currentYearBalance (繰越し)", () => {
+  it("should handle currentYearBalance (現金残高)", () => {
     const aggregation: SankeyCategoryAggregationResult = {
       income: [
         {
@@ -378,15 +378,15 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const currentYearBalance = 300000;
     const result = convertCategoryAggregationToSankeyData(aggregation, false, currentYearBalance, 0);
 
-    // 「繰越し」ノードが追加されることを確認
-    const carryoverNode = result.nodes.find(node => node.label === "繰越し");
+    // 「現金残高」ノードが追加されることを確認
+    const carryoverNode = result.nodes.find(node => node.label === "現金残高");
     expect(carryoverNode).toBeDefined();
     expect(carryoverNode?.nodeType).toBe("expense");
 
-    // 「繰越し」へのリンクが追加されることを確認
+    // 「現金残高」へのリンクが追加されることを確認
     const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
     const totalId = getNodeIdByLabel("合計");
-    const carryoverId = getNodeIdByLabel("繰越し");
+    const carryoverId = getNodeIdByLabel("現金残高");
 
     const linkToCarryover = result.links.find(
       link => link.source === totalId && link.target === carryoverId
@@ -395,7 +395,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
     expect(linkToCarryover?.value).toBe(300000);
   });
 
-  it("should handle previousYearBalance (昨年からの繰越し)", () => {
+  it("should handle previousYearBalance (昨年からの現金残高)", () => {
     const aggregation: SankeyCategoryAggregationResult = {
       income: [
         {
@@ -414,14 +414,14 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const previousYearBalance = 150000;
     const result = convertCategoryAggregationToSankeyData(aggregation, false, 0, previousYearBalance);
 
-    // 「昨年からの繰越し」ノードが追加されることを確認
-    const previousCarryoverNode = result.nodes.find(node => node.label === "昨年からの繰越し");
+    // 「昨年からの現金残高」ノードが追加されることを確認
+    const previousCarryoverNode = result.nodes.find(node => node.label === "昨年からの現金残高");
     expect(previousCarryoverNode).toBeDefined();
     expect(previousCarryoverNode?.nodeType).toBe("income");
 
-    // 「昨年からの繰越し」からのリンクが追加されることを確認
+    // 「昨年からの現金残高」からのリンクが追加されることを確認
     const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
-    const previousCarryoverId = getNodeIdByLabel("昨年からの繰越し");
+    const previousCarryoverId = getNodeIdByLabel("昨年からの現金残高");
     const totalId = getNodeIdByLabel("合計");
 
     const linkFromPreviousCarryover = result.links.find(
@@ -452,8 +452,8 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const result = convertCategoryAggregationToSankeyData(aggregation, false, currentYearBalance, previousYearBalance);
 
     // 両方のノードが追加されることを確認
-    const carryoverNode = result.nodes.find(node => node.label === "繰越し");
-    const previousCarryoverNode = result.nodes.find(node => node.label === "昨年からの繰越し");
+    const carryoverNode = result.nodes.find(node => node.label === "現金残高");
+    const previousCarryoverNode = result.nodes.find(node => node.label === "昨年からの現金残高");
 
     expect(carryoverNode).toBeDefined();
     expect(previousCarryoverNode).toBeDefined();
@@ -461,8 +461,8 @@ describe("convertCategoryAggregationToSankeyData", () => {
     // リンクの検証
     const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
     const totalId = getNodeIdByLabel("合計");
-    const carryoverId = getNodeIdByLabel("繰越し");
-    const previousCarryoverId = getNodeIdByLabel("昨年からの繰越し");
+    const carryoverId = getNodeIdByLabel("現金残高");
+    const previousCarryoverId = getNodeIdByLabel("昨年からの現金残高");
 
     // 今年の繰越し
     const linkToCarryover = result.links.find(
@@ -504,9 +504,9 @@ describe("convertCategoryAggregationToSankeyData", () => {
 
     const result = convertCategoryAggregationToSankeyData(aggregation, false, 0, 0);
 
-    // 繰越しノードが追加されないことを確認
-    const carryoverNode = result.nodes.find(node => node.label === "繰越し");
-    const previousCarryoverNode = result.nodes.find(node => node.label === "昨年からの繰越し");
+    // 現金残高ノードが追加されないことを確認
+    const carryoverNode = result.nodes.find(node => node.label === "現金残高");
+    const previousCarryoverNode = result.nodes.find(node => node.label === "昨年からの現金残高");
 
     expect(carryoverNode).toBeUndefined();
     expect(previousCarryoverNode).toBeUndefined();
