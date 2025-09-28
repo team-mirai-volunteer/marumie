@@ -3,12 +3,15 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import AboutSection from "@/client/components/common/AboutSection";
+import AnotherPageLinkSection from "@/client/components/common/AnotherPageLinkSection";
 import ExplanationSection from "@/client/components/common/ExplanationSection";
+import LinkCardsSection from "@/client/components/common/LinkCardsSection";
 import TransparencySection from "@/client/components/common/TransparencySection";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumn from "@/client/components/layout/MainColumn";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 import InteractiveTransactionTable from "@/client/components/top-page/features/transactions-table/InteractiveTransactionTable";
+import ProgressSection from "@/client/components/top-page/ProgressSection";
 import { loadTransactionsPageData } from "@/server/loaders/load-transactions-page-data";
 import { loadOrganizations } from "@/server/loaders/load-organizations";
 import { formatUpdatedAt } from "@/server/utils/format-date";
@@ -148,10 +151,11 @@ export default async function TransactionsPage({
         </MainColumnCard>
 
         <TransparencySection title="党内の機密データの流出事故ではありません☺️" />
-
+        <AnotherPageLinkSection currentSlug={slug} />
+        <ProgressSection />
         <ExplanationSection />
-
         <AboutSection />
+        <LinkCardsSection />
       </MainColumn>
     );
   } catch (error) {
