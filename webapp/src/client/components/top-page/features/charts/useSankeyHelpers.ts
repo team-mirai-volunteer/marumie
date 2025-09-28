@@ -55,6 +55,12 @@ export function useNodeColors() {
         return COLORS.TEXT; // テキスト色は#1F2937
       }
 
+      if (nodeLabel === "収支") {
+        if (variant === "light") return "#D2D4D8";
+        if (variant === "box" || variant === "fill") return "#6B7280"; // ボックス色はグレーのまま
+        return COLORS.TEXT; // テキスト色は#1F2937
+      }
+
       if (nodeLabel === "(仕訳中)") {
         return variant === "light" ? "#FFF2F2" : "#F87171";
       }
@@ -82,7 +88,18 @@ export function useLinkColors(data: SankeyData) {
 
   const processLinksWithColors = React.useCallback(() => {
     return data.links.map((link) => {
+      const sourceNode = data.nodes.find((n) => n.id === link.source);
       const targetNode = data.nodes.find((n) => n.id === link.target);
+
+      // 「昨年からの現金残高」ノードからのリンクはグレーにする
+      if (sourceNode?.label === "昨年からの現金残高") {
+        return {
+          ...link,
+          startColor: "#D2D4D8", // グレー（light variant）
+          endColor: "#D2D4D8",
+        };
+      }
+
       const targetColor = getNodeColor(
         targetNode?.nodeType,
         "light",
@@ -211,6 +228,19 @@ export function useSankeySorting(data: SankeyData) {
           if (aParentIndex !== -1 && bParentIndex !== -1) {
             return aParentIndex - bParentIndex; // 親の順序に従う
           }
+        }
+
+        // sub-expenseにおいて「収支」を同一カテゴリ内で末尾に配置
+        if (
+          a.nodeType === "expense-sub" &&
+          b.nodeType === "expense-sub" &&
+          aParent === bParent
+        ) {
+          const aIsBalance = a.label === "収支";
+          const bIsBalance = b.label === "収支";
+
+          if (aIsBalance && !bIsBalance) return 1;
+          if (bIsBalance && !aIsBalance) return -1;
         }
 
         // 同一親内では金額順
