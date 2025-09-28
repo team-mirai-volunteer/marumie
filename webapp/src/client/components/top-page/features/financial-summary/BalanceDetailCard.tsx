@@ -1,5 +1,8 @@
 interface BalanceDetailCardProps {
   className?: string;
+  balance: number;
+  cashBalance: number;
+  unpaidExpense: number;
 }
 
 interface BalanceItem {
@@ -10,26 +13,37 @@ interface BalanceItem {
 
 export default function BalanceDetailCard({
   className,
+  balance,
+  cashBalance,
+  unpaidExpense,
 }: BalanceDetailCardProps) {
-  // ダミーデータ
+  // 金額を万円単位に変換
+  const formatToManYen = (value: number): number => {
+    return Math.round(value / 10000);
+  };
+
   const mainBalance = {
     title: "収支",
-    amount: 2262,
+    amount: formatToManYen(balance),
     unit: "万円",
   };
 
   const balanceItems: BalanceItem[] = [
     {
       label: "現金残高",
-      amount: 4262,
-      unit: "万円",
-    },
-    {
-      label: "未払費用",
-      amount: -2000,
+      amount: formatToManYen(cashBalance),
       unit: "万円",
     },
   ];
+
+  // 未払費用が0より大きい場合のみ追加
+  if (unpaidExpense > 0) {
+    balanceItems.push({
+      label: "未払費用",
+      amount: -formatToManYen(unpaidExpense),
+      unit: "万円",
+    });
+  }
 
   const formatAmount = (amount: number): string => {
     if (amount >= 0) {

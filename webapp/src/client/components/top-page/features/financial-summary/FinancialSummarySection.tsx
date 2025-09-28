@@ -42,11 +42,75 @@ function calculateFinancialData(sankeyData: SankeyData | null) {
   return { income, expense, balance: currentBalance };
 }
 
+// sankeyDataから収支詳細データを計算する関数
+function calculateBalanceDetailData(sankeyData: SankeyData | null) {
+  if (!sankeyData?.links || !sankeyData?.nodes) {
+    return { balance: 0, cashBalance: 0, unpaidExpense: 0 };
+  }
+
+  // 合計ノードのIDを取得
+  const totalNode = sankeyData.nodes.find((node) => node.label === "合計");
+  if (!totalNode) {
+    return { balance: 0, cashBalance: 0, unpaidExpense: 0 };
+  }
+
+  // 現金残高カテゴリノードを取得
+  const cashBalanceNode = sankeyData.nodes.find(
+    (node) => node.label === "現金残高" && node.nodeType === "expense",
+  );
+  if (!cashBalanceNode) {
+    return { balance: 0, cashBalance: 0, unpaidExpense: 0 };
+  }
+
+  // 現金残高の合計値を取得（合計から現金残高への流入）
+  const cashBalanceTotal = sankeyData.links
+    .filter(
+      (link: SankeyLink) =>
+        link.source === totalNode.id && link.target === cashBalanceNode.id,
+    )
+    .reduce((sum: number, link: SankeyLink) => sum + link.value, 0);
+
+  // 収支サブカテゴリノードを取得
+  const balanceSubNode = sankeyData.nodes.find(
+    (node) => node.label === "収支" && node.nodeType === "expense-sub",
+  );
+  const balanceValue = balanceSubNode
+    ? sankeyData.links
+        .filter(
+          (link: SankeyLink) =>
+            link.source === cashBalanceNode.id &&
+            link.target === balanceSubNode.id,
+        )
+        .reduce((sum: number, link: SankeyLink) => sum + link.value, 0)
+    : 0;
+
+  // 未払費用サブカテゴリノードを取得
+  const unpaidExpenseSubNode = sankeyData.nodes.find(
+    (node) => node.label === "未払費用" && node.nodeType === "expense-sub",
+  );
+  const unpaidExpenseValue = unpaidExpenseSubNode
+    ? sankeyData.links
+        .filter(
+          (link: SankeyLink) =>
+            link.source === cashBalanceNode.id &&
+            link.target === unpaidExpenseSubNode.id,
+        )
+        .reduce((sum: number, link: SankeyLink) => sum + link.value, 0)
+    : 0;
+
+  return {
+    balance: balanceValue,
+    cashBalance: cashBalanceTotal,
+    unpaidExpense: unpaidExpenseValue,
+  };
+}
+
 export default function FinancialSummarySection({
   sankeyData,
 }: FinancialSummarySectionProps) {
   // 財務データを計算
   const financialData = calculateFinancialData(sankeyData);
+  const balanceDetailData = calculateBalanceDetailData(sankeyData);
 
   return (
     <div className="flex flex-col md:flex-row gap-2 items-center">
@@ -66,7 +130,12 @@ export default function FinancialSummarySection({
         amountColor="#1F2937"
       />
 
-      <BalanceDetailCard className="w-full md:w-auto" />
+      <BalanceDetailCard
+        className="w-full md:w-auto"
+        balance={balanceDetailData.balance}
+        cashBalance={balanceDetailData.cashBalance}
+        unpaidExpense={balanceDetailData.unpaidExpense}
+      />
     </div>
   );
 }
