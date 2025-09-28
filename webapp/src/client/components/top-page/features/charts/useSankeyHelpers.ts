@@ -38,7 +38,6 @@ export function useNodeColors() {
   // 統一されたノード色取得関数
   const getNodeColor = React.useCallback(
     (
-      nodeId: string,
       nodeType?: string,
       variant: "fill" | "light" | "box" = "fill",
       nodeLabel?: string,
@@ -85,7 +84,6 @@ export function useLinkColors(data: SankeyData) {
     return data.links.map((link) => {
       const targetNode = data.nodes.find((n) => n.id === link.target);
       const targetColor = getNodeColor(
-        link.target,
         targetNode?.nodeType,
         "light",
         targetNode?.label,

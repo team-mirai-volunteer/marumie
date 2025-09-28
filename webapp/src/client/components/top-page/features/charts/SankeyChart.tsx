@@ -168,12 +168,7 @@ const CustomNodesLayer = ({
         {nodes.map((node: SankeyNodeWithPosition) => {
           const width = getNodeWidth(node.nodeType, isMobile);
           const x = node.x - (width - DIMENSIONS.NODE_BASE_WIDTH) / 2;
-          const color = getNodeColor(
-            node.id,
-            node.nodeType,
-            "fill",
-            node.label,
-          );
+          const color = getNodeColor(node.nodeType, "fill", node.label);
 
           return (
             <InteractiveRect
@@ -494,12 +489,7 @@ const CustomLabelsLayer = ({
         const textAnchor = isLeft ? "end" : "start";
         const percentageY = node.y - DIMENSIONS.PERCENTAGE_OFFSET;
         const percentageText = calculatePercentageText(node.value, totalValue);
-        const boxColor = getNodeColor(
-          node.id,
-          node.nodeType,
-          "box",
-          node.label,
-        );
+        const boxColor = getNodeColor(node.nodeType, "box", node.label);
         const elements = [];
 
         if (node.nodeType === "total") {
@@ -626,7 +616,6 @@ export default function SankeyChart({ data }: SankeyChartProps) {
         align="center"
         colors={(node) =>
           getNodeColor(
-            (node as { id: string }).id,
             (node as { nodeType?: string }).nodeType,
             "light",
             (node as { label?: string }).label,
