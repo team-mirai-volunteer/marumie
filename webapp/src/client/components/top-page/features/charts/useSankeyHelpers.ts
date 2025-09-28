@@ -79,7 +79,31 @@ export function useNodeColors() {
     [],
   );
 
-  return { getNodeColor };
+  // パーセンテージテキスト色取得関数
+  const getPercentageTextColor = React.useCallback(
+    (nodeLabel?: string, boxColor?: string): string => {
+      if (nodeLabel === "(仕訳中)") {
+        return "#DC2626";
+      }
+
+      if (nodeLabel === "現金残高") {
+        return COLORS.TEXT;
+      }
+
+      if (nodeLabel === "収支") {
+        return "#111827"; // 現金残高より濃いグレー
+      }
+
+      if (nodeLabel === "昨年からの現金残高") {
+        return "#111827"; // 現金残高より濃いグレー
+      }
+
+      return boxColor || COLORS.TEXT;
+    },
+    [],
+  );
+
+  return { getNodeColor, getPercentageTextColor };
 }
 
 // リンク色処理のカスタムフック

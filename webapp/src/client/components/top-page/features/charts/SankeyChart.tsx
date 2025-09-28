@@ -352,18 +352,13 @@ const renderPercentageLabel = (
   boxColor: string,
   percentageY: number,
   isMobile: boolean,
+  getPercentageTextColor: (nodeLabel?: string, boxColor?: string) => string,
 ) => {
   if (!percentageText) {
     return null;
   }
 
-  // (仕訳中)ノードの場合は特別な色を使用、現金残高の場合もTEXT色を使用
-  const textColor =
-    node.label === "(仕訳中)"
-      ? "#DC2626"
-      : node.label === "現金残高"
-        ? TEXT
-        : boxColor;
+  const textColor = getPercentageTextColor(node.label, boxColor);
 
   return (
     <text
@@ -464,7 +459,7 @@ const CustomLabelsLayer = ({
   nodes: readonly SankeyNodeWithPosition[];
 }) => {
   const isMobile = useMobileDetection();
-  const { getNodeColor } = useNodeColors();
+  const { getNodeColor, getPercentageTextColor } = useNodeColors();
 
   // 全体の合計値を計算（合計ノードの値を使用）
   const totalValue =
@@ -503,6 +498,7 @@ const CustomLabelsLayer = ({
             boxColor,
             percentageY,
             isMobile,
+            getPercentageTextColor,
           );
           if (percentageLabel) {
             elements.push(percentageLabel);
