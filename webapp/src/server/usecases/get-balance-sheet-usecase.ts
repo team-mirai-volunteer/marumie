@@ -46,21 +46,25 @@ export class GetBalanceSheetUsecase {
       );
 
     // 4. 固定負債を計算（借入金の収入 - 支出）
-    const [borrowingIncome, borrowingExpense] = await Promise.all([
-      this.transactionRepository.getBorrowingIncomeTotal(
-        orgIds,
-        params.financialYear,
-      ),
-      this.transactionRepository.getBorrowingExpenseTotal(
-        orgIds,
-        params.financialYear,
-      ),
-    ]);
+    const [borrowingIncome, borrowingExpense, currentLiabilities] =
+      await Promise.all([
+        this.transactionRepository.getBorrowingIncomeTotal(
+          orgIds,
+          params.financialYear,
+        ),
+        this.transactionRepository.getBorrowingExpenseTotal(
+          orgIds,
+          params.financialYear,
+        ),
+        this.transactionRepository.getLiabilityBalance(
+          orgIds,
+          params.financialYear,
+        ),
+      ]);
     const fixedLiabilities = borrowingIncome - borrowingExpense;
 
-    // 5. 固定資産と流動負債は決め打ちでゼロ
+    // 5. 固定資産は決め打ちでゼロ
     const fixedAssets = 0;
-    const currentLiabilities = 0;
 
     // 6. 純資産と債務超過を計算
     const [netAssets, debtExcess] = this.calculateNetAssetsAndDebtExcess(
