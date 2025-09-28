@@ -6,7 +6,7 @@ import {
 import type { Transaction, TransactionType } from "@/shared/models/transaction";
 import type { TransactionFilters } from "@/types/transaction-filters";
 import type { DisplayTransactionType } from "@/types/display-transaction";
-import { PL_CATEGORIES } from "@/shared/utils/category-mapping";
+import { PL_CATEGORIES, BS_CATEGORIES } from "@/shared/utils/category-mapping";
 import type {
   DailyDonationData,
   ITransactionRepository,
@@ -352,6 +352,71 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     });
 
     return Number(result._sum.debitAmount) || 0;
+  }
+
+  async getLiabilityBalance(
+    politicalOrganizationIds: string[],
+    financialYear: number,
+  ): Promise<number> {
+    // BS_CATEGORIESからliabilityのアカウントを抽出
+    const liabilityAccounts = Object.keys(BS_CATEGORIES).filter(
+      (account) => BS_CATEGORIES[account].type === "liability",
+    );
+
+    if (liabilityAccounts.length === 0) {
+      return 0;
+    }
+
+    // 借方の合計（未払金の減少）
+    const debitResult = await this.prisma.transaction.aggregate({
+      _sum: {
+        debitAmount: true,
+      },
+      where: {
+        politicalOrganizationId: {
+          in: politicalOrganizationIds.map((id) => BigInt(id)),
+        },
+        financialYear,
+        debitAccount: {
+          in: liabilityAccounts,
+        },
+      },
+    });
+
+    // 貸方の合計（未払金の増加）
+    const creditResult = await this.prisma.transaction.aggregate({
+      _sum: {
+        creditAmount: true,
+      },
+      where: {
+        politicalOrganizationId: {
+          in: politicalOrganizationIds.map((id) => BigInt(id)),
+        },
+        financialYear,
+        creditAccount: {
+          in: liabilityAccounts,
+        },
+      },
+    });
+
+    const debitTotal = Number(debitResult._sum.debitAmount) || 0;
+    const creditTotal = Number(creditResult._sum.creditAmount) || 0;
+
+    console.log(
+      `[getLiabilityBalance] Liability accounts: ${liabilityAccounts.join(", ")}`,
+    );
+    console.log(
+      `[getLiabilityBalance] Debit total (未払金の減少): ${debitTotal}`,
+    );
+    console.log(
+      `[getLiabilityBalance] Credit total (未払金の増加): ${creditTotal}`,
+    );
+    console.log(
+      `[getLiabilityBalance] Final liability balance: ${creditTotal - debitTotal}`,
+    );
+
+    // 負債は貸方残高なので、貸方合計から借方合計を引く
+    return creditTotal - debitTotal;
   }
 
   async getLastUpdatedAt(): Promise<Date | null> {

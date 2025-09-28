@@ -359,7 +359,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
     expect(categoryToSub).toBeDefined();
   });
 
-  it("should handle currentYearBalance (繰越し)", () => {
+  it("should handle currentYearBalance (現金残高)", () => {
     const aggregation: SankeyCategoryAggregationResult = {
       income: [
         {
@@ -378,15 +378,15 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const currentYearBalance = 300000;
     const result = convertCategoryAggregationToSankeyData(aggregation, false, currentYearBalance, 0);
 
-    // 「繰越し」ノードが追加されることを確認
-    const carryoverNode = result.nodes.find(node => node.label === "繰越し");
+    // 「現金残高」ノードが追加されることを確認
+    const carryoverNode = result.nodes.find(node => node.label === "現金残高");
     expect(carryoverNode).toBeDefined();
     expect(carryoverNode?.nodeType).toBe("expense");
 
-    // 「繰越し」へのリンクが追加されることを確認
+    // 「現金残高」へのリンクが追加されることを確認
     const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
     const totalId = getNodeIdByLabel("合計");
-    const carryoverId = getNodeIdByLabel("繰越し");
+    const carryoverId = getNodeIdByLabel("現金残高");
 
     const linkToCarryover = result.links.find(
       link => link.source === totalId && link.target === carryoverId
@@ -395,7 +395,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
     expect(linkToCarryover?.value).toBe(300000);
   });
 
-  it("should handle previousYearBalance (昨年からの繰越し)", () => {
+  it("should handle previousYearBalance (昨年からの現金残高)", () => {
     const aggregation: SankeyCategoryAggregationResult = {
       income: [
         {
@@ -414,14 +414,14 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const previousYearBalance = 150000;
     const result = convertCategoryAggregationToSankeyData(aggregation, false, 0, previousYearBalance);
 
-    // 「昨年からの繰越し」ノードが追加されることを確認
-    const previousCarryoverNode = result.nodes.find(node => node.label === "昨年からの繰越し");
+    // 「昨年からの現金残高」ノードが追加されることを確認
+    const previousCarryoverNode = result.nodes.find(node => node.label === "昨年からの現金残高");
     expect(previousCarryoverNode).toBeDefined();
     expect(previousCarryoverNode?.nodeType).toBe("income");
 
-    // 「昨年からの繰越し」からのリンクが追加されることを確認
+    // 「昨年からの現金残高」からのリンクが追加されることを確認
     const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
-    const previousCarryoverId = getNodeIdByLabel("昨年からの繰越し");
+    const previousCarryoverId = getNodeIdByLabel("昨年からの現金残高");
     const totalId = getNodeIdByLabel("合計");
 
     const linkFromPreviousCarryover = result.links.find(
@@ -452,8 +452,8 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const result = convertCategoryAggregationToSankeyData(aggregation, false, currentYearBalance, previousYearBalance);
 
     // 両方のノードが追加されることを確認
-    const carryoverNode = result.nodes.find(node => node.label === "繰越し");
-    const previousCarryoverNode = result.nodes.find(node => node.label === "昨年からの繰越し");
+    const carryoverNode = result.nodes.find(node => node.label === "現金残高");
+    const previousCarryoverNode = result.nodes.find(node => node.label === "昨年からの現金残高");
 
     expect(carryoverNode).toBeDefined();
     expect(previousCarryoverNode).toBeDefined();
@@ -461,8 +461,8 @@ describe("convertCategoryAggregationToSankeyData", () => {
     // リンクの検証
     const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
     const totalId = getNodeIdByLabel("合計");
-    const carryoverId = getNodeIdByLabel("繰越し");
-    const previousCarryoverId = getNodeIdByLabel("昨年からの繰越し");
+    const carryoverId = getNodeIdByLabel("現金残高");
+    const previousCarryoverId = getNodeIdByLabel("昨年からの現金残高");
 
     // 今年の繰越し
     const linkToCarryover = result.links.find(
@@ -504,9 +504,9 @@ describe("convertCategoryAggregationToSankeyData", () => {
 
     const result = convertCategoryAggregationToSankeyData(aggregation, false, 0, 0);
 
-    // 繰越しノードが追加されないことを確認
-    const carryoverNode = result.nodes.find(node => node.label === "繰越し");
-    const previousCarryoverNode = result.nodes.find(node => node.label === "昨年からの繰越し");
+    // 現金残高ノードが追加されないことを確認
+    const carryoverNode = result.nodes.find(node => node.label === "現金残高");
+    const previousCarryoverNode = result.nodes.find(node => node.label === "昨年からの現金残高");
 
     expect(carryoverNode).toBeUndefined();
     expect(previousCarryoverNode).toBeUndefined();
@@ -514,5 +514,107 @@ describe("convertCategoryAggregationToSankeyData", () => {
     // 基本の3ノードのみ存在することを確認
     expect(result.nodes).toHaveLength(3);
     expect(result.links).toHaveLength(2);
+  });
+
+  it("should add 未払金 and 収支 subcategories when isFriendlyCategory is true", () => {
+    const aggregation: SankeyCategoryAggregationResult = {
+      income: [
+        {
+          category: "寄附",
+          totalAmount: 500000, // 50万円
+        },
+      ],
+      expense: [
+        {
+          category: "政治活動費",
+          totalAmount: 300000, // 30万円
+        },
+      ],
+    };
+
+    const currentYearBalance = 50000; // 5万円（未払金10万円より少ない）
+    const liabilityBalance = 100000; // 10万円の未払金
+    const result = convertCategoryAggregationToSankeyData(aggregation, true, currentYearBalance, 0, liabilityBalance);
+
+    // 「現金残高」カテゴリが作成されることを確認
+    const cashBalanceNode = result.nodes.find(node => node.label === "現金残高");
+    expect(cashBalanceNode).toBeDefined();
+    expect(cashBalanceNode?.nodeType).toBe("expense");
+
+    // 「未払金」サブカテゴリが作成されることを確認
+    const unpaidNode = result.nodes.find(node => node.label === "未払金");
+    expect(unpaidNode).toBeDefined();
+    expect(unpaidNode?.nodeType).toBe("expense-sub");
+
+    // 「収支」サブカテゴリが作成されることを確認
+    const balanceNode = result.nodes.find(node => node.label === "収支");
+    expect(balanceNode).toBeDefined();
+    expect(balanceNode?.nodeType).toBe("expense-sub");
+
+    // リンクの検証
+    const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
+    const totalId = getNodeIdByLabel("合計");
+    const cashBalanceId = getNodeIdByLabel("現金残高");
+    const unpaidId = getNodeIdByLabel("未払金");
+    const balanceId = getNodeIdByLabel("収支");
+
+    // 合計 → 現金残高のリンク
+    const linkToCashBalance = result.links.find(
+      link => link.source === totalId && link.target === cashBalanceId
+    );
+    expect(linkToCashBalance).toBeDefined();
+
+    // 現金残高 → 未払金のリンク
+    const linkToUnpaid = result.links.find(
+      link => link.source === cashBalanceId && link.target === unpaidId
+    );
+    expect(linkToUnpaid).toBeDefined();
+    expect(linkToUnpaid?.value).toBe(100000); // 10万円
+
+    // 現金残高 → 収支のリンク（現金残高5万円 - 未払金10万円 = 0円）
+    const linkToBalance = result.links.find(
+      link => link.source === cashBalanceId && link.target === balanceId
+    );
+    expect(linkToBalance).toBeDefined();
+    expect(linkToBalance?.value).toBe(0); // 負数の場合は0になる
+  });
+
+  it("should handle friendly category with sufficient cash balance", () => {
+    const aggregation: SankeyCategoryAggregationResult = {
+      income: [
+        {
+          category: "寄附",
+          totalAmount: 1000000, // 100万円
+        },
+      ],
+      expense: [
+        {
+          category: "政治活動費",
+          totalAmount: 500000, // 50万円
+        },
+      ],
+    };
+
+    const currentYearBalance = 300000; // 30万円（未払金10万円より多い）
+    const liabilityBalance = 100000; // 10万円の未払金
+    const result = convertCategoryAggregationToSankeyData(aggregation, true, currentYearBalance, 0, liabilityBalance);
+
+    // リンクの検証
+    const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
+    const cashBalanceId = getNodeIdByLabel("現金残高");
+    const unpaidId = getNodeIdByLabel("未払金");
+    const balanceId = getNodeIdByLabel("収支");
+
+    // 現金残高 → 未払金のリンク
+    const linkToUnpaid = result.links.find(
+      link => link.source === cashBalanceId && link.target === unpaidId
+    );
+    expect(linkToUnpaid?.value).toBe(100000); // 10万円
+
+    // 現金残高 → 収支のリンク（現金残高30万円 - 未払金10万円 = 20万円）
+    const linkToBalance = result.links.find(
+      link => link.source === cashBalanceId && link.target === balanceId
+    );
+    expect(linkToBalance?.value).toBe(200000); // 20万円
   });
 });
