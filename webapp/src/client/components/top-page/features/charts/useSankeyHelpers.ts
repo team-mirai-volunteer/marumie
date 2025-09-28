@@ -178,7 +178,7 @@ export function useSankeySorting(data: SankeyData) {
           return bValue - aValue; // 大きい順
         }
 
-        // income-sub, expense-sub -> 親カテゴリのサイズ・自カテゴリのサイズで複合ソート
+        // income-sub, expense-sub -> 親カテゴリの順序で並べ、同一親内で金額順
         if (a.nodeType === "income-sub" || a.nodeType === "expense-sub") {
           // 親カテゴリを特定
           const getParentCategory = (nodeId: string, nodeType: string) => {
@@ -203,16 +203,58 @@ export function useSankeySorting(data: SankeyData) {
           const aParent = getParentCategory(a.id, a.nodeType!);
           const bParent = getParentCategory(b.id, b.nodeType!);
 
-          // 親カテゴリのサイズで比較
+          // 親カテゴリが異なる場合は、親カテゴリの既定の順序に従う
           if (aParent && bParent && aParent !== bParent) {
-            const aParentValue = calculateNodeValue(aParent, data.links);
-            const bParentValue = calculateNodeValue(bParent, data.links);
-            if (aParentValue !== bParentValue) {
+            // 親ノードを取得してそれらの順序を比較
+            const parentA = data.nodes.find((n) => n.id === aParent);
+            const parentB = data.nodes.find((n) => n.id === bParent);
+
+            if (parentA && parentB) {
+              // 親カテゴリのサイズを計算
+              const aParentValue = calculateNodeValue(aParent, data.links);
+              const bParentValue = calculateNodeValue(bParent, data.links);
+
+              // 親カテゴリに特別処理がある場合を考慮
+              if (
+                parentA.nodeType === "expense" &&
+                parentB.nodeType === "expense"
+              ) {
+                const aIsCarryover = parentA.label === "繰越し";
+                const bIsCarryover = parentB.label === "繰越し";
+                const aIsProcessing = parentA.label === "(仕訳中)";
+                const bIsProcessing = parentB.label === "(仕訳中)";
+
+                // 繰越し vs その他
+                if (aIsCarryover && !bIsCarryover) return 1; // 繰越しを最後に
+                if (bIsCarryover && !aIsCarryover) return -1; // 繰越しを最後に
+
+                // (仕訳中) vs その他（繰越し以外）
+                if (aIsProcessing && !bIsProcessing && !bIsCarryover) return 1; // (仕訳中)を後に
+                if (bIsProcessing && !aIsProcessing && !aIsCarryover) return -1; // (仕訳中)を後に
+              }
+
+              if (
+                parentA.nodeType === "income" &&
+                parentB.nodeType === "income"
+              ) {
+                const aIsPreviousYearCarryover =
+                  parentA.label === "昨年からの繰越し";
+                const bIsPreviousYearCarryover =
+                  parentB.label === "昨年からの繰越し";
+
+                // 昨年からの繰越し vs その他
+                if (aIsPreviousYearCarryover && !bIsPreviousYearCarryover)
+                  return 1; // 昨年からの繰越しを最後に
+                if (bIsPreviousYearCarryover && !aIsPreviousYearCarryover)
+                  return -1; // 昨年からの繰越しを最後に
+              }
+
+              // 特別処理がない場合は親カテゴリのサイズで比較
               return bParentValue - aParentValue; // 大きい親から
             }
           }
 
-          // 同じ親カテゴリなら自カテゴリのサイズで比較
+          // 同じ親カテゴリなら子カテゴリの金額で比較
           const aValue = calculateNodeValue(a.id, data.links);
           const bValue = calculateNodeValue(b.id, data.links);
           return bValue - aValue; // 大きい順
@@ -221,7 +263,7 @@ export function useSankeySorting(data: SankeyData) {
         return 0;
       });
     },
-    [data.links, calculateNodeValue],
+    [data.links, data.nodes, calculateNodeValue],
   );
 
   // ② リンクを並び替え

@@ -148,10 +148,25 @@ export function convertCategoryAggregationToSankeyData(
   const renamedAggregation = renameOtherCategories(aggregation);
 
   // 親しみやすいカテゴリーの場合は1%以下の項目を統合
-  const processedAggregation = consolidateSmallItems(
+  let processedAggregation = consolidateSmallItems(
     renamedAggregation,
     isFriendlyCategory,
   );
+
+  // friendly categoryの場合、未払金のモックデータを追加
+  if (isFriendlyCategory) {
+    // 未払金のモックデータ（10万円）
+    const unpaidLiabilitiesMock = {
+      category: "繰越し",
+      subcategory: "未払金",
+      totalAmount: 100000, // 10万円
+    };
+
+    processedAggregation = {
+      income: processedAggregation.income,
+      expense: [...processedAggregation.expense, unpaidLiabilitiesMock],
+    };
+  }
 
   const nodes: SankeyNode[] = [];
   const links: SankeyLink[] = [];
