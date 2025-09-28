@@ -1,11 +1,9 @@
-import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
+import { PL_CATEGORIES, BS_CATEGORIES } from "@/shared/utils/category-mapping";
 import type { PreviewTransaction } from "./mf-record-converter";
 import type { Transaction } from "@/shared/models/transaction";
 
-const REGULAR_DEPOSIT_ACCOUNT = "普通預金";
 const OFFSET_EXPENSE_ACCOUNT = "相殺項目（費用）";
 const OFFSET_INCOME_ACCOUNT = "相殺項目（収入）";
-const CURRENT_LIABILITIES_ACCOUNT = "未払金（流動）";
 
 export class TransactionValidator {
   public validatePreviewTransactions(
@@ -77,11 +75,10 @@ export class TransactionValidator {
   private validateAccounts(transaction: PreviewTransaction): string[] {
     const errors: string[] = [];
     const validAccountLabels = new Set([
-      ...Object.keys(ACCOUNT_CATEGORY_MAPPING),
-      REGULAR_DEPOSIT_ACCOUNT,
+      ...Object.keys(PL_CATEGORIES),
+      ...Object.keys(BS_CATEGORIES),
       OFFSET_EXPENSE_ACCOUNT,
       OFFSET_INCOME_ACCOUNT,
-      CURRENT_LIABILITIES_ACCOUNT,
     ]);
 
     if (!validAccountLabels.has(transaction.debit_account)) {
@@ -102,8 +99,12 @@ export class TransactionValidator {
       transaction.debit_account === OFFSET_EXPENSE_ACCOUNT ||
       transaction.credit_account === OFFSET_INCOME_ACCOUNT;
 
+    const isNonCashTransaction =
+      transaction.transaction_type === "non_cash_journal";
+
     if (
       !isOffsetTransaction &&
+      !isNonCashTransaction &&
       (!transaction.friendly_category ||
         transaction.friendly_category.trim() === "")
     ) {

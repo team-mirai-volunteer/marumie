@@ -6,7 +6,7 @@ import {
 import type { Transaction, TransactionType } from "@/shared/models/transaction";
 import type { TransactionFilters } from "@/types/transaction-filters";
 import type { DisplayTransactionType } from "@/types/display-transaction";
-import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
+import { PL_CATEGORIES } from "@/shared/utils/category-mapping";
 import type {
   DailyDonationData,
   ITransactionRepository,
@@ -273,8 +273,8 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     financialYear: number,
   ): Promise<DailyDonationData[]> {
     // 寄附カテゴリに該当するアカウントキーを抽出
-    const donationAccountKeys = Object.keys(ACCOUNT_CATEGORY_MAPPING).filter(
-      (key) => ACCOUNT_CATEGORY_MAPPING[key].category === "寄附",
+    const donationAccountKeys = Object.keys(PL_CATEGORIES).filter(
+      (key) => PL_CATEGORIES[key].category === "寄附",
     );
     const organizationIdsBigInt = politicalOrganizationIds.map((id) =>
       BigInt(id),
@@ -374,7 +374,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     >();
 
     for (const item of accountData) {
-      const mapping = ACCOUNT_CATEGORY_MAPPING[item.account] || {
+      const mapping = PL_CATEGORIES[item.account] || {
         category: item.account,
       };
       const key = mapping.subcategory
@@ -405,7 +405,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     >();
 
     for (const item of accountData) {
-      const mapping = ACCOUNT_CATEGORY_MAPPING[item.account] || {
+      const mapping = PL_CATEGORIES[item.account] || {
         category: item.account,
       };
       // friendlyカテゴリーの場合は、subcategoryをtagに置き換える
