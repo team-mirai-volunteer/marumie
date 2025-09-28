@@ -24,34 +24,44 @@ open/
 │   │   ├── client/   # クライアントサイドコンポーネント
 │   │   ├── server/   # サーバーサイドロジック
 │   │   └── types/    # 型定義
+│   ├── tests/        # テストファイル
 │   └── package.json
 ├── admin/            # 管理画面
 │   ├── src/
 │   │   ├── app/      # Next.js App Router
 │   │   ├── client/   # クライアントサイドコンポーネント
 │   │   ├── server/   # サーバーサイドロジック
+│   │   ├── types/    # 型定義
 │   │   └── middleware.ts
+│   ├── tests/        # テストファイル
 │   └── package.json
-├── shared/           # 共通モデル・型定義
-│   └── model/
+├── shared/           # 共通モデル・型定義・ユーティリティ
+│   ├── models/       # 共通データモデル
+│   └── utils/        # 共通ユーティリティ関数
 ├── data/             # サンプルデータ
-│   └── sampledata.csv
+│   ├── sampledata.csv
+│   └── test_current_liabilities.csv
 ├── supabase/         # Supabaseローカル開発環境設定
-│   └── config.toml
+│   ├── config.toml
+│   └── templates/
 ├── prisma/           # データベーススキーマ・マイグレーション
 │   ├── schema.prisma
-│   └── migrations/
+│   ├── migrations/
+│   └── seed.cjs
+├── logs/             # ログファイル
 └── docs/             # 設計ドキュメント（その時点での設計メモなので必ずしも正確ではないです）
+    └── images/       # ドキュメント用画像
 ```
 
 ### 各ディレクトリの役割
 
 - **webapp/**: 一般ユーザー向けのフロントエンドアプリケーション（政治資金データの可視化）
 - **admin/**: 管理者向けの管理画面（データ登録・管理機能）
-- **shared/**: webapp と admin で共通して使用するモデルや型定義
+- **shared/**: webapp と admin で共通して使用するモデル、型定義、ユーティリティ関数
 - **data/**: サンプルデータファイル
-- **supabase/**: Supabaseローカル開発環境の設定ファイル
-- **prisma/**: データベーススキーマ定義とマイグレーションファイル
+- **supabase/**: Supabaseローカル開発環境の設定ファイルとテンプレート
+- **prisma/**: データベーススキーマ定義、マイグレーションファイル、シードデータ
+- **logs/**: ログファイルやデバッグ用データ
 - **docs/**: プロジェクトの設計ドキュメント
 
 ## 技術スタック
