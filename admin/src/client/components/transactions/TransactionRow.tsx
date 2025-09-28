@@ -24,7 +24,18 @@ function getCategoryLabel(accountName: string): string {
   return categoryInfo?.shortLabel || accountName;
 }
 
-function getTransactionCategory(transaction: TransactionWithOrganization) {
+function getTransactionCategory(transaction: TransactionWithOrganization): {
+  account: string;
+  color: string;
+  label: string;
+  type:
+    | "income"
+    | "expense"
+    | "non_cash_journal"
+    | "offset_income"
+    | "offset_expense"
+    | "unknown";
+} {
   // non_cash_journal取引の場合はカテゴリを表示しない
   if (transaction.transaction_type === "non_cash_journal") {
     return {
@@ -32,6 +43,25 @@ function getTransactionCategory(transaction: TransactionWithOrganization) {
       color: "#6B7280", // グレー
       label: "-",
       type: "non_cash_journal" as const,
+    };
+  }
+
+  // offset系の取引の場合
+  if (transaction.transaction_type === "offset_income") {
+    return {
+      account: transaction.credit_account,
+      color: getCategoryColor(transaction.credit_account),
+      label: getCategoryLabel(transaction.credit_account),
+      type: "offset_income" as const,
+    };
+  }
+
+  if (transaction.transaction_type === "offset_expense") {
+    return {
+      account: transaction.debit_account,
+      color: getCategoryColor(transaction.debit_account),
+      label: getCategoryLabel(transaction.debit_account),
+      type: "offset_expense" as const,
     };
   }
 
@@ -51,7 +81,7 @@ function getTransactionCategory(transaction: TransactionWithOrganization) {
       account: transaction.credit_account,
       color: getCategoryColor(transaction.credit_account),
       label: getCategoryLabel(transaction.credit_account),
-      type: creditInfo?.type || "unknown",
+      type: (creditInfo?.type as "income" | "expense") || "unknown",
     };
   }
 }
@@ -140,7 +170,9 @@ export function TransactionRow({ transaction }: TransactionRowProps) {
           return (
             <div
               className={`inline-block px-2 py-1 rounded text-xs font-medium max-w-fit ${
-                category.type === "income" || category.type === "offset_income"
+                category.type === "income" ||
+                category.type === "offset_income" ||
+                category.type === "unknown"
                   ? "text-black"
                   : "text-white"
               }`}

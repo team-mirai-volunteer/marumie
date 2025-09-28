@@ -27,7 +27,18 @@ function getCategoryLabel(accountName: string): string {
   return categoryInfo?.shortLabel || accountName;
 }
 
-function getTransactionCategory(record: PreviewTransaction) {
+function getTransactionCategory(record: PreviewTransaction): {
+  account: string;
+  color: string;
+  label: string;
+  type:
+    | "income"
+    | "expense"
+    | "non_cash_journal"
+    | "offset_income"
+    | "offset_expense"
+    | "unknown";
+} {
   // non_cash_journal取引の場合はカテゴリを表示しない
   if (record.transaction_type === "non_cash_journal") {
     return {
@@ -35,6 +46,25 @@ function getTransactionCategory(record: PreviewTransaction) {
       color: "#6B7280", // グレー
       label: "-",
       type: "non_cash_journal" as const,
+    };
+  }
+
+  // offset系の取引の場合
+  if (record.transaction_type === "offset_income") {
+    return {
+      account: record.credit_account,
+      color: getCategoryColor(record.credit_account),
+      label: getCategoryLabel(record.credit_account),
+      type: "offset_income" as const,
+    };
+  }
+
+  if (record.transaction_type === "offset_expense") {
+    return {
+      account: record.debit_account,
+      color: getCategoryColor(record.debit_account),
+      label: getCategoryLabel(record.debit_account),
+      type: "offset_expense" as const,
     };
   }
 
@@ -54,7 +84,7 @@ function getTransactionCategory(record: PreviewTransaction) {
       account: record.credit_account,
       color: getCategoryColor(record.credit_account),
       label: getCategoryLabel(record.credit_account),
-      type: creditInfo?.type || "unknown",
+      type: (creditInfo?.type as "income" | "expense") || "unknown",
     };
   }
 }
