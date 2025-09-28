@@ -1,7 +1,8 @@
 // DB保存用のTransactionType (invalidは含まない)
 export type TransactionType =
-  | "income"
-  | "expense"
+  | "income" // 現金収入
+  | "expense" // 現金支出
+  | "non_cash_journal" // 非現金仕訳
   | "offset_income"
   | "offset_expense";
 

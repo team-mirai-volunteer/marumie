@@ -2,7 +2,8 @@
 import "client-only";
 
 import type { TransactionWithOrganization } from "@/server/usecases/get-transactions-usecase";
-import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
+import { PL_CATEGORIES } from "@/shared/utils/category-mapping";
+import type { TransactionType } from "@/shared/models/transaction";
 
 interface TransactionRowProps {
   transaction: TransactionWithOrganization;
@@ -11,7 +12,7 @@ interface TransactionRowProps {
 const DEFAULT_CATEGORY_COLOR = "#64748B"; // slate-500 as default fallback color
 
 function getCategoryInfoByAccount(accountName: string) {
-  return ACCOUNT_CATEGORY_MAPPING[accountName];
+  return PL_CATEGORIES[accountName];
 }
 
 function getCategoryColor(accountName: string): string {
@@ -24,22 +25,58 @@ function getCategoryLabel(accountName: string): string {
   return categoryInfo?.shortLabel || accountName;
 }
 
-function getTransactionCategory(transaction: TransactionWithOrganization) {
-  // transaction_typeがexpenseの場合は借方のカテゴリを、そうでなければ貸方のカテゴリを表示
+function getTransactionCategory(transaction: TransactionWithOrganization): {
+  account: string;
+  color: string;
+  label: string;
+  type: TransactionType;
+} {
+  // non_cash_journal取引の場合はカテゴリを表示しない
+  if (transaction.transaction_type === "non_cash_journal") {
+    return {
+      account: "non_cash_journal",
+      color: "#6B7280", // グレー
+      label: "-",
+      type: "non_cash_journal" as const,
+    };
+  }
 
-  if (transaction.transaction_type === "expense") {
+  // offset系の取引の場合
+  if (transaction.transaction_type === "offset_income") {
+    return {
+      account: transaction.credit_account,
+      color: getCategoryColor(transaction.credit_account),
+      label: getCategoryLabel(transaction.credit_account),
+      type: "offset_income" as const,
+    };
+  }
+
+  if (transaction.transaction_type === "offset_expense") {
     return {
       account: transaction.debit_account,
       color: getCategoryColor(transaction.debit_account),
       label: getCategoryLabel(transaction.debit_account),
-      type: "expense",
+      type: "offset_expense" as const,
+    };
+  }
+
+  // 借方（debit）が費用系の場合は借方のカテゴリを、そうでなければ貸方のカテゴリを表示
+  const debitInfo = getCategoryInfoByAccount(transaction.debit_account);
+  const creditInfo = getCategoryInfoByAccount(transaction.credit_account);
+
+  if (debitInfo?.type === "expense") {
+    return {
+      account: transaction.debit_account,
+      color: getCategoryColor(transaction.debit_account),
+      label: getCategoryLabel(transaction.debit_account),
+      type: debitInfo.type,
     };
   } else {
     return {
       account: transaction.credit_account,
       color: getCategoryColor(transaction.credit_account),
       label: getCategoryLabel(transaction.credit_account),
-      type: transaction.transaction_type,
+      type: creditInfo?.type || transaction.transaction_type,
     };
   }
 }
@@ -47,9 +84,11 @@ function getTransactionCategory(transaction: TransactionWithOrganization) {
 function getTypeLabel(type: string): string {
   switch (type) {
     case "income":
-      return "収入";
+      return "現金収入";
     case "expense":
-      return "支出";
+      return "現金支出";
+    case "non_cash_journal":
+      return "非現金仕訳";
     case "offset_income":
       return "相殺収入";
     case "offset_expense":
@@ -69,6 +108,8 @@ function getTypeBadgeClass(type: string): string {
     case "expense":
     case "offset_expense":
       return "bg-red-600";
+    case "non_cash_journal":
+      return "bg-blue-600";
     case "invalid":
       return "bg-orange-600";
     default:
@@ -112,16 +153,11 @@ export function TransactionRow({ transaction }: TransactionRowProps) {
         ¥{transaction.credit_amount.toLocaleString()}
       </td>
       <td className="px-2 py-3 text-sm text-white">
-        {(() => {
-          const category = getTransactionCategory(transaction);
-          return (
-            <span
-              className={`px-2 py-1 rounded text-white text-xs font-medium ${getTypeBadgeClass(category.type)}`}
-            >
-              {getTypeLabel(category.type)}
-            </span>
-          );
-        })()}
+        <span
+          className={`px-2 py-1 rounded text-white text-xs font-medium ${getTypeBadgeClass(transaction.transaction_type)}`}
+        >
+          {getTypeLabel(transaction.transaction_type)}
+        </span>
       </td>
       <td className="px-2 py-3 text-sm text-white">
         {(() => {

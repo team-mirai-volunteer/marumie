@@ -69,7 +69,7 @@ const CHART_CONFIG = {
   NODE_THICKNESS: 12,
   NODE_SPACING_DESKTOP: 24,
   NODE_SPACING_MOBILE: 12,
-  LINK_OPACITY: 0.5,
+  LINK_OPACITY: 1.0,
   LINK_HOVER_OPACITY: 0.8,
   HOVER_OPACITY: 0.9,
 } as const;
@@ -168,12 +168,7 @@ const CustomNodesLayer = ({
         {nodes.map((node: SankeyNodeWithPosition) => {
           const width = getNodeWidth(node.nodeType, isMobile);
           const x = node.x - (width - DIMENSIONS.NODE_BASE_WIDTH) / 2;
-          const color = getNodeColor(
-            node.id,
-            node.nodeType,
-            "fill",
-            node.label,
-          );
+          const color = getNodeColor(node.nodeType, "fill", node.label);
 
           return (
             <InteractiveRect
@@ -252,7 +247,7 @@ const calculatePercentageText = (nodeValue?: number, totalValue?: number) => {
 
 const renderTotalNodeLabels = (
   node: SankeyNodeWithPosition,
-  boxColor: string,
+  _boxColor: string,
   percentageY: number,
   isMobile: boolean,
 ) => {
@@ -327,9 +322,9 @@ const splitLabel = (label: string, maxCharsPerLine: number): string[] => {
     return ["その他", label.substring(3)];
   }
 
-  // 「昨年からの繰越し」の特別対応：「昨年からの」と「繰越し」に分割
-  if (label === "昨年からの繰越し") {
-    return ["昨年からの", "繰越し"];
+  // 「昨年からの現金残高」の特別対応：「昨年からの」と「現金残高」に分割
+  if (label === "昨年からの現金残高") {
+    return ["昨年からの", "現金残高"];
   }
 
   // 特殊ケース：N+1文字（7文字）の場合は N-2, 3 に分割
@@ -357,18 +352,13 @@ const renderPercentageLabel = (
   boxColor: string,
   percentageY: number,
   isMobile: boolean,
+  getPercentageTextColor: (nodeLabel?: string, boxColor?: string) => string,
 ) => {
   if (!percentageText) {
     return null;
   }
 
-  // (仕訳中)ノードの場合は特別な色を使用、繰越しの場合もTEXT色を使用
-  const textColor =
-    node.label === "(仕訳中)"
-      ? "#DC2626"
-      : node.label === "繰越し"
-        ? TEXT
-        : boxColor;
+  const textColor = getPercentageTextColor(node.label, boxColor);
 
   return (
     <text
@@ -469,7 +459,7 @@ const CustomLabelsLayer = ({
   nodes: readonly SankeyNodeWithPosition[];
 }) => {
   const isMobile = useMobileDetection();
-  const { getNodeColor } = useNodeColors();
+  const { getNodeColor, getPercentageTextColor } = useNodeColors();
 
   // 全体の合計値を計算（合計ノードの値を使用）
   const totalValue =
@@ -494,12 +484,7 @@ const CustomLabelsLayer = ({
         const textAnchor = isLeft ? "end" : "start";
         const percentageY = node.y - DIMENSIONS.PERCENTAGE_OFFSET;
         const percentageText = calculatePercentageText(node.value, totalValue);
-        const boxColor = getNodeColor(
-          node.id,
-          node.nodeType,
-          "box",
-          node.label,
-        );
+        const boxColor = getNodeColor(node.nodeType, "box", node.label);
         const elements = [];
 
         if (node.nodeType === "total") {
@@ -513,6 +498,7 @@ const CustomLabelsLayer = ({
             boxColor,
             percentageY,
             isMobile,
+            getPercentageTextColor,
           );
           if (percentageLabel) {
             elements.push(percentageLabel);
@@ -532,8 +518,35 @@ const CustomLabelsLayer = ({
 export default function SankeyChart({ data }: SankeyChartProps) {
   const isMobile = useMobileDetection();
   const { getNodeColor } = useNodeColors();
-  const { processLinksWithColors } = useLinkColors(data);
-  const { sortNodes, sortLinks } = useSankeySorting(data);
+
+  // 空データの場合はダミーデータを渡す
+  const safeData = data?.nodes && data?.links ? data : { nodes: [], links: [] };
+  const { processLinksWithColors } = useLinkColors(safeData);
+  const { sortNodes, sortLinks } = useSankeySorting(safeData);
+
+  // データが空または不正な場合の早期リターン
+  if (
+    !data ||
+    !data.nodes ||
+    !data.links ||
+    data.nodes.length === 0 ||
+    data.links.length === 0
+  ) {
+    return (
+      <div
+        style={{
+          height: 300,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#6B7280",
+          fontSize: "14px",
+        }}
+      >
+        データがありません
+      </div>
+    );
+  }
 
   // ソートされたデータを取得
   const sortedNodes = sortNodes(data.nodes);
@@ -599,7 +612,6 @@ export default function SankeyChart({ data }: SankeyChartProps) {
         align="center"
         colors={(node) =>
           getNodeColor(
-            (node as { id: string }).id,
             (node as { nodeType?: string }).nodeType,
             "light",
             (node as { label?: string }).label,

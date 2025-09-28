@@ -13,7 +13,6 @@ export function generateTransactionHash(
   const hashData = {
     transaction_no: transaction.transaction_no,
     transaction_date: normalizeDate(transaction.transaction_date),
-    transaction_type: transaction.transaction_type,
     debit_account: transaction.debit_account,
     debit_sub_account: transaction.debit_sub_account || "",
     debit_amount: transaction.debit_amount,
@@ -21,7 +20,6 @@ export function generateTransactionHash(
     credit_sub_account: transaction.credit_sub_account || "",
     credit_amount: transaction.credit_amount,
     description: transaction.description || "",
-    category_key: transaction.category_key,
   };
 
   // オブジェクトをJSONにシリアライズしてからハッシュ化

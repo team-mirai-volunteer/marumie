@@ -1,6 +1,6 @@
 import type { Transaction } from "@/shared/models/transaction";
 import {
-  ACCOUNT_CATEGORY_MAPPING,
+  PL_CATEGORIES,
   type CategoryMapping,
 } from "@/shared/utils/category-mapping";
 import type {
@@ -14,7 +14,7 @@ import type {
  */
 export function getCategoryMapping(account: string): CategoryMapping {
   return (
-    ACCOUNT_CATEGORY_MAPPING[account] || {
+    PL_CATEGORIES[account] || {
       category: "unknown",
       subcategory: "unknown",
       color: "#99F6E4",

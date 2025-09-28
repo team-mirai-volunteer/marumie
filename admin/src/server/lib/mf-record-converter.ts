@@ -1,12 +1,16 @@
 import type { MfCsvRecord } from "./mf-csv-loader";
-import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
+import {
+  PL_CATEGORIES,
+  BS_CATEGORIES,
+  CASH_ACCOUNTS,
+} from "@/shared/utils/category-mapping";
 import type { TransactionType } from "@/shared/models/transaction";
 import { generateTransactionHash } from "./transaction-hash";
 
 export interface PreviewTransaction {
   political_organization_id: string;
   transaction_no: string;
-  transaction_date: Date | string;
+  transaction_date: Date;
   transaction_type: TransactionType | null;
   debit_account: string;
   debit_sub_account: string | undefined;
@@ -39,6 +43,8 @@ export class MfRecordConverter {
       record.debit_account,
       record.credit_account,
     );
+
+    const friendlyCategory = record.friendly_category;
 
     const label = record.description?.startsWith("デビット")
       ? record.description
@@ -76,7 +82,7 @@ export class MfRecordConverter {
       credit_amount: creditAmount,
       description: record.description,
       label: label,
-      friendly_category: record.friendly_category,
+      friendly_category: friendlyCategory,
       category_key: categoryKey,
       hash: "",
       status,
@@ -119,15 +125,18 @@ export class MfRecordConverter {
     debitAccount: string,
     creditAccount: string,
   ): string {
-    if (debitAccount === "普通預金") {
-      const mapping = ACCOUNT_CATEGORY_MAPPING[creditAccount];
+    const isDebitPL = debitAccount in PL_CATEGORIES;
+    const isCreditPL = creditAccount in PL_CATEGORIES;
+
+    if (isDebitPL) {
+      const mapping = PL_CATEGORIES[debitAccount];
       return mapping ? mapping.key : "undefined";
-    } else if (creditAccount === "普通預金") {
-      const mapping = ACCOUNT_CATEGORY_MAPPING[debitAccount];
-      return mapping ? mapping.key : "undefined";
-    } else {
-      return "undefined";
     }
+    if (isCreditPL) {
+      const mapping = PL_CATEGORIES[creditAccount];
+      return mapping ? mapping.key : "undefined";
+    }
+    return "undefined";
   }
 
   private determineTransactionType(
@@ -140,19 +149,35 @@ export class MfRecordConverter {
     if (creditAccount === "相殺項目（収入）") {
       return "offset_income";
     }
-    if (debitAccount === "普通預金") {
+
+    const isDebitBS = debitAccount in BS_CATEGORIES;
+    const isCreditBS = creditAccount in BS_CATEGORIES;
+    const isDebitPL = debitAccount in PL_CATEGORIES;
+    const isCreditPL = creditAccount in PL_CATEGORIES;
+
+    // 現金収入: 現金類(借方) + PL科目(貸方)
+    if (isDebitBS && isCreditPL && this.isCashEquivalent(debitAccount)) {
       return "income";
     }
-    if (creditAccount === "普通預金") {
+    // 現金支出: PL科目(借方) + 現金類(貸方)
+    if (isDebitPL && isCreditBS && this.isCashEquivalent(creditAccount)) {
       return "expense";
     }
+    // 非現金仕訳: PL科目とBS科目の組み合わせ（現金を含まない）
+    if ((isDebitPL && isCreditBS) || (isDebitBS && isCreditPL)) {
+      return "non_cash_journal";
+    }
+
     return null;
   }
 
-  public extractFinancialYear(dateString: string): number {
+  private isCashEquivalent(account: string): boolean {
+    return CASH_ACCOUNTS.has(account);
+  }
+
+  public extractFinancialYear(date: Date): number {
     const startOfFinancialYear = 1;
 
-    const date = new Date(dateString);
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
 

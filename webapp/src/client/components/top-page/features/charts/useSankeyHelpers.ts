@@ -15,6 +15,12 @@ const COLORS = {
   INCOME_LIGHT: "#E5F7F4", // 薄い緑
   EXPENSE_LIGHT: "#FBE2E7", // 薄い赤
   CARRYOVER_LIGHT: "#E5E7EB", // 薄いグレー（繰越し用）
+  // 特別なノード用の色
+  CASH_BALANCE_BOX: "#6B7280", // 現金残高・収支・昨年残高のボックス色
+  CASH_BALANCE_LIGHT: "#E5E7EB", // 現金残高・収支・昨年残高の薄い色
+  PROCESSING_ERROR: "#F87171", // (仕訳中)のエラー色
+  PROCESSING_LIGHT: "#FFF2F2", // (仕訳中)の薄い色
+  PERCENTAGE_DARK: "#111827", // パーセンテージ表記の濃い色（収支・昨年残高用）
 } as const;
 
 // モバイル検知のカスタムフック
@@ -38,26 +44,36 @@ export function useNodeColors() {
   // 統一されたノード色取得関数
   const getNodeColor = React.useCallback(
     (
-      nodeId: string,
       nodeType?: string,
       variant: "fill" | "light" | "box" = "fill",
       nodeLabel?: string,
     ): string => {
       // 特別なノードの判定（labelベース）
-      if (nodeLabel === "繰越し") {
-        if (variant === "light") return "#D2D4D8";
-        if (variant === "box" || variant === "fill") return "#6B7280"; // ボックス色はグレーのまま
-        return COLORS.TEXT; // テキスト色は#1F2937
+      if (nodeLabel === "現金残高") {
+        if (variant === "light") return COLORS.CASH_BALANCE_LIGHT;
+        if (variant === "box" || variant === "fill")
+          return COLORS.CASH_BALANCE_BOX;
+        return COLORS.TEXT;
       }
 
-      if (nodeLabel === "昨年からの繰越し") {
-        if (variant === "light") return "#D2D4D8";
-        if (variant === "box" || variant === "fill") return "#6B7280"; // ボックス色はグレーのまま
-        return COLORS.TEXT; // テキスト色は#1F2937
+      if (nodeLabel === "昨年からの現金残高") {
+        if (variant === "light") return COLORS.CASH_BALANCE_LIGHT;
+        if (variant === "box" || variant === "fill")
+          return COLORS.CASH_BALANCE_BOX;
+        return COLORS.TEXT;
+      }
+
+      if (nodeLabel === "収支") {
+        if (variant === "light") return COLORS.CASH_BALANCE_LIGHT;
+        if (variant === "box" || variant === "fill")
+          return COLORS.CASH_BALANCE_BOX;
+        return COLORS.TEXT;
       }
 
       if (nodeLabel === "(仕訳中)") {
-        return variant === "light" ? "#FFF2F2" : "#F87171";
+        return variant === "light"
+          ? COLORS.PROCESSING_LIGHT
+          : COLORS.PROCESSING_ERROR;
       }
 
       // 通常のノードタイプ判定
@@ -74,7 +90,31 @@ export function useNodeColors() {
     [],
   );
 
-  return { getNodeColor };
+  // パーセンテージテキスト色取得関数
+  const getPercentageTextColor = React.useCallback(
+    (nodeLabel?: string, boxColor?: string): string => {
+      if (nodeLabel === "(仕訳中)") {
+        return COLORS.EXPENSE;
+      }
+
+      if (nodeLabel === "現金残高") {
+        return COLORS.TEXT;
+      }
+
+      if (nodeLabel === "収支") {
+        return COLORS.PERCENTAGE_DARK;
+      }
+
+      if (nodeLabel === "昨年からの現金残高") {
+        return COLORS.PERCENTAGE_DARK;
+      }
+
+      return boxColor || COLORS.TEXT;
+    },
+    [],
+  );
+
+  return { getNodeColor, getPercentageTextColor };
 }
 
 // リンク色処理のカスタムフック
@@ -83,9 +123,19 @@ export function useLinkColors(data: SankeyData) {
 
   const processLinksWithColors = React.useCallback(() => {
     return data.links.map((link) => {
+      const sourceNode = data.nodes.find((n) => n.id === link.source);
       const targetNode = data.nodes.find((n) => n.id === link.target);
+
+      // 「昨年からの現金残高」ノードからのリンクはグレーにする
+      if (sourceNode?.label === "昨年からの現金残高") {
+        return {
+          ...link,
+          startColor: COLORS.CASH_BALANCE_LIGHT,
+          endColor: COLORS.CASH_BALANCE_LIGHT,
+        };
+      }
+
       const targetColor = getNodeColor(
-        link.target,
         targetNode?.nodeType,
         "light",
         targetNode?.label,
@@ -123,105 +173,152 @@ export function useSankeySorting(data: SankeyData) {
     [],
   );
 
-  // ① ノードを並び替え
-  const sortNodes = React.useCallback(
+  // ヘルパー関数: 親カテゴリIDを取得
+  const getParentCategoryId = React.useCallback(
+    (nodeId: string, nodeType: string) => {
+      if (nodeType === "income-sub") {
+        const link = data.links.find(
+          (link) => link.source === nodeId && link.target.startsWith("income-"),
+        );
+        return link?.target;
+      } else if (nodeType === "expense-sub") {
+        const link = data.links.find(
+          (link) =>
+            link.target === nodeId && link.source.startsWith("expense-"),
+        );
+        return link?.source;
+      }
+      return null;
+    },
+    [data.links],
+  );
+
+  // ソート関数: income カテゴリ
+  const sortIncomeNodes = React.useCallback(
     (nodes: SankeyNode[]) => {
       return [...nodes].sort((a, b) => {
-        // ノードタイプによる基本的な順序
-        const typeOrder = {
-          "income-sub": 0,
-          income: 1,
-          total: 2,
-          expense: 3,
-          "expense-sub": 4,
-        } as const;
+        const aValue = calculateNodeValue(a.id, data.links);
+        const bValue = calculateNodeValue(b.id, data.links);
 
-        const aOrder = typeOrder[a.nodeType as keyof typeof typeOrder] ?? 5;
-        const bOrder = typeOrder[b.nodeType as keyof typeof typeOrder] ?? 5;
+        // 昨年からの現金残高を最後に
+        const aIsPreviousYearCarryover = a.label === "昨年からの現金残高";
+        const bIsPreviousYearCarryover = b.label === "昨年からの現金残高";
 
-        if (aOrder !== bOrder) {
-          return aOrder - bOrder;
-        }
+        if (aIsPreviousYearCarryover && !bIsPreviousYearCarryover) return 1;
+        if (bIsPreviousYearCarryover && !aIsPreviousYearCarryover) return -1;
 
-        // income, expense -> 単純に大きい順に並び替え
-        if (a.nodeType === "income" || a.nodeType === "expense") {
-          const aValue = calculateNodeValue(a.id, data.links);
-          const bValue = calculateNodeValue(b.id, data.links);
-
-          // income カテゴリでの特別処理
-          if (a.nodeType === "income") {
-            const aIsPreviousYearCarryover = a.label === "昨年からの繰越し";
-            const bIsPreviousYearCarryover = b.label === "昨年からの繰越し";
-
-            // 昨年からの繰越し vs その他
-            if (aIsPreviousYearCarryover && !bIsPreviousYearCarryover) return 1; // 昨年からの繰越しを最後に
-            if (bIsPreviousYearCarryover && !aIsPreviousYearCarryover)
-              return -1; // 昨年からの繰越しを最後に
-          }
-
-          // expense カテゴリでの特別処理
-          if (a.nodeType === "expense") {
-            const aIsCarryover = a.label === "繰越し";
-            const bIsCarryover = b.label === "繰越し";
-            const aIsProcessing = a.label === "(仕訳中)";
-            const bIsProcessing = b.label === "(仕訳中)";
-
-            // 繰越し vs その他
-            if (aIsCarryover && !bIsCarryover) return 1; // 繰越しを最後に
-            if (bIsCarryover && !aIsCarryover) return -1; // 繰越しを最後に
-
-            // (仕訳中) vs その他（繰越し以外）
-            if (aIsProcessing && !bIsProcessing && !bIsCarryover) return 1; // (仕訳中)を後に
-            if (bIsProcessing && !aIsProcessing && !aIsCarryover) return -1; // (仕訳中)を後に
-          }
-
-          return bValue - aValue; // 大きい順
-        }
-
-        // income-sub, expense-sub -> 親カテゴリのサイズ・自カテゴリのサイズで複合ソート
-        if (a.nodeType === "income-sub" || a.nodeType === "expense-sub") {
-          // 親カテゴリを特定
-          const getParentCategory = (nodeId: string, nodeType: string) => {
-            if (nodeType === "income-sub") {
-              // income-sub-{subcategory} -> income-{category}への接続を探す
-              const link = data.links.find(
-                (link) =>
-                  link.source === nodeId && link.target.startsWith("income-"),
-              );
-              return link?.target;
-            } else if (nodeType === "expense-sub") {
-              // expense-{category} -> expense-sub-{subcategory}への接続を探す
-              const link = data.links.find(
-                (link) =>
-                  link.target === nodeId && link.source.startsWith("expense-"),
-              );
-              return link?.source;
-            }
-            return null;
-          };
-
-          const aParent = getParentCategory(a.id, a.nodeType!);
-          const bParent = getParentCategory(b.id, b.nodeType!);
-
-          // 親カテゴリのサイズで比較
-          if (aParent && bParent && aParent !== bParent) {
-            const aParentValue = calculateNodeValue(aParent, data.links);
-            const bParentValue = calculateNodeValue(bParent, data.links);
-            if (aParentValue !== bParentValue) {
-              return bParentValue - aParentValue; // 大きい親から
-            }
-          }
-
-          // 同じ親カテゴリなら自カテゴリのサイズで比較
-          const aValue = calculateNodeValue(a.id, data.links);
-          const bValue = calculateNodeValue(b.id, data.links);
-          return bValue - aValue; // 大きい順
-        }
-
-        return 0;
+        return bValue - aValue; // 大きい順
       });
     },
     [data.links, calculateNodeValue],
+  );
+
+  // ソート関数: expense カテゴリ
+  const sortExpenseNodes = React.useCallback(
+    (nodes: SankeyNode[]) => {
+      return [...nodes].sort((a, b) => {
+        const aValue = calculateNodeValue(a.id, data.links);
+        const bValue = calculateNodeValue(b.id, data.links);
+
+        const aIsCarryover = a.label === "現金残高";
+        const bIsCarryover = b.label === "現金残高";
+        const aIsProcessing = a.label === "(仕訳中)";
+        const bIsProcessing = b.label === "(仕訳中)";
+
+        // 現金残高を最後に
+        if (aIsCarryover && !bIsCarryover) return 1;
+        if (bIsCarryover && !aIsCarryover) return -1;
+
+        // (仕訳中)を後に（現金残高以外）
+        if (aIsProcessing && !bIsProcessing && !bIsCarryover) return 1;
+        if (bIsProcessing && !aIsProcessing && !aIsCarryover) return -1;
+
+        return bValue - aValue; // 大きい順
+      });
+    },
+    [data.links, calculateNodeValue],
+  );
+
+  // ソート関数: sub カテゴリ（income-sub, expense-sub）
+  const sortSubNodes = React.useCallback(
+    (nodes: SankeyNode[], sortedParentNodes: SankeyNode[]) => {
+      return [...nodes].sort((a, b) => {
+        const aParent = a.nodeType
+          ? getParentCategoryId(a.id, a.nodeType)
+          : null;
+        const bParent = b.nodeType
+          ? getParentCategoryId(b.id, b.nodeType)
+          : null;
+
+        // 親カテゴリが異なる場合は親の順序に従う
+        if (aParent && bParent && aParent !== bParent) {
+          // ソート済み親ノードの順序を使用
+          const aParentIndex = sortedParentNodes.findIndex(
+            (n) => n.id === aParent,
+          );
+          const bParentIndex = sortedParentNodes.findIndex(
+            (n) => n.id === bParent,
+          );
+
+          if (aParentIndex !== -1 && bParentIndex !== -1) {
+            return aParentIndex - bParentIndex; // 親の順序に従う
+          }
+        }
+
+        // sub-expenseにおいて「収支」を同一カテゴリ内で末尾に配置
+        if (
+          a.nodeType === "expense-sub" &&
+          b.nodeType === "expense-sub" &&
+          aParent === bParent
+        ) {
+          const aIsBalance = a.label === "収支";
+          const bIsBalance = b.label === "収支";
+
+          if (aIsBalance && !bIsBalance) return 1;
+          if (bIsBalance && !aIsBalance) return -1;
+        }
+
+        // 同一親内では金額順
+        const aValue = calculateNodeValue(a.id, data.links);
+        const bValue = calculateNodeValue(b.id, data.links);
+        return bValue - aValue;
+      });
+    },
+    [data.links, calculateNodeValue, getParentCategoryId],
+  );
+
+  // ① ノードを並び替え（カテゴリ別にfilter→sort→結合）
+  const sortNodes = React.useCallback(
+    (nodes: SankeyNode[]) => {
+      // 親ノードを先にソート
+      const incomeNodes = sortIncomeNodes(
+        nodes.filter((n) => n.nodeType === "income"),
+      );
+      const expenseNodes = sortExpenseNodes(
+        nodes.filter((n) => n.nodeType === "expense"),
+      );
+
+      // ソート済み親ノードを使ってsubノードをソート
+      const incomeSubNodes = sortSubNodes(
+        nodes.filter((n) => n.nodeType === "income-sub"),
+        incomeNodes,
+      );
+      const expenseSubNodes = sortSubNodes(
+        nodes.filter((n) => n.nodeType === "expense-sub"),
+        expenseNodes,
+      );
+
+      const totalNode = nodes.find((n) => n.nodeType === "total");
+
+      return [
+        ...incomeSubNodes,
+        ...incomeNodes,
+        ...(totalNode ? [totalNode] : []),
+        ...expenseNodes,
+        ...expenseSubNodes,
+      ];
+    },
+    [sortSubNodes, sortIncomeNodes, sortExpenseNodes],
   );
 
   // ② リンクを並び替え

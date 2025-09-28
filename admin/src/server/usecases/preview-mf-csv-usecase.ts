@@ -139,24 +139,28 @@ export class PreviewMfCsvUsecase {
       insert: {
         income: { count: 0, amount: 0 },
         expense: { count: 0, amount: 0 },
+        non_cash_journal: { count: 0, amount: 0 },
         offset_income: { count: 0, amount: 0 },
         offset_expense: { count: 0, amount: 0 },
       },
       update: {
         income: { count: 0, amount: 0 },
         expense: { count: 0, amount: 0 },
+        non_cash_journal: { count: 0, amount: 0 },
         offset_income: { count: 0, amount: 0 },
         offset_expense: { count: 0, amount: 0 },
       },
       invalid: {
         income: { count: 0, amount: 0 },
         expense: { count: 0, amount: 0 },
+        non_cash_journal: { count: 0, amount: 0 },
         offset_income: { count: 0, amount: 0 },
         offset_expense: { count: 0, amount: 0 },
       },
       skip: {
         income: { count: 0, amount: 0 },
         expense: { count: 0, amount: 0 },
+        non_cash_journal: { count: 0, amount: 0 },
         offset_income: { count: 0, amount: 0 },
         offset_expense: { count: 0, amount: 0 },
       },
@@ -178,7 +182,7 @@ export class PreviewMfCsvUsecase {
       // 統計を更新
       statistics[status][transactionType].count += 1;
 
-      // 収入系は credit_amount、支出系は debit_amount を使用
+      // 収入系は credit_amount、支出系とtransferは debit_amount を使用
       const amount =
         transactionType === "income" || transactionType === "offset_income"
           ? transaction.credit_amount

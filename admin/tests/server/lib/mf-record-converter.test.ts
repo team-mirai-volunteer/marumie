@@ -83,10 +83,10 @@ describe("MfRecordConverter", () => {
       expect(result.credit_amount).toBe(0);
     });
 
-    it("should set transaction_type to income when debit_account is 普通預金", () => {
+    it("should set transaction_type to income when debit_account is 普通預金 and credit_account is PL category", () => {
       const record = createMockRecord({
         debit_account: "普通預金",
-        credit_account: "寄附金",
+        credit_account: "個人からの寄附",
       });
 
       const result = converter.convertRow(record, "test-org-id");
@@ -94,9 +94,9 @@ describe("MfRecordConverter", () => {
       expect(result.transaction_type).toBe("income");
     });
 
-    it("should set transaction_type to expense when credit_account is 普通預金", () => {
+    it("should set transaction_type to expense when credit_account is 普通預金 and debit_account is PL category", () => {
       const record = createMockRecord({
-        debit_account: "事務費",
+        debit_account: "事務所費",
         credit_account: "普通預金",
       });
 
@@ -107,8 +107,8 @@ describe("MfRecordConverter", () => {
 
     it("should set transaction_type to other when neither account is 普通預金", () => {
       const record = createMockRecord({
-        debit_account: "事務費",
-        credit_account: "寄附金",
+        debit_account: "事務所費",
+        credit_account: "個人からの寄附",
       });
 
       const result = converter.convertRow(record, "test-org-id");
@@ -137,15 +137,26 @@ describe("MfRecordConverter", () => {
       expect(result.friendly_category).toBe("テストタグ");
     });
 
-    it("should prioritize debit_account when both accounts are 普通預金", () => {
+    it("should set transaction_type to null when both accounts are BS categories", () => {
       const record = createMockRecord({
         debit_account: "普通預金",
-        credit_account: "普通預金",
+        credit_account: "未払金",
       });
 
       const result = converter.convertRow(record, "test-org-id");
 
-      expect(result.transaction_type).toBe("income");
+      expect(result.transaction_type).toBe(null);
+    });
+
+    it("should set transaction_type to non_cash_journal when PL and BS accounts are mixed without cash", () => {
+      const record = createMockRecord({
+        debit_account: "事務所費",
+        credit_account: "未払金",
+      });
+
+      const result = converter.convertRow(record, "test-org-id");
+
+      expect(result.transaction_type).toBe("non_cash_journal");
     });
 
 
@@ -162,10 +173,10 @@ describe("MfRecordConverter", () => {
 
   describe("extractFinancialYear", () => {
     it("should return correct financial year for calendar year dates", () => {
-      expect(converter.extractFinancialYear("2025/1/1")).toBe(2025);
-      expect(converter.extractFinancialYear("2025/3/31")).toBe(2025);
-      expect(converter.extractFinancialYear("2025/6/15")).toBe(2025);
-      expect(converter.extractFinancialYear("2025/12/31")).toBe(2025);
+      expect(converter.extractFinancialYear(new Date("2025/1/1"))).toBe(2025);
+      expect(converter.extractFinancialYear(new Date("2025/3/31"))).toBe(2025);
+      expect(converter.extractFinancialYear(new Date("2025/6/15"))).toBe(2025);
+      expect(converter.extractFinancialYear(new Date("2025/12/31"))).toBe(2025);
     });
   });
 });

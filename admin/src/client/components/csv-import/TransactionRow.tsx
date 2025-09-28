@@ -2,7 +2,8 @@
 import "client-only";
 
 import type { PreviewTransaction } from "@/server/lib/mf-record-converter";
-import { ACCOUNT_CATEGORY_MAPPING } from "@/shared/utils/category-mapping";
+import { PL_CATEGORIES } from "@/shared/utils/category-mapping";
+import type { TransactionType } from "@/shared/models/transaction";
 
 interface TransactionRowProps {
   record: PreviewTransaction;
@@ -14,7 +15,7 @@ interface TransactionRowProps {
 const DEFAULT_CATEGORY_COLOR = "#64748B"; // slate-500 as default fallback color
 
 function getCategoryInfoByAccount(accountName: string) {
-  return ACCOUNT_CATEGORY_MAPPING[accountName];
+  return PL_CATEGORIES[accountName];
 }
 
 function getCategoryColor(accountName: string): string {
@@ -27,7 +28,41 @@ function getCategoryLabel(accountName: string): string {
   return categoryInfo?.shortLabel || accountName;
 }
 
-function getTransactionCategory(record: PreviewTransaction) {
+function getTransactionCategory(record: PreviewTransaction): {
+  account: string;
+  color: string;
+  label: string;
+  type: TransactionType | "unknown";
+} {
+  // non_cash_journal取引の場合はカテゴリを表示しない
+  if (record.transaction_type === "non_cash_journal") {
+    return {
+      account: "non_cash_journal",
+      color: "#6B7280", // グレー
+      label: "-",
+      type: "non_cash_journal" as const,
+    };
+  }
+
+  // offset系の取引の場合
+  if (record.transaction_type === "offset_income") {
+    return {
+      account: record.credit_account,
+      color: getCategoryColor(record.credit_account),
+      label: getCategoryLabel(record.credit_account),
+      type: "offset_income" as const,
+    };
+  }
+
+  if (record.transaction_type === "offset_expense") {
+    return {
+      account: record.debit_account,
+      color: getCategoryColor(record.debit_account),
+      label: getCategoryLabel(record.debit_account),
+      type: "offset_expense" as const,
+    };
+  }
+
   // 借方（debit）が費用系の場合は借方のカテゴリを、そうでなければ貸方のカテゴリを表示
   const debitInfo = getCategoryInfoByAccount(record.debit_account);
   const creditInfo = getCategoryInfoByAccount(record.credit_account);
@@ -44,7 +79,7 @@ function getTransactionCategory(record: PreviewTransaction) {
       account: record.credit_account,
       color: getCategoryColor(record.credit_account),
       label: getCategoryLabel(record.credit_account),
-      type: creditInfo?.type || "unknown",
+      type: (creditInfo?.type as "income" | "expense") || "unknown",
     };
   }
 }
@@ -52,9 +87,11 @@ function getTransactionCategory(record: PreviewTransaction) {
 function getTypeLabel(type: string): string {
   switch (type) {
     case "income":
-      return "収入";
+      return "現金収入";
     case "expense":
-      return "支出";
+      return "現金支出";
+    case "non_cash_journal":
+      return "非現金仕訳";
     case "offset_income":
       return "相殺収入";
     case "offset_expense":
@@ -74,6 +111,8 @@ function getTypeBadgeClass(type: string): string {
     case "expense":
     case "offset_expense":
       return "bg-red-600";
+    case "non_cash_journal":
+      return "bg-blue-600";
     case "invalid":
       return "bg-orange-600";
     default:
@@ -168,16 +207,11 @@ export default function TransactionRow({
           : "-"}
       </td>
       <td className="px-2 py-3 text-sm text-white">
-        {(() => {
-          const category = getTransactionCategory(record);
-          return (
-            <span
-              className={`px-2 py-1 rounded text-white text-xs font-medium ${getTypeBadgeClass(category.type)}`}
-            >
-              {getTypeLabel(category.type)}
-            </span>
-          );
-        })()}
+        <span
+          className={`px-2 py-1 rounded text-white text-xs font-medium ${getTypeBadgeClass(record.transaction_type || "unknown")}`}
+        >
+          {getTypeLabel(record.transaction_type || "unknown")}
+        </span>
       </td>
       <td className="px-2 py-3 text-sm text-white">
         {(() => {
@@ -195,7 +229,7 @@ export default function TransactionRow({
         })()}
       </td>
       <td className="px-2 py-3 text-sm text-white">
-        {record.description || "-"}
+        {record.description || "-"}, {record.transaction_type}
         {record.label && (
           <div className="text-blue-400 text-xs mt-1">
             ラベル: {record.label}
