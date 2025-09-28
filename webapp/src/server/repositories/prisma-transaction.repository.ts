@@ -367,7 +367,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       return 0;
     }
 
-    // 借方の合計（未払金の減少）
+    // 借方の合計（未払費用の減少）
     const debitResult = await this.prisma.transaction.aggregate({
       _sum: {
         debitAmount: true,
@@ -383,7 +383,7 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       },
     });
 
-    // 貸方の合計（未払金の増加）
+    // 貸方の合計（未払費用の増加）
     const creditResult = await this.prisma.transaction.aggregate({
       _sum: {
         creditAmount: true,
@@ -406,10 +406,10 @@ export class PrismaTransactionRepository implements ITransactionRepository {
       `[getLiabilityBalance] Liability accounts: ${liabilityAccounts.join(", ")}`,
     );
     console.log(
-      `[getLiabilityBalance] Debit total (未払金の減少): ${debitTotal}`,
+      `[getLiabilityBalance] Debit total (未払費用の減少): ${debitTotal}`,
     );
     console.log(
-      `[getLiabilityBalance] Credit total (未払金の増加): ${creditTotal}`,
+      `[getLiabilityBalance] Credit total (未払費用の増加): ${creditTotal}`,
     );
     console.log(
       `[getLiabilityBalance] Final liability balance: ${creditTotal - debitTotal}`,

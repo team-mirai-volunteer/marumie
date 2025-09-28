@@ -168,8 +168,8 @@ const createMockSankeyData = (): SankeyData => ({
       nodeType: "expense-sub",
     },
     {
-      id: "expense-sub-未払金",
-      label: "未払金",
+      id: "expense-sub-未払費用",
+      label: "未払費用",
       nodeType: "expense-sub",
     },
   ],
@@ -201,7 +201,7 @@ const createMockSankeyData = (): SankeyData => ({
     },
     {
       source: "expense-現金残高",
-      target: "expense-sub-未払金",
+      target: "expense-sub-未払費用",
       value: 100000,
     },
   ],
@@ -247,7 +247,7 @@ describe("SankeyHelpers Sorting Logic", () => {
       const expenseSubNodes = sortedNodes.filter((node) => node.nodeType === "expense-sub");
       expect(expenseSubNodes.map((node) => node.label)).toEqual([
         "広告費", // 政治活動費の子（親が先に来るため）
-        "未払金", // 現金残高の子（親が後に来るため）
+        "未払費用", // 現金残高の子（親が後に来るため）
       ]);
     });
 

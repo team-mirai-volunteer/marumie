@@ -70,7 +70,7 @@ export function useNodeColors() {
         return COLORS.TEXT;
       }
 
-      if (nodeLabel === "未払金") {
+      if (nodeLabel === "未払費用") {
         return variant === "light"
           ? COLORS.PROCESSING_LIGHT
           : COLORS.PROCESSING_ERROR;
@@ -93,7 +93,7 @@ export function useNodeColors() {
   // パーセンテージテキスト色取得関数
   const getPercentageTextColor = React.useCallback(
     (nodeLabel?: string, boxColor?: string): string => {
-      if (nodeLabel === "未払金") {
+      if (nodeLabel === "未払費用") {
         return COLORS.EXPENSE;
       }
 

@@ -140,7 +140,7 @@ describe("MfRecordConverter", () => {
     it("should set transaction_type to null when both accounts are BS categories", () => {
       const record = createMockRecord({
         debit_account: "普通預金",
-        credit_account: "未払金",
+        credit_account: "未払費用",
       });
 
       const result = converter.convertRow(record, "test-org-id");
@@ -151,7 +151,7 @@ describe("MfRecordConverter", () => {
     it("should set transaction_type to non_cash_journal when PL and BS accounts are mixed without cash", () => {
       const record = createMockRecord({
         debit_account: "事務所費",
-        credit_account: "未払金",
+        credit_account: "未払費用",
       });
 
       const result = converter.convertRow(record, "test-org-id");

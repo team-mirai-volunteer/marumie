@@ -163,7 +163,7 @@ function adjustBalanceAndCategories(
 
   // 現金残高の処理
   if (isFriendlyCategory) {
-    // friendly categoryの場合：未払金と収支を追加
+    // friendly categoryの場合：未払費用と収支を追加
     const unpaidAmount = Math.max(liabilityBalance, 0);
     const actualCashBalance = Math.max(currentYearBalance, 0);
     const balanceAmount = Math.max(0, actualCashBalance - unpaidAmount);
@@ -171,7 +171,7 @@ function adjustBalanceAndCategories(
     result.expense.push(
       {
         category: "現金残高",
-        subcategory: "未払金",
+        subcategory: "未払費用",
         totalAmount: unpaidAmount,
       },
       {
