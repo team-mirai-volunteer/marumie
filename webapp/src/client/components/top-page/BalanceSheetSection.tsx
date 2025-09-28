@@ -40,6 +40,13 @@ export default function BalanceSheetSection({
           データを読み込み中...
         </div>
       )}
+
+      {/* 更新日時 */}
+      <div className="mt-4 text-right">
+        <span className="text-xs font-normal text-[#9CA3AF] leading-[1.33]">
+          {updatedAt}
+        </span>
+      </div>
     </MainColumnCard>
   );
 }
