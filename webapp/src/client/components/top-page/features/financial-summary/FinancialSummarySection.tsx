@@ -145,9 +145,9 @@ export default function FinancialSummarySection({
 
       <BalanceDetailCard
         className="w-full md:w-auto"
-        balance={balanceDetailData.balance}
-        cashBalance={balanceDetailData.cashBalance}
-        unpaidExpense={balanceDetailData.unpaidExpense}
+        balance={formatAmount(balanceDetailData.balance)}
+        cashBalance={formatAmount(balanceDetailData.cashBalance)}
+        unpaidExpense={formatAmount(balanceDetailData.unpaidExpense)}
       />
     </div>
   );

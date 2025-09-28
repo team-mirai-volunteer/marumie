@@ -1,14 +1,48 @@
+import type { FormattedAmount } from "@/server/utils/financial-calculator";
+
 interface BalanceDetailCardProps {
   className?: string;
-  balance: number;
-  cashBalance: number;
-  unpaidExpense: number;
+  balance: FormattedAmount;
+  cashBalance: FormattedAmount;
+  unpaidExpense: FormattedAmount;
 }
 
 interface BalanceItem {
   label: string;
-  amount: number;
-  unit: string;
+  amount: FormattedAmount;
+}
+
+// FormattedAmountを表示用JSXに変換する関数
+function formatAmountDisplay(
+  amount: FormattedAmount,
+  isLarge: boolean = false,
+): JSX.Element {
+  const mainClass = isLarge
+    ? "text-gray-800 font-bold font-sf-pro"
+    : "text-gray-600 font-bold font-sf-pro";
+  const unitClass = isLarge
+    ? "text-gray-500 font-bold text-base leading-4"
+    : "text-gray-500 font-bold text-xs leading-4";
+
+  if (amount.tertiary) {
+    return (
+      <span className="flex items-end gap-1">
+        <span className={mainClass}>{amount.main}</span>
+        <span className={unitClass}>{amount.secondary}</span>
+        <span className={mainClass}>{amount.tertiary}</span>
+        <span className={unitClass}>{amount.unit}</span>
+      </span>
+    );
+  }
+  return (
+    <span className="flex items-end gap-1">
+      <span className={mainClass}>{amount.main}</span>
+      <span className={unitClass}>
+        {amount.secondary}
+        {amount.unit}
+      </span>
+    </span>
+  );
 }
 
 export default function BalanceDetailCard({
@@ -17,40 +51,25 @@ export default function BalanceDetailCard({
   cashBalance,
   unpaidExpense,
 }: BalanceDetailCardProps) {
-  // 金額を万円単位に変換
-  const formatToManYen = (value: number): number => {
-    return Math.round(value / 10000);
-  };
-
   const mainBalance = {
     title: "収支",
-    amount: formatToManYen(balance),
-    unit: "万円",
+    amount: balance,
   };
 
   const balanceItems: BalanceItem[] = [
     {
       label: "現金残高",
-      amount: formatToManYen(cashBalance),
-      unit: "万円",
+      amount: cashBalance,
     },
   ];
 
-  // 未払費用が0より大きい場合のみ追加
-  if (unpaidExpense > 0) {
+  // 未払費用が0でない場合のみ追加
+  if (unpaidExpense.main !== "0") {
     balanceItems.push({
       label: "未払費用",
-      amount: -formatToManYen(unpaidExpense),
-      unit: "万円",
+      amount: unpaidExpense,
     });
   }
-
-  const formatAmount = (amount: number): string => {
-    if (amount >= 0) {
-      return `+${amount.toLocaleString()}`;
-    }
-    return amount.toLocaleString();
-  };
 
   return (
     <div
@@ -63,13 +82,8 @@ export default function BalanceDetailCard({
           <div className="text-gray-800 font-bold text-base leading-7">
             {mainBalance.title}
           </div>
-          <div className="flex flex-row items-end gap-1">
-            <div className="text-gray-800 font-bold text-4xl leading-7 tracking-wide font-sf-pro">
-              {mainBalance.amount}
-            </div>
-            <div className="text-gray-500 font-bold text-base leading-4">
-              {mainBalance.unit}
-            </div>
+          <div className="flex items-end gap-1 text-4xl leading-7 tracking-wide">
+            {formatAmountDisplay(mainBalance.amount, true)}
           </div>
         </div>
 
@@ -83,13 +97,8 @@ export default function BalanceDetailCard({
               <div className="text-gray-600 font-bold text-sm leading-4">
                 {item.label}
               </div>
-              <div className="flex flex-row items-center gap-0.5">
-                <div className="text-gray-600 font-bold text-sm leading-4 font-sf-pro">
-                  {formatAmount(item.amount)}
-                </div>
-                <div className="text-gray-500 font-bold text-xs leading-4">
-                  {item.unit}
-                </div>
+              <div className="flex items-end gap-1 text-sm leading-4">
+                {formatAmountDisplay(item.amount)}
               </div>
             </div>
           ))}
@@ -105,16 +114,11 @@ export default function BalanceDetailCard({
         <div className="flex flex-col items-end gap-2 flex-1">
           {/* メイン値 */}
           <div className="flex flex-row justify-end gap-10">
-            <div className="flex flex-row items-end gap-1">
-              <div
-                className="text-gray-800 font-bold font-sf-pro"
-                style={{ fontSize: "28px", lineHeight: "1.2" }}
-              >
-                {mainBalance.amount}
-              </div>
-              <div className="text-gray-500 font-normal text-xs leading-4">
-                {mainBalance.unit}
-              </div>
+            <div
+              className="flex items-end gap-1 font-bold"
+              style={{ fontSize: "28px", lineHeight: "1.2" }}
+            >
+              {formatAmountDisplay(mainBalance.amount, true)}
             </div>
           </div>
 
@@ -125,13 +129,8 @@ export default function BalanceDetailCard({
                 <div className="text-gray-600 font-bold text-xs leading-4">
                   {item.label}
                 </div>
-                <div className="flex flex-row items-center gap-0.5">
-                  <div className="text-gray-600 font-bold text-xs leading-4 font-sf-pro">
-                    {formatAmount(item.amount)}
-                  </div>
-                  <div className="text-gray-500 font-bold text-xs leading-4">
-                    {item.unit}
-                  </div>
+                <div className="flex items-end gap-1 text-xs leading-4">
+                  {formatAmountDisplay(item.amount)}
                 </div>
               </div>
             ))}
