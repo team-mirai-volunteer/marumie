@@ -146,6 +146,7 @@ function adjustBalanceAndCategories(
   isFriendlyCategory: boolean,
   currentYearBalance: number,
   previousYearBalance: number,
+  liabilityBalance: number = 0,
 ): SankeyCategoryAggregationResult {
   const result = {
     income: [...aggregation.income],
@@ -163,7 +164,7 @@ function adjustBalanceAndCategories(
   // 現金残高の処理
   if (isFriendlyCategory) {
     // friendly categoryの場合：未払金と収支を追加
-    const unpaidAmount = 100000; // 10万円
+    const unpaidAmount = Math.max(liabilityBalance, 0);
     const actualCashBalance = Math.max(currentYearBalance, 0);
     const balanceAmount = Math.max(0, actualCashBalance - unpaidAmount);
 
@@ -195,6 +196,7 @@ export function convertCategoryAggregationToSankeyData(
   isFriendlyCategory: boolean = false,
   currentYearBalance: number,
   previousYearBalance: number,
+  liabilityBalance: number = 0,
 ): SankeyData {
   // 「その他」カテゴリをリネーム
   const renamedAggregation = renameOtherCategories(aggregation);
@@ -211,6 +213,7 @@ export function convertCategoryAggregationToSankeyData(
     isFriendlyCategory,
     currentYearBalance,
     previousYearBalance,
+    liabilityBalance,
   );
 
   const nodes: SankeyNode[] = [];
