@@ -42,6 +42,13 @@ export default function MonthlyTrendsSection({
       <div className="-mr-[18px] sm:mr-0">
         <MonthlyChart data={monthlyData || []} />
       </div>
+
+      {/* 更新日時 */}
+      <div className="mt-4 text-right">
+        <span className="text-xs font-normal text-[#9CA3AF] leading-[1.33]">
+          {updatedAt}
+        </span>
+      </div>
     </MainColumnCard>
   );
 }
