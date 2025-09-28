@@ -163,23 +163,26 @@ function adjustBalanceAndCategories(
 
   // 現金残高の処理
   if (isFriendlyCategory) {
-    // friendly categoryの場合：未払金と収支を追加
+    // friendly categoryの場合：未払費用と収支を追加
     const unpaidAmount = Math.max(liabilityBalance, 0);
     const actualCashBalance = Math.max(currentYearBalance, 0);
     const balanceAmount = Math.max(0, actualCashBalance - unpaidAmount);
 
-    result.expense.push(
-      {
+    // 未払費用が0円より大きい場合のみ追加
+    if (unpaidAmount > 0) {
+      result.expense.push({
         category: "現金残高",
-        subcategory: "未払金",
+        subcategory: "未払費用",
         totalAmount: unpaidAmount,
-      },
-      {
-        category: "現金残高",
-        subcategory: "収支",
-        totalAmount: balanceAmount,
-      },
-    );
+      });
+    }
+
+    // 収支は常に追加（0円でも表示）
+    result.expense.push({
+      category: "現金残高",
+      subcategory: "収支",
+      totalAmount: balanceAmount,
+    });
   } else if (currentYearBalance > 0) {
     // 通常の場合：現金残高のみ追加
     result.expense.push({

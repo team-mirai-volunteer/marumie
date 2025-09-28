@@ -516,7 +516,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
     expect(result.links).toHaveLength(2);
   });
 
-  it("should add 未払金 and 収支 subcategories when isFriendlyCategory is true", () => {
+  it("should add 未払費用 and 収支 subcategories when isFriendlyCategory is true", () => {
     const aggregation: SankeyCategoryAggregationResult = {
       income: [
         {
@@ -532,8 +532,8 @@ describe("convertCategoryAggregationToSankeyData", () => {
       ],
     };
 
-    const currentYearBalance = 50000; // 5万円（未払金10万円より少ない）
-    const liabilityBalance = 100000; // 10万円の未払金
+    const currentYearBalance = 50000; // 5万円（未払費用10万円より少ない）
+    const liabilityBalance = 100000; // 10万円の未払費用
     const result = convertCategoryAggregationToSankeyData(aggregation, true, currentYearBalance, 0, liabilityBalance);
 
     // 「現金残高」カテゴリが作成されることを確認
@@ -541,8 +541,8 @@ describe("convertCategoryAggregationToSankeyData", () => {
     expect(cashBalanceNode).toBeDefined();
     expect(cashBalanceNode?.nodeType).toBe("expense");
 
-    // 「未払金」サブカテゴリが作成されることを確認
-    const unpaidNode = result.nodes.find(node => node.label === "未払金");
+    // 「未払費用」サブカテゴリが作成されることを確認
+    const unpaidNode = result.nodes.find(node => node.label === "未払費用");
     expect(unpaidNode).toBeDefined();
     expect(unpaidNode?.nodeType).toBe("expense-sub");
 
@@ -555,7 +555,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
     const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
     const totalId = getNodeIdByLabel("合計");
     const cashBalanceId = getNodeIdByLabel("現金残高");
-    const unpaidId = getNodeIdByLabel("未払金");
+    const unpaidId = getNodeIdByLabel("未払費用");
     const balanceId = getNodeIdByLabel("収支");
 
     // 合計 → 現金残高のリンク
@@ -564,14 +564,14 @@ describe("convertCategoryAggregationToSankeyData", () => {
     );
     expect(linkToCashBalance).toBeDefined();
 
-    // 現金残高 → 未払金のリンク
+    // 現金残高 → 未払費用のリンク
     const linkToUnpaid = result.links.find(
       link => link.source === cashBalanceId && link.target === unpaidId
     );
     expect(linkToUnpaid).toBeDefined();
     expect(linkToUnpaid?.value).toBe(100000); // 10万円
 
-    // 現金残高 → 収支のリンク（現金残高5万円 - 未払金10万円 = 0円）
+    // 現金残高 → 収支のリンク（現金残高5万円 - 未払費用10万円 = 0円）
     const linkToBalance = result.links.find(
       link => link.source === cashBalanceId && link.target === balanceId
     );
@@ -595,23 +595,23 @@ describe("convertCategoryAggregationToSankeyData", () => {
       ],
     };
 
-    const currentYearBalance = 300000; // 30万円（未払金10万円より多い）
-    const liabilityBalance = 100000; // 10万円の未払金
+    const currentYearBalance = 300000; // 30万円（未払費用10万円より多い）
+    const liabilityBalance = 100000; // 10万円の未払費用
     const result = convertCategoryAggregationToSankeyData(aggregation, true, currentYearBalance, 0, liabilityBalance);
 
     // リンクの検証
     const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
     const cashBalanceId = getNodeIdByLabel("現金残高");
-    const unpaidId = getNodeIdByLabel("未払金");
+    const unpaidId = getNodeIdByLabel("未払費用");
     const balanceId = getNodeIdByLabel("収支");
 
-    // 現金残高 → 未払金のリンク
+    // 現金残高 → 未払費用のリンク
     const linkToUnpaid = result.links.find(
       link => link.source === cashBalanceId && link.target === unpaidId
     );
     expect(linkToUnpaid?.value).toBe(100000); // 10万円
 
-    // 現金残高 → 収支のリンク（現金残高30万円 - 未払金10万円 = 20万円）
+    // 現金残高 → 収支のリンク（現金残高30万円 - 未払費用10万円 = 20万円）
     const linkToBalance = result.links.find(
       link => link.source === cashBalanceId && link.target === balanceId
     );
