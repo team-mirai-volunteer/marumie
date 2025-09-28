@@ -3,6 +3,7 @@ import "client-only";
 
 import type { TransactionWithOrganization } from "@/server/usecases/get-transactions-usecase";
 import { PL_CATEGORIES } from "@/shared/utils/category-mapping";
+import type { TransactionType } from "@/shared/models/transaction";
 
 interface TransactionRowProps {
   transaction: TransactionWithOrganization;
@@ -28,13 +29,7 @@ function getTransactionCategory(transaction: TransactionWithOrganization): {
   account: string;
   color: string;
   label: string;
-  type:
-    | "income"
-    | "expense"
-    | "non_cash_journal"
-    | "offset_income"
-    | "offset_expense"
-    | "unknown";
+  type: TransactionType | "unknown";
 } {
   // non_cash_journal取引の場合はカテゴリを表示しない
   if (transaction.transaction_type === "non_cash_journal") {

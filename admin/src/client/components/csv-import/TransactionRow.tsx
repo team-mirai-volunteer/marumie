@@ -3,6 +3,7 @@ import "client-only";
 
 import type { PreviewTransaction } from "@/server/lib/mf-record-converter";
 import { PL_CATEGORIES } from "@/shared/utils/category-mapping";
+import type { TransactionType } from "@/shared/models/transaction";
 
 interface TransactionRowProps {
   record: PreviewTransaction;
@@ -31,13 +32,7 @@ function getTransactionCategory(record: PreviewTransaction): {
   account: string;
   color: string;
   label: string;
-  type:
-    | "income"
-    | "expense"
-    | "non_cash_journal"
-    | "offset_income"
-    | "offset_expense"
-    | "unknown";
+  type: TransactionType | "unknown";
 } {
   // non_cash_journal取引の場合はカテゴリを表示しない
   if (record.transaction_type === "non_cash_journal") {
