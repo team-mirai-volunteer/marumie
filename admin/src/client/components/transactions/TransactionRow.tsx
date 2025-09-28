@@ -29,7 +29,7 @@ function getTransactionCategory(transaction: TransactionWithOrganization): {
   account: string;
   color: string;
   label: string;
-  type: TransactionType | "unknown";
+  type: TransactionType;
 } {
   // non_cash_journal取引の場合はカテゴリを表示しない
   if (transaction.transaction_type === "non_cash_journal") {
@@ -76,7 +76,7 @@ function getTransactionCategory(transaction: TransactionWithOrganization): {
       account: transaction.credit_account,
       color: getCategoryColor(transaction.credit_account),
       label: getCategoryLabel(transaction.credit_account),
-      type: (creditInfo?.type as "income" | "expense") || "unknown",
+      type: creditInfo?.type || transaction.transaction_type,
     };
   }
 }
@@ -165,9 +165,7 @@ export function TransactionRow({ transaction }: TransactionRowProps) {
           return (
             <div
               className={`inline-block px-2 py-1 rounded text-xs font-medium max-w-fit ${
-                category.type === "income" ||
-                category.type === "offset_income" ||
-                category.type === "unknown"
+                category.type === "income" || category.type === "offset_income"
                   ? "text-black"
                   : "text-white"
               }`}
