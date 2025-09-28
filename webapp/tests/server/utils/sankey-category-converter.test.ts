@@ -533,7 +533,8 @@ describe("convertCategoryAggregationToSankeyData", () => {
     };
 
     const currentYearBalance = 50000; // 5万円（未払金10万円より少ない）
-    const result = convertCategoryAggregationToSankeyData(aggregation, true, currentYearBalance, 0);
+    const liabilityBalance = 100000; // 10万円の未払金
+    const result = convertCategoryAggregationToSankeyData(aggregation, true, currentYearBalance, 0, liabilityBalance);
 
     // 「現金残高」カテゴリが作成されることを確認
     const cashBalanceNode = result.nodes.find(node => node.label === "現金残高");
@@ -595,7 +596,8 @@ describe("convertCategoryAggregationToSankeyData", () => {
     };
 
     const currentYearBalance = 300000; // 30万円（未払金10万円より多い）
-    const result = convertCategoryAggregationToSankeyData(aggregation, true, currentYearBalance, 0);
+    const liabilityBalance = 100000; // 10万円の未払金
+    const result = convertCategoryAggregationToSankeyData(aggregation, true, currentYearBalance, 0, liabilityBalance);
 
     // リンクの検証
     const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
