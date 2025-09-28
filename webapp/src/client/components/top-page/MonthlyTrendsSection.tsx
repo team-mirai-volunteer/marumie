@@ -35,7 +35,7 @@ export default function MonthlyTrendsSection({
         organizationName={organizationName || "未登録の政治団体"}
         title="月ごとの収支の推移"
         updatedAt={updatedAt}
-        subtitle="今年の年始から月ごとの収入と支出"
+        subtitle="今年の月ごとの収入と支出"
       />
 
       {/* 月次チャート表示 - モバイルのみ右端まで拡張 */}
