@@ -15,6 +15,12 @@ const COLORS = {
   INCOME_LIGHT: "#E5F7F4", // 薄い緑
   EXPENSE_LIGHT: "#FBE2E7", // 薄い赤
   CARRYOVER_LIGHT: "#E5E7EB", // 薄いグレー（繰越し用）
+  // 特別なノード用の色
+  CASH_BALANCE_BOX: "#6B7280", // 現金残高・収支・昨年残高のボックス色
+  CASH_BALANCE_LIGHT: "#E5E7EB", // 現金残高・収支・昨年残高の薄い色
+  PROCESSING_ERROR: "#F87171", // (仕訳中)のエラー色
+  PROCESSING_LIGHT: "#FFF2F2", // (仕訳中)の薄い色
+  PERCENTAGE_DARK: "#111827", // パーセンテージ表記の濃い色（収支・昨年残高用）
 } as const;
 
 // モバイル検知のカスタムフック
@@ -44,25 +50,30 @@ export function useNodeColors() {
     ): string => {
       // 特別なノードの判定（labelベース）
       if (nodeLabel === "現金残高") {
-        if (variant === "light") return "#D2D4D8";
-        if (variant === "box" || variant === "fill") return "#6B7280"; // ボックス色はグレーのまま
-        return COLORS.TEXT; // テキスト色は#1F2937
+        if (variant === "light") return COLORS.CASH_BALANCE_LIGHT;
+        if (variant === "box" || variant === "fill")
+          return COLORS.CASH_BALANCE_BOX;
+        return COLORS.TEXT;
       }
 
       if (nodeLabel === "昨年からの現金残高") {
-        if (variant === "light") return "#D2D4D8";
-        if (variant === "box" || variant === "fill") return "#6B7280"; // ボックス色はグレーのまま
-        return COLORS.TEXT; // テキスト色は#1F2937
+        if (variant === "light") return COLORS.CASH_BALANCE_LIGHT;
+        if (variant === "box" || variant === "fill")
+          return COLORS.CASH_BALANCE_BOX;
+        return COLORS.TEXT;
       }
 
       if (nodeLabel === "収支") {
-        if (variant === "light") return "#D2D4D8";
-        if (variant === "box" || variant === "fill") return "#6B7280"; // ボックス色はグレーのまま
-        return COLORS.TEXT; // テキスト色は#1F2937
+        if (variant === "light") return COLORS.CASH_BALANCE_LIGHT;
+        if (variant === "box" || variant === "fill")
+          return COLORS.CASH_BALANCE_BOX;
+        return COLORS.TEXT;
       }
 
       if (nodeLabel === "(仕訳中)") {
-        return variant === "light" ? "#FFF2F2" : "#F87171";
+        return variant === "light"
+          ? COLORS.PROCESSING_LIGHT
+          : COLORS.PROCESSING_ERROR;
       }
 
       // 通常のノードタイプ判定
@@ -83,7 +94,7 @@ export function useNodeColors() {
   const getPercentageTextColor = React.useCallback(
     (nodeLabel?: string, boxColor?: string): string => {
       if (nodeLabel === "(仕訳中)") {
-        return "#DC2626";
+        return COLORS.EXPENSE;
       }
 
       if (nodeLabel === "現金残高") {
@@ -91,11 +102,11 @@ export function useNodeColors() {
       }
 
       if (nodeLabel === "収支") {
-        return "#111827"; // 現金残高より濃いグレー
+        return COLORS.PERCENTAGE_DARK;
       }
 
       if (nodeLabel === "昨年からの現金残高") {
-        return "#111827"; // 現金残高より濃いグレー
+        return COLORS.PERCENTAGE_DARK;
       }
 
       return boxColor || COLORS.TEXT;
@@ -119,8 +130,8 @@ export function useLinkColors(data: SankeyData) {
       if (sourceNode?.label === "昨年からの現金残高") {
         return {
           ...link,
-          startColor: "#D2D4D8", // グレー（light variant）
-          endColor: "#D2D4D8",
+          startColor: COLORS.CASH_BALANCE_LIGHT,
+          endColor: COLORS.CASH_BALANCE_LIGHT,
         };
       }
 
