@@ -102,11 +102,12 @@ export class TransactionValidator {
       transaction.debit_account === OFFSET_EXPENSE_ACCOUNT ||
       transaction.credit_account === OFFSET_INCOME_ACCOUNT;
 
-    const isTransferTransaction = transaction.transaction_type === "transfer";
+    const isNonCashTransaction =
+      transaction.transaction_type === "non_cash_journal";
 
     if (
       !isOffsetTransaction &&
-      !isTransferTransaction &&
+      !isNonCashTransaction &&
       (!transaction.friendly_category ||
         transaction.friendly_category.trim() === "")
     ) {

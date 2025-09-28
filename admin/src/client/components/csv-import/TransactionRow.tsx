@@ -28,13 +28,13 @@ function getCategoryLabel(accountName: string): string {
 }
 
 function getTransactionCategory(record: PreviewTransaction) {
-  // transfer取引の場合は friendly_category を使用
-  if (record.transaction_type === "transfer") {
+  // non_cash_journal取引の場合は friendly_category を使用
+  if (record.transaction_type === "non_cash_journal") {
     return {
-      account: "transfer",
+      account: "non_cash_journal",
       color: "#6B7280", // グレー
-      label: record.friendly_category || "資金移動",
-      type: "transfer" as const,
+      label: record.friendly_category || "非現金仕訳",
+      type: "non_cash_journal" as const,
     };
   }
 
@@ -62,11 +62,11 @@ function getTransactionCategory(record: PreviewTransaction) {
 function getTypeLabel(type: string): string {
   switch (type) {
     case "income":
-      return "収入";
+      return "現金収入";
     case "expense":
-      return "支出";
-    case "transfer":
-      return "振替";
+      return "現金支出";
+    case "non_cash_journal":
+      return "非現金仕訳";
     case "offset_income":
       return "相殺収入";
     case "offset_expense":
@@ -86,6 +86,8 @@ function getTypeBadgeClass(type: string): string {
     case "expense":
     case "offset_expense":
       return "bg-red-600";
+    case "non_cash_journal":
+      return "bg-blue-600";
     case "invalid":
       return "bg-orange-600";
     default:

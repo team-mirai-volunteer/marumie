@@ -1,5 +1,9 @@
 import type { MfCsvRecord } from "./mf-csv-loader";
-import { PL_CATEGORIES, BS_CATEGORIES } from "@/shared/utils/category-mapping";
+import {
+  PL_CATEGORIES,
+  BS_CATEGORIES,
+  CASH_ACCOUNTS,
+} from "@/shared/utils/category-mapping";
 import type { TransactionType } from "@/shared/models/transaction";
 import { generateTransactionHash } from "./transaction-hash";
 
@@ -40,8 +44,7 @@ export class MfRecordConverter {
       record.credit_account,
     );
 
-    const friendlyCategory =
-      transactionType === "transfer" ? "資金移動" : record.friendly_category;
+    const friendlyCategory = record.friendly_category;
 
     const label = record.description?.startsWith("デビット")
       ? record.description
@@ -122,21 +125,15 @@ export class MfRecordConverter {
     debitAccount: string,
     creditAccount: string,
   ): string {
-    const isDebitBS = debitAccount in BS_CATEGORIES;
-    const isCreditBS = creditAccount in BS_CATEGORIES;
     const isDebitPL = debitAccount in PL_CATEGORIES;
     const isCreditPL = creditAccount in PL_CATEGORIES;
 
-    if (isDebitBS && isCreditBS) {
-      return "transfer";
-    }
-
-    if (isDebitBS && isCreditPL) {
-      const mapping = PL_CATEGORIES[creditAccount];
+    if (isDebitPL) {
+      const mapping = PL_CATEGORIES[debitAccount];
       return mapping ? mapping.key : "undefined";
     }
-    if (isDebitPL && isCreditBS) {
-      const mapping = PL_CATEGORIES[debitAccount];
+    if (isCreditPL) {
+      const mapping = PL_CATEGORIES[creditAccount];
       return mapping ? mapping.key : "undefined";
     }
     return "undefined";
@@ -158,17 +155,24 @@ export class MfRecordConverter {
     const isDebitPL = debitAccount in PL_CATEGORIES;
     const isCreditPL = creditAccount in PL_CATEGORIES;
 
-    if (isDebitBS && isCreditPL) {
+    // 現金収入: 現金類(借方) + PL科目(貸方)
+    if (isDebitBS && isCreditPL && this.isCashEquivalent(debitAccount)) {
       return "income";
     }
-    if (isDebitPL && isCreditBS) {
+    // 現金支出: PL科目(借方) + 現金類(貸方)
+    if (isDebitPL && isCreditBS && this.isCashEquivalent(creditAccount)) {
       return "expense";
     }
-    if (isDebitBS && isCreditBS) {
-      return "transfer";
+    // 非現金仕訳: PL科目とBS科目の組み合わせ（現金を含まない）
+    if ((isDebitPL && isCreditBS) || (isDebitBS && isCreditPL)) {
+      return "non_cash_journal";
     }
 
     return null;
+  }
+
+  private isCashEquivalent(account: string): boolean {
+    return CASH_ACCOUNTS.has(account);
   }
 
   public extractFinancialYear(date: Date): number {

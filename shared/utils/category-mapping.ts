@@ -215,3 +215,8 @@ export const BS_CATEGORIES: Record<string, { type: "asset" | "liability" | "net_
     type: "liability"
   }
 };
+
+/**
+ * 現金類の科目
+ */
+export const CASH_ACCOUNTS = new Set(["普通預金"]);

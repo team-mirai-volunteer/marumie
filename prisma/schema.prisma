@@ -14,7 +14,7 @@ datasource db {
 enum TransactionType {
   income
   expense
-  transfer
+  non_cash_journal
   offset_income
   offset_expense
 }
