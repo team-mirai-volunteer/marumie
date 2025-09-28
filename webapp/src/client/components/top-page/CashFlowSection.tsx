@@ -34,9 +34,12 @@ export default function CashFlowSection({
   const getDisclaimerText = () => {
     if (organizationSlug === "team-mirai") {
       return "*寄附金額は、政党「チームみらい」が受け取った寄附のみを対象としており、党首・安野や参院選公認候補者の政治団体への寄附は含んでおりません。";
-    } else if (organizationSlug === "digimin") {
+    }
+
+    if (organizationSlug === "digimin") {
       return "*寄附金額は、党首・安野の政治団体が受け取った寄附のみを対象としており、政党「チームみらい」や参院選公認候補者の政治団体への寄附は含んでおりません。";
     }
+
     return null;
   };
 
