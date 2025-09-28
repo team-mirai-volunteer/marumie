@@ -123,147 +123,139 @@ export function useSankeySorting(data: SankeyData) {
     [],
   );
 
-  // ① ノードを並び替え
-  const sortNodes = React.useCallback(
+  // ヘルパー関数: 親カテゴリIDを取得
+  const getParentCategoryId = React.useCallback(
+    (nodeId: string, nodeType: string) => {
+      if (nodeType === "income-sub") {
+        const link = data.links.find(
+          (link) => link.source === nodeId && link.target.startsWith("income-"),
+        );
+        return link?.target;
+      } else if (nodeType === "expense-sub") {
+        const link = data.links.find(
+          (link) =>
+            link.target === nodeId && link.source.startsWith("expense-"),
+        );
+        return link?.source;
+      }
+      return null;
+    },
+    [data.links],
+  );
+
+  // ソート関数: income カテゴリ
+  const sortIncomeNodes = React.useCallback(
     (nodes: SankeyNode[]) => {
       return [...nodes].sort((a, b) => {
-        // ノードタイプによる基本的な順序
-        const typeOrder = {
-          "income-sub": 0,
-          income: 1,
-          total: 2,
-          expense: 3,
-          "expense-sub": 4,
-        } as const;
+        const aValue = calculateNodeValue(a.id, data.links);
+        const bValue = calculateNodeValue(b.id, data.links);
 
-        const aOrder = typeOrder[a.nodeType as keyof typeof typeOrder] ?? 5;
-        const bOrder = typeOrder[b.nodeType as keyof typeof typeOrder] ?? 5;
+        // 昨年からの繰越しを最後に
+        const aIsPreviousYearCarryover = a.label === "昨年からの繰越し";
+        const bIsPreviousYearCarryover = b.label === "昨年からの繰越し";
 
-        if (aOrder !== bOrder) {
-          return aOrder - bOrder;
-        }
+        if (aIsPreviousYearCarryover && !bIsPreviousYearCarryover) return 1;
+        if (bIsPreviousYearCarryover && !aIsPreviousYearCarryover) return -1;
 
-        // income, expense -> 単純に大きい順に並び替え
-        if (a.nodeType === "income" || a.nodeType === "expense") {
-          const aValue = calculateNodeValue(a.id, data.links);
-          const bValue = calculateNodeValue(b.id, data.links);
-
-          // income カテゴリでの特別処理
-          if (a.nodeType === "income") {
-            const aIsPreviousYearCarryover = a.label === "昨年からの繰越し";
-            const bIsPreviousYearCarryover = b.label === "昨年からの繰越し";
-
-            // 昨年からの繰越し vs その他
-            if (aIsPreviousYearCarryover && !bIsPreviousYearCarryover) return 1; // 昨年からの繰越しを最後に
-            if (bIsPreviousYearCarryover && !aIsPreviousYearCarryover)
-              return -1; // 昨年からの繰越しを最後に
-          }
-
-          // expense カテゴリでの特別処理
-          if (a.nodeType === "expense") {
-            const aIsCarryover = a.label === "繰越し";
-            const bIsCarryover = b.label === "繰越し";
-            const aIsProcessing = a.label === "(仕訳中)";
-            const bIsProcessing = b.label === "(仕訳中)";
-
-            // 繰越し vs その他
-            if (aIsCarryover && !bIsCarryover) return 1; // 繰越しを最後に
-            if (bIsCarryover && !aIsCarryover) return -1; // 繰越しを最後に
-
-            // (仕訳中) vs その他（繰越し以外）
-            if (aIsProcessing && !bIsProcessing && !bIsCarryover) return 1; // (仕訳中)を後に
-            if (bIsProcessing && !aIsProcessing && !aIsCarryover) return -1; // (仕訳中)を後に
-          }
-
-          return bValue - aValue; // 大きい順
-        }
-
-        // income-sub, expense-sub -> 親カテゴリの順序で並べ、同一親内で金額順
-        if (a.nodeType === "income-sub" || a.nodeType === "expense-sub") {
-          // 親カテゴリを特定
-          const getParentCategory = (nodeId: string, nodeType: string) => {
-            if (nodeType === "income-sub") {
-              // income-sub-{subcategory} -> income-{category}への接続を探す
-              const link = data.links.find(
-                (link) =>
-                  link.source === nodeId && link.target.startsWith("income-"),
-              );
-              return link?.target;
-            } else if (nodeType === "expense-sub") {
-              // expense-{category} -> expense-sub-{subcategory}への接続を探す
-              const link = data.links.find(
-                (link) =>
-                  link.target === nodeId && link.source.startsWith("expense-"),
-              );
-              return link?.source;
-            }
-            return null;
-          };
-
-          const aParent = getParentCategory(a.id, a.nodeType!);
-          const bParent = getParentCategory(b.id, b.nodeType!);
-
-          // 親カテゴリが異なる場合は、親カテゴリの既定の順序に従う
-          if (aParent && bParent && aParent !== bParent) {
-            // 親ノードを取得してそれらの順序を比較
-            const parentA = data.nodes.find((n) => n.id === aParent);
-            const parentB = data.nodes.find((n) => n.id === bParent);
-
-            if (parentA && parentB) {
-              // 親カテゴリのサイズを計算
-              const aParentValue = calculateNodeValue(aParent, data.links);
-              const bParentValue = calculateNodeValue(bParent, data.links);
-
-              // 親カテゴリに特別処理がある場合を考慮
-              if (
-                parentA.nodeType === "expense" &&
-                parentB.nodeType === "expense"
-              ) {
-                const aIsCarryover = parentA.label === "繰越し";
-                const bIsCarryover = parentB.label === "繰越し";
-                const aIsProcessing = parentA.label === "(仕訳中)";
-                const bIsProcessing = parentB.label === "(仕訳中)";
-
-                // 繰越し vs その他
-                if (aIsCarryover && !bIsCarryover) return 1; // 繰越しを最後に
-                if (bIsCarryover && !aIsCarryover) return -1; // 繰越しを最後に
-
-                // (仕訳中) vs その他（繰越し以外）
-                if (aIsProcessing && !bIsProcessing && !bIsCarryover) return 1; // (仕訳中)を後に
-                if (bIsProcessing && !aIsProcessing && !aIsCarryover) return -1; // (仕訳中)を後に
-              }
-
-              if (
-                parentA.nodeType === "income" &&
-                parentB.nodeType === "income"
-              ) {
-                const aIsPreviousYearCarryover =
-                  parentA.label === "昨年からの繰越し";
-                const bIsPreviousYearCarryover =
-                  parentB.label === "昨年からの繰越し";
-
-                // 昨年からの繰越し vs その他
-                if (aIsPreviousYearCarryover && !bIsPreviousYearCarryover)
-                  return 1; // 昨年からの繰越しを最後に
-                if (bIsPreviousYearCarryover && !aIsPreviousYearCarryover)
-                  return -1; // 昨年からの繰越しを最後に
-              }
-
-              // 特別処理がない場合は親カテゴリのサイズで比較
-              return bParentValue - aParentValue; // 大きい親から
-            }
-          }
-
-          // 同じ親カテゴリなら子カテゴリの金額で比較
-          const aValue = calculateNodeValue(a.id, data.links);
-          const bValue = calculateNodeValue(b.id, data.links);
-          return bValue - aValue; // 大きい順
-        }
-
-        return 0;
+        return bValue - aValue; // 大きい順
       });
     },
-    [data.links, data.nodes, calculateNodeValue],
+    [data.links, calculateNodeValue],
+  );
+
+  // ソート関数: expense カテゴリ
+  const sortExpenseNodes = React.useCallback(
+    (nodes: SankeyNode[]) => {
+      return [...nodes].sort((a, b) => {
+        const aValue = calculateNodeValue(a.id, data.links);
+        const bValue = calculateNodeValue(b.id, data.links);
+
+        const aIsCarryover = a.label === "繰越し";
+        const bIsCarryover = b.label === "繰越し";
+        const aIsProcessing = a.label === "(仕訳中)";
+        const bIsProcessing = b.label === "(仕訳中)";
+
+        // 繰越しを最後に
+        if (aIsCarryover && !bIsCarryover) return 1;
+        if (bIsCarryover && !aIsCarryover) return -1;
+
+        // (仕訳中)を後に（繰越し以外）
+        if (aIsProcessing && !bIsProcessing && !bIsCarryover) return 1;
+        if (bIsProcessing && !aIsProcessing && !aIsCarryover) return -1;
+
+        return bValue - aValue; // 大きい順
+      });
+    },
+    [data.links, calculateNodeValue],
+  );
+
+  // ソート関数: sub カテゴリ（income-sub, expense-sub）
+  const sortSubNodes = React.useCallback(
+    (nodes: SankeyNode[], sortedParentNodes: SankeyNode[]) => {
+      return [...nodes].sort((a, b) => {
+        const aParent = a.nodeType
+          ? getParentCategoryId(a.id, a.nodeType)
+          : null;
+        const bParent = b.nodeType
+          ? getParentCategoryId(b.id, b.nodeType)
+          : null;
+
+        // 親カテゴリが異なる場合は親の順序に従う
+        if (aParent && bParent && aParent !== bParent) {
+          // ソート済み親ノードの順序を使用
+          const aParentIndex = sortedParentNodes.findIndex(
+            (n) => n.id === aParent,
+          );
+          const bParentIndex = sortedParentNodes.findIndex(
+            (n) => n.id === bParent,
+          );
+
+          if (aParentIndex !== -1 && bParentIndex !== -1) {
+            return aParentIndex - bParentIndex; // 親の順序に従う
+          }
+        }
+
+        // 同一親内では金額順
+        const aValue = calculateNodeValue(a.id, data.links);
+        const bValue = calculateNodeValue(b.id, data.links);
+        return bValue - aValue;
+      });
+    },
+    [data.links, calculateNodeValue, getParentCategoryId],
+  );
+
+  // ① ノードを並び替え（カテゴリ別にfilter→sort→結合）
+  const sortNodes = React.useCallback(
+    (nodes: SankeyNode[]) => {
+      // 親ノードを先にソート
+      const incomeNodes = sortIncomeNodes(
+        nodes.filter((n) => n.nodeType === "income"),
+      );
+      const expenseNodes = sortExpenseNodes(
+        nodes.filter((n) => n.nodeType === "expense"),
+      );
+
+      // ソート済み親ノードを使ってsubノードをソート
+      const incomeSubNodes = sortSubNodes(
+        nodes.filter((n) => n.nodeType === "income-sub"),
+        incomeNodes,
+      );
+      const expenseSubNodes = sortSubNodes(
+        nodes.filter((n) => n.nodeType === "expense-sub"),
+        expenseNodes,
+      );
+
+      const totalNode = nodes.find((n) => n.nodeType === "total");
+
+      return [
+        ...incomeSubNodes,
+        ...incomeNodes,
+        ...(totalNode ? [totalNode] : []),
+        ...expenseNodes,
+        ...expenseSubNodes,
+      ];
+    },
+    [sortSubNodes, sortIncomeNodes, sortExpenseNodes],
   );
 
   // ② リンクを並び替え
