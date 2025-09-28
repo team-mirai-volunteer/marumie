@@ -28,12 +28,12 @@ function getCategoryLabel(accountName: string): string {
 }
 
 function getTransactionCategory(record: PreviewTransaction) {
-  // non_cash_journal取引の場合は friendly_category を使用
+  // non_cash_journal取引の場合はカテゴリを表示しない
   if (record.transaction_type === "non_cash_journal") {
     return {
       account: "non_cash_journal",
       color: "#6B7280", // グレー
-      label: record.friendly_category || "非現金仕訳",
+      label: "-",
       type: "non_cash_journal" as const,
     };
   }

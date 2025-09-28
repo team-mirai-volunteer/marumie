@@ -25,21 +25,33 @@ function getCategoryLabel(accountName: string): string {
 }
 
 function getTransactionCategory(transaction: TransactionWithOrganization) {
-  // transaction_typeがexpenseの場合は借方のカテゴリを、そうでなければ貸方のカテゴリを表示
+  // non_cash_journal取引の場合はカテゴリを表示しない
+  if (transaction.transaction_type === "non_cash_journal") {
+    return {
+      account: "non_cash_journal",
+      color: "#6B7280", // グレー
+      label: "-",
+      type: "non_cash_journal" as const,
+    };
+  }
 
-  if (transaction.transaction_type === "expense") {
+  // 借方（debit）が費用系の場合は借方のカテゴリを、そうでなければ貸方のカテゴリを表示
+  const debitInfo = getCategoryInfoByAccount(transaction.debit_account);
+  const creditInfo = getCategoryInfoByAccount(transaction.credit_account);
+
+  if (debitInfo?.type === "expense") {
     return {
       account: transaction.debit_account,
       color: getCategoryColor(transaction.debit_account),
       label: getCategoryLabel(transaction.debit_account),
-      type: "expense",
+      type: debitInfo.type,
     };
   } else {
     return {
       account: transaction.credit_account,
       color: getCategoryColor(transaction.credit_account),
       label: getCategoryLabel(transaction.credit_account),
-      type: transaction.transaction_type,
+      type: creditInfo?.type || "unknown",
     };
   }
 }
@@ -47,15 +59,15 @@ function getTransactionCategory(transaction: TransactionWithOrganization) {
 function getTypeLabel(type: string): string {
   switch (type) {
     case "income":
-      return "収入";
+      return "現金収入";
     case "expense":
-      return "支出";
+      return "現金支出";
+    case "non_cash_journal":
+      return "非現金仕訳";
     case "offset_income":
       return "相殺収入";
     case "offset_expense":
       return "相殺支出";
-    case "current_liabilities":
-      return "未払金";
     case "invalid":
       return "無効";
     default:
@@ -71,7 +83,7 @@ function getTypeBadgeClass(type: string): string {
     case "expense":
     case "offset_expense":
       return "bg-red-600";
-    case "current_liabilities":
+    case "non_cash_journal":
       return "bg-blue-600";
     case "invalid":
       return "bg-orange-600";
