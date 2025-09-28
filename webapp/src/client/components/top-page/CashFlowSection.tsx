@@ -61,7 +61,7 @@ export default function CashFlowSection({
       />
 
       {/* 財務サマリー */}
-      <FinancialSummarySection sankeyData={currentData ?? null} />
+      <FinancialSummarySection sankeyData={friendly ?? null} />
 
       {/* タブ */}
       <div className="flex gap-7 border-b border-gray-300 mb-4">
