@@ -1,6 +1,7 @@
 import { formatAmount } from "@/server/utils/financial-calculator";
 import type { SankeyData, SankeyLink } from "@/types/sankey";
 import FinancialSummaryCard from "./FinancialSummaryCard";
+import BalanceDetailCard from "./BalanceDetailCard";
 
 interface FinancialSummarySectionProps {
   sankeyData: SankeyData | null;
@@ -48,9 +49,9 @@ export default function FinancialSummarySection({
   const financialData = calculateFinancialData(sankeyData);
 
   return (
-    <div className="flex flex-col sm:flex-row gap-2 sm:gap-6">
+    <div className="flex flex-col sm:flex-row gap-6 items-center">
       <FinancialSummaryCard
-        className="flex-1"
+        className="w-full sm:w-[250px]"
         title="収入総額"
         amount={formatAmount(financialData.income)}
         titleColor="#238778"
@@ -58,20 +59,14 @@ export default function FinancialSummarySection({
       />
 
       <FinancialSummaryCard
-        className="flex-1"
+        className="w-full sm:w-[250px]"
         title="支出総額"
         amount={formatAmount(financialData.expense)}
         titleColor="#DC2626"
         amountColor="#1F2937"
       />
 
-      <FinancialSummaryCard
-        className="flex-1"
-        title="繰越し"
-        amount={formatAmount(financialData.balance)}
-        titleColor="#1F2937"
-        amountColor="#1F2937"
-      />
+      <BalanceDetailCard className="flex-1" />
     </div>
   );
 }
