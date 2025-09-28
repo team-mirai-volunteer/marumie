@@ -515,4 +515,104 @@ describe("convertCategoryAggregationToSankeyData", () => {
     expect(result.nodes).toHaveLength(3);
     expect(result.links).toHaveLength(2);
   });
+
+  it("should add 未払金 and 収支 subcategories when isFriendlyCategory is true", () => {
+    const aggregation: SankeyCategoryAggregationResult = {
+      income: [
+        {
+          category: "寄附",
+          totalAmount: 500000, // 50万円
+        },
+      ],
+      expense: [
+        {
+          category: "政治活動費",
+          totalAmount: 300000, // 30万円
+        },
+      ],
+    };
+
+    const currentYearBalance = 50000; // 5万円（未払金10万円より少ない）
+    const result = convertCategoryAggregationToSankeyData(aggregation, true, currentYearBalance, 0);
+
+    // 「現金残高」カテゴリが作成されることを確認
+    const cashBalanceNode = result.nodes.find(node => node.label === "現金残高");
+    expect(cashBalanceNode).toBeDefined();
+    expect(cashBalanceNode?.nodeType).toBe("expense");
+
+    // 「未払金」サブカテゴリが作成されることを確認
+    const unpaidNode = result.nodes.find(node => node.label === "未払金");
+    expect(unpaidNode).toBeDefined();
+    expect(unpaidNode?.nodeType).toBe("expense-sub");
+
+    // 「収支」サブカテゴリが作成されることを確認
+    const balanceNode = result.nodes.find(node => node.label === "収支");
+    expect(balanceNode).toBeDefined();
+    expect(balanceNode?.nodeType).toBe("expense-sub");
+
+    // リンクの検証
+    const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
+    const totalId = getNodeIdByLabel("合計");
+    const cashBalanceId = getNodeIdByLabel("現金残高");
+    const unpaidId = getNodeIdByLabel("未払金");
+    const balanceId = getNodeIdByLabel("収支");
+
+    // 合計 → 現金残高のリンク
+    const linkToCashBalance = result.links.find(
+      link => link.source === totalId && link.target === cashBalanceId
+    );
+    expect(linkToCashBalance).toBeDefined();
+
+    // 現金残高 → 未払金のリンク
+    const linkToUnpaid = result.links.find(
+      link => link.source === cashBalanceId && link.target === unpaidId
+    );
+    expect(linkToUnpaid).toBeDefined();
+    expect(linkToUnpaid?.value).toBe(100000); // 10万円
+
+    // 現金残高 → 収支のリンク（現金残高5万円 - 未払金10万円 = 0円）
+    const linkToBalance = result.links.find(
+      link => link.source === cashBalanceId && link.target === balanceId
+    );
+    expect(linkToBalance).toBeDefined();
+    expect(linkToBalance?.value).toBe(0); // 負数の場合は0になる
+  });
+
+  it("should handle friendly category with sufficient cash balance", () => {
+    const aggregation: SankeyCategoryAggregationResult = {
+      income: [
+        {
+          category: "寄附",
+          totalAmount: 1000000, // 100万円
+        },
+      ],
+      expense: [
+        {
+          category: "政治活動費",
+          totalAmount: 500000, // 50万円
+        },
+      ],
+    };
+
+    const currentYearBalance = 300000; // 30万円（未払金10万円より多い）
+    const result = convertCategoryAggregationToSankeyData(aggregation, true, currentYearBalance, 0);
+
+    // リンクの検証
+    const getNodeIdByLabel = (label: string) => result.nodes.find(n => n.label === label)?.id;
+    const cashBalanceId = getNodeIdByLabel("現金残高");
+    const unpaidId = getNodeIdByLabel("未払金");
+    const balanceId = getNodeIdByLabel("収支");
+
+    // 現金残高 → 未払金のリンク
+    const linkToUnpaid = result.links.find(
+      link => link.source === cashBalanceId && link.target === unpaidId
+    );
+    expect(linkToUnpaid?.value).toBe(100000); // 10万円
+
+    // 現金残高 → 収支のリンク（現金残高30万円 - 未払金10万円 = 20万円）
+    const linkToBalance = result.links.find(
+      link => link.source === cashBalanceId && link.target === balanceId
+    );
+    expect(linkToBalance?.value).toBe(200000); // 20万円
+  });
 });

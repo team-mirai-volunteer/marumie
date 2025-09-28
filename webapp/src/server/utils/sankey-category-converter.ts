@@ -138,6 +138,58 @@ function renameOtherCategories(
   return { income, expense };
 }
 
+/**
+ * バランス調整とカテゴリ追加を一箇所で処理
+ */
+function adjustBalanceAndCategories(
+  aggregation: SankeyCategoryAggregationResult,
+  isFriendlyCategory: boolean,
+  currentYearBalance: number,
+  previousYearBalance: number,
+): SankeyCategoryAggregationResult {
+  const result = {
+    income: [...aggregation.income],
+    expense: [...aggregation.expense],
+  };
+
+  // 昨年からの現金残高を収入側に追加
+  if (previousYearBalance > 0) {
+    result.income.push({
+      category: "昨年からの現金残高",
+      totalAmount: previousYearBalance,
+    });
+  }
+
+  // 現金残高の処理
+  if (isFriendlyCategory) {
+    // friendly categoryの場合：未払金と収支を追加
+    const unpaidAmount = 100000; // 10万円
+    const actualCashBalance = Math.max(currentYearBalance, 0);
+    const balanceAmount = Math.max(0, actualCashBalance - unpaidAmount);
+
+    result.expense.push(
+      {
+        category: "現金残高",
+        subcategory: "未払金",
+        totalAmount: unpaidAmount,
+      },
+      {
+        category: "現金残高",
+        subcategory: "収支",
+        totalAmount: balanceAmount,
+      },
+    );
+  } else if (currentYearBalance > 0) {
+    // 通常の場合：現金残高のみ追加
+    result.expense.push({
+      category: "現金残高",
+      totalAmount: currentYearBalance,
+    });
+  }
+
+  return result;
+}
+
 export function convertCategoryAggregationToSankeyData(
   aggregation: SankeyCategoryAggregationResult,
   isFriendlyCategory: boolean = false,
@@ -153,20 +205,13 @@ export function convertCategoryAggregationToSankeyData(
     isFriendlyCategory,
   );
 
-  // friendly categoryの場合、未払金のモックデータを追加
-  if (isFriendlyCategory) {
-    // 未払金のモックデータ（10万円）
-    const unpaidLiabilitiesMock = {
-      category: "現金残高",
-      subcategory: "未払金",
-      totalAmount: 100000, // 10万円
-    };
-
-    processedAggregation = {
-      income: processedAggregation.income,
-      expense: [...processedAggregation.expense, unpaidLiabilitiesMock],
-    };
-  }
+  // カテゴリ別の統合処理とバランス調整を一箇所で実行
+  processedAggregation = adjustBalanceAndCategories(
+    processedAggregation,
+    isFriendlyCategory,
+    currentYearBalance,
+    previousYearBalance,
+  );
 
   const nodes: SankeyNode[] = [];
   const links: SankeyLink[] = [];
@@ -176,15 +221,6 @@ export function convertCategoryAggregationToSankeyData(
 
   // 収入データの処理: subcategoryがあるものとないものを分別
   const incomeByCategory = new Map<string, number>();
-
-  // previousYearBalanceが0より大きい場合、「昨年からの現金残高」として収入側に追加
-  if (previousYearBalance > 0) {
-    // 収入データに「昨年からの現金残高」レコードを追加（UI用）
-    processedAggregation.income.push({
-      category: "昨年からの現金残高",
-      totalAmount: previousYearBalance,
-    });
-  }
 
   // 1. 収入サブカテゴリノード（subcategoryがあるもの）
   for (const item of processedAggregation.income) {
@@ -236,17 +272,6 @@ export function convertCategoryAggregationToSankeyData(
   }
 
   // 収入と支出の合計を計算
-
-  // currentYearBalanceが0より大きい場合、「現金残高」として支出側に追加
-  if (currentYearBalance > 0) {
-    expenseByCategory.set("現金残高", currentYearBalance);
-
-    // 支出データに「現金残高」レコードを追加（UI用）
-    processedAggregation.expense.push({
-      category: "現金残高",
-      totalAmount: currentYearBalance,
-    });
-  }
 
   const totalIncome = Array.from(incomeByCategory.values()).reduce(
     (sum, amount) => sum + amount,
