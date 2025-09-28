@@ -27,7 +27,8 @@ export default function BalanceSheetSection({
             height={30}
           />
         }
-        title={`${organizationName || "未登録の政治団体"}｜現時点での貸借対照表`}
+        organizationName={organizationName || "未登録の政治団体"}
+        title="現時点での貸借対照表"
         updatedAt={updatedAt}
         subtitle={`現在の${organizationName || "未登録の政治団体"}の財産と負債の状況`}
       />

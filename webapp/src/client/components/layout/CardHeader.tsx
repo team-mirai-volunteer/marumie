@@ -3,6 +3,7 @@ import { Subtitle, Title } from "@/client/components/ui/Typography";
 interface CardHeaderProps {
   icon: React.ReactNode;
   title: string;
+  organizationName?: string;
   updatedAt: string;
   subtitle: string;
 }
@@ -10,11 +11,12 @@ interface CardHeaderProps {
 export default function CardHeader({
   icon,
   title,
+  organizationName,
   updatedAt,
   subtitle,
 }: CardHeaderProps) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between w-full gap-2">
+    <div className="flex flex-col md:flex-row md:items-start md:justify-between w-full gap-2">
       {/* 左側：タイトル・サブタイトル */}
       <div className="flex flex-col gap-2">
         {/* アイコン + タイトル */}
@@ -23,7 +25,19 @@ export default function CardHeader({
           <div className="w-[30px] h-[30px] flex items-center justify-center flex-shrink-0">
             {icon}
           </div>
-          <Title className="text-[--color-text-primary]">{title}</Title>
+          <div className="flex flex-col md:flex-row md:items-center">
+            {organizationName && (
+              <>
+                <Title className="text-[--color-text-primary]">
+                  {organizationName}
+                </Title>
+                <Title className="hidden md:inline text-[--color-text-primary] mx-1">
+                  ｜
+                </Title>
+              </>
+            )}
+            <Title className="text-[--color-text-primary]">{title}</Title>
+          </div>
         </div>
 
         {/* サブタイトル */}
@@ -34,8 +48,8 @@ export default function CardHeader({
 
       {/* 右側：更新時刻 */}
       {updatedAt && (
-        <div className="flex flex-shrink-0 self-end sm:self-start">
-          <span className="text-[11px] sm:text-[13px] font-bold text-[#9CA3AF] leading-[1.31]">
+        <div className="flex flex-shrink-0 self-end md:self-start">
+          <span className="text-[11px] md:text-[13px] font-bold text-[#9CA3AF] leading-[1.31]">
             {updatedAt}
           </span>
         </div>

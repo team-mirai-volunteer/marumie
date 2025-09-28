@@ -54,7 +54,8 @@ export default function CashFlowSection({
             height={31}
           />
         }
-        title={`${organizationName || "未登録の政治団体"}｜収支の流れ`}
+        organizationName={organizationName || "未登録の政治団体"}
+        title="収支の流れ"
         updatedAt={updatedAt}
         subtitle="どこからお金を得て、何に使っているか"
       />

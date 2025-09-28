@@ -32,7 +32,8 @@ export default function MonthlyTrendsSection({
             height={30}
           />
         }
-        title={`${organizationName || "未登録の政治団体"}｜月ごとの収支の推移`}
+        organizationName={organizationName || "未登録の政治団体"}
+        title="月ごとの収支の推移"
         updatedAt={updatedAt}
         subtitle="今年の年始から月ごとの収入と支出"
       />
