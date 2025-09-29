@@ -1,5 +1,8 @@
 import type { SankeyData, SankeyLink, SankeyNode } from "@/types/sankey";
-import type { SankeyCategoryAggregationResult } from "../repositories/interfaces/transaction-repository.interface";
+import type {
+  SankeyCategoryAggregationResult,
+  TransactionCategoryAggregation,
+} from "../repositories/interfaces/transaction-repository.interface";
 import { createSafariCompatibleId } from "./sankey-id-utils";
 
 const SUBCATEGORY_LIMITS = {
@@ -197,53 +200,71 @@ function consolidateSmallItems(
     SUBCATEGORY_LIMITS.EXPENSE,
   );
 
-  const consolidatedIncome: typeof aggregation.income = [];
-  const smallIncomeByCategory = new Map<string, number>();
-
-  for (const item of aggregation.income) {
-    if (item.subcategory && item.totalAmount < incomeThreshold) {
-      const current = smallIncomeByCategory.get(item.category) || 0;
-      smallIncomeByCategory.set(item.category, current + item.totalAmount);
-    } else {
-      consolidatedIncome.push(item);
-    }
-  }
-
-  for (const [category, total] of smallIncomeByCategory) {
-    if (total > 0) {
-      consolidatedIncome.push({
-        category,
-        subcategory: `その他(${category})`,
-        totalAmount: total,
-      });
-    }
-  }
-
-  const consolidatedExpense: typeof aggregation.expense = [];
-  const smallExpenseByCategory = new Map<string, number>();
-
-  for (const item of aggregation.expense) {
-    if (item.subcategory && item.totalAmount < expenseThreshold) {
-      const current = smallExpenseByCategory.get(item.category) || 0;
-      smallExpenseByCategory.set(item.category, current + item.totalAmount);
-    } else {
-      consolidatedExpense.push(item);
-    }
-  }
-
-  for (const [category, total] of smallExpenseByCategory) {
-    if (total > 0) {
-      consolidatedExpense.push({
-        category,
-        subcategory: `その他（${category}）`,
-        totalAmount: total,
-      });
-    }
-  }
+  const consolidatedIncome = consolidateSmallItemsByType(
+    aggregation.income,
+    incomeThreshold,
+  );
+  const consolidatedExpense = consolidateSmallItemsByType(
+    aggregation.expense,
+    expenseThreshold,
+  );
 
   return {
     income: consolidatedIncome,
     expense: consolidatedExpense,
+  };
+}
+
+function consolidateSmallItemsByType(
+  items: TransactionCategoryAggregation[],
+  threshold: number,
+): TransactionCategoryAggregation[] {
+  // 閾値で大きいグループと小さいグループに分離
+  const smallItems = items.filter(
+    (item) => item.subcategory && item.totalAmount < threshold,
+  );
+  const largeItems = items.filter(
+    (item) => !item.subcategory || item.totalAmount >= threshold,
+  );
+
+  // 小さいアイテムをカテゴリごとにグループ化
+  const smallItemsByCategory = new Map<
+    string,
+    TransactionCategoryAggregation[]
+  >();
+  for (const item of smallItems) {
+    const categoryItems = smallItemsByCategory.get(item.category) || [];
+    smallItemsByCategory.set(item.category, [...categoryItems, item]);
+  }
+
+  // 小さいアイテムを統合処理
+  const consolidatedSmallItems = Array.from(smallItemsByCategory).map(
+    ([category, categoryItems]) =>
+      consolidateCategoryItems(category, categoryItems),
+  );
+
+  // 大きいアイテムと統合後の小さいアイテムをマージして返す
+  return [...largeItems, ...consolidatedSmallItems];
+}
+
+function consolidateCategoryItems(
+  category: string,
+  categoryItems: TransactionCategoryAggregation[],
+): TransactionCategoryAggregation {
+  // 属するノードが1種類だけの場合はまとめずにそのまま残す
+  if (categoryItems.length === 1) {
+    return categoryItems[0];
+  }
+
+  // 複数の場合は統合
+  const totalAmount = categoryItems.reduce(
+    (sum, item) => sum + item.totalAmount,
+    0,
+  );
+  return {
+    ...categoryItems[0],
+    subcategory: `その他（${category}）`,
+    totalAmount,
   };
 }
 
