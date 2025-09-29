@@ -421,6 +421,30 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     return updatedAt ? new Date(updatedAt) : null;
   }
 
+  async findAllWithPoliticalOrganizationName(
+    filters?: TransactionFilters,
+  ): Promise<Array<Transaction & { political_organization_name: string }>> {
+    const where = this.buildWhereClause(filters);
+
+    const transactions = await this.prisma.transaction.findMany({
+      where,
+      orderBy: { transactionDate: "desc" },
+      include: {
+        politicalOrganization: {
+          select: {
+            displayName: true,
+          },
+        },
+      },
+    });
+
+    return transactions.map((transaction) => ({
+      ...this.mapToTransaction(transaction),
+      political_organization_name:
+        transaction.politicalOrganization.displayName,
+    }));
+  }
+
   private aggregateByCategory(
     accountData: Array<{ account: string; amount: number }>,
   ): TransactionCategoryAggregation[] {
