@@ -77,7 +77,7 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
               <div className="h-[15px] xl:h-6 relative w-[160px] xl:w-[257px]">
                 <Image
                   src="/logos/service-logo.svg"
-                  alt="みらいオープンデータ"
+                  alt="みらいまる見え政治資金"
                   fill
                   className="object-contain object-left"
                   priority
