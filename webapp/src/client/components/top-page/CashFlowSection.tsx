@@ -100,7 +100,7 @@ export default function CashFlowSection({
 
       {/* 免責事項 */}
       {getDisclaimerText() && (
-        <div className="mt-4 text-right text-xs text-gray-500 leading-relaxed">
+        <div className="text-right text-xs text-gray-500 leading-relaxed !p-0 !m-0">
           <span className="text-[10px]">{getDisclaimerText()}</span>
         </div>
       )}

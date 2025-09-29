@@ -265,17 +265,20 @@ export function useSankeySorting(data: SankeyData) {
           }
         }
 
-        // sub-expenseにおいて「収支」を同一カテゴリ内で末尾に配置
-        if (
-          a.nodeType === "expense-sub" &&
-          b.nodeType === "expense-sub" &&
-          aParent === bParent
-        ) {
+        // 同一カテゴリ内での特別なソート処理
+        if (aParent === bParent) {
           const aIsBalance = a.label === "収支";
           const bIsBalance = b.label === "収支";
+          const aHasOther = a.label?.includes("その他") || false;
+          const bHasOther = b.label?.includes("その他") || false;
 
+          // 「収支」を最も末尾に配置（最優先）
           if (aIsBalance && !bIsBalance) return 1;
           if (bIsBalance && !aIsBalance) return -1;
+
+          // 「その他」を含むノードを末尾に配置（「収支」の次）
+          if (aHasOther && !bHasOther && !bIsBalance) return 1;
+          if (bHasOther && !aHasOther && !aIsBalance) return -1;
         }
 
         // 同一親内では金額順

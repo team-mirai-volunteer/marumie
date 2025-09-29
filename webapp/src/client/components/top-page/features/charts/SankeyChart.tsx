@@ -36,7 +36,7 @@ const DIMENSIONS = {
 
   // フォントサイズ
   FONT_SIZE_DESKTOP: "14.5px",
-  FONT_SIZE_MOBILE: "8px",
+  FONT_SIZE_MOBILE: "6.5px",
   FONT_SIZE_SUB_DESKTOP: "11px",
   FONT_SIZE_SUB_MOBILE: "6px",
 
@@ -64,11 +64,11 @@ const CHART_CONFIG = {
   MARGIN_TOP_DESKTOP: 40,
   MARGIN_TOP_MOBILE: 20,
   MARGIN_HORIZONTAL_DESKTOP: 100,
-  MARGIN_HORIZONTAL_MOBILE: 38,
+  MARGIN_HORIZONTAL_MOBILE: 48,
   MARGIN_BOTTOM: 30,
   NODE_THICKNESS: 12,
-  NODE_SPACING_DESKTOP: 24,
-  NODE_SPACING_MOBILE: 12,
+  NODE_SPACING_DESKTOP: 20,
+  NODE_SPACING_MOBILE: 10,
   LINK_OPACITY: 1.0,
   LINK_HOVER_OPACITY: 0.8,
   HOVER_OPACITY: 0.9,
@@ -286,7 +286,9 @@ const renderTotalNodeLabels = (
 
   // 下のラベル：金額
   const amountText = node.value
-    ? `${Math.round(node.value / TEXT_CONFIG.CURRENCY_DIVIDER).toLocaleString("ja-JP")}${TEXT_CONFIG.CURRENCY_UNIT}`
+    ? `${Math.round(node.value / TEXT_CONFIG.CURRENCY_DIVIDER).toLocaleString(
+        "ja-JP",
+      )}${TEXT_CONFIG.CURRENCY_UNIT}`
     : "";
   if (amountText) {
     elements.push(
@@ -573,7 +575,7 @@ export default function SankeyChart({ data }: SankeyChartProps) {
           ? DIMENSIONS.CHART_HEIGHT_DESKTOP
           : DIMENSIONS.CHART_HEIGHT_MOBILE,
       }}
-      className="sankey-container"
+      className="sankey-container !mb-0"
       role="img"
       aria-label="政治資金の収支フロー図"
       aria-describedby="sankey-chart-description"
