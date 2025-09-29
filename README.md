@@ -17,7 +17,7 @@
 ### ディレクトリ構造
 
 ```
-open/
+marumie/
 ├── webapp/           # フロントエンド（一般ユーザー向け）
 │   ├── src/
 │   │   ├── app/      # Next.js App Router
