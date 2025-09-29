@@ -86,10 +86,10 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
             </div>
           </Link>
 
-          {/* Desktop: Navigation Menu + Organization Selector */}
-          <div className="hidden lg:flex items-center gap-8">
+          {/* Navigation Menu + Organization Selector */}
+          <div className="flex items-center gap-8">
             <nav
-              className="flex items-center gap-6"
+              className="hidden lg:flex items-center gap-6"
               aria-label="メインナビゲーション"
             >
               {navigationItems
@@ -104,18 +104,12 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
                   </Link>
                 ))}
             </nav>
-            <OrganizationSelector
-              organizations={organizations}
-              currentSlug={currentSlug}
-            />
-          </div>
-
-          {/* Mobile: Organization Selector */}
-          <div className="lg:hidden flex items-center min-w-0 flex-shrink">
-            <OrganizationSelector
-              organizations={organizations}
-              currentSlug={currentSlug}
-            />
+            <div className="flex items-center min-w-0 flex-shrink">
+              <OrganizationSelector
+                organizations={organizations}
+                initialSlug={currentSlug}
+              />
+            </div>
           </div>
         </div>
       </div>

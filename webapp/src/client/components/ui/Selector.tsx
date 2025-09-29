@@ -11,7 +11,8 @@ interface SelectorOption {
 
 interface SelectorProps {
   options: SelectorOption[];
-  defaultValue: string;
+  defaultValue?: string;
+  value?: string;
   placeholder?: string;
   title: string;
   onSelect?: (value: string) => void;
@@ -20,21 +21,26 @@ interface SelectorProps {
 export default function Selector({
   options,
   defaultValue,
+  value,
   placeholder = "選択してください",
   title,
   onSelect,
 }: SelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState(defaultValue);
+  const [selectedValue, setSelectedValue] = useState(defaultValue || "");
+
+  const currentValue = value !== undefined ? value : selectedValue;
 
   const selectedOption = options.find(
-    (option) => option.value === selectedValue,
+    (option) => option.value === currentValue,
   );
 
-  const handleSelect = (value: string) => {
-    setSelectedValue(value);
+  const handleSelect = (newValue: string) => {
+    if (value === undefined) {
+      setSelectedValue(newValue);
+    }
     setIsOpen(false);
-    onSelect?.(value);
+    onSelect?.(newValue);
   };
 
   return (
@@ -92,7 +98,7 @@ export default function Selector({
                 >
                   {/* Checkbox */}
                   <div className="flex items-center justify-center w-[18px] h-[18px] mt-0.5">
-                    {selectedValue === option.value && (
+                    {currentValue === option.value && (
                       <Image
                         src="/icons/icon-checkmark.svg"
                         alt=""
