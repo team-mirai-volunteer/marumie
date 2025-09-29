@@ -214,7 +214,7 @@ export const BS_CATEGORIES: Record<string, { type: "asset" | "liability" | "net_
   "未払金/未払費用": {
     type: "liability"
   },
-  "未払金": {
+  "未払費用": {
     // 使わなくしていきたい。過渡期的に残す。
     type: "liability"
   },
