@@ -22,12 +22,12 @@ function formatAmountDisplay(
     ? "text-gray-800 font-bold font-sf-pro"
     : "text-gray-600 font-bold font-sf-pro";
   const unitClass = isLarge
-    ? "text-gray-500 font-bold text-base leading-4"
+    ? "text-gray-500 font-bold text-xs sm:text-base leading-none"
     : "text-gray-500 font-bold text-xs leading-4";
 
   if (amount.tertiary) {
     return (
-      <span className="flex items-end gap-1">
+      <span className="flex items-baseline gap-1 translate-y-0.5">
         <span className={mainClass}>{amount.main}</span>
         <span className={unitClass}>{amount.secondary}</span>
         <span className={mainClass}>{amount.tertiary}</span>
@@ -36,7 +36,7 @@ function formatAmountDisplay(
     );
   }
   return (
-    <span className="flex items-end gap-1">
+    <span className="flex items-baseline gap-1 translate-y-0.5">
       <span className={mainClass}>{amount.main}</span>
       <span className={unitClass}>
         {amount.secondary}
@@ -74,7 +74,7 @@ export default function BalanceDetailCard({
 
   return (
     <div
-      className={`border border-gray-200 rounded-2xl p-5 sm:p-6 ${className}`}
+      className={`border border-gray-200 rounded-2xl py-4 px-5 sm:py-5 sm:px-6 ${className}`}
     >
       {/* デスクトップ版レイアウト */}
       <div className="hidden sm:flex flex-row items-end gap-4">
@@ -83,7 +83,7 @@ export default function BalanceDetailCard({
           <div className="text-gray-800 font-bold text-base leading-7">
             {mainBalance.title}
           </div>
-          <div className="flex items-end gap-1 text-4xl leading-7 tracking-wide">
+          <div className="flex items-baseline gap-1 translate-y-0.5 text-4xl leading-7 tracking-wide">
             {formatAmountDisplay(mainBalance.amount, true)}
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function BalanceDetailCard({
           {/* メイン値 */}
           <div className="flex flex-row justify-end gap-10">
             <div
-              className="flex items-end gap-1 font-bold"
+              className="flex items-baseline gap-1 translate-y-0.5 font-bold"
               style={{ fontSize: "28px", lineHeight: "1.2" }}
             >
               {formatAmountDisplay(mainBalance.amount, true)}

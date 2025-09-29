@@ -4,7 +4,7 @@ import { createSafariCompatibleId } from "./sankey-id-utils";
 
 const SUBCATEGORY_LIMITS = {
   INCOME: 8,
-  EXPENSE: 10,
+  EXPENSE: 8,
 } as const;
 
 export function convertCategoryAggregationToSankeyData(
