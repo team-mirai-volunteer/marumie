@@ -10,16 +10,7 @@ export default function ProgressSection() {
           </h2>
         </div>
         <p className="text-xs sm:text-base font-normal leading-[1.667] sm:leading-[1.75] tracking-[-0.01em] text-gray-800 font-japanese max-w-[874px]">
-          政治資金の徹底的な透明化に向けて、国民の皆さまとともに、少しずつですが着実に歩んでまいります。ロードマップは
-          <a
-            href="https://note.com/annotakahiro24"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-bold underline hover:no-underline"
-          >
-            こちらのnote
-          </a>
-          をお読みください。
+          政治資金の徹底的な透明化に向けて、国民の皆さまとともに少しずつですが着実に歩んでまいります。
         </p>
       </div>
     </div>
