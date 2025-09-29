@@ -229,7 +229,7 @@ export default function TransactionRow({
         })()}
       </td>
       <td className="px-2 py-3 text-sm text-white">
-        {record.description || "-"}, {record.transaction_type}
+        {record.description || "-"}
         {record.label && (
           <div className="text-blue-400 text-xs mt-1">
             ラベル: {record.label}
