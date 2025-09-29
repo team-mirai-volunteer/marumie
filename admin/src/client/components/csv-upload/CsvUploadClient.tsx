@@ -28,6 +28,8 @@ export default function CsvUploadClient({
   const [politicalOrganizationId, setPoliticalOrganizationId] =
     useState<string>("");
   const [message, setMessage] = useState<string>("");
+  const [errors, setErrors] = useState<string[]>([]);
+  const [hasError, setHasError] = useState<boolean>(false);
   const [uploading, setUploading] = useState(false);
   const [previewResult, setPreviewResult] = useState<PreviewMfCsvResult | null>(
     null,
@@ -54,10 +56,13 @@ export default function CsvUploadClient({
     if (!file || !politicalOrganizationId) return;
     setUploading(true);
     setMessage("");
+    setErrors([]);
+    setHasError(false);
 
     try {
       if (!previewResult) {
-        setMessage("Error: Preview data not available");
+        setMessage("Preview data not available");
+        setHasError(true);
         return;
       }
 
@@ -66,6 +71,7 @@ export default function CsvUploadClient({
       );
       if (validTransactions.length === 0) {
         setMessage("保存可能なデータがありません");
+        setHasError(true);
         return;
       }
 
@@ -73,6 +79,13 @@ export default function CsvUploadClient({
         validTransactions,
         politicalOrganizationId,
       });
+
+      if (!result.ok && result.errors && result.errors.length > 0) {
+        setMessage(result.message);
+        setErrors(result.errors);
+        setHasError(true);
+        return;
+      }
 
       setMessage(
         result.message ||
@@ -91,6 +104,11 @@ export default function CsvUploadClient({
     } catch (err) {
       console.error("Upload error:", err);
       setMessage(`Error: ${err instanceof Error ? err.message : String(err)}`);
+      setHasError(true);
+      // For admin interface, show stack trace
+      if (err instanceof Error && err.stack) {
+        setErrors([err.stack]);
+      }
     } finally {
       setUploading(false);
     }
@@ -160,12 +178,25 @@ export default function CsvUploadClient({
       {message && (
         <div
           className={`mt-3 p-3 rounded border ${
-            message.startsWith("Error:")
+            hasError
               ? "text-red-500 bg-red-900/20 border-red-900/30"
               : "text-green-500 bg-green-900/20 border-green-900/30"
           }`}
         >
           {message}
+        </div>
+      )}
+
+      {errors.length > 0 && (
+        <div className="mt-3 p-3 rounded border text-red-500 bg-red-900/20 border-red-900/30">
+          <div className="font-semibold mb-2">エラー詳細:</div>
+          {errors.map((error) => (
+            <div key={error} className="mb-2 last:mb-0">
+              <pre className="whitespace-pre-wrap text-xs font-mono bg-red-950/30 p-2 rounded overflow-x-auto">
+                {error}
+              </pre>
+            </div>
+          ))}
         </div>
       )}
     </form>
