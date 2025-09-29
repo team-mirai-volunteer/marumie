@@ -12,7 +12,7 @@ export default function ExplanationSection() {
           <p className="text-[11px] sm:text-[15px] leading-[1.82] sm:leading-[1.87] tracking-[0.01em] text-gray-500 sm:text-gray-800 font-medium sm:font-normal font-japanese">
             本プロジェクトは、チームみらいによって政治資金の透明化を目的に開発されたオープンソースソフトウェアです。決済データは、クレジットカード、デビットカード、銀行口座を通じて収集され、現状不定期で更新されています。すでにオープンソースで
             <a
-              href="https://github.com/team-mirai-volunteer/open"
+              href="https://github.com/team-mirai-volunteer/marumie"
               target="_blank"
               rel="noopener noreferrer"
               className="font-bold text-[#238778] underline hover:no-underline"
@@ -37,7 +37,7 @@ export default function ExplanationSection() {
             データの出典
           </h3>
           <p className="text-[11px] sm:text-[15px] leading-[1.82] sm:leading-[1.87] tracking-[0.01em] text-gray-500 sm:text-gray-800 font-medium sm:font-normal font-japanese">
-            本サイトに含まれる政治資金収支データは、政党「チームみらい」並びに党首・安野貴博の政治団体である「デジタル民主主義を考える会」の収支を合算したもので、結党した2025年5月以降の仕訳けが完了した収支を掲載しています。なお収支データには、政治資金規制法で定義された政治活動に使うお金である「政治資金」と、公職選挙法で定義された選挙運動に使うお金である「選挙資金」の双方が含まれています。
+            本サイトに含まれる政治資金収支データは、政党「チームみらい」並びに党首・安野貴博の政治団体である「デジタル民主主義を考える会」の収支を整理したもので、結党した2025年5月以降の仕訳けが完了した収支を掲載しています。なお収支データには、政治資金規制法で定義された政治活動に使うお金である「政治資金」と、公職選挙法で定義された選挙運動に使うお金である「選挙資金」の双方が含まれています。
           </p>
         </div>
 
