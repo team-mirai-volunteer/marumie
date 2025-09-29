@@ -141,6 +141,7 @@ export default async function TransactionsPage({
           />
 
           <InteractiveTransactionTable
+            slug={slug}
             transactions={data.transactions}
             total={data.total}
             page={data.page}

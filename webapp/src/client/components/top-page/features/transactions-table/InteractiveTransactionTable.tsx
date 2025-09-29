@@ -27,6 +27,7 @@ const SORT_CONFIGS: Record<SortOption, SortConfig> = {
 };
 
 interface InteractiveTransactionTableProps {
+  slug: string;
   transactions: DisplayTransaction[];
   total: number;
   page: number;
@@ -36,6 +37,7 @@ interface InteractiveTransactionTableProps {
 }
 
 export default function InteractiveTransactionTable({
+  slug,
   transactions,
   total,
   page,
@@ -172,7 +174,10 @@ export default function InteractiveTransactionTable({
 
           {/* 右側のCSVダウンロードリンク */}
           <div className="flex-1 flex justify-end">
-            <CsvDownloadLink className="px-4 py-3 text-sm font-bold text-[#238778] bg-white hover:bg-gray-50 transition-colors cursor-pointer" />
+            <CsvDownloadLink
+              slug={slug}
+              className="px-4 py-3 text-sm font-bold text-[#238778] bg-white hover:bg-gray-50 transition-colors cursor-pointer"
+            />
           </div>
         </div>
         {/* 件数表示を下に配置 */}
@@ -197,7 +202,10 @@ export default function InteractiveTransactionTable({
 
         {/* SP版CSVダウンロードリンク */}
         <div className="mt-3 text-right">
-          <CsvDownloadLink className="text-sm font-bold text-[#238778] hover:bg-gray-50 transition-all cursor-pointer" />
+          <CsvDownloadLink
+            slug={slug}
+            className="text-sm font-bold text-[#238778] hover:bg-gray-50 transition-all cursor-pointer"
+          />
         </div>
       </div>
     </>

@@ -5,23 +5,24 @@ import { prisma } from "@/server/lib/prisma";
 import { PrismaPoliticalOrganizationRepository } from "@/server/repositories/prisma-political-organization.repository";
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
 import {
-  type GetAllTransactionsBySlugParams,
-  GetAllTransactionsBySlugUsecase,
-} from "@/server/usecases/get-all-transactions-by-slug-usecase";
+  type GetTransactionsForCsvParams,
+  GetTransactionsForCsvUsecase,
+} from "@/server/usecases/get-transactions-for-csv-usecase";
+
 const CACHE_REVALIDATE_SECONDS = 60;
 
-export const loadAllTransactionsData = unstable_cache(
-  async (params: GetAllTransactionsBySlugParams) => {
+export const loadTransactionsForCsv = unstable_cache(
+  async (params: GetTransactionsForCsvParams) => {
     const transactionRepository = new PrismaTransactionRepository(prisma);
     const politicalOrganizationRepository =
       new PrismaPoliticalOrganizationRepository(prisma);
-    const usecase = new GetAllTransactionsBySlugUsecase(
+    const usecase = new GetTransactionsForCsvUsecase(
       transactionRepository,
       politicalOrganizationRepository,
     );
 
     return await usecase.execute(params);
   },
-  ["all-transactions-data"],
+  ["transactions-for-csv"],
   { revalidate: CACHE_REVALIDATE_SECONDS },
 );
