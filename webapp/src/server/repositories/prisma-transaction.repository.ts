@@ -402,19 +402,6 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     const debitTotal = Number(debitResult._sum.debitAmount) || 0;
     const creditTotal = Number(creditResult._sum.creditAmount) || 0;
 
-    console.log(
-      `[getLiabilityBalance] Liability accounts: ${liabilityAccounts.join(", ")}`,
-    );
-    console.log(
-      `[getLiabilityBalance] Debit total (未払費用の減少): ${debitTotal}`,
-    );
-    console.log(
-      `[getLiabilityBalance] Credit total (未払費用の増加): ${creditTotal}`,
-    );
-    console.log(
-      `[getLiabilityBalance] Final liability balance: ${creditTotal - debitTotal}`,
-    );
-
     // 負債は貸方残高なので、貸方合計から借方合計を引く
     return creditTotal - debitTotal;
   }

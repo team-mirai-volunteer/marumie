@@ -54,13 +54,14 @@ export default function CashFlowSection({
             height={31}
           />
         }
-        title={`${organizationName || "未登録の政治団体"}｜収支の流れ`}
+        organizationName={organizationName || "未登録の政治団体"}
+        title="収支の流れ"
         updatedAt={updatedAt}
         subtitle="どこからお金を得て、何に使っているか"
       />
 
       {/* 財務サマリー */}
-      <FinancialSummarySection sankeyData={currentData ?? null} />
+      <FinancialSummarySection sankeyData={friendly ?? null} />
 
       {/* タブ */}
       <div className="flex gap-7 border-b border-gray-300 mb-4">
@@ -103,6 +104,13 @@ export default function CashFlowSection({
           <span className="text-[10px]">{getDisclaimerText()}</span>
         </div>
       )}
+
+      {/* 更新日時 */}
+      <div className="mt-4 text-right">
+        <span className="text-xs font-normal text-[#9CA3AF] leading-[1.33]">
+          {updatedAt}
+        </span>
+      </div>
     </MainColumnCard>
   );
 }

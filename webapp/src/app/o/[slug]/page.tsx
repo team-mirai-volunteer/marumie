@@ -1,4 +1,5 @@
 import "server-only";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import AboutSection from "@/client/components/common/AboutSection";
 import LinkCardsSection from "@/client/components/common/LinkCardsSection";
@@ -21,6 +22,23 @@ interface OrgPageProps {
   params: Promise<{
     slug: string;
   }>;
+}
+
+export async function generateMetadata({
+  params,
+}: OrgPageProps): Promise<Metadata> {
+  const { slug } = await params;
+
+  const { organizations } = await loadOrganizations();
+  const currentOrganization = organizations.find((org) => org.slug === slug);
+
+  const title = currentOrganization?.displayName
+    ? `${currentOrganization.displayName} - みらいまる見え政治資金`
+    : "みらいまる見え政治資金";
+
+  return {
+    title,
+  };
 }
 
 export default async function OrgPage({ params }: OrgPageProps) {
@@ -78,7 +96,7 @@ export default async function OrgPage({ params }: OrgPageProps) {
         slug={slug}
         organizationName={currentOrganization?.displayName}
       />
-      <AnotherPageLinkSection />
+      <AnotherPageLinkSection currentSlug={slug} />
       <ProgressSection />
       <ExplanationSection />
       <AboutSection />

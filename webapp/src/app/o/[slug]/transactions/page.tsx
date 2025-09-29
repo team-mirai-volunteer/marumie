@@ -3,12 +3,15 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import AboutSection from "@/client/components/common/AboutSection";
+import AnotherPageLinkSection from "@/client/components/common/AnotherPageLinkSection";
 import ExplanationSection from "@/client/components/common/ExplanationSection";
+import LinkCardsSection from "@/client/components/common/LinkCardsSection";
 import TransparencySection from "@/client/components/common/TransparencySection";
 import CardHeader from "@/client/components/layout/CardHeader";
 import MainColumn from "@/client/components/layout/MainColumn";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
 import InteractiveTransactionTable from "@/client/components/top-page/features/transactions-table/InteractiveTransactionTable";
+import ProgressSection from "@/client/components/top-page/ProgressSection";
 import { loadTransactionsPageData } from "@/server/loaders/load-transactions-page-data";
 import { loadOrganizations } from "@/server/loaders/load-organizations";
 import { formatUpdatedAt } from "@/server/utils/format-date";
@@ -44,12 +47,12 @@ export async function generateMetadata({
     });
 
     return {
-      title: `みらいオープンデータ - すべての入出金（${result.politicalOrganizations[0]?.displayName || "Unknown"}）`,
+      title: `${result.politicalOrganizations[0]?.displayName || "Unknown"}:全ての入出金 - みらいまる見え政治資金`,
       description: `${result.politicalOrganizations[0]?.displayName || "Unknown"}の政治資金取引一覧を表示しています。`,
     };
   } catch {
     return {
-      title: "みらいオープンデータ - すべての入出金",
+      title: "全ての入出金 - みらいまる見え政治資金",
       description: "政治資金取引一覧を表示しています。",
     };
   }
@@ -148,10 +151,11 @@ export default async function TransactionsPage({
         </MainColumnCard>
 
         <TransparencySection title="党内の機密データの流出事故ではありません☺️" />
-
+        <AnotherPageLinkSection currentSlug={slug} />
+        <ProgressSection />
         <ExplanationSection />
-
         <AboutSection />
+        <LinkCardsSection />
       </MainColumn>
     );
   } catch (error) {

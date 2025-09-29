@@ -41,7 +41,8 @@ export default function TransactionsSection({
             height={30}
           />
         }
-        title={`${organizationName || "未登録の政治団体"}｜すべての出入金`}
+        organizationName={organizationName || "未登録の政治団体"}
+        title="すべての出入金"
         updatedAt={updatedAt}
         subtitle="これまでにデータ連携された出入金の明細"
       />

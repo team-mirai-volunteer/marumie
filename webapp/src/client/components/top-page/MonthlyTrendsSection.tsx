@@ -32,14 +32,22 @@ export default function MonthlyTrendsSection({
             height={30}
           />
         }
-        title={`${organizationName || "未登録の政治団体"}｜月ごとの収支の推移`}
+        organizationName={organizationName || "未登録の政治団体"}
+        title="月ごとの収支の推移"
         updatedAt={updatedAt}
-        subtitle="今年の年始から月ごとの収入と支出"
+        subtitle="今年の月ごとの収入と支出"
       />
 
       {/* 月次チャート表示 - モバイルのみ右端まで拡張 */}
       <div className="-mr-[18px] sm:mr-0">
         <MonthlyChart data={monthlyData || []} />
+      </div>
+
+      {/* 更新日時 */}
+      <div className="mt-4 text-right">
+        <span className="text-xs font-normal text-[#9CA3AF] leading-[1.33]">
+          {updatedAt}
+        </span>
       </div>
     </MainColumnCard>
   );
