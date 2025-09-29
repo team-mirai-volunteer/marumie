@@ -288,7 +288,7 @@ function adjustBalanceAndCategories(
     });
   }
 
-  if (currentYearBalance > 0) {
+  if (currentYearBalance > 0 && !isFriendlyCategory) {
     result.expense.push({
       category: "現金残高",
       totalAmount: currentYearBalance,
@@ -308,11 +308,13 @@ function adjustBalanceAndCategories(
       });
     }
 
-    result.expense.push({
-      category: "現金残高",
-      subcategory: "収支",
-      totalAmount: balanceAmount,
-    });
+    if (balanceAmount > 0) {
+      result.expense.push({
+        category: "現金残高",
+        subcategory: "収支",
+        totalAmount: balanceAmount,
+      });
+    }
   }
 
   return result;
