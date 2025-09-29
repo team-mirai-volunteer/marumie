@@ -575,7 +575,7 @@ export default function SankeyChart({ data }: SankeyChartProps) {
           ? DIMENSIONS.CHART_HEIGHT_DESKTOP
           : DIMENSIONS.CHART_HEIGHT_MOBILE,
       }}
-      className="sankey-container"
+      className="sankey-container !mb-0"
       role="img"
       aria-label="政治資金の収支フロー図"
       aria-describedby="sankey-chart-description"
