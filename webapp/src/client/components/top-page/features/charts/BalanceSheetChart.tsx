@@ -12,6 +12,18 @@ const CHART_WIDTH = 500;
 const CHART_HEIGHT = 380;
 const MARGIN = 1;
 
+// 色定数
+const COLORS = {
+  CURRENT_ASSETS: "#5EEAD4",
+  FIXED_ASSETS: "#2DD4BF",
+  DEBT_EXCESS: "#DC2626",
+  DEBT_EXCESS_STROKE: "#B91C1C",
+  CURRENT_LIABILITIES: "#FECACA",
+  FIXED_LIABILITIES: "#F87171",
+  NET_ASSETS: "#22D3EE",
+  WHITE: "#ffffff",
+} as const;
+
 interface BalanceSheetNode {
   name: string;
   value: number;
@@ -53,7 +65,7 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
       nodes.push({
         name: BALANCE_SHEET_LABELS.currentAssets,
         value: balanceSheet.left.currentAssets,
-        color: "#5EEAD4",
+        color: COLORS.CURRENT_ASSETS,
         x: 0,
         y: currentY,
         width: leftWidth - MARGIN / 2,
@@ -67,7 +79,7 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
       nodes.push({
         name: BALANCE_SHEET_LABELS.fixedAssets,
         value: balanceSheet.left.fixedAssets,
-        color: "#2DD4BF",
+        color: COLORS.FIXED_ASSETS,
         x: 0,
         y: currentY,
         width: leftWidth - MARGIN / 2,
@@ -81,7 +93,7 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
       nodes.push({
         name: BALANCE_SHEET_LABELS.debtExcess,
         value: balanceSheet.left.debtExcess,
-        color: "#DC2626",
+        color: COLORS.DEBT_EXCESS,
         x: 1,
         y: currentY + 1,
         width: leftWidth - MARGIN / 2 - 2,
@@ -98,7 +110,7 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
       nodes.push({
         name: BALANCE_SHEET_LABELS.currentLiabilities,
         value: balanceSheet.right.currentLiabilities,
-        color: "#FECACA",
+        color: COLORS.CURRENT_LIABILITIES,
         x: leftWidth + MARGIN / 2,
         y: currentY,
         width: rightWidth - MARGIN / 2,
@@ -113,7 +125,7 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
       nodes.push({
         name: BALANCE_SHEET_LABELS.fixedLiabilities,
         value: balanceSheet.right.fixedLiabilities,
-        color: "#F87171",
+        color: COLORS.FIXED_LIABILITIES,
         x: leftWidth + MARGIN / 2,
         y: currentY,
         width: rightWidth - MARGIN / 2,
@@ -127,7 +139,7 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
       nodes.push({
         name: BALANCE_SHEET_LABELS.netAssets,
         value: balanceSheet.right.netAssets,
-        color: "#22D3EE",
+        color: COLORS.NET_ASSETS,
         x: leftWidth + MARGIN / 2,
         y: currentY,
         width: rightWidth - MARGIN / 2,
@@ -139,6 +151,12 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
   };
 
   const nodes = calculateLayout(data);
+
+  // 全ての要素の高さをログ出力
+  console.log("Balance Sheet Chart - Element Heights:");
+  nodes.forEach((node) => {
+    console.log(`${node.name}: ${node.height}px`);
+  });
 
   // 金額フォーマット関数
   const formatAmount = (amount: number) => {
@@ -152,6 +170,119 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
       return en > 0 ? `${man}万${en}円` : `${man}万円`;
     }
     return `${amount}円`;
+  };
+
+  // ラベル表示関数
+  const renderLabel = (node: BalanceSheetNode) => {
+    const isDebtExcess = node.name === BALANCE_SHEET_LABELS.debtExcess;
+    const textColor = isDebtExcess ? "fill-red-600" : "fill-black";
+
+    // 高さが30以下の場合：一行表示
+    if (node.height <= 30) {
+      return (
+        <text
+          x={node.x + node.width / 2}
+          y={node.y + node.height / 2 - 2}
+          textAnchor="middle"
+          dominantBaseline="central"
+          className={`pointer-events-none ${textColor}`}
+        >
+          {isDebtExcess && (
+            <tspan
+              fontSize="14"
+              fontWeight="700"
+              style={{ fontFamily: "'Noto Sans JP', sans-serif" }}
+            >
+              ▲
+            </tspan>
+          )}
+          <tspan
+            fontSize="14"
+            fontWeight="700"
+            style={{ fontFamily: "'Noto Sans JP', sans-serif" }}
+            dx={isDebtExcess ? "4" : "0"}
+          >
+            {node.name}{" "}
+          </tspan>
+          {formatAmount(node.value)
+            .split(/(\d+)/)
+            .map((part, partIndex) => {
+              const isNumber = /^\d+$/.test(part);
+              return (
+                <tspan
+                  key={`${node.name}-${partIndex}-${part}`}
+                  fontSize={isNumber ? "16" : "12"}
+                  fontWeight={isNumber ? "700" : "500"}
+                  dx={partIndex > 0 ? "2" : "0"}
+                  style={{
+                    fontFamily: isNumber
+                      ? "'SF Pro', -apple-system, system-ui, sans-serif"
+                      : "'Noto Sans JP', sans-serif",
+                  }}
+                >
+                  {part}
+                </tspan>
+              );
+            })}
+        </text>
+      );
+    }
+
+    // 高さが30より大きい場合：二行表示
+    return (
+      <>
+        {/* ラベル */}
+        <text
+          x={node.x + node.width / 2}
+          y={node.y + node.height / 2 - 10}
+          textAnchor="middle"
+          fontSize="16"
+          fontWeight="700"
+          className={`pointer-events-none font-bold ${textColor}`}
+          style={{ fontFamily: "'Noto Sans JP', sans-serif" }}
+        >
+          {node.name}
+        </text>
+
+        {/* 金額 */}
+        <text
+          x={node.x + node.width / 2}
+          y={node.y + node.height / 2 + 15}
+          textAnchor="middle"
+          className={`pointer-events-none ${textColor}`}
+        >
+          {isDebtExcess && (
+            <tspan
+              fontSize="18"
+              fontWeight="700"
+              style={{ fontFamily: "'Noto Sans JP', sans-serif" }}
+            >
+              ▲
+            </tspan>
+          )}
+          {formatAmount(node.value)
+            .split(/(\d+)/)
+            .map((part, partIndex) => {
+              const isNumber = /^\d+$/.test(part);
+              return (
+                <tspan
+                  key={`${node.name}-${partIndex}-${part}`}
+                  fontSize={isNumber ? "20" : "14"}
+                  fontWeight={isNumber ? "700" : "500"}
+                  dx={partIndex > 0 ? "4" : "0"}
+                  style={{
+                    fontFamily: isNumber
+                      ? "'SF Pro', -apple-system, system-ui, sans-serif"
+                      : "'Noto Sans JP', sans-serif",
+                  }}
+                >
+                  {part}
+                </tspan>
+              );
+            })}
+        </text>
+      </>
+    );
   };
 
   return (
@@ -179,8 +310,8 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
                 }
                 stroke={
                   node.name === BALANCE_SHEET_LABELS.debtExcess
-                    ? "#B91C1C"
-                    : "#ffffff"
+                    ? COLORS.DEBT_EXCESS_STROKE
+                    : COLORS.WHITE
                 }
                 strokeWidth={
                   node.name === BALANCE_SHEET_LABELS.debtExcess ? 1 : 2
@@ -190,64 +321,7 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
                 }
                 className="cursor-pointer"
               />
-              {/* ラベル */}
-              <text
-                x={node.x + node.width / 2}
-                y={node.y + node.height / 2 - 10}
-                textAnchor="middle"
-                fontSize="16"
-                fontWeight="700"
-                className={`pointer-events-none font-bold ${
-                  node.name === BALANCE_SHEET_LABELS.debtExcess
-                    ? "fill-red-600"
-                    : "fill-black"
-                }`}
-                style={{ fontFamily: "'Noto Sans JP', sans-serif" }}
-              >
-                {node.name}
-              </text>
-
-              {/* 金額 */}
-              <text
-                x={node.x + node.width / 2}
-                y={node.y + node.height / 2 + 15}
-                textAnchor="middle"
-                className={`pointer-events-none ${
-                  node.name === BALANCE_SHEET_LABELS.debtExcess
-                    ? "fill-red-600"
-                    : "fill-black"
-                }`}
-              >
-                {node.name === BALANCE_SHEET_LABELS.debtExcess && (
-                  <tspan
-                    fontSize="18"
-                    fontWeight="700"
-                    style={{ fontFamily: "'Noto Sans JP', sans-serif" }}
-                  >
-                    ▲
-                  </tspan>
-                )}
-                {formatAmount(node.value)
-                  .split(/(\d+)/)
-                  .map((part, partIndex) => {
-                    const isNumber = /^\d+$/.test(part);
-                    return (
-                      <tspan
-                        key={`${node.name}-${partIndex}-${part}`}
-                        fontSize={isNumber ? "20" : "14"}
-                        fontWeight={isNumber ? "700" : "500"}
-                        dx={partIndex > 0 ? "4" : "0"}
-                        style={{
-                          fontFamily: isNumber
-                            ? "'SF Pro', -apple-system, system-ui, sans-serif"
-                            : "'Noto Sans JP', sans-serif",
-                        }}
-                      >
-                        {part}
-                      </tspan>
-                    );
-                  })}
-              </text>
+              {renderLabel(node)}
             </g>
           ))}
         </svg>
