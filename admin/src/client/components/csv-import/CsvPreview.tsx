@@ -64,42 +64,6 @@ export default function CsvPreview({
         const errorMessage =
           err instanceof Error ? err.message : "CSVのプレビューに失敗しました";
         setError(errorMessage);
-        onPreviewCompleteRef.current?.({
-          transactions: [],
-          summary: {
-            totalCount: 0,
-            insertCount: 0,
-            updateCount: 0,
-            invalidCount: 0,
-            skipCount: 0,
-          },
-          statistics: {
-            insert: {
-              income: { count: 0, amount: 0 },
-              expense: { count: 0, amount: 0 },
-              offset_income: { count: 0, amount: 0 },
-              offset_expense: { count: 0, amount: 0 },
-            },
-            update: {
-              income: { count: 0, amount: 0 },
-              expense: { count: 0, amount: 0 },
-              offset_income: { count: 0, amount: 0 },
-              offset_expense: { count: 0, amount: 0 },
-            },
-            invalid: {
-              income: { count: 0, amount: 0 },
-              expense: { count: 0, amount: 0 },
-              offset_income: { count: 0, amount: 0 },
-              offset_expense: { count: 0, amount: 0 },
-            },
-            skip: {
-              income: { count: 0, amount: 0 },
-              expense: { count: 0, amount: 0 },
-              offset_income: { count: 0, amount: 0 },
-              offset_expense: { count: 0, amount: 0 },
-            },
-          },
-        });
       } finally {
         setLoading(false);
       }
