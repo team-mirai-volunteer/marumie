@@ -25,18 +25,16 @@ export default function CardHeader({
           <div className="w-[30px] h-[30px] flex items-center justify-center flex-shrink-0">
             {icon}
           </div>
-          <div className="flex flex-col md:flex-row md:items-center">
-            {organizationName && (
-              <>
-                <Title className="text-[--color-text-primary]">
-                  {organizationName}
-                </Title>
-                <Title className="hidden md:inline text-[--color-text-primary] mx-1">
-                  ｜
-                </Title>
-              </>
+          <div className="flex flex-col md:block">
+            {organizationName ? (
+              <Title className="text-[--color-text-primary]">
+                <span className="md:inline block">{organizationName}</span>
+                <span className="hidden md:inline mx-1">｜</span>
+                <span className="md:inline block">{title}</span>
+              </Title>
+            ) : (
+              <Title className="text-[--color-text-primary]">{title}</Title>
             )}
-            <Title className="text-[--color-text-primary]">{title}</Title>
           </div>
         </div>
 
