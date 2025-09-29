@@ -53,7 +53,7 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
     <header className="fixed top-0 left-0 right-0 z-40 px-2.5 py-3 xl:px-6 xl:py-4">
       {/* Main Header Container with rounded background */}
       <div className="bg-white rounded-[20px] px-3 py-3 xl:px-6 xl:py-0 relative z-10">
-        <div className="flex justify-between items-center gap-2 xl:h-16">
+        <div className="flex items-center gap-2 xl:h-16">
           {/* Logo and Title Section */}
           <Link
             href={logoHref}
@@ -87,7 +87,7 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
           </Link>
 
           {/* Navigation Menu + Organization Selector */}
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-8 ml-auto min-w-0">
             <nav
               className="hidden lg:flex items-center gap-6"
               aria-label="メインナビゲーション"
@@ -104,7 +104,7 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
                   </Link>
                 ))}
             </nav>
-            <div className="flex items-center min-w-0 flex-shrink">
+            <div className="flex items-center min-w-0 flex-1">
               <OrganizationSelector
                 organizations={organizations}
                 initialSlug={currentSlug}
