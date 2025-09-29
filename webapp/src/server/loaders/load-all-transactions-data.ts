@@ -1,13 +1,13 @@
-import { PrismaClient } from "@prisma/client";
+import "server-only";
+
 import { unstable_cache } from "next/cache";
+import { prisma } from "@/server/lib/prisma";
 import { PrismaPoliticalOrganizationRepository } from "@/server/repositories/prisma-political-organization.repository";
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
 import {
   type GetAllTransactionsBySlugParams,
   GetAllTransactionsBySlugUsecase,
 } from "@/server/usecases/get-all-transactions-by-slug-usecase";
-
-const prisma = new PrismaClient();
 const CACHE_REVALIDATE_SECONDS = 60;
 
 export const loadAllTransactionsData = unstable_cache(
