@@ -16,8 +16,7 @@ export async function downloadTransactionsCsv(slug: string) {
       "政治団体名",
       "タイプ",
       "金額",
-      "メインカテゴリ",
-      "サブカテゴリ",
+      "カテゴリ",
       "詳細区分",
       "ラベル",
     ];
@@ -34,7 +33,6 @@ export async function downloadTransactionsCsv(slug: string) {
             ? transaction.credit_amount.toString()
             : transaction.debit_amount.toString(),
           `"${(transaction.transaction_type === "income" ? transaction.credit_account : transaction.debit_account).replace(/"/g, '""')}"`,
-          `"${(transaction.transaction_type === "income" ? transaction.credit_account : transaction.debit_account).replace(/"/g, '""')}"`, // CSVエスケープ
           `"${transaction.friendly_category.replace(/"/g, '""')}"`,
           `"${transaction.label.replace(/"/g, '""')}"`,
         ];
