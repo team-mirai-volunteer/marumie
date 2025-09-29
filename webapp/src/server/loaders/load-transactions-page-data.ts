@@ -10,18 +10,24 @@ import {
 const prisma = new PrismaClient();
 const CACHE_REVALIDATE_SECONDS = 60;
 
-export const loadTransactionsPageData = unstable_cache(
-  async (params: GetTransactionsBySlugParams) => {
-    const transactionRepository = new PrismaTransactionRepository(prisma);
-    const politicalOrganizationRepository =
-      new PrismaPoliticalOrganizationRepository(prisma);
-    const usecase = new GetTransactionsBySlugUsecase(
-      transactionRepository,
-      politicalOrganizationRepository,
-    );
+export const loadTransactionsPageData = (
+  params: GetTransactionsBySlugParams,
+) => {
+  const cacheKey = ["transactions-page-data", JSON.stringify(params)];
 
-    return await usecase.execute(params);
-  },
-  ["transactions-page-data"],
-  { revalidate: CACHE_REVALIDATE_SECONDS },
-);
+  return unstable_cache(
+    async () => {
+      const transactionRepository = new PrismaTransactionRepository(prisma);
+      const politicalOrganizationRepository =
+        new PrismaPoliticalOrganizationRepository(prisma);
+      const usecase = new GetTransactionsBySlugUsecase(
+        transactionRepository,
+        politicalOrganizationRepository,
+      );
+
+      return await usecase.execute(params);
+    },
+    cacheKey,
+    { revalidate: CACHE_REVALIDATE_SECONDS },
+  )();
+};
