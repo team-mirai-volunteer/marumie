@@ -532,7 +532,7 @@ describe("convertCategoryAggregationToSankeyData", () => {
       ],
     };
 
-    const currentYearBalance = 50000; // 5万円（未払費用10万円より少ない）
+    const currentYearBalance = 150000; // 15万円（未払費用10万円より多い）
     const liabilityBalance = 100000; // 10万円の未払費用
     const result = convertCategoryAggregationToSankeyData(aggregation, true, currentYearBalance, 0, liabilityBalance);
 
@@ -571,12 +571,12 @@ describe("convertCategoryAggregationToSankeyData", () => {
     expect(linkToUnpaid).toBeDefined();
     expect(linkToUnpaid?.value).toBe(100000); // 10万円
 
-    // 現金残高 → 収支のリンク（現金残高5万円 - 未払費用10万円 = 0円）
+    // 現金残高 → 収支のリンク（現金残高15万円 - 未払費用10万円 = 5万円）
     const linkToBalance = result.links.find(
       link => link.source === cashBalanceId && link.target === balanceId
     );
     expect(linkToBalance).toBeDefined();
-    expect(linkToBalance?.value).toBe(0); // 負数の場合は0になる
+    expect(linkToBalance?.value).toBe(50000); // 5万円
   });
 
   it("should handle friendly category with sufficient cash balance", () => {

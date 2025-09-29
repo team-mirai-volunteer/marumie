@@ -2,197 +2,10 @@ import type { SankeyData, SankeyLink, SankeyNode } from "@/types/sankey";
 import type { SankeyCategoryAggregationResult } from "../repositories/interfaces/transaction-repository.interface";
 import { createSafariCompatibleId } from "./sankey-id-utils";
 
-// サブカテゴリ表示の上限設定
 const SUBCATEGORY_LIMITS = {
   INCOME: 8,
   EXPENSE: 10,
 } as const;
-
-/**
- * サブカテゴリが10個になるように閾値を動的計算する処理
- */
-function calculateDynamicThreshold(
-  items: Array<{ subcategory?: string; totalAmount: number }>,
-  targetCount: number,
-): number {
-  // サブカテゴリのみを対象とする
-  const subcategoryItems = items.filter((item) => item.subcategory);
-
-  // サブカテゴリの個数が目標以下の場合は閾値を0にして統合しない
-  if (subcategoryItems.length <= targetCount) {
-    return 0;
-  }
-
-  // 金額で降順ソート
-  const sortedItems = [...subcategoryItems].sort(
-    (a, b) => b.totalAmount - a.totalAmount,
-  );
-
-  // 全体の合計金額を計算して1%を求める
-  const totalAmount = items.reduce((sum, item) => sum + item.totalAmount, 0);
-  const onePercentThreshold = totalAmount * 0.01;
-
-  // 上位targetCount個目の金額を閾値とする
-  // これにより、上位targetCount-1個 + その他1個 = 合計targetCount個になる
-  const dynamicThreshold = sortedItems[targetCount - 1].totalAmount;
-
-  // 動的閾値と1%閾値の最大値を返す（最低でも1%は保証）
-  return Math.max(dynamicThreshold, onePercentThreshold);
-}
-
-/**
- * 小項目をまとめる処理（動的閾値）
- */
-function consolidateSmallItems(
-  aggregation: SankeyCategoryAggregationResult,
-  isFriendlyCategory: boolean = false,
-): SankeyCategoryAggregationResult {
-  if (!isFriendlyCategory) {
-    return aggregation;
-  }
-
-  // サブカテゴリが設定個数になるように閾値を動的計算
-  const incomeThreshold = calculateDynamicThreshold(
-    aggregation.income,
-    SUBCATEGORY_LIMITS.INCOME,
-  );
-  const expenseThreshold = calculateDynamicThreshold(
-    aggregation.expense,
-    SUBCATEGORY_LIMITS.EXPENSE,
-  );
-
-  // 収入の処理 - カテゴリ別に閾値以下を集計
-  const consolidatedIncome: typeof aggregation.income = [];
-  const smallIncomeByCategory = new Map<string, number>();
-
-  for (const item of aggregation.income) {
-    if (item.subcategory && item.totalAmount < incomeThreshold) {
-      const current = smallIncomeByCategory.get(item.category) || 0;
-      smallIncomeByCategory.set(item.category, current + item.totalAmount);
-    } else {
-      consolidatedIncome.push(item);
-    }
-  }
-
-  // カテゴリ別に閾値以下の合計項目を追加
-  for (const [category, total] of smallIncomeByCategory) {
-    if (total > 0) {
-      consolidatedIncome.push({
-        category,
-        subcategory: `その他(${category})`,
-        totalAmount: total,
-      });
-    }
-  }
-
-  // 支出の処理 - カテゴリ別に閾値以下を集計
-  const consolidatedExpense: typeof aggregation.expense = [];
-  const smallExpenseByCategory = new Map<string, number>();
-
-  for (const item of aggregation.expense) {
-    if (item.subcategory && item.totalAmount < expenseThreshold) {
-      const current = smallExpenseByCategory.get(item.category) || 0;
-      smallExpenseByCategory.set(item.category, current + item.totalAmount);
-    } else {
-      consolidatedExpense.push(item);
-    }
-  }
-
-  // カテゴリ別に閾値以下の合計項目を追加
-  for (const [category, total] of smallExpenseByCategory) {
-    if (total > 0) {
-      consolidatedExpense.push({
-        category,
-        subcategory: `その他（${category}）`,
-        totalAmount: total,
-      });
-    }
-  }
-
-  return {
-    income: consolidatedIncome,
-    expense: consolidatedExpense,
-  };
-}
-
-/**
- * category集計データを5層サンキーデータに変換
- * subcategoryがあるものは5層、ないものは3層になる
- */
-/**
- * 「その他」カテゴリを収入・支出別にリネームする処理
- */
-function renameOtherCategories(
-  aggregation: SankeyCategoryAggregationResult,
-): SankeyCategoryAggregationResult {
-  const income = aggregation.income.map((item) => ({
-    ...item,
-    category: item.category === "その他" ? "その他の収入" : item.category,
-  }));
-
-  const expense = aggregation.expense.map((item) => ({
-    ...item,
-    category: item.category === "その他" ? "その他の支出" : item.category,
-  }));
-
-  return { income, expense };
-}
-
-/**
- * バランス調整とカテゴリ追加を一箇所で処理
- */
-function adjustBalanceAndCategories(
-  aggregation: SankeyCategoryAggregationResult,
-  isFriendlyCategory: boolean,
-  currentYearBalance: number,
-  previousYearBalance: number,
-  liabilityBalance: number = 0,
-): SankeyCategoryAggregationResult {
-  const result = {
-    income: [...aggregation.income],
-    expense: [...aggregation.expense],
-  };
-
-  // 昨年からの現金残高を収入側に追加
-  if (previousYearBalance > 0) {
-    result.income.push({
-      category: "昨年からの現金残高",
-      totalAmount: previousYearBalance,
-    });
-  }
-
-  // 現金残高の処理
-  if (isFriendlyCategory) {
-    // friendly categoryの場合：未払費用と収支を追加
-    const unpaidAmount = Math.max(liabilityBalance, 0);
-    const actualCashBalance = Math.max(currentYearBalance, 0);
-    const balanceAmount = Math.max(0, actualCashBalance - unpaidAmount);
-
-    // 未払費用が0円より大きい場合のみ追加
-    if (unpaidAmount > 0) {
-      result.expense.push({
-        category: "現金残高",
-        subcategory: "未払費用",
-        totalAmount: unpaidAmount,
-      });
-    }
-
-    // 収支は常に追加（0円でも表示）
-    result.expense.push({
-      category: "現金残高",
-      subcategory: "収支",
-      totalAmount: balanceAmount,
-    });
-  } else if (currentYearBalance > 0) {
-    // 通常の場合：現金残高のみ追加
-    result.expense.push({
-      category: "現金残高",
-      totalAmount: currentYearBalance,
-    });
-  }
-
-  return result;
-}
 
 export function convertCategoryAggregationToSankeyData(
   aggregation: SankeyCategoryAggregationResult,
@@ -201,16 +14,13 @@ export function convertCategoryAggregationToSankeyData(
   previousYearBalance: number,
   liabilityBalance: number = 0,
 ): SankeyData {
-  // 「その他」カテゴリをリネーム
   const renamedAggregation = renameOtherCategories(aggregation);
 
-  // 親しみやすいカテゴリーの場合は1%以下の項目を統合
   let processedAggregation = consolidateSmallItems(
     renamedAggregation,
     isFriendlyCategory,
   );
 
-  // カテゴリ別の統合処理とバランス調整を一箇所で実行
   processedAggregation = adjustBalanceAndCategories(
     processedAggregation,
     isFriendlyCategory,
@@ -222,13 +32,10 @@ export function convertCategoryAggregationToSankeyData(
   const nodes: SankeyNode[] = [];
   const links: SankeyLink[] = [];
 
-  // ノードIDの重複を避けるためのSet
   const nodeIds = new Set<string>();
 
-  // 収入データの処理: subcategoryがあるものとないものを分別
   const incomeByCategory = new Map<string, number>();
 
-  // 1. 収入サブカテゴリノード（subcategoryがあるもの）
   for (const item of processedAggregation.income) {
     if (item.subcategory) {
       const nodeId = createSafariCompatibleId(`income-sub-${item.subcategory}`);
@@ -242,12 +49,10 @@ export function convertCategoryAggregationToSankeyData(
       }
     }
 
-    // カテゴリ別の合計を計算
     const current = incomeByCategory.get(item.category) || 0;
     incomeByCategory.set(item.category, current + item.totalAmount);
   }
 
-  // 2. 収入カテゴリノード
   for (const category of incomeByCategory.keys()) {
     const nodeId = createSafariCompatibleId(`income-${category}`);
     if (!nodeIds.has(nodeId)) {
@@ -260,24 +65,18 @@ export function convertCategoryAggregationToSankeyData(
     }
   }
 
-  // 3. 中央の合計ノード
   nodes.push({
     id: createSafariCompatibleId("合計"),
     label: "合計",
     nodeType: "total",
   });
 
-  // 支出データの処理
   const expenseByCategory = new Map<string, number>();
 
-  // 4. 支出カテゴリノード
   for (const item of processedAggregation.expense) {
-    // カテゴリ別の合計を計算
     const current = expenseByCategory.get(item.category) || 0;
     expenseByCategory.set(item.category, current + item.totalAmount);
   }
-
-  // 収入と支出の合計を計算
 
   const totalIncome = Array.from(incomeByCategory.values()).reduce(
     (sum, amount) => sum + amount,
@@ -288,12 +87,10 @@ export function convertCategoryAggregationToSankeyData(
     0,
   );
 
-  // 収入 > 支出の場合、「(仕訳中)」を追加
   if (totalIncome > totalExpense) {
     const currentBalance = totalIncome - totalExpense;
     expenseByCategory.set("(仕訳中)", currentBalance);
 
-    // 支出データに「(仕訳中)」レコードを追加（UI用）
     processedAggregation.expense.push({
       category: "(仕訳中)",
       totalAmount: currentBalance,
@@ -312,7 +109,6 @@ export function convertCategoryAggregationToSankeyData(
     }
   }
 
-  // 5. 支出サブカテゴリノード（subcategoryがあるもの）
   for (const item of processedAggregation.expense) {
     if (item.subcategory) {
       const nodeId = createSafariCompatibleId(
@@ -329,9 +125,6 @@ export function convertCategoryAggregationToSankeyData(
     }
   }
 
-  // リンクの生成
-
-  // 1. 収入サブカテゴリ → 収入カテゴリ（subcategoryがあるもの）
   for (const item of processedAggregation.income) {
     if (item.subcategory) {
       links.push({
@@ -342,7 +135,6 @@ export function convertCategoryAggregationToSankeyData(
     }
   }
 
-  // 2. 収入カテゴリ → 合計
   for (const [category, amount] of incomeByCategory) {
     links.push({
       source: createSafariCompatibleId(`income-${category}`),
@@ -351,7 +143,6 @@ export function convertCategoryAggregationToSankeyData(
     });
   }
 
-  // 3. 合計 → 支出カテゴリ
   for (const [category, amount] of expenseByCategory) {
     links.push({
       source: createSafariCompatibleId("合計"),
@@ -360,7 +151,6 @@ export function convertCategoryAggregationToSankeyData(
     });
   }
 
-  // 4. 支出カテゴリ → 支出サブカテゴリ（subcategoryがあるもの）
   for (const item of processedAggregation.expense) {
     if (item.subcategory) {
       links.push({
@@ -372,4 +162,158 @@ export function convertCategoryAggregationToSankeyData(
   }
 
   return { nodes, links };
+}
+
+function renameOtherCategories(
+  aggregation: SankeyCategoryAggregationResult,
+): SankeyCategoryAggregationResult {
+  const income = aggregation.income.map((item) => ({
+    ...item,
+    category: item.category === "その他" ? "その他の収入" : item.category,
+  }));
+
+  const expense = aggregation.expense.map((item) => ({
+    ...item,
+    category: item.category === "その他" ? "その他の支出" : item.category,
+  }));
+
+  return { income, expense };
+}
+
+function consolidateSmallItems(
+  aggregation: SankeyCategoryAggregationResult,
+  isFriendlyCategory: boolean = false,
+): SankeyCategoryAggregationResult {
+  if (!isFriendlyCategory) {
+    return aggregation;
+  }
+
+  const incomeThreshold = calculateDynamicThreshold(
+    aggregation.income,
+    SUBCATEGORY_LIMITS.INCOME,
+  );
+  const expenseThreshold = calculateDynamicThreshold(
+    aggregation.expense,
+    SUBCATEGORY_LIMITS.EXPENSE,
+  );
+
+  const consolidatedIncome: typeof aggregation.income = [];
+  const smallIncomeByCategory = new Map<string, number>();
+
+  for (const item of aggregation.income) {
+    if (item.subcategory && item.totalAmount < incomeThreshold) {
+      const current = smallIncomeByCategory.get(item.category) || 0;
+      smallIncomeByCategory.set(item.category, current + item.totalAmount);
+    } else {
+      consolidatedIncome.push(item);
+    }
+  }
+
+  for (const [category, total] of smallIncomeByCategory) {
+    if (total > 0) {
+      consolidatedIncome.push({
+        category,
+        subcategory: `その他(${category})`,
+        totalAmount: total,
+      });
+    }
+  }
+
+  const consolidatedExpense: typeof aggregation.expense = [];
+  const smallExpenseByCategory = new Map<string, number>();
+
+  for (const item of aggregation.expense) {
+    if (item.subcategory && item.totalAmount < expenseThreshold) {
+      const current = smallExpenseByCategory.get(item.category) || 0;
+      smallExpenseByCategory.set(item.category, current + item.totalAmount);
+    } else {
+      consolidatedExpense.push(item);
+    }
+  }
+
+  for (const [category, total] of smallExpenseByCategory) {
+    if (total > 0) {
+      consolidatedExpense.push({
+        category,
+        subcategory: `その他（${category}）`,
+        totalAmount: total,
+      });
+    }
+  }
+
+  return {
+    income: consolidatedIncome,
+    expense: consolidatedExpense,
+  };
+}
+
+function calculateDynamicThreshold(
+  items: Array<{ subcategory?: string; totalAmount: number }>,
+  targetCount: number,
+): number {
+  const subcategoryItems = items.filter((item) => item.subcategory);
+
+  if (subcategoryItems.length <= targetCount) {
+    return 0;
+  }
+
+  const sortedItems = [...subcategoryItems].sort(
+    (a, b) => b.totalAmount - a.totalAmount,
+  );
+
+  const totalAmount = items.reduce((sum, item) => sum + item.totalAmount, 0);
+  const onePercentThreshold = totalAmount * 0.01;
+
+  const dynamicThreshold = sortedItems[targetCount - 1].totalAmount;
+
+  return Math.max(dynamicThreshold, onePercentThreshold);
+}
+
+function adjustBalanceAndCategories(
+  aggregation: SankeyCategoryAggregationResult,
+  isFriendlyCategory: boolean,
+  currentYearBalance: number,
+  previousYearBalance: number,
+  liabilityBalance: number = 0,
+): SankeyCategoryAggregationResult {
+  const result = {
+    income: [...aggregation.income],
+    expense: [...aggregation.expense],
+  };
+
+  if (previousYearBalance > 0) {
+    result.income.push({
+      category: "昨年からの現金残高",
+      totalAmount: previousYearBalance,
+    });
+  }
+
+  if (currentYearBalance > 0) {
+    result.expense.push({
+      category: "現金残高",
+      totalAmount: currentYearBalance,
+    });
+  }
+
+  if (currentYearBalance > 0 && isFriendlyCategory) {
+    const unpaidAmount = Math.max(liabilityBalance, 0);
+    const actualCashBalance = Math.max(currentYearBalance, 0);
+    const balanceAmount = Math.max(0, actualCashBalance - unpaidAmount);
+
+    if (unpaidAmount > 0) {
+      result.expense.push({
+        category: "現金残高",
+        subcategory: "未払費用",
+        totalAmount: unpaidAmount,
+      });
+    }
+
+    result.expense.push({
+      category: "現金残高",
+      subcategory: "収支",
+      totalAmount: balanceAmount,
+    });
+  }
+
+  return result;
 }
