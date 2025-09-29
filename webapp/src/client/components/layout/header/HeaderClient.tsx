@@ -57,11 +57,11 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
           {/* Logo and Title Section */}
           <Link
             href={logoHref}
-            className="flex items-center gap-2 xl:gap-6 hover:opacity-80 transition-opacity cursor-pointer"
+            className="flex items-center gap-2 xl:gap-4 hover:opacity-80 transition-opacity cursor-pointer"
           >
             {/* Logo */}
             <div className="flex items-center">
-              <div className="w-10 h-8 xl:w-12 xl:h-11 relative">
+              <div className="w-14 h-12 xl:w-12 xl:h-11 relative">
                 {/* Team Mirai Logo */}
                 <Image
                   src="/logos/team-mirai-logo.svg"
@@ -74,9 +74,20 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
 
             {/* Title and Subtitle - Mobile: Vertical Stack, Desktop: Horizontal with baseline alignment */}
             <div className="flex flex-col gap-1.5 2xl:flex-row 2xl:items-end 2xl:gap-2 min-w-0">
-              <div className="h-[15px] xl:h-6 relative w-[160px] xl:w-[257px]">
+              {/* SP用ロゴ (xl未満で表示) */}
+              <div className="h-[45px] relative w-[126px] xl:hidden">
                 <Image
-                  src="/logos/service-logo.svg"
+                  src="/logos/service-logo-sp.svg"
+                  alt="みらいまる見え政治資金"
+                  fill
+                  className="object-contain object-left"
+                  priority
+                />
+              </div>
+              {/* PC用ロゴ (xl以上で表示) */}
+              <div className="hidden xl:block h-7 relative w-[300px]">
+                <Image
+                  src="/logos/service-logo-pc.svg"
                   alt="みらいまる見え政治資金"
                   fill
                   className="object-contain object-left"

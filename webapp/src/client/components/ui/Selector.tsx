@@ -48,7 +48,7 @@ export default function Selector({
       {/* Closed State Button */}
       <button
         type="button"
-        className="flex items-center justify-between w-full px-2 py-1 lg:px-4 lg:py-2.5 border border-gray-600 rounded-md text-gray-800 text-xs lg:text-sm font-bold hover:opacity-90 transition-opacity cursor-pointer"
+        className="flex items-center justify-between w-full px-2 py-2 lg:px-4 lg:py-2.5 border border-gray-600 rounded-md text-gray-800 text-sm lg:text-sm font-bold hover:opacity-90 transition-opacity cursor-pointer"
         style={{
           background:
             "linear-gradient(90deg, rgba(226, 246, 243, 1) 0%, rgba(238, 246, 226, 1) 100%)",
