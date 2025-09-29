@@ -83,7 +83,7 @@ export default function BalanceDetailCard({
           <div className="text-gray-800 font-bold text-base leading-7">
             {mainBalance.title}
           </div>
-          <div className="flex items-baseline gap-1 translate-y-0.5 text-4xl leading-7 tracking-wide">
+          <div className="flex items-baseline gap-1 -translate-y-1 text-4xl leading-7 tracking-wide">
             {formatAmountDisplay(mainBalance.amount, true)}
           </div>
         </div>
