@@ -1,20 +1,29 @@
 "use client";
 import "client-only";
 import { useRouter, usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 import Selector from "@/client/components/ui/Selector";
 import type { OrganizationsResponse } from "@/types/organization";
 
 interface OrganizationSelectorProps {
   organizations: OrganizationsResponse;
-  currentSlug: string;
+  initialSlug?: string;
 }
 
 export default function OrganizationSelector({
   organizations,
-  currentSlug,
+  initialSlug,
 }: OrganizationSelectorProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const [currentSlug, setCurrentSlug] = useState(initialSlug || "");
+
+  useEffect(() => {
+    const pathSegments = pathname.split("/");
+    if (pathSegments[1] === "o" && pathSegments[2]) {
+      setCurrentSlug(pathSegments[2]);
+    }
+  }, [pathname]);
 
   const options = organizations.organizations.map((org) => ({
     value: org.slug,
@@ -35,7 +44,7 @@ export default function OrganizationSelector({
   return (
     <Selector
       options={options}
-      defaultValue={currentSlug}
+      value={currentSlug}
       placeholder="チームみらい計"
       title="政治団体の区別"
       onSelect={handleSelect}

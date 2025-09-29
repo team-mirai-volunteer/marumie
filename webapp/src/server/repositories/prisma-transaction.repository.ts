@@ -207,7 +207,9 @@ export class PrismaTransactionRepository implements ITransactionRepository {
           EXTRACT(MONTH FROM transaction_date) as month,
           SUM(credit_amount) as total_amount
         FROM transactions
-        WHERE political_organization_id IN (${Prisma.join(organizationIdsBigInt)})
+        WHERE political_organization_id IN (${Prisma.join(
+          organizationIdsBigInt,
+        )})
           AND financial_year = ${financialYear}
           AND transaction_type = 'income'
         GROUP BY EXTRACT(YEAR FROM transaction_date), EXTRACT(MONTH FROM transaction_date)
@@ -221,7 +223,9 @@ export class PrismaTransactionRepository implements ITransactionRepository {
           EXTRACT(MONTH FROM transaction_date) as month,
           SUM(debit_amount) as total_amount
         FROM transactions
-        WHERE political_organization_id IN (${Prisma.join(organizationIdsBigInt)})
+        WHERE political_organization_id IN (${Prisma.join(
+          organizationIdsBigInt,
+        )})
           AND financial_year = ${financialYear}
           AND transaction_type = 'expense'
         GROUP BY EXTRACT(YEAR FROM transaction_date), EXTRACT(MONTH FROM transaction_date)
