@@ -7,12 +7,12 @@ interface LinkCard {
 
 const linkCards: LinkCard[] = [
   {
-    title: "チームみらいwebサイト",
-    href: "https://team-mir.ai",
+    title: "寄附で応援する",
+    href: "https://team-mir.ai/support/donation",
   },
   {
-    title: "ご寄付はこちらから",
-    href: "https://team-mir.ai/support/donation",
+    title: "チームみらい党員になる",
+    href: "https://team-mir.ai/support/membership",
   },
 ];
 

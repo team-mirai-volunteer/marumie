@@ -4,7 +4,7 @@ import MainColumnCard from "@/client/components/layout/MainColumnCard";
 
 const socialLinks = [
   {
-    name: "Web",
+    name: "webサイト",
     href: "https://team-mir.ai/",
     icon: "icon-web.svg",
   },
@@ -14,19 +14,26 @@ const socialLinks = [
     icon: "icon-yt.svg",
   },
   {
-    name: "X (Twitter)",
-    href: "https://x.com/team_mirai_jp",
-    icon: "icon-x.svg",
-  },
-  {
     name: "LINE",
     href: "https://line.me/R/ti/p/@465hhyop?oat__id=5529589",
     icon: "icon-line.svg",
   },
   {
+    name: "X",
+    mainText: "X",
+    subText: "（旧Twitter）",
+    href: "https://x.com/team_mirai_jp",
+    icon: "icon-x.svg",
+  },
+  {
     name: "Instagram",
     href: "https://www.instagram.com/annotakahiro2024/",
     icon: "icon-insta.svg",
+  },
+  {
+    name: "Threads",
+    href: "https://www.threads.com/@annotakahiro2024",
+    icon: "icon-threads.svg",
   },
   {
     name: "Facebook",
@@ -37,11 +44,6 @@ const socialLinks = [
     name: "TikTok",
     href: "https://www.tiktok.com/@annotakahiro2024",
     icon: "icon-tiktok.svg",
-  },
-  {
-    name: "GitHub",
-    href: "https://github.com/team-mirai-volunteer",
-    icon: "icon-github.svg",
   },
 ];
 
@@ -59,21 +61,41 @@ export default function AboutSection() {
         </div>
 
         <div className="flex justify-center">
-          <div className="grid grid-cols-4 gap-3 md:flex md:flex-wrap md:justify-center md:gap-3">
+          <div className="grid grid-cols-4 gap-0 sm:gap-1">
             {socialLinks.map((social) => (
               <a
                 key={social.name}
                 href={social.href}
                 target="_blank"
                 rel="noopener"
-                className="w-12 h-12 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity relative"
+                className="flex flex-col items-center gap-1 sm:flex-row sm:gap-2 hover:bg-gray-50 transition-colors rounded-lg p-2"
                 aria-label={social.name}
               >
-                <Image
-                  src={`/images/social-icons/${social.icon}`}
-                  alt={social.name}
-                  fill
-                />
+                <div className="w-14 h-14 sm:w-12 sm:h-12 rounded-full flex items-center justify-center relative">
+                  <Image
+                    src={`/images/social-icons/${social.icon}`}
+                    alt={social.name}
+                    width={56}
+                    height={56}
+                    className="sm:w-12 sm:h-12"
+                  />
+                </div>
+                <div className="text-left hidden sm:block">
+                  {social.subText ? (
+                    <div className="flex items-baseline gap-1">
+                      <div className="text-base font-bold text-black">
+                        {social.mainText || social.name}
+                      </div>
+                      <div className="text-xs font-bold text-black opacity-80">
+                        {social.subText}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-base font-bold text-black">
+                      {social.mainText || social.name}
+                    </div>
+                  )}
+                </div>
               </a>
             ))}
           </div>
