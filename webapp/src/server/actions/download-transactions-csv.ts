@@ -1,23 +1,23 @@
 "use server";
 
-import { loadAllTransactionsData } from "@/server/loaders/load-all-transactions-data";
+import { loadTransactionsForCsv } from "@/server/loaders/load-transactions-for-csv";
 
-export async function downloadTransactionsCsv() {
+export async function downloadTransactionsCsv(slug: string) {
   try {
     // すべてのトランザクションを取得
-    const data = await loadAllTransactionsData({
-      slugs: ["team-mirai", "digimin"],
+    const data = await loadTransactionsForCsv({
+      slugs: [slug],
       financialYear: 2025,
     });
 
     // CSVヘッダー
     const headers = [
       "日付",
+      "政治団体名",
       "タイプ",
       "金額",
       "カテゴリ",
-      "科目",
-      "チームみらい区分",
+      "詳細区分",
       "ラベル",
     ];
 
@@ -26,12 +26,14 @@ export async function downloadTransactionsCsv() {
       headers.join(","),
       ...data.transactions.map((transaction) => {
         const row = [
-          new Date(transaction.date).toISOString().split("T")[0],
-          transaction.transactionType === "income" ? "収入" : "支出",
-          transaction.amount.toString(),
-          `"${transaction.category.replace(/"/g, '""')}"`,
-          `"${transaction.account.replace(/"/g, '""')}"`, // CSVエスケープ
-          `"${(transaction.friendly_category || "").replace(/"/g, '""')}"`,
+          new Date(transaction.transaction_date).toISOString().split("T")[0],
+          `"${transaction.political_organization_name.replace(/"/g, '""')}"`,
+          transaction.transaction_type === "income" ? "収入" : "支出",
+          transaction.transaction_type === "income"
+            ? transaction.credit_amount.toString()
+            : transaction.debit_amount.toString(),
+          `"${(transaction.transaction_type === "income" ? transaction.credit_account : transaction.debit_account).replace(/"/g, '""')}"`,
+          `"${transaction.friendly_category.replace(/"/g, '""')}"`,
           `"${transaction.label.replace(/"/g, '""')}"`,
         ];
         return row.join(",");
@@ -43,7 +45,7 @@ export async function downloadTransactionsCsv() {
     // ダウンロード用のレスポンスを返す
     const now = new Date();
     const timestamp = now.toISOString().split("T")[0];
-    const filename = `transactions_${timestamp}.csv`;
+    const filename = `transactions_${slug}_${timestamp}.csv`;
 
     return {
       success: true,

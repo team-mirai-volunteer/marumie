@@ -83,4 +83,7 @@ export interface ITransactionRepository {
     financialYear: number,
   ): Promise<number>;
   getLastUpdatedAt(): Promise<Date | null>;
+  findAllWithPoliticalOrganizationName(
+    filters?: TransactionFilters,
+  ): Promise<Array<Transaction & { political_organization_name: string }>>;
 }

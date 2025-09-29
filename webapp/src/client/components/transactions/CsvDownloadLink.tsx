@@ -5,12 +5,14 @@ import { useState } from "react";
 import { downloadTransactionsCsv } from "@/server/actions/download-transactions-csv";
 
 interface CsvDownloadLinkProps {
+  slug: string;
   className?: string;
   children?: React.ReactNode;
   loadingText?: string;
 }
 
 export default function CsvDownloadLink({
+  slug,
   className = "",
   children = "全件CSVダウンロード",
   loadingText = "ダウンロード中...",
@@ -22,7 +24,7 @@ export default function CsvDownloadLink({
 
     setIsDownloading(true);
     try {
-      const result = await downloadTransactionsCsv();
+      const result = await downloadTransactionsCsv(slug);
 
       if (result.success && result.data) {
         // BOMを追加してUTF-8で保存

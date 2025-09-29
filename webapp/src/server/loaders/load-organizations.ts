@@ -1,9 +1,8 @@
 import "server-only";
-import { PrismaClient } from "@prisma/client";
-import { unstable_cache } from "next/cache";
-import type { OrganizationsResponse } from "../../types/organization";
 
-const prisma = new PrismaClient();
+import { unstable_cache } from "next/cache";
+import { prisma } from "@/server/lib/prisma";
+import type { OrganizationsResponse } from "../../types/organization";
 
 export const loadOrganizations = unstable_cache(
   async (): Promise<OrganizationsResponse> => {
