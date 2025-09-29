@@ -64,10 +64,10 @@ const CHART_CONFIG = {
   MARGIN_TOP_DESKTOP: 40,
   MARGIN_TOP_MOBILE: 20,
   MARGIN_HORIZONTAL_DESKTOP: 100,
-  MARGIN_HORIZONTAL_MOBILE: 38,
+  MARGIN_HORIZONTAL_MOBILE: 48,
   MARGIN_BOTTOM: 30,
   NODE_THICKNESS: 12,
-  NODE_SPACING_DESKTOP: 24,
+  NODE_SPACING_DESKTOP: 20,
   NODE_SPACING_MOBILE: 12,
   LINK_OPACITY: 1.0,
   LINK_HOVER_OPACITY: 0.8,
@@ -286,7 +286,9 @@ const renderTotalNodeLabels = (
 
   // 下のラベル：金額
   const amountText = node.value
-    ? `${Math.round(node.value / TEXT_CONFIG.CURRENCY_DIVIDER).toLocaleString("ja-JP")}${TEXT_CONFIG.CURRENCY_UNIT}`
+    ? `${Math.round(node.value / TEXT_CONFIG.CURRENCY_DIVIDER).toLocaleString(
+        "ja-JP",
+      )}${TEXT_CONFIG.CURRENCY_UNIT}`
     : "";
   if (amountText) {
     elements.push(
