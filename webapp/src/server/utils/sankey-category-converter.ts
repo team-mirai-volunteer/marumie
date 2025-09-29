@@ -1,5 +1,8 @@
 import type { SankeyData, SankeyLink, SankeyNode } from "@/types/sankey";
-import type { SankeyCategoryAggregationResult } from "../repositories/interfaces/transaction-repository.interface";
+import type {
+  SankeyCategoryAggregationResult,
+  TransactionCategoryAggregation,
+} from "../repositories/interfaces/transaction-repository.interface";
 import { createSafariCompatibleId } from "./sankey-id-utils";
 
 const SUBCATEGORY_LIMITS = {
@@ -212,43 +215,57 @@ function consolidateSmallItems(
   };
 }
 
-function consolidateSmallItemsByType<
-  T extends { category: string; subcategory?: string; totalAmount: number },
->(items: T[], threshold: number): T[] {
-  const consolidated: T[] = [];
-  const smallItemsByCategory = new Map<string, { total: number; items: T[] }>();
+function consolidateSmallItemsByType(
+  items: TransactionCategoryAggregation[],
+  threshold: number,
+): TransactionCategoryAggregation[] {
+  // 閾値で大きいグループと小さいグループに分離
+  const smallItems = items.filter(
+    (item) => item.subcategory && item.totalAmount < threshold,
+  );
+  const largeItems = items.filter(
+    (item) => !item.subcategory || item.totalAmount >= threshold,
+  );
 
-  for (const item of items) {
-    if (item.subcategory && item.totalAmount < threshold) {
-      const current = smallItemsByCategory.get(item.category) || {
-        total: 0,
-        items: [],
-      };
-      smallItemsByCategory.set(item.category, {
-        total: current.total + item.totalAmount,
-        items: [...current.items, item],
-      });
-    } else {
-      consolidated.push(item);
-    }
+  // 小さいアイテムをカテゴリごとにグループ化
+  const smallItemsByCategory = new Map<
+    string,
+    TransactionCategoryAggregation[]
+  >();
+  for (const item of smallItems) {
+    const categoryItems = smallItemsByCategory.get(item.category) || [];
+    smallItemsByCategory.set(item.category, [...categoryItems, item]);
   }
 
-  for (const [category, { total, items }] of smallItemsByCategory) {
-    if (total > 0) {
-      if (items.length === 1) {
-        // 属するノードが1種類だけの場合はまとめずにそのまま残す
-        consolidated.push(items[0]);
-      } else {
-        consolidated.push({
-          ...items[0],
-          subcategory: `その他（${category}）`,
-          totalAmount: total,
-        } as T);
-      }
-    }
+  // 小さいアイテムを統合処理
+  const consolidatedSmallItems = Array.from(smallItemsByCategory).map(
+    ([category, categoryItems]) =>
+      consolidateCategoryItems(category, categoryItems),
+  );
+
+  // 大きいアイテムと統合後の小さいアイテムをマージして返す
+  return [...largeItems, ...consolidatedSmallItems];
+}
+
+function consolidateCategoryItems(
+  category: string,
+  categoryItems: TransactionCategoryAggregation[],
+): TransactionCategoryAggregation {
+  // 属するノードが1種類だけの場合はまとめずにそのまま残す
+  if (categoryItems.length === 1) {
+    return categoryItems[0];
   }
 
-  return consolidated;
+  // 複数の場合は統合
+  const totalAmount = categoryItems.reduce(
+    (sum, item) => sum + item.totalAmount,
+    0,
+  );
+  return {
+    ...categoryItems[0],
+    subcategory: `その他（${category}）`,
+    totalAmount,
+  };
 }
 
 function calculateDynamicThreshold(
