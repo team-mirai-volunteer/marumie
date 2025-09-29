@@ -197,54 +197,58 @@ function consolidateSmallItems(
     SUBCATEGORY_LIMITS.EXPENSE,
   );
 
-  const consolidatedIncome: typeof aggregation.income = [];
-  const smallIncomeByCategory = new Map<string, number>();
-
-  for (const item of aggregation.income) {
-    if (item.subcategory && item.totalAmount < incomeThreshold) {
-      const current = smallIncomeByCategory.get(item.category) || 0;
-      smallIncomeByCategory.set(item.category, current + item.totalAmount);
-    } else {
-      consolidatedIncome.push(item);
-    }
-  }
-
-  for (const [category, total] of smallIncomeByCategory) {
-    if (total > 0) {
-      consolidatedIncome.push({
-        category,
-        subcategory: `その他(${category})`,
-        totalAmount: total,
-      });
-    }
-  }
-
-  const consolidatedExpense: typeof aggregation.expense = [];
-  const smallExpenseByCategory = new Map<string, number>();
-
-  for (const item of aggregation.expense) {
-    if (item.subcategory && item.totalAmount < expenseThreshold) {
-      const current = smallExpenseByCategory.get(item.category) || 0;
-      smallExpenseByCategory.set(item.category, current + item.totalAmount);
-    } else {
-      consolidatedExpense.push(item);
-    }
-  }
-
-  for (const [category, total] of smallExpenseByCategory) {
-    if (total > 0) {
-      consolidatedExpense.push({
-        category,
-        subcategory: `その他（${category}）`,
-        totalAmount: total,
-      });
-    }
-  }
+  const consolidatedIncome = consolidateSmallItemsByType(
+    aggregation.income,
+    incomeThreshold,
+  );
+  const consolidatedExpense = consolidateSmallItemsByType(
+    aggregation.expense,
+    expenseThreshold,
+  );
 
   return {
     income: consolidatedIncome,
     expense: consolidatedExpense,
   };
+}
+
+function consolidateSmallItemsByType<
+  T extends { category: string; subcategory?: string; totalAmount: number },
+>(items: T[], threshold: number): T[] {
+  const consolidated: T[] = [];
+  const smallItemsByCategory = new Map<string, { total: number; items: T[] }>();
+
+  for (const item of items) {
+    if (item.subcategory && item.totalAmount < threshold) {
+      const current = smallItemsByCategory.get(item.category) || {
+        total: 0,
+        items: [],
+      };
+      smallItemsByCategory.set(item.category, {
+        total: current.total + item.totalAmount,
+        items: [...current.items, item],
+      });
+    } else {
+      consolidated.push(item);
+    }
+  }
+
+  for (const [category, { total, items }] of smallItemsByCategory) {
+    if (total > 0) {
+      if (items.length === 1) {
+        // 属するノードが1種類だけの場合はまとめずにそのまま残す
+        consolidated.push(items[0]);
+      } else {
+        consolidated.push({
+          ...items[0],
+          subcategory: `その他（${category}）`,
+          totalAmount: total,
+        } as T);
+      }
+    }
+  }
+
+  return consolidated;
 }
 
 function calculateDynamicThreshold(
