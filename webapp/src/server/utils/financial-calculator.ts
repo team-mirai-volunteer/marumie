@@ -7,6 +7,10 @@ export interface FormattedAmount {
 
 // 金額を万円単位でフォーマットする関数
 export function formatAmount(amount: number): FormattedAmount {
+  if (amount < 0) {
+    throw new Error("Negative amounts are not supported");
+  }
+
   const manAmount = Math.round(amount / 10000); // 万円に変換
 
   if (manAmount >= 10000) {
