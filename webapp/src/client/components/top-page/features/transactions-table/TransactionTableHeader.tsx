@@ -61,6 +61,46 @@ export default function TransactionTableHeader({
           )}
         </th>
 
+        {/* カテゴリー - 160px width to match row */}
+        <th
+          className="text-left pl-4 h-12 font-normal w-[160px] relative overflow-visible"
+          scope="col"
+        >
+          {allowControl ? (
+            <button
+              type="button"
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              className="flex items-center gap-1 h-12 hover:opacity-70 transition-opacity cursor-pointer"
+              aria-label="カテゴリーフィルター"
+            >
+              <span className="text-gray-800 text-sm font-bold leading-[1.5]">
+                カテゴリー
+              </span>
+              <div className="w-3 h-2 flex items-center justify-center">
+                <Image
+                  src="/icons/icon-filter.svg"
+                  alt="Filter category"
+                  width={12}
+                  height={8}
+                  className="w-3 h-2"
+                />
+              </div>
+            </button>
+          ) : (
+            <div className="flex items-center gap-1 h-12">
+              <span className="text-gray-800 text-sm font-bold leading-[1.5]">
+                カテゴリー
+              </span>
+            </div>
+          )}
+          <CategoryFilter
+            isOpen={isFilterOpen}
+            onClose={() => setIsFilterOpen(false)}
+            onApplyFilter={onApplyFilter || (() => {})}
+            selectedCategories={selectedCategories}
+          />
+        </th>
+
         {/* 項目項目 - flexible width to match row */}
         <th className="text-left h-12 font-normal" scope="col">
           <div className="flex items-center h-5">
@@ -106,46 +146,6 @@ export default function TransactionTableHeader({
               </span>
             </div>
           )}
-        </th>
-
-        {/* カテゴリー - 160px width to match row */}
-        <th
-          className="text-left pl-4 h-12 font-normal w-[160px] relative overflow-visible"
-          scope="col"
-        >
-          {allowControl ? (
-            <button
-              type="button"
-              onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className="flex items-center gap-1 h-12 hover:opacity-70 transition-opacity cursor-pointer"
-              aria-label="カテゴリーフィルター"
-            >
-              <span className="text-gray-800 text-sm font-bold leading-[1.5]">
-                カテゴリー
-              </span>
-              <div className="w-3 h-2 flex items-center justify-center">
-                <Image
-                  src="/icons/icon-filter.svg"
-                  alt="Filter category"
-                  width={12}
-                  height={8}
-                  className="w-3 h-2"
-                />
-              </div>
-            </button>
-          ) : (
-            <div className="flex items-center gap-1 h-12">
-              <span className="text-gray-800 text-sm font-bold leading-[1.5]">
-                カテゴリー
-              </span>
-            </div>
-          )}
-          <CategoryFilter
-            isOpen={isFilterOpen}
-            onClose={() => setIsFilterOpen(false)}
-            onApplyFilter={onApplyFilter || (() => {})}
-            selectedCategories={selectedCategories}
-          />
         </th>
       </tr>
     </thead>
