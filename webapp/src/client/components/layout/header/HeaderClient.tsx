@@ -103,7 +103,7 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
           </Link>
 
           {/* Navigation Menu + Organization Selector */}
-          <div className="flex items-center gap-8 ml-auto min-w-0">
+          <div className="flex items-center gap-8 ml-auto flex-1 justify-end">
             <nav
               className="hidden lg:flex items-center gap-6"
               aria-label="メインナビゲーション"
@@ -136,7 +136,7 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
                   );
                 })}
             </nav>
-            <div className="flex items-center min-w-0 flex-1">
+            <div className="flex items-center flex-1 max-w-[217px]">
               <OrganizationSelector
                 organizations={organizations}
                 initialSlug={currentSlug}
