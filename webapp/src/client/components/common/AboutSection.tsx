@@ -49,7 +49,7 @@ const socialLinks = [
 
 export default function AboutSection() {
   return (
-    <MainColumnCard>
+    <MainColumnCard id="about">
       <div className="space-y-9">
         <div className="space-y-3">
           <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-3">
