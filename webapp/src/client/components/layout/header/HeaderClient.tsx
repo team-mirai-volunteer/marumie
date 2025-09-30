@@ -112,24 +112,15 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
                 .filter((item) => item.desktopLabel)
                 .map((item) => {
                   const isExternal = item.href.startsWith("http");
-                  if (isExternal) {
-                    return (
-                      <a
-                        key={item.href}
-                        href={item.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap cursor-pointer"
-                      >
-                        {item.desktopLabel}
-                      </a>
-                    );
-                  }
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
                       className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap cursor-pointer"
+                      {...(isExternal && {
+                        target: "_blank",
+                        rel: "noopener noreferrer",
+                      })}
                     >
                       {item.desktopLabel}
                     </Link>
