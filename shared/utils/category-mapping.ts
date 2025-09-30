@@ -193,14 +193,6 @@ export const PL_CATEGORIES: Record<string, CategoryMapping> = {
     color: "#334155",
     shortLabel: "その他経費",
     type: "expense"
-  },
-  "短期貸付金": {
-    key: "short-term-loans",
-    category: "貸付金",
-    subcategory: "短期貸付金",
-    color: "#7C2D12",
-    shortLabel: "短期貸付金",
-    type: "expense"
   }
 };
 
@@ -212,10 +204,6 @@ export const BS_CATEGORIES: Record<string, { type: "asset" | "liability" | "net_
     type: "asset"
   },
   "未払金/未払費用": {
-    type: "liability"
-  },
-  "未払費用": {
-    // 使わなくしていきたい。過渡期的に残す。
     type: "liability"
   },
 };
