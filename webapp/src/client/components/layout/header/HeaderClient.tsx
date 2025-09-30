@@ -33,6 +33,11 @@ const getNavigationItems = (currentSlug: string) => [
     label: "データについて",
     desktopLabel: "データについて",
   },
+  {
+    href: "https://team-mirai.notion.site/FAQ-27ef6f56bae180c085e9f97d05a5d59c",
+    label: "よくあるご質問",
+    desktopLabel: "よくあるご質問",
+  },
 ];
 
 interface HeaderClientProps {
@@ -105,15 +110,31 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
             >
               {navigationItems
                 .filter((item) => item.desktopLabel)
-                .map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap cursor-pointer"
-                  >
-                    {item.desktopLabel}
-                  </Link>
-                ))}
+                .map((item) => {
+                  const isExternal = item.href.startsWith("http");
+                  if (isExternal) {
+                    return (
+                      <a
+                        key={item.href}
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap cursor-pointer"
+                      >
+                        {item.desktopLabel}
+                      </a>
+                    );
+                  }
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="text-sm font-bold text-black hover:text-teal-600 transition-colors whitespace-nowrap cursor-pointer"
+                    >
+                      {item.desktopLabel}
+                    </Link>
+                  );
+                })}
             </nav>
             <div className="flex items-center min-w-0 flex-1">
               <OrganizationSelector
