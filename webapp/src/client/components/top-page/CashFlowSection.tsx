@@ -75,13 +75,15 @@ export default function CashFlowSection({
       </div>
 
       {/* サンキー図 */}
-      {currentData ? (
-        <SankeyChart data={currentData} />
-      ) : (
-        <div className="text-gray-500">
-          サンキー図データが取得できませんでした
-        </div>
-      )}
+      <div className="md:mx-0 -mx-3">
+        {currentData ? (
+          <SankeyChart data={currentData} />
+        ) : (
+          <div className="text-gray-500 mx-4">
+            サンキー図データが取得できませんでした
+          </div>
+        )}
+      </div>
 
       {/* 更新日時 */}
       <div className="mt-4 text-right md:hidden">
