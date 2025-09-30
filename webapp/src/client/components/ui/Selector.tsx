@@ -44,7 +44,7 @@ export default function Selector({
   };
 
   return (
-    <div className="relative flex-1 min-w-0 lg:flex-none lg:w-[217px]">
+    <div className="relative flex-1 min-w-0 max-w-[217px]">
       {/* Closed State Button */}
       <button
         type="button"
