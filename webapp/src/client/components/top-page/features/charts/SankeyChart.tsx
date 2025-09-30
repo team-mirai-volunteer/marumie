@@ -329,6 +329,10 @@ const splitLabel = (label: string, maxCharsPerLine: number): string[] => {
     return ["昨年からの", "現金残高"];
   }
 
+  if (label === "安野貴博の政治団体からの寄附") {
+    return ["安野貴博の", "政治団体からの", "寄附"];
+  }
+
   // 特殊ケース：N+1文字（7文字）の場合は N-2, 3 に分割
   if (label.length === N + 1) {
     return [label.substring(0, N - 2), label.substring(N - 2)];
