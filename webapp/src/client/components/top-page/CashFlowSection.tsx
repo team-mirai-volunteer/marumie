@@ -75,7 +75,7 @@ export default function CashFlowSection({
       </div>
 
       {/* サンキー図 */}
-      <div className="md:mx-0 -mx-3">
+      <div className="md:mx-0 -mx-3 mb-0">
         {currentData ? (
           <SankeyChart data={currentData} />
         ) : (
@@ -86,7 +86,7 @@ export default function CashFlowSection({
       </div>
 
       {/* 更新日時 */}
-      <div className="mt-4 text-right md:hidden">
+      <div className="text-right md:hidden">
         <span className="text-xs font-normal text-[#9CA3AF] leading-[1.33]">
           {updatedAt}
         </span>
