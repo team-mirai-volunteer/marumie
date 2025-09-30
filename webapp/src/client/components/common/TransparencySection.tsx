@@ -22,7 +22,7 @@ export default function TransparencySection({
           </span>
           私たちがなぜここまでオープンにするのか、その理由は
           <a
-            href="https://note.com/annotakahiro24"
+            href="https://note.com/preview/n830e827cf79b?prev_access_key=46895cce285f2320b8ee6f897b16e2d3"
             target="_blank"
             rel="noopener noreferrer"
             className="font-bold underline hover:no-underline"
