@@ -44,18 +44,18 @@ export default function Selector({
   };
 
   return (
-    <div className="relative w-full max-w-[217px]">
+    <div className="relative w-full min-w-0 max-w-full">
       {/* Closed State Button */}
       <button
         type="button"
-        className="flex items-center justify-between w-full px-2 py-2 lg:px-4 lg:py-2.5 border border-gray-600 rounded-md text-gray-800 text-sm lg:text-sm font-bold hover:opacity-90 transition-opacity cursor-pointer"
+        className="flex items-center justify-between w-full min-w-0 px-2 py-2 lg:px-4 lg:py-2.5 border border-gray-600 rounded-md text-gray-800 text-sm lg:text-sm font-bold hover:opacity-90 transition-opacity cursor-pointer"
         style={{
           background:
             "linear-gradient(90deg, rgba(226, 246, 243, 1) 0%, rgba(238, 246, 226, 1) 100%)",
         }}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="text-left truncate min-w-0 flex-shrink">
+        <span className="text-left truncate flex-1 min-w-0">
           {selectedOption?.label || placeholder}
         </span>
         <Image
@@ -69,7 +69,7 @@ export default function Selector({
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute top-0 right-0 min-w-[217px] w-full bg-white border border-gray-600 rounded-md shadow-lg z-50">
+        <div className="absolute top-0 right-0 w-full bg-white border border-gray-600 rounded-md shadow-lg z-50">
           <div className="space-y-0">
             {/* Header */}
             <button
