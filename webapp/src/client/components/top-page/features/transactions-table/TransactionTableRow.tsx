@@ -132,26 +132,6 @@ export default function TransactionTableRow({
         </span>
       </td>
 
-      {/* Title column - flexible width */}
-      <td className="hidden md:table-cell h-16">
-        <span className="leading-7 font-bold text-base text-gray-800">
-          {getDisplayTitle(transaction)}
-        </span>
-      </td>
-
-      {/* Amount column - 180px width */}
-      <td className="hidden md:table-cell text-right pr-6 h-16 w-[180px]">
-        <span
-          className={`leading-[1em] font-bold text-xl tracking-[0.01em] ${
-            isIncome ? "text-[#238778]" : "text-[#DC2626]"
-          }`}
-        >
-          {isIncome ? "+" : "-"}
-          {formatCurrency(Math.abs(transaction.amount))}
-          <span className="text-[12px] text-gray-600 font-normal"> 円</span>
-        </span>
-      </td>
-
       {/* Category column - 160px width */}
       <td className="hidden md:table-cell pl-4 h-16 w-[160px]">
         <div className="flex justify-start items-center h-11">
@@ -172,6 +152,26 @@ export default function TransactionTableRow({
             </span>
           </div>
         </div>
+      </td>
+
+      {/* Title column - flexible width */}
+      <td className="hidden md:table-cell h-16">
+        <span className="leading-7 font-bold text-base text-gray-800">
+          {getDisplayTitle(transaction)}
+        </span>
+      </td>
+
+      {/* Amount column - 180px width */}
+      <td className="hidden md:table-cell text-right pr-6 h-16 w-[180px]">
+        <span
+          className={`leading-[1em] font-bold text-xl tracking-[0.01em] ${
+            isIncome ? "text-[#238778]" : "text-[#DC2626]"
+          }`}
+        >
+          {isIncome ? "+" : "-"}
+          {formatCurrency(Math.abs(transaction.amount))}
+          <span className="text-[12px] text-gray-600 font-normal"> 円</span>
+        </span>
       </td>
     </tr>
   );
