@@ -556,15 +556,9 @@ export default function SankeyChart({ data }: SankeyChartProps) {
   const nodeOrder = sortedNodes.map((n) => n.id);
   const sortedLinks = sortLinks(processedLinks, nodeOrder);
 
-  // 寄附ノードにアスタリスクを追加
-  const nodesWithAsterisk = sortedNodes.map((node) => ({
-    ...node,
-    label: node.label === "寄附" ? "寄附*" : node.label,
-  }));
-
   const processedData = {
     ...data,
-    nodes: nodesWithAsterisk,
+    nodes: sortedNodes,
     links: sortedLinks,
   };
 

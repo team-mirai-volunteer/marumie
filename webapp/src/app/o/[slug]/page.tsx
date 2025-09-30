@@ -77,7 +77,6 @@ export default async function OrgPage({ params }: OrgPageProps) {
         friendly={data?.friendly ?? null}
         updatedAt={updatedAt}
         organizationName={currentOrganization?.displayName}
-        organizationSlug={slug}
       />
       <MonthlyTrendsSection
         monthlyData={data?.monthlyData}
