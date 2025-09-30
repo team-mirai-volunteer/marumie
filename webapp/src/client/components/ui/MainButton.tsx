@@ -37,7 +37,8 @@ export default function MainButton({
         font-bold
         text-base
         leading-[1.5em]
-        hover:opacity-90
+        hover:bg-gray-50
+        transition-colors
         ${className}
       `
         .trim()

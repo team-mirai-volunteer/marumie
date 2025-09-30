@@ -1,5 +1,6 @@
 import "server-only";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
+import MainButton from "@/client/components/ui/MainButton";
 
 export default function ExplanationSection() {
   return (
@@ -49,6 +50,16 @@ export default function ExplanationSection() {
             本サイトで公開するデータは、可能な限り正確かつ最新の情報を反映するよう努めていますが、現時点においてはその正確性・完全性・即時性について保証するものではありません。今後は、これらの側面について一層踏み込んだ公開を目指してまいります。最終的な収支は、別途公開される「政治資金収支報告書」並びに「選挙運動費用収支報告書」をご確認ください。
           </p>
         </div>
+      </div>
+
+      <div className="flex justify-center">
+        <a
+          href="https://team-mirai.notion.site/FAQ-27ef6f56bae180c085e9f97d05a5d59c"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <MainButton>よくあるご質問</MainButton>
+        </a>
       </div>
     </MainColumnCard>
   );
