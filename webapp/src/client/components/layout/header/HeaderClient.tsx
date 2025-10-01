@@ -57,7 +57,7 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
   return (
     <header className="fixed top-0 left-0 right-0 z-40 px-2.5 py-3 xl:px-6 xl:py-4">
       {/* Main Header Container with rounded background */}
-      <div className="bg-white rounded-[20px] px-3 py-3 xl:px-6 xl:py-0 relative z-10">
+      <div className="bg-white rounded-[20px] px-3 py-3 xl:px-6 xl:py-0 relative z-10 shadow-[2px_4px_4px_0px_rgba(209,209,209,0.5)]">
         <div className="flex items-center gap-2 xl:h-16">
           {/* Logo and Title Section */}
           <Link
