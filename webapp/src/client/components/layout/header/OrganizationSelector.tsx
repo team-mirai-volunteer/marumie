@@ -46,7 +46,7 @@ export default function OrganizationSelector({
       options={options}
       value={currentSlug}
       placeholder="チームみらい計"
-      title="政治団体を選択"
+      title="表示する政治団体"
       onSelect={handleSelect}
     />
   );
