@@ -131,18 +131,19 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
 
   // アイテムのレンダリング
   const renderItem = (item: BalanceSheetItem) => {
-    const isSmall = item.percentage < 8; // 高さが30px以下相当
+    const isSmall = item.percentage < 16; // 高さが30px以下相当
 
     return (
       <div
         key={item.name}
-        className="flex flex-col items-center justify-center px-2 border cursor-pointer"
+        className={`flex flex-col items-center justify-center px-2 border cursor-pointer box-border ${
+          item.isDebtExcess
+            ? "bg-transparent border-dashed border-[#B91C1C]"
+            : "border-solid border-white"
+        }`}
         style={{
-          backgroundColor: item.isDebtExcess ? "transparent" : item.color,
+          backgroundColor: item.isDebtExcess ? undefined : item.color,
           height: `${item.percentage}%`,
-          borderStyle: item.isDebtExcess ? "dashed" : "solid",
-          borderColor: item.isDebtExcess ? COLORS.DEBT_EXCESS_STROKE : "white",
-          boxSizing: "border-box",
         }}
       >
         {isSmall ? (
@@ -179,8 +180,7 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
   return (
     <div className="flex justify-center mt-10">
       <div
-        className="w-full max-w-[500px] flex gap-0.5"
-        style={{ height: "380px" }}
+        className="w-full max-w-[500px] flex gap-0.5 h-[380px]"
         role="img"
         aria-label="貸借対照表チャート"
       >
