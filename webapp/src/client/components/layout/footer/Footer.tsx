@@ -50,6 +50,10 @@ const getTextLinks = (currentSlug: string) => [
     label: "利用規約",
     href: "/terms",
   },
+  {
+    label: "プライバシーポリシー",
+    href: "/privacy",
+  },
 ];
 
 // SNSリンク集
