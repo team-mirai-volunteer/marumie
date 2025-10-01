@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import type { FormattedAmount } from "@/server/utils/financial-calculator";
 
 interface BalanceDetailCardProps {
@@ -27,7 +27,7 @@ function formatAmountDisplay(
 
   if (amount.tertiary) {
     return (
-      <span className="flex items-baseline gap-1 translate-y-0.5">
+      <span className="flex items-baseline gap-1">
         <span className={mainClass}>{amount.main}</span>
         <span className={unitClass}>{amount.secondary}</span>
         <span className={mainClass}>{amount.tertiary}</span>
@@ -36,7 +36,7 @@ function formatAmountDisplay(
     );
   }
   return (
-    <span className="flex items-baseline gap-1 translate-y-0.5">
+    <span className="flex items-baseline gap-1">
       <span className={mainClass}>{amount.main}</span>
       <span className={unitClass}>
         {amount.secondary}
@@ -72,6 +72,9 @@ export default function BalanceDetailCard({
     });
   }
 
+  const getBalanceItemKey = (item: BalanceItem) =>
+    `${item.label}-${item.amount.main}`;
+
   return (
     <div
       className={`border border-gray-200 rounded-2xl py-4 px-5 sm:py-5 sm:px-6 ${className}`}
@@ -93,8 +96,11 @@ export default function BalanceDetailCard({
 
         {/* 詳細セクション */}
         <div className="flex flex-col justify-center gap-2">
-          {balanceItems.map((item, index) => (
-            <div key={index} className="flex flex-row gap-3">
+          {balanceItems.map((item) => (
+            <div
+              key={getBalanceItemKey(item)}
+              className="flex flex-row items-baseline gap-3"
+            >
               <div className="text-gray-600 font-bold text-sm leading-4">
                 {item.label}
               </div>
@@ -125,8 +131,11 @@ export default function BalanceDetailCard({
 
           {/* 詳細項目 */}
           <div className="flex flex-col items-end gap-1">
-            {balanceItems.map((item, index) => (
-              <div key={index} className="flex flex-row gap-3">
+            {balanceItems.map((item) => (
+              <div
+                key={getBalanceItemKey(item)}
+                className="flex flex-row gap-3"
+              >
                 <div className="text-gray-600 font-bold text-xs leading-4">
                   {item.label}
                 </div>
