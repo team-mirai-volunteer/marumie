@@ -5,10 +5,12 @@ import LegalPageLayout, {
   List,
 } from "@/client/components/common/LegalPageLayout";
 
-export default function TermsPage() {
+export default function PrivacyPage() {
   return (
-    <LegalPageLayout title="利用規約">
-      <Paragraph className="mb-6">利用規約は10/1中に追加予定です。</Paragraph>
+    <LegalPageLayout title="プライバシーポリシー">
+      <Paragraph className="mb-6">
+        プライバシーポリシーは10/1中に追加予定です。
+      </Paragraph>
 
       <div className="space-y-6 hidden">
         <div>
