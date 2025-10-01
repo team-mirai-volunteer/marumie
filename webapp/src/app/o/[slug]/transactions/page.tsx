@@ -5,6 +5,7 @@ import { notFound, redirect } from "next/navigation";
 import AboutSection from "@/client/components/common/AboutSection";
 import AnotherPageLinkSection from "@/client/components/common/AnotherPageLinkSection";
 import ExplanationSection from "@/client/components/common/ExplanationSection";
+import FloatingBackButton from "@/client/components/common/FloatingBackButton";
 import LinkCardsSection from "@/client/components/common/LinkCardsSection";
 import TransparencySection from "@/client/components/common/TransparencySection";
 import CardHeader from "@/client/components/layout/CardHeader";
@@ -124,41 +125,44 @@ export default async function TransactionsPage({
     const updatedAt = formatUpdatedAt(data.lastUpdatedAt ?? null);
 
     return (
-      <MainColumn>
-        <MainColumnCard>
-          <CardHeader
-            icon={
-              <Image
-                src="/icons/icon-cashback.svg"
-                alt="Cash move icon"
-                width={30}
-                height={30}
-              />
-            }
-            organizationName={organization?.displayName || "未登録の政治団体"}
-            title="すべての出入金"
-            updatedAt={updatedAt}
-            subtitle="これまでにデータ連携された出入金の明細"
-          />
+      <>
+        <FloatingBackButton slug={slug} />
+        <MainColumn>
+          <MainColumnCard>
+            <CardHeader
+              icon={
+                <Image
+                  src="/icons/icon-cashback.svg"
+                  alt="Cash move icon"
+                  width={30}
+                  height={30}
+                />
+              }
+              organizationName={organization?.displayName || "未登録の政治団体"}
+              title="すべての出入金"
+              updatedAt={updatedAt}
+              subtitle="これまでにデータ連携された出入金の明細"
+            />
 
-          <InteractiveTransactionTable
-            slug={slug}
-            transactions={data.transactions}
-            total={data.total}
-            page={data.page}
-            perPage={data.perPage}
-            totalPages={data.totalPages}
-            selectedCategories={categories}
-          />
-        </MainColumnCard>
+            <InteractiveTransactionTable
+              slug={slug}
+              transactions={data.transactions}
+              total={data.total}
+              page={data.page}
+              perPage={data.perPage}
+              totalPages={data.totalPages}
+              selectedCategories={categories}
+            />
+          </MainColumnCard>
 
-        <TransparencySection title="党内の機密データの流出事故ではありません☺️" />
-        <AnotherPageLinkSection currentSlug={slug} />
-        <ProgressSection />
-        <ExplanationSection />
-        <AboutSection />
-        <LinkCardsSection />
-      </MainColumn>
+          <TransparencySection title="党内の機密データの流出事故ではありません☺️" />
+          <AnotherPageLinkSection currentSlug={slug} />
+          <ProgressSection />
+          <ExplanationSection />
+          <AboutSection />
+          <LinkCardsSection />
+        </MainColumn>
+      </>
     );
   } catch (error) {
     if (error instanceof Error && error.message.includes("not found")) {
