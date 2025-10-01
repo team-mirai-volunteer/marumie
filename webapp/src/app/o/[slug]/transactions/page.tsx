@@ -48,12 +48,12 @@ export async function generateMetadata({
     });
 
     return {
-      title: `${result.politicalOrganizations[0]?.displayName || "Unknown"}:全ての入出金 - みらいまる見え政治資金`,
+      title: `${result.politicalOrganizations[0]?.displayName || "Unknown"}:全ての出入金 - みらいまる見え政治資金`,
       description: `${result.politicalOrganizations[0]?.displayName || "Unknown"}の政治資金取引一覧を表示しています。`,
     };
   } catch {
     return {
-      title: "全ての入出金 - みらいまる見え政治資金",
+      title: "全ての出入金 - みらいまる見え政治資金",
       description: "政治資金取引一覧を表示しています。",
     };
   }
