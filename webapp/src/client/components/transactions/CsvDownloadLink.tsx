@@ -14,7 +14,7 @@ interface CsvDownloadLinkProps {
 export default function CsvDownloadLink({
   slug,
   className = "",
-  children = "全件CSVダウンロード",
+  children = "出入金履歴をCSVでダウンロード",
   loadingText = "ダウンロード中...",
 }: CsvDownloadLinkProps) {
   const [isDownloading, setIsDownloading] = useState(false);
