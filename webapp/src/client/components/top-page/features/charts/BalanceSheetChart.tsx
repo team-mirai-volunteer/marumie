@@ -180,7 +180,7 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
   return (
     <div className="flex justify-center mt-10">
       <div
-        className="w-full max-w-[500px] flex gap-0.5 h-[380px]"
+        className="w-full max-w-[500px] flex gap-[1px] h-[380px]"
         role="img"
         aria-label="貸借対照表チャート"
       >
