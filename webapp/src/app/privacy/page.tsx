@@ -3,7 +3,7 @@ import LegalPageLayout, {
   Paragraph,
   SubSectionTitle,
   List,
-} from "@/client/components/common/LegalPageLayout";
+} from "@/client/components/layout/LegalPageLayout";
 
 export default function PrivacyPage() {
   return (
