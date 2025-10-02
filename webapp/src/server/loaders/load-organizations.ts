@@ -31,6 +31,6 @@ export const loadOrganizations = unstable_cache(
   },
   ["organizations"],
   {
-    revalidate: 60, // 60秒間キャッシュ
+    revalidate: 3600, // 1時間キャッシュ
   },
 );
