@@ -79,7 +79,7 @@ function getTransactionCategory(record: PreviewTransaction): {
       account: record.credit_account,
       color: getCategoryColor(record.credit_account),
       label: getCategoryLabel(record.credit_account),
-      type: (creditInfo?.type as "income" | "expense") || "unknown",
+      type: creditInfo?.type || "unknown",
     };
   }
 }
