@@ -71,7 +71,7 @@ marumie/
 - **Styling**: Tailwind CSS v4
 - **Charts**: Recharts, ApexCharts, Nivo
 - **Database**: PostgreSQL (via Supabase)
-- **Development**: pnpm, Biome, ESLint
+- **Development**: pnpm, Biome
 - **Testing**: Jest
 
 ## 画面イメージ

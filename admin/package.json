@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack --port 3001",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "biome check",
     "type-check": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
