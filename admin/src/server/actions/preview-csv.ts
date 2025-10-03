@@ -1,6 +1,6 @@
 "use server";
 
-import { EncodingConverter } from "@/server/lib/encoding-converter";
+import { bufferToString } from "@/server/lib/encoding-converter";
 import { prisma } from "@/server/lib/prisma";
 import { PrismaTransactionRepository } from "@/server/repositories/prisma-transaction.repository";
 import { PreviewMfCsvUsecase } from "@/server/usecases/preview-mf-csv-usecase";
@@ -30,7 +30,7 @@ export async function previewCsv(
 
     // Convert file to buffer and then to properly encoded string
     const csvBuffer = Buffer.from(await file.arrayBuffer());
-    const csvContent = EncodingConverter.bufferToString(csvBuffer);
+    const csvContent = bufferToString(csvBuffer);
 
     const result = await previewUsecase.execute({
       csvContent,

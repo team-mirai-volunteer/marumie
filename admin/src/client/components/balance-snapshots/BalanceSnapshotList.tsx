@@ -76,6 +76,7 @@ export default function BalanceSnapshotList({
               </td>
               <td className="px-2 py-3 text-center">
                 <button
+                  type="button"
                   onClick={() => handleDelete(snapshot.id)}
                   disabled={deletingId === snapshot.id}
                   className={`bg-red-600 text-white border-0 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 ${

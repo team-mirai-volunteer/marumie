@@ -1,6 +1,9 @@
 import "server-only";
-import { PrismaClient, UserRole } from "@prisma/client";
-import { User, UserRepository } from "./interfaces/user-repository.interface";
+import type { PrismaClient, UserRole } from "@prisma/client";
+import type {
+  User,
+  UserRepository,
+} from "./interfaces/user-repository.interface";
 
 export class PrismaUserRepository implements UserRepository {
   constructor(private prisma: PrismaClient) {}

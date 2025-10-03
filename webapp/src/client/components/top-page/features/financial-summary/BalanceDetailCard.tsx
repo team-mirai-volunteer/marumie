@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import type { FormattedAmount } from "@/server/utils/financial-calculator";
 
 interface BalanceDetailCardProps {
@@ -93,8 +93,8 @@ export default function BalanceDetailCard({
 
         {/* 詳細セクション */}
         <div className="flex flex-col justify-center gap-2">
-          {balanceItems.map((item, index) => (
-            <div key={index} className="flex flex-row gap-3">
+          {balanceItems.map((item) => (
+            <div key={item.label} className="flex flex-row gap-3">
               <div className="text-gray-600 font-bold text-sm leading-4">
                 {item.label}
               </div>
@@ -125,8 +125,8 @@ export default function BalanceDetailCard({
 
           {/* 詳細項目 */}
           <div className="flex flex-col items-end gap-1">
-            {balanceItems.map((item, index) => (
-              <div key={index} className="flex flex-row gap-3">
+            {balanceItems.map((item) => (
+              <div key={item.label} className="flex flex-row gap-3">
                 <div className="text-gray-600 font-bold text-xs leading-4">
                   {item.label}
                 </div>
