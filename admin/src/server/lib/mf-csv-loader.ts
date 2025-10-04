@@ -48,8 +48,6 @@ export class MfCsvLoader {
     メモ: "memo",
   };
 
-  constructor() {}
-
   async load(csvContent: string): Promise<MfCsvRecord[]> {
     if (!csvContent.trim()) {
       return [];
@@ -92,41 +90,31 @@ export class MfCsvLoader {
   private parseCSVLine(line: string): string[] {
     const chars = Array.from(line);
 
-    const { result, current } = chars.reduce(
-      (acc, char) => {
-        if (char === '"') {
-          return { ...acc, inQuotes: !acc.inQuotes };
-        } else if (char === "," && !acc.inQuotes) {
-          return {
-            result: [...acc.result, acc.current],
-            current: "",
-            inQuotes: acc.inQuotes,
-          };
-        } else {
-          return { ...acc, current: acc.current + char };
-        }
-      },
-      { result: [] as string[], current: "", inQuotes: false },
-    );
+    const result: string[] = [];
+    let current = "";
+    let inQuotes = false;
 
-    return [...result, current];
+    for (const char of chars) {
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === "," && !inQuotes) {
+        result.push(current);
+        current = "";
+      } else {
+        current += char;
+      }
+    }
+
+    result.push(current);
+    return result;
   }
 
   private createRecord(headers: string[], values: string[]): MfCsvRecord {
-    const record = headers
-      .map((header, index) => ({
-        header,
-        value: values[index] || "",
-        mappedKey: this.columnMapping[header],
-      }))
-      .filter(({ mappedKey }) => mappedKey)
-      .reduce(
-        (acc, { mappedKey, value }) => ({
-          ...acc,
-          [mappedKey]: value,
-        }),
-        {} as Partial<MfCsvRecord>,
-      );
+    const record: Partial<MfCsvRecord> = Object.fromEntries(
+      headers
+        .map((header, i) => [this.columnMapping[header], values[i] || ""])
+        .filter(([key]) => key),
+    );
 
     const defaultRecord: MfCsvRecord = {
       transaction_no: "",

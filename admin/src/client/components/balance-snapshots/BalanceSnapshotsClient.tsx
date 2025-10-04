@@ -1,7 +1,7 @@
 "use client";
 import "client-only";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
 import type { BalanceSnapshot } from "@/shared/models/balance-snapshot";
 import { Selector } from "@/client/components/ui";
@@ -28,7 +28,7 @@ export default function BalanceSnapshotsClient({
 
   const currentBalance = snapshots.length > 0 ? snapshots[0] : null;
 
-  const loadSnapshots = async (orgId: string) => {
+  const loadSnapshots = useCallback(async (orgId: string) => {
     if (!orgId) {
       setSnapshots([]);
       return;
@@ -44,7 +44,7 @@ export default function BalanceSnapshotsClient({
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const handleOrgChange = (orgId: string) => {
     setSelectedOrgId(orgId);
@@ -58,7 +58,7 @@ export default function BalanceSnapshotsClient({
       setSelectedOrgId(firstOrgId);
       loadSnapshots(firstOrgId);
     }
-  }, [organizations, selectedOrgId]);
+  }, [organizations, selectedOrgId, loadSnapshots]);
 
   const handleFormSubmit = async (data: {
     politicalOrganizationId: string;

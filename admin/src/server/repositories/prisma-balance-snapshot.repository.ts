@@ -53,7 +53,7 @@ export class PrismaBalanceSnapshotRepository
   }
 
   private mapToBalanceSnapshot(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: <any>
     prismaBalanceSnapshot: any,
   ): BalanceSnapshot {
     return {

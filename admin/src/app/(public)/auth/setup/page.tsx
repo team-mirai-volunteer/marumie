@@ -38,7 +38,7 @@ export default async function SetupPage({ searchParams }: SetupPageProps) {
               your password to continue.
             </p>
           </div>
-          <SetupForm userEmail={user.email!} />
+          <SetupForm userEmail={user.email ?? ""} />
         </div>
       </div>
     );
