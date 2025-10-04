@@ -50,21 +50,26 @@ describe("formatAmount", () => {
       input: 99995000,
       expected: { main: "1", secondary: "億", tertiary: "", unit: "円" },
     },
+
+    // マイナス値
+    {
+      description: "-1,000,000円 = -100万円",
+      input: -1000000,
+      expected: { main: "-100", secondary: "", tertiary: "", unit: "万円" },
+    },
+    {
+      description: "-100,000,000円 = -1億円",
+      input: -100000000,
+      expected: { main: "-1", secondary: "億", tertiary: "", unit: "円" },
+    },
+    {
+      description: "-150,000,000円 = -1億5000万円",
+      input: -150000000,
+      expected: { main: "-1", secondary: "億", tertiary: "5000", unit: "万円" },
+    },
   ];
 
   it.each(testCases)("should format $description", ({ input, expected }) => {
     expect(formatAmount(input)).toEqual(expected);
-  });
-
-  const errorTestCases: Array<{
-    description: string;
-    input: number;
-  }> = [
-    { description: "-1", input: -1 },
-    { description: "-100,000,000円", input: -100000000 },
-  ];
-
-  it.each(errorTestCases)("should throw error for negative amount $description", ({ input }) => {
-    expect(() => formatAmount(input)).toThrow("Negative amounts are not supported");
   });
 });

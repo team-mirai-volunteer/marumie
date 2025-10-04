@@ -7,32 +7,31 @@ export interface FormattedAmount {
 
 // 金額を万円単位でフォーマットする関数
 export function formatAmount(amount: number): FormattedAmount {
-  if (amount < 0) {
-    throw new Error("Negative amounts are not supported");
-  }
-
-  const manAmount = Math.round(amount / 10000); // 万円に変換
+  const isNegative = amount < 0;
+  const absAmount = Math.abs(amount);
+  const manAmount = Math.round(absAmount / 10000); // 万円に変換
+  const sign = isNegative ? "-" : "";
 
   if (manAmount >= 10000) {
     const oku = Math.floor(manAmount / 10000);
     const man = manAmount % 10000;
     if (man === 0) {
       return {
-        main: oku.toString(),
+        main: `${sign}${oku}`,
         secondary: "億",
         tertiary: "",
         unit: "円",
       };
     }
     return {
-      main: oku.toString(),
+      main: `${sign}${oku}`,
       secondary: "億",
       tertiary: man.toString(),
       unit: "万円",
     };
   }
   return {
-    main: manAmount.toString(),
+    main: `${sign}${manAmount}`,
     secondary: "",
     tertiary: "",
     unit: "万円",
