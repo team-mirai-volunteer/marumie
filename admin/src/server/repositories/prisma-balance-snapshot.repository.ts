@@ -53,8 +53,7 @@ export class PrismaBalanceSnapshotRepository
   }
 
   private mapToBalanceSnapshot(
-    // biome-ignore lint/suspicious/noExplicitAny: <any>
-    prismaBalanceSnapshot: any,
+    prismaBalanceSnapshot: Prisma.BalanceSnapshotGetPayload<object>,
   ): BalanceSnapshot {
     return {
       id: prismaBalanceSnapshot.id.toString(),
