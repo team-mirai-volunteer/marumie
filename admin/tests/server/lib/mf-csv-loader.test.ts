@@ -1,7 +1,4 @@
-import {
-  MfCsvLoader,
-  MfCsvRecord,
-} from "../../../src/server/lib/mf-csv-loader";
+import { MfCsvLoader } from "../../../src/server/lib/mf-csv-loader";
 
 describe("MfCsvLoader", () => {
   let loader: MfCsvLoader;
