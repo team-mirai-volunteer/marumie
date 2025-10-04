@@ -1,5 +1,6 @@
 import "server-only";
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { requireRole } from "@/server/auth/roles";
 import type { UserRole } from "@prisma/client";
 import { prisma } from "@/server/lib/prisma";
