@@ -7,11 +7,6 @@ interface BalanceSheetChartProps {
   data: BalanceSheetData;
 }
 
-// レイアウト定数
-const CHART_WIDTH = 500;
-const CHART_HEIGHT = 380;
-const MARGIN = 1;
-
 // 色定数
 const COLORS = {
   CURRENT_ASSETS: "#5EEAD4",
@@ -21,143 +16,17 @@ const COLORS = {
   CURRENT_LIABILITIES: "#FECACA",
   FIXED_LIABILITIES: "#F87171",
   NET_ASSETS: "#22D3EE",
-  WHITE: "#ffffff",
 } as const;
 
-interface BalanceSheetNode {
+interface BalanceSheetItem {
   name: string;
   value: number;
   color: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
+  percentage: number;
+  isDebtExcess?: boolean;
 }
 
 export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
-  // 座標計算によるレイアウト
-  const calculateLayout = (
-    balanceSheet: BalanceSheetData,
-  ): BalanceSheetNode[] => {
-    const nodes: BalanceSheetNode[] = [];
-
-    // 左側（資産）の合計値
-    const leftTotal =
-      balanceSheet.left.currentAssets +
-      balanceSheet.left.fixedAssets +
-      balanceSheet.left.debtExcess;
-    // 右側（負債・資本）の合計値
-    const rightTotal =
-      balanceSheet.right.currentLiabilities +
-      balanceSheet.right.fixedLiabilities +
-      balanceSheet.right.netAssets;
-
-    // 常に左右の幅を50:50にする
-    const leftWidth = CHART_WIDTH / 2;
-    const rightWidth = CHART_WIDTH / 2;
-
-    let currentY = 0;
-
-    // 左側（資産）のノードを配置
-    if (balanceSheet.left.currentAssets > 0) {
-      const height =
-        (CHART_HEIGHT * balanceSheet.left.currentAssets) / leftTotal;
-      nodes.push({
-        name: BALANCE_SHEET_LABELS.currentAssets,
-        value: balanceSheet.left.currentAssets,
-        color: COLORS.CURRENT_ASSETS,
-        x: 0,
-        y: currentY,
-        width: leftWidth - MARGIN / 2,
-        height: height - MARGIN,
-      });
-      currentY += height;
-    }
-
-    if (balanceSheet.left.fixedAssets > 0) {
-      const height = (CHART_HEIGHT * balanceSheet.left.fixedAssets) / leftTotal;
-      nodes.push({
-        name: BALANCE_SHEET_LABELS.fixedAssets,
-        value: balanceSheet.left.fixedAssets,
-        color: COLORS.FIXED_ASSETS,
-        x: 0,
-        y: currentY,
-        width: leftWidth - MARGIN / 2,
-        height: height - MARGIN,
-      });
-      currentY += height;
-    }
-
-    if (balanceSheet.left.debtExcess > 0) {
-      const height = (CHART_HEIGHT * balanceSheet.left.debtExcess) / leftTotal;
-      nodes.push({
-        name: BALANCE_SHEET_LABELS.debtExcess,
-        value: balanceSheet.left.debtExcess,
-        color: COLORS.DEBT_EXCESS,
-        x: 1,
-        y: currentY + 1,
-        width: leftWidth - MARGIN / 2 - 2,
-        height: height - MARGIN - 2,
-      });
-    }
-
-    // 右側（負債・資本）のノードを配置
-    currentY = 0;
-
-    if (balanceSheet.right.currentLiabilities > 0) {
-      const height =
-        (CHART_HEIGHT * balanceSheet.right.currentLiabilities) / rightTotal;
-      nodes.push({
-        name: BALANCE_SHEET_LABELS.currentLiabilities,
-        value: balanceSheet.right.currentLiabilities,
-        color: COLORS.CURRENT_LIABILITIES,
-        x: leftWidth + MARGIN / 2,
-        y: currentY,
-        width: rightWidth - MARGIN / 2,
-        height: height - MARGIN,
-      });
-      currentY += height;
-    }
-
-    if (balanceSheet.right.fixedLiabilities > 0) {
-      const height =
-        (CHART_HEIGHT * balanceSheet.right.fixedLiabilities) / rightTotal;
-      nodes.push({
-        name: BALANCE_SHEET_LABELS.fixedLiabilities,
-        value: balanceSheet.right.fixedLiabilities,
-        color: COLORS.FIXED_LIABILITIES,
-        x: leftWidth + MARGIN / 2,
-        y: currentY,
-        width: rightWidth - MARGIN / 2,
-        height: height - MARGIN,
-      });
-      currentY += height;
-    }
-
-    if (balanceSheet.right.netAssets > 0) {
-      const height = (CHART_HEIGHT * balanceSheet.right.netAssets) / rightTotal;
-      nodes.push({
-        name: BALANCE_SHEET_LABELS.netAssets,
-        value: balanceSheet.right.netAssets,
-        color: COLORS.NET_ASSETS,
-        x: leftWidth + MARGIN / 2,
-        y: currentY,
-        width: rightWidth - MARGIN / 2,
-        height: height - MARGIN,
-      });
-    }
-
-    return nodes;
-  };
-
-  const nodes = calculateLayout(data);
-
-  // 全ての要素の高さをログ出力
-  console.log("Balance Sheet Chart - Element Heights:");
-  nodes.forEach((node) => {
-    console.log(`${node.name}: ${node.height}px`);
-  });
-
   // 金額フォーマット関数
   const formatAmount = (amount: number) => {
     if (amount >= 100000000) {
@@ -172,159 +41,158 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
     return `${amount}円`;
   };
 
-  // ラベル表示関数
-  const renderLabel = (node: BalanceSheetNode) => {
-    const isDebtExcess = node.name === BALANCE_SHEET_LABELS.debtExcess;
-    const textColor = isDebtExcess ? "fill-red-600" : "fill-black";
+  // 金額を数値と単位に分割して表示
+  const renderFormattedAmount = (amount: number, isDebtExcess = false) => {
+    const formatted = formatAmount(amount);
+    const parts = formatted.split(/(\d+)/);
 
-    // 高さが30以下の場合：一行表示
-    if (node.height <= 30) {
-      return (
-        <text
-          x={node.x + node.width / 2}
-          y={node.y + node.height / 2 - 2}
-          textAnchor="middle"
-          dominantBaseline="central"
-          className={`pointer-events-none ${textColor}`}
-        >
-          {isDebtExcess && (
-            <tspan
-              fontSize="14"
-              fontWeight="700"
-              style={{ fontFamily: "'Noto Sans JP', sans-serif" }}
-            >
-              ▲
-            </tspan>
-          )}
-          <tspan
-            fontSize="14"
-            fontWeight="700"
-            style={{ fontFamily: "'Noto Sans JP', sans-serif" }}
-            dx={isDebtExcess ? "4" : "0"}
-          >
-            {node.name}{" "}
-          </tspan>
-          {formatAmount(node.value)
-            .split(/(\d+)/)
-            .map((part, partIndex) => {
-              const isNumber = /^\d+$/.test(part);
-              return (
-                <tspan
-                  key={`${node.name}-${partIndex}-${part}`}
-                  fontSize={isNumber ? "16" : "12"}
-                  fontWeight={isNumber ? "700" : "500"}
-                  dx={partIndex > 0 ? "2" : "0"}
-                  style={{
-                    fontFamily: isNumber
-                      ? "'SF Pro', -apple-system, system-ui, sans-serif"
-                      : "'Noto Sans JP', sans-serif",
-                  }}
-                >
-                  {part}
-                </tspan>
-              );
-            })}
-        </text>
-      );
-    }
-
-    // 高さが30より大きい場合：二行表示
     return (
-      <>
-        {/* ラベル */}
-        <text
-          x={node.x + node.width / 2}
-          y={node.y + node.height / 2 - 10}
-          textAnchor="middle"
-          fontSize="16"
-          fontWeight="700"
-          className={`pointer-events-none font-bold ${textColor}`}
-          style={{ fontFamily: "'Noto Sans JP', sans-serif" }}
-        >
-          {node.name}
-        </text>
+      <span className="inline-flex items-baseline gap-0.5">
+        {isDebtExcess && (
+          <span className="text-sm font-bold text-red-600">▲</span>
+        )}
+        {parts
+          .map((part, index) => ({ part, index }))
+          .filter(({ part }) => part !== "")
+          .map(({ part, index }) => {
+            const isNumber = /^\d+$/.test(part);
+            return (
+              <span
+                key={`part-${index}-${part}`}
+                className={
+                  isNumber ? "text-lg font-bold" : "text-xs font-medium"
+                }
+                style={{
+                  fontFamily: isNumber
+                    ? "'SF Pro', -apple-system, system-ui, sans-serif"
+                    : "'Noto Sans JP', sans-serif",
+                }}
+              >
+                {part}
+              </span>
+            );
+          })}
+      </span>
+    );
+  };
 
-        {/* 金額 */}
-        <text
-          x={node.x + node.width / 2}
-          y={node.y + node.height / 2 + 15}
-          textAnchor="middle"
-          className={`pointer-events-none ${textColor}`}
-        >
-          {isDebtExcess && (
-            <tspan
-              fontSize="18"
-              fontWeight="700"
+  // 左側（資産）の計算
+  const leftTotal =
+    data.left.currentAssets + data.left.fixedAssets + data.left.debtExcess;
+
+  const leftItems: BalanceSheetItem[] = [
+    {
+      name: BALANCE_SHEET_LABELS.currentAssets,
+      value: data.left.currentAssets,
+      color: COLORS.CURRENT_ASSETS,
+      percentage: (data.left.currentAssets / leftTotal) * 100,
+    },
+    {
+      name: BALANCE_SHEET_LABELS.fixedAssets,
+      value: data.left.fixedAssets,
+      color: COLORS.FIXED_ASSETS,
+      percentage: (data.left.fixedAssets / leftTotal) * 100,
+    },
+    {
+      name: BALANCE_SHEET_LABELS.debtExcess,
+      value: data.left.debtExcess,
+      color: COLORS.DEBT_EXCESS,
+      percentage: (data.left.debtExcess / leftTotal) * 100,
+      isDebtExcess: true,
+    },
+  ].filter((item) => item.value > 0);
+
+  // 右側（負債・資本）の計算
+  const rightTotal =
+    data.right.currentLiabilities +
+    data.right.fixedLiabilities +
+    data.right.netAssets;
+
+  const rightItems: BalanceSheetItem[] = [
+    {
+      name: BALANCE_SHEET_LABELS.currentLiabilities,
+      value: data.right.currentLiabilities,
+      color: COLORS.CURRENT_LIABILITIES,
+      percentage: (data.right.currentLiabilities / rightTotal) * 100,
+    },
+    {
+      name: BALANCE_SHEET_LABELS.fixedLiabilities,
+      value: data.right.fixedLiabilities,
+      color: COLORS.FIXED_LIABILITIES,
+      percentage: (data.right.fixedLiabilities / rightTotal) * 100,
+    },
+    {
+      name: BALANCE_SHEET_LABELS.netAssets,
+      value: data.right.netAssets,
+      color: COLORS.NET_ASSETS,
+      percentage: (data.right.netAssets / rightTotal) * 100,
+    },
+  ].filter((item) => item.value > 0);
+
+  // アイテムのレンダリング
+  const renderItem = (item: BalanceSheetItem) => {
+    const isSmall = item.percentage < 16; // 高さが30px以下相当
+
+    return (
+      <div
+        key={item.name}
+        className={`flex flex-col items-center justify-center px-2 border cursor-pointer box-border ${
+          item.isDebtExcess
+            ? "bg-transparent border-dashed border-[#B91C1C]"
+            : "border-solid border-white"
+        }`}
+        style={{
+          backgroundColor: item.isDebtExcess ? undefined : item.color,
+          height: `${item.percentage}%`,
+        }}
+      >
+        {isSmall ? (
+          // 小さい場合：一行表示
+          <div
+            className={`text-center ${item.isDebtExcess ? "text-red-600" : "text-black"}`}
+          >
+            <span
+              className="text-sm font-bold"
               style={{ fontFamily: "'Noto Sans JP', sans-serif" }}
             >
-              ▲
-            </tspan>
-          )}
-          {formatAmount(node.value)
-            .split(/(\d+)/)
-            .map((part, partIndex) => {
-              const isNumber = /^\d+$/.test(part);
-              return (
-                <tspan
-                  key={`${node.name}-${partIndex}-${part}`}
-                  fontSize={isNumber ? "20" : "14"}
-                  fontWeight={isNumber ? "700" : "500"}
-                  dx={partIndex > 0 ? "4" : "0"}
-                  style={{
-                    fontFamily: isNumber
-                      ? "'SF Pro', -apple-system, system-ui, sans-serif"
-                      : "'Noto Sans JP', sans-serif",
-                  }}
-                >
-                  {part}
-                </tspan>
-              );
-            })}
-        </text>
-      </>
+              {item.name}{" "}
+            </span>
+            {renderFormattedAmount(item.value, item.isDebtExcess)}
+          </div>
+        ) : (
+          // 大きい場合：二行表示
+          <>
+            <div
+              className={`text-base font-bold mb-1 ${item.isDebtExcess ? "text-red-600" : "text-black"}`}
+              style={{ fontFamily: "'Noto Sans JP', sans-serif" }}
+            >
+              {item.name}
+            </div>
+            <div className={item.isDebtExcess ? "text-red-600" : "text-black"}>
+              {renderFormattedAmount(item.value, item.isDebtExcess)}
+            </div>
+          </>
+        )}
+      </div>
     );
   };
 
   return (
     <div className="flex justify-center mt-10">
-      <div className="w-full max-w-[500px] relative">
-        <svg
-          width={CHART_WIDTH}
-          height={CHART_HEIGHT}
-          viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`}
-          className="w-full h-auto"
-          role="img"
-          aria-label="貸借対照表チャート"
-        >
-          {nodes.map((node) => (
-            <g key={node.name}>
-              <rect
-                x={node.x}
-                y={node.y}
-                width={node.width}
-                height={node.height}
-                fill={
-                  node.name === BALANCE_SHEET_LABELS.debtExcess
-                    ? "transparent"
-                    : node.color
-                }
-                stroke={
-                  node.name === BALANCE_SHEET_LABELS.debtExcess
-                    ? COLORS.DEBT_EXCESS_STROKE
-                    : COLORS.WHITE
-                }
-                strokeWidth={
-                  node.name === BALANCE_SHEET_LABELS.debtExcess ? 1 : 2
-                }
-                strokeDasharray={
-                  node.name === BALANCE_SHEET_LABELS.debtExcess ? "2,2" : "none"
-                }
-                className="cursor-pointer"
-              />
-              {renderLabel(node)}
-            </g>
-          ))}
-        </svg>
+      <div
+        className="w-full max-w-[500px] flex gap-[1px] h-[380px]"
+        role="img"
+        aria-label="貸借対照表チャート"
+      >
+        {/* 左側（資産） */}
+        <div className="flex-1 flex flex-col">
+          {leftItems.map((item) => renderItem(item))}
+        </div>
+
+        {/* 右側（負債・資本） */}
+        <div className="flex-1 flex flex-col">
+          {rightItems.map((item) => renderItem(item))}
+        </div>
       </div>
     </div>
   );

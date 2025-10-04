@@ -8,7 +8,7 @@ import {
   type GetTransactionsBySlugParams,
   GetTransactionsBySlugUsecase,
 } from "@/server/usecases/get-transactions-by-slug-usecase";
-const CACHE_REVALIDATE_SECONDS = 60;
+const CACHE_REVALIDATE_SECONDS = 3600;
 
 export const loadTransactionsPageData = (
   params: GetTransactionsBySlugParams,
