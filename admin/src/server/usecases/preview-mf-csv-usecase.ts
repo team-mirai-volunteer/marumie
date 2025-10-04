@@ -47,7 +47,7 @@ export class PreviewMfCsvUsecase {
       // Get existing transactions first
       const transactionNos = csvRecords
         .map((record) => record.transaction_no)
-        .filter(Boolean) as string[];
+        .filter(Boolean);
 
       const existingTransactions =
         await this.transactionRepository.findByTransactionNos(transactionNos, [
