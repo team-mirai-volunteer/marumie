@@ -4,9 +4,7 @@ import { loadOrganizations } from "@/server/loaders/load-organizations";
 export const dynamic = "force-static";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const baseUrl = process.env.WEBAPP_URL || "https://marumie.team-mir.ai";
 
   const { organizations } = await loadOrganizations();
 
