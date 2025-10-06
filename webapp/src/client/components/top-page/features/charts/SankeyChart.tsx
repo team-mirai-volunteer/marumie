@@ -2,7 +2,8 @@
 import "client-only";
 
 import { ResponsiveSankey } from "@nivo/sankey";
-import React from "react";
+import { useState } from "react";
+import type { MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import type { SankeyData } from "@/types/sankey";
 import InteractiveRect from "./InteractiveRect";
@@ -108,7 +109,7 @@ const CustomNodesLayer = ({
 }) => {
   const isMobile = useMobileDetection();
   const { getNodeColor } = useNodeColors();
-  const [tooltip, setTooltip] = React.useState<{
+  const [tooltip, setTooltip] = useState<{
     visible: boolean;
     x: number;
     y: number;
@@ -116,7 +117,7 @@ const CustomNodesLayer = ({
   }>({ visible: false, x: 0, y: 0, node: null });
 
   const handleMouseEnter = (
-    event: React.MouseEvent,
+    event: MouseEvent,
     nodeData: { id: string; label?: string; value?: number },
   ) => {
     // 元のnode情報を再構築（必要な場合）
@@ -146,7 +147,7 @@ const CustomNodesLayer = ({
     setTooltip((prev) => ({ ...prev, visible: false }));
   };
 
-  const handleMouseMove = (event: React.MouseEvent) => {
+  const handleMouseMove = (event: MouseEvent) => {
     if (tooltip.visible && tooltip.node) {
       // 支出側（expense, expense-sub）かどうかを判定
       const isExpenseSide =

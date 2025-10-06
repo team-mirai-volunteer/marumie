@@ -1,7 +1,7 @@
 "use client";
 import "client-only";
 
-import React, { useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
 import type { BalanceSnapshot } from "@/shared/models/balance-snapshot";
 import { Selector } from "@/client/components/ui";
@@ -52,7 +52,7 @@ export default function BalanceSnapshotsClient({
   };
 
   // 最初の組織を自動選択
-  React.useEffect(() => {
+  useEffect(() => {
     if (organizations.length > 0 && !selectedOrgId) {
       const firstOrgId = organizations[0].id;
       setSelectedOrgId(firstOrgId);
