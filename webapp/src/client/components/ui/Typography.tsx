@@ -1,7 +1,6 @@
-import type React from "react";
-
+import type { ReactNode } from "react";
 interface TypographyProps {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
 }
 
