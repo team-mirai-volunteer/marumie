@@ -59,34 +59,36 @@ export const loadTopPageData = unstable_cache(
       politicalOrganizationRepository,
     );
 
-    // 5つのUsecaseを並列実行（sankeyは2回実行）
-    const [
-      transactionData,
-      monthlyData,
-      sankeyPoliticalCategoryData,
-      sankeyFriendlyCategoryData,
-      balanceSheetData,
-    ] = await Promise.all([
+    // データ取得を2段階に分けて実行することで、データベースコネクションプールへの同時接続数を削減
+    // 全てを同時実行するとコネクション上限に達する可能性があるため、段階的に実行する
+
+    // 第1段階: transaction、monthly、balanceSheetを並列実行
+    const [transactionData, monthlyData, balanceSheetData] = await Promise.all([
       transactionUsecase.execute(params),
       monthlyUsecase.execute({
         slugs: params.slugs,
         financialYear: params.financialYear,
-      }),
-      sankeyUsecase.execute({
-        slugs: params.slugs,
-        financialYear: params.financialYear,
-        categoryType: "political-category",
-      }),
-      sankeyUsecase.execute({
-        slugs: params.slugs,
-        financialYear: params.financialYear,
-        categoryType: "friendly-category",
       }),
       balanceSheetUsecase.execute({
         slugs: params.slugs,
         financialYear: params.financialYear,
       }),
     ]);
+
+    // 第2段階: sankeyの2種類を並列実行
+    const [sankeyPoliticalCategoryData, sankeyFriendlyCategoryData] =
+      await Promise.all([
+        sankeyUsecase.execute({
+          slugs: params.slugs,
+          financialYear: params.financialYear,
+          categoryType: "political-category",
+        }),
+        sankeyUsecase.execute({
+          slugs: params.slugs,
+          financialYear: params.financialYear,
+          categoryType: "friendly-category",
+        }),
+      ]);
 
     return {
       transactionData,
