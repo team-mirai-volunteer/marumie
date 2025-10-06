@@ -3,6 +3,7 @@ import "client-only";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { SOCIAL_LINKS } from "@/constants/social-links";
 
 // テキストリンク集
 const getTextLinks = (currentSlug: string) => [
@@ -53,52 +54,6 @@ const getTextLinks = (currentSlug: string) => [
   {
     label: "プライバシーポリシー",
     href: "/privacy",
-  },
-];
-
-// SNSリンク集
-const socialLinks = [
-  {
-    name: "webサイト",
-    href: "https://team-mir.ai/",
-    icon: "icon-web.svg",
-  },
-  {
-    name: "YouTube",
-    href: "https://www.youtube.com/@%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84%E5%85%AC%E5%BC%8F%E3%83%81%E3%83%A3%E3%83%B3%E3%83%8D%E3%83%AB/featured",
-    icon: "icon-yt.svg",
-  },
-  {
-    name: "LINE",
-    href: "https://line.me/R/ti/p/@465hhyop?oat__id=5529589",
-    icon: "icon-line.svg",
-  },
-  {
-    name: "X",
-    mainText: "X",
-    subText: "（旧Twitter）",
-    href: "https://x.com/team_mirai_jp",
-    icon: "icon-x.svg",
-  },
-  {
-    name: "Instagram",
-    href: "https://www.instagram.com/annotakahiro2024/",
-    icon: "icon-insta.svg",
-  },
-  {
-    name: "Facebook",
-    href: "https://www.facebook.com/teammirai.official",
-    icon: "icon-fb.svg",
-  },
-  {
-    name: "TikTok",
-    href: "https://www.tiktok.com/@annotakahiro2024",
-    icon: "icon-tiktok.svg",
-  },
-  {
-    name: "GitHub",
-    href: "https://github.com/team-mirai-volunteer/marumie",
-    icon: "icon-github.svg",
   },
 ];
 
@@ -161,35 +116,37 @@ export default function Footer() {
         {/* SNS Icons */}
         <div className="w-[299px] lg:w-auto">
           <div className="flex flex-wrap justify-center gap-4 lg:gap-6">
-            {socialLinks.map((social) => (
-              <a
-                key={social.name}
-                href={social.href}
-                target="_blank"
-                rel="noopener"
-                className="flex lg:flex-row items-center gap-1 lg:gap-1 hover:opacity-80 transition-opacity"
-                aria-label={social.name}
-              >
-                <div className="w-12 h-12 lg:w-7 lg:h-7 rounded-full flex items-center justify-center relative bg-white">
-                  <Image
-                    src={`/images/social-icons/${social.icon}`}
-                    alt={social.name}
-                    width={48}
-                    height={48}
-                    className="lg:w-7 lg:h-7"
-                  />
-                </div>
-                {/* PC版のみラベル表示 */}
-                <span className="hidden lg:block text-base font-bold text-black">
-                  {social.mainText || social.name}
-                  {social.subText && (
-                    <span className="text-xs ml-1 opacity-80">
-                      {social.subText}
-                    </span>
-                  )}
-                </span>
-              </a>
-            ))}
+            {SOCIAL_LINKS.filter((social) => social.name !== "Threads").map(
+              (social) => (
+                <a
+                  key={social.name}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener"
+                  className="flex lg:flex-row items-center gap-1 lg:gap-1 hover:opacity-80 transition-opacity"
+                  aria-label={social.name}
+                >
+                  <div className="w-12 h-12 lg:w-7 lg:h-7 rounded-full flex items-center justify-center relative bg-white">
+                    <Image
+                      src={`/images/social-icons/${social.icon}`}
+                      alt={social.name}
+                      width={48}
+                      height={48}
+                      className="lg:w-7 lg:h-7"
+                    />
+                  </div>
+                  {/* PC版のみラベル表示 */}
+                  <span className="hidden lg:block text-base font-bold text-black">
+                    {social.mainText || social.name}
+                    {social.subText && (
+                      <span className="text-xs ml-1 opacity-80">
+                        {social.subText}
+                      </span>
+                    )}
+                  </span>
+                </a>
+              ),
+            )}
           </div>
         </div>
 

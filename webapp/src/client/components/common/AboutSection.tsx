@@ -1,51 +1,7 @@
 import "server-only";
 import Image from "next/image";
 import MainColumnCard from "@/client/components/layout/MainColumnCard";
-
-const socialLinks = [
-  {
-    name: "webサイト",
-    href: "https://team-mir.ai/",
-    icon: "icon-web.svg",
-  },
-  {
-    name: "YouTube",
-    href: "https://www.youtube.com/@%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84%E5%85%AC%E5%BC%8F%E3%83%81%E3%83%A3%E3%83%B3%E3%83%8D%E3%83%AB/featured",
-    icon: "icon-yt.svg",
-  },
-  {
-    name: "LINE",
-    href: "https://line.me/R/ti/p/@465hhyop?oat__id=5529589",
-    icon: "icon-line.svg",
-  },
-  {
-    name: "X",
-    mainText: "X",
-    subText: "（旧Twitter）",
-    href: "https://x.com/team_mirai_jp",
-    icon: "icon-x.svg",
-  },
-  {
-    name: "Instagram",
-    href: "https://www.instagram.com/annotakahiro2024/",
-    icon: "icon-insta.svg",
-  },
-  {
-    name: "Threads",
-    href: "https://www.threads.com/@annotakahiro2024",
-    icon: "icon-threads.svg",
-  },
-  {
-    name: "Facebook",
-    href: "https://www.facebook.com/teammirai.official",
-    icon: "icon-fb.svg",
-  },
-  {
-    name: "TikTok",
-    href: "https://www.tiktok.com/@annotakahiro2024",
-    icon: "icon-tiktok.svg",
-  },
-];
+import { SOCIAL_LINKS } from "@/constants/social-links";
 
 export default function AboutSection() {
   return (
@@ -62,42 +18,44 @@ export default function AboutSection() {
 
         <div className="flex justify-center">
           <div className="grid grid-cols-4 gap-0 sm:gap-1">
-            {socialLinks.map((social) => (
-              <a
-                key={social.name}
-                href={social.href}
-                target="_blank"
-                rel="noopener"
-                className="flex flex-col items-center gap-1 sm:flex-row sm:gap-2 hover:bg-gray-50 transition-colors rounded-lg p-2"
-                aria-label={social.name}
-              >
-                <div className="w-14 h-14 sm:w-12 sm:h-12 rounded-full flex items-center justify-center relative">
-                  <Image
-                    src={`/images/social-icons/${social.icon}`}
-                    alt={social.name}
-                    width={56}
-                    height={56}
-                    className="sm:w-12 sm:h-12"
-                  />
-                </div>
-                <div className="text-left hidden sm:block">
-                  {social.subText ? (
-                    <div className="flex items-baseline gap-1">
+            {SOCIAL_LINKS.filter((social) => social.name !== "GitHub").map(
+              (social) => (
+                <a
+                  key={social.name}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener"
+                  className="flex flex-col items-center gap-1 sm:flex-row sm:gap-2 hover:bg-gray-50 transition-colors rounded-lg p-2"
+                  aria-label={social.name}
+                >
+                  <div className="w-14 h-14 sm:w-12 sm:h-12 rounded-full flex items-center justify-center relative">
+                    <Image
+                      src={`/images/social-icons/${social.icon}`}
+                      alt={social.name}
+                      width={56}
+                      height={56}
+                      className="sm:w-12 sm:h-12"
+                    />
+                  </div>
+                  <div className="text-left hidden sm:block">
+                    {social.subText ? (
+                      <div className="flex items-baseline gap-1">
+                        <div className="text-base font-bold text-black">
+                          {social.mainText || social.name}
+                        </div>
+                        <div className="text-xs font-bold text-black opacity-80">
+                          {social.subText}
+                        </div>
+                      </div>
+                    ) : (
                       <div className="text-base font-bold text-black">
                         {social.mainText || social.name}
                       </div>
-                      <div className="text-xs font-bold text-black opacity-80">
-                        {social.subText}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-base font-bold text-black">
-                      {social.mainText || social.name}
-                    </div>
-                  )}
-                </div>
-              </a>
-            ))}
+                    )}
+                  </div>
+                </a>
+              ),
+            )}
           </div>
         </div>
       </div>
