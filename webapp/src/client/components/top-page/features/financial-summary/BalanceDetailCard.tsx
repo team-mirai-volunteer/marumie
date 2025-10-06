@@ -1,4 +1,4 @@
-import type React from "react";
+import type { ReactElement } from "react";
 import type { FormattedAmount } from "@/server/utils/financial-calculator";
 
 interface BalanceDetailCardProps {
@@ -17,7 +17,7 @@ interface BalanceItem {
 function formatAmountDisplay(
   amount: FormattedAmount,
   isLarge: boolean = false,
-): React.ReactElement {
+): ReactElement {
   const mainClass = isLarge
     ? "text-gray-800 font-bold font-sf-pro"
     : "text-gray-600 font-bold font-sf-pro";

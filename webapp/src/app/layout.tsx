@@ -89,7 +89,7 @@ export default function RootLayout({
         <div className="mt-0 sm:mt-16">
           <Footer />
         </div>
-        <SpeedInsights />
+        <SpeedInsights sampleRate={0.1} />
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_TRACKING_ID || ""} />
       </body>
     </html>

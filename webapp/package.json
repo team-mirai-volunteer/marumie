@@ -31,7 +31,7 @@
     "dev": "next dev --turbopack",
     "build": "cd ../ && prisma generate && prisma migrate deploy && cd webapp && next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "biome check",
     "type-check": "tsc --noEmit",
     "format": "biome check --write .",
     "test": "jest",

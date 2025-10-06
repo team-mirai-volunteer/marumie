@@ -21,7 +21,7 @@ async function performBasicAuth(
 
   const authorizationHeader = request.headers.get("authorization");
 
-  if (!authorizationHeader || !authorizationHeader.startsWith("Basic ")) {
+  if (!authorizationHeader?.startsWith("Basic ")) {
     return new NextResponse("Authentication required", {
       status: 401,
       headers: {

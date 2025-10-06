@@ -30,7 +30,8 @@
         "useNodejsImportProtocol": "off"
       },
       "suspicious": {
-        "noImplicitAnyLet": "off"
+        "noImplicitAnyLet": "off",
+        "noUnknownAtRules": "off"
       },
       "nursery": {
         "useSortedClasses": "off"

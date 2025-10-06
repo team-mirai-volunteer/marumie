@@ -1,5 +1,5 @@
 import "server-only";
-import { UserRole } from "@prisma/client";
+import type { UserRole } from "@prisma/client";
 
 export interface User {
   id: string;

@@ -3,6 +3,7 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/team-mirai-volunteer/marumie)
 
 > 政治資金の透明性向上を目指すオープンソースダッシュボード
 
@@ -71,7 +72,7 @@ marumie/
 - **Styling**: Tailwind CSS v4
 - **Charts**: Recharts, ApexCharts, Nivo
 - **Database**: PostgreSQL (via Supabase)
-- **Development**: pnpm, Biome, ESLint
+- **Development**: pnpm, Biome
 - **Testing**: Jest
 
 ## 画面イメージ

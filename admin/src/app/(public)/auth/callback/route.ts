@@ -22,9 +22,13 @@ export async function GET(request: Request) {
 
         if (!existingUser) {
           // Create user in Prisma database for invited users
+          const email = data.user.email;
+          if (!email) {
+            throw new Error("User email is required");
+          }
           await userRepository.create({
             authId: data.user.id,
-            email: data.user.email!,
+            email: email,
             role: "user", // Default role for invited users
           });
         }

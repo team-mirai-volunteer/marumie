@@ -1,5 +1,5 @@
 import { MfCsvLoader } from "@/server/lib/mf-csv-loader";
-import { EncodingConverter } from "@/server/lib/encoding-converter";
+import { bufferToString } from "@/server/lib/encoding-converter";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -16,7 +16,7 @@ describe("MfCsvLoader Encoding Tests", () => {
       const csvPath = path.join(__dirname, "../../data/sample-shift-jis.csv");
 
       const buffer = fs.readFileSync(csvPath);
-      const csvString = EncodingConverter.bufferToString(buffer);
+      const csvString = bufferToString(buffer);
 
       const result = await loader.load(csvString);
 

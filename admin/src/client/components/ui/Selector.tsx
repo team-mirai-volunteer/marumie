@@ -1,7 +1,7 @@
 "use client";
 import "client-only";
 
-import React, { useId } from "react";
+import { useId } from "react";
 
 interface Option {
   value: string;

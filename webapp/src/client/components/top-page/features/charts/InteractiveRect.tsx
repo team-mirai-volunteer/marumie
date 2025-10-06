@@ -1,7 +1,7 @@
 "use client";
 import "client-only";
 
-import type React from "react";
+import type { MouseEvent } from "react";
 
 interface InteractiveRectProps {
   id: string;
@@ -13,11 +13,11 @@ interface InteractiveRectProps {
   fill: string;
   value?: number;
   onMouseEnter: (
-    event: React.MouseEvent,
+    event: MouseEvent,
     nodeData: { id: string; label?: string; value?: number },
   ) => void;
   onMouseLeave: () => void;
-  onMouseMove: (event: React.MouseEvent) => void;
+  onMouseMove: (event: MouseEvent) => void;
 }
 
 export default function InteractiveRect({
@@ -43,7 +43,9 @@ export default function InteractiveRect({
       height={height}
       fill={fill}
       opacity={1}
-      aria-label={`${label || id}: ¥${Math.round(value || 0).toLocaleString("ja-JP")}`}
+      aria-label={`${label || id}: ¥${Math.round(value || 0).toLocaleString(
+        "ja-JP",
+      )}`}
       onMouseEnter={(e) => onMouseEnter(e, { id, label, value })}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}

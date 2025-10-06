@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { SankeyData, SankeyLink, SankeyNode } from "@/types/sankey";
 
 const BREAKPOINT = {
@@ -25,9 +25,9 @@ const COLORS = {
 
 // モバイル検知のカスタムフック
 export function useMobileDetection() {
-  const [isMobile, setIsMobile] = React.useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < BREAKPOINT.MOBILE);
     };
@@ -42,7 +42,7 @@ export function useMobileDetection() {
 // 色管理のカスタムフック
 export function useNodeColors() {
   // 統一されたノード色取得関数
-  const getNodeColor = React.useCallback(
+  const getNodeColor = useCallback(
     (
       nodeType?: string,
       variant: "fill" | "light" | "box" = "fill",
@@ -91,7 +91,7 @@ export function useNodeColors() {
   );
 
   // パーセンテージテキスト色取得関数
-  const getPercentageTextColor = React.useCallback(
+  const getPercentageTextColor = useCallback(
     (nodeLabel?: string, boxColor?: string): string => {
       if (nodeLabel === "未払費用") {
         return COLORS.EXPENSE;
@@ -121,7 +121,7 @@ export function useNodeColors() {
 export function useLinkColors(data: SankeyData) {
   const { getNodeColor } = useNodeColors();
 
-  const processLinksWithColors = React.useCallback(() => {
+  const processLinksWithColors = useCallback(() => {
     return data.links.map((link) => {
       const sourceNode = data.nodes.find((n) => n.id === link.source);
       const targetNode = data.nodes.find((n) => n.id === link.target);
@@ -156,7 +156,7 @@ export function useLinkColors(data: SankeyData) {
 // ソート関連のカスタムフック
 export function useSankeySorting(data: SankeyData) {
   // ノードの値を計算する関数
-  const calculateNodeValue = React.useCallback(
+  const calculateNodeValue = useCallback(
     (nodeId: string, links: SankeyLink[]) => {
       // 対象ノードに関連するリンクを取得
       const incomingLinks = links.filter((link) => link.target === nodeId);
@@ -174,7 +174,7 @@ export function useSankeySorting(data: SankeyData) {
   );
 
   // ヘルパー関数: 親カテゴリIDを取得
-  const getParentCategoryId = React.useCallback(
+  const getParentCategoryId = useCallback(
     (nodeId: string, nodeType: string) => {
       if (nodeType === "income-sub") {
         const link = data.links.find(
@@ -194,7 +194,7 @@ export function useSankeySorting(data: SankeyData) {
   );
 
   // ソート関数: income カテゴリ
-  const sortIncomeNodes = React.useCallback(
+  const sortIncomeNodes = useCallback(
     (nodes: SankeyNode[]) => {
       return [...nodes].sort((a, b) => {
         const aValue = calculateNodeValue(a.id, data.links);
@@ -214,7 +214,7 @@ export function useSankeySorting(data: SankeyData) {
   );
 
   // ソート関数: expense カテゴリ
-  const sortExpenseNodes = React.useCallback(
+  const sortExpenseNodes = useCallback(
     (nodes: SankeyNode[]) => {
       return [...nodes].sort((a, b) => {
         const aValue = calculateNodeValue(a.id, data.links);
@@ -240,7 +240,7 @@ export function useSankeySorting(data: SankeyData) {
   );
 
   // ソート関数: sub カテゴリ（income-sub, expense-sub）
-  const sortSubNodes = React.useCallback(
+  const sortSubNodes = useCallback(
     (nodes: SankeyNode[], sortedParentNodes: SankeyNode[]) => {
       return [...nodes].sort((a, b) => {
         const aParent = a.nodeType
@@ -291,7 +291,7 @@ export function useSankeySorting(data: SankeyData) {
   );
 
   // ① ノードを並び替え（カテゴリ別にfilter→sort→結合）
-  const sortNodes = React.useCallback(
+  const sortNodes = useCallback(
     (nodes: SankeyNode[]) => {
       // 親ノードを先にソート
       const incomeNodes = sortIncomeNodes(
@@ -325,7 +325,7 @@ export function useSankeySorting(data: SankeyData) {
   );
 
   // ② リンクを並び替え
-  const sortLinks = React.useCallback(
+  const sortLinks = useCallback(
     (
       links: Array<{
         source: string;

@@ -53,8 +53,7 @@ export class PrismaBalanceSnapshotRepository
   }
 
   private mapToBalanceSnapshot(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    prismaBalanceSnapshot: any,
+    prismaBalanceSnapshot: Prisma.BalanceSnapshotGetPayload<object>,
   ): BalanceSnapshot {
     return {
       id: prismaBalanceSnapshot.id.toString(),
