@@ -2,7 +2,7 @@
 import "client-only";
 
 import { useState, useId } from "react";
-import type React from "react";
+import type { ChangeEvent, FormEvent } from "react";
 import { Button } from "@/client/components/ui";
 
 interface BalanceSnapshotFormProps {
@@ -47,13 +47,13 @@ export default function BalanceSnapshotForm({
     return true;
   };
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newDate = e.target.value;
     setSnapshotDate(newDate);
     validateDate(newDate);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!snapshotDate || !balance) return;
 
