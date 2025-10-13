@@ -7,9 +7,9 @@ interface SectionTitleProps {
 
 export function SectionTitle({ children }: SectionTitleProps) {
   return (
-    <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 font-japanese">
-      {children}
-    </h2>
+    <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 font-japanese">
+      みらいまる見え政治資金 | {children}
+    </h1>
   );
 }
 
@@ -19,9 +19,9 @@ interface SubSectionTitleProps {
 
 export function SubSectionTitle({ children }: SubSectionTitleProps) {
   return (
-    <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-3 font-japanese">
+    <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-3 font-japanese">
       {children}
-    </h3>
+    </h2>
   );
 }
 
