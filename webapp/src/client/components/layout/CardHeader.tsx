@@ -6,6 +6,7 @@ interface CardHeaderProps {
   organizationName?: string;
   updatedAt: string;
   subtitle: string;
+  useH1?: boolean;
 }
 
 export default function CardHeader({
@@ -14,7 +15,9 @@ export default function CardHeader({
   organizationName,
   updatedAt,
   subtitle,
+  useH1 = false,
 }: CardHeaderProps) {
+  const headingLevel = useH1 ? "h1" : "h2";
   return (
     <div className="flex flex-col md:flex-row md:items-start md:justify-between w-full gap-2">
       {/* 左側：タイトル・サブタイトル */}
@@ -27,13 +30,13 @@ export default function CardHeader({
           </div>
           <div className="flex flex-col md:block">
             {organizationName ? (
-              <Title as="h2" className="text-[--color-text-primary]">
+              <Title as={headingLevel} className="text-[--color-text-primary]">
                 <span className="md:inline block">{organizationName}</span>
                 <span className="hidden md:inline mx-1">｜</span>
                 <span className="md:inline block">{title}</span>
               </Title>
             ) : (
-              <Title as="h2" className="text-[--color-text-primary]">
+              <Title as={headingLevel} className="text-[--color-text-primary]">
                 {title}
               </Title>
             )}

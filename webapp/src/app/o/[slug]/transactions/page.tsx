@@ -142,6 +142,7 @@ export default async function TransactionsPage({
               title="すべての出入金"
               updatedAt={updatedAt}
               subtitle="これまでにデータ連携された出入金の明細"
+              useH1={true}
             />
 
             <InteractiveTransactionTable
