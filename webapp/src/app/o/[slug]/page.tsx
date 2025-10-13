@@ -72,6 +72,7 @@ export default async function OrgPage({ params }: OrgPageProps) {
 
   return (
     <MainColumn>
+      <h1 className="sr-only">みらいまる見え政治資金</h1>
       <CashFlowSection
         political={data?.political ?? null}
         friendly={data?.friendly ?? null}

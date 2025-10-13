@@ -1,11 +1,14 @@
 import { Subtitle, Title } from "@/client/components/ui/Typography";
 
+type HeadingLevel = "h1" | "h2" | "h3";
+
 interface CardHeaderProps {
   icon: React.ReactNode;
   title: string;
   organizationName?: string;
   updatedAt: string;
   subtitle: string;
+  headingLevel?: HeadingLevel;
 }
 
 export default function CardHeader({
@@ -14,6 +17,7 @@ export default function CardHeader({
   organizationName,
   updatedAt,
   subtitle,
+  headingLevel = "h2",
 }: CardHeaderProps) {
   return (
     <div className="flex flex-col md:flex-row md:items-start md:justify-between w-full gap-2">
@@ -27,13 +31,15 @@ export default function CardHeader({
           </div>
           <div className="flex flex-col md:block">
             {organizationName ? (
-              <Title className="text-[--color-text-primary]">
+              <Title as={headingLevel} className="text-[--color-text-primary]">
                 <span className="md:inline block">{organizationName}</span>
                 <span className="hidden md:inline mx-1">｜</span>
                 <span className="md:inline block">{title}</span>
               </Title>
             ) : (
-              <Title className="text-[--color-text-primary]">{title}</Title>
+              <Title as={headingLevel} className="text-[--color-text-primary]">
+                {title}
+              </Title>
             )}
           </div>
         </div>
