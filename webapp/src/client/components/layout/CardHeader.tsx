@@ -27,13 +27,15 @@ export default function CardHeader({
           </div>
           <div className="flex flex-col md:block">
             {organizationName ? (
-              <Title className="text-[--color-text-primary]">
+              <Title as="h2" className="text-[--color-text-primary]">
                 <span className="md:inline block">{organizationName}</span>
                 <span className="hidden md:inline mx-1">｜</span>
                 <span className="md:inline block">{title}</span>
               </Title>
             ) : (
-              <Title className="text-[--color-text-primary]">{title}</Title>
+              <Title as="h2" className="text-[--color-text-primary]">
+                {title}
+              </Title>
             )}
           </div>
         </div>
