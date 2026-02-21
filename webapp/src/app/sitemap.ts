@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { loadOrganizations } from "@/server/contexts/public-finance/presentation/loaders/load-organizations";
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.WEBAPP_URL || "https://marumie.team-mir.ai";
