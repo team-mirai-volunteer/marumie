@@ -6,6 +6,7 @@
     "postinstall": "pnpm exec playwright install chromium",
     "dev": "next dev --turbopack --port 3001",
     "build": "next build",
+    "build:vercel": "cd .. && pnpm exec prisma generate && cd admin && pnpm run build",
     "start": "next start",
     "lint": "biome check",
     "type-check": "tsc --noEmit",
