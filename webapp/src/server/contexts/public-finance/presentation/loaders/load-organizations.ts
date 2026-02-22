@@ -15,5 +15,6 @@ export const loadOrganizations = unstable_cache(
   ["organizations"],
   {
     revalidate: CACHE_REVALIDATE_SECONDS,
+    tags: ["organizations"],
   },
 );
