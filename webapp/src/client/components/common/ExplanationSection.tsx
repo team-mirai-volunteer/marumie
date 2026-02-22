@@ -8,7 +8,7 @@ export default function ExplanationSection() {
       <div className="space-y-9">
         <div>
           <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-3 font-japanese">
-            みらい まる見え政治資金について
+            みらい まる見え運営資金について
           </h3>
           <p className="text-[11px] sm:text-[15px] leading-[1.82] sm:leading-[1.87] tracking-[0.01em] text-gray-500 sm:text-gray-800 font-medium sm:font-normal font-japanese">
             本プロジェクトは、チームみらいによって政治資金の透明化を目的に開発されたオープンソースソフトウェアです。決済データは、クレジットカード、デビットカード、銀行口座を通じて収集され、現状不定期で更新されています。すでにオープンソースで

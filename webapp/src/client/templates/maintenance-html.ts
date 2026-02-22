@@ -8,7 +8,7 @@ export function getMaintenanceHtml(message?: string): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>メンテナンス中 | みらい まる見え政治資金</title>
+  <title>メンテナンス中 | みらい まる見え運営資金</title>
   <style>
     * {
       margin: 0;
@@ -90,7 +90,7 @@ export function getMaintenanceHtml(message?: string): string {
     <h1>メンテナンス中</h1>
     <p>現在、システムメンテナンスを実施しております。<br>ご不便をおかけしますが、しばらくお待ちください。</p>
     ${additionalMessage}
-    <div class="brand">みらい まる見え政治資金</div>
+    <div class="brand">みらい まる見え運営資金</div>
   </div>
 </body>
 </html>`;

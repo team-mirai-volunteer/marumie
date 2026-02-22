@@ -31,8 +31,8 @@ export async function generateMetadata({ params }: OrgPageProps): Promise<Metada
   const currentOrganization = organizations.find((org) => org.slug === slug);
 
   const title = currentOrganization?.displayName
-    ? `${currentOrganization.displayName} - みらいまる見え政治資金`
-    : "みらいまる見え政治資金";
+    ? `${currentOrganization.displayName} - みらいまる見え運営資金`
+    : "みらいまる見え運営資金";
 
   return {
     title,

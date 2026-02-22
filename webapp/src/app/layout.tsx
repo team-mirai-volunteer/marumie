@@ -42,17 +42,17 @@ const inter = Inter({
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "みらい まる見え政治資金 - チームみらいの政治資金をオープンに",
-  description: "チームみらいの政治資金の流れを透明性を持って公開するプラットフォームです。",
+  title: "みらい まる見え運営資金 - チームみらいの運営資金をオープンに",
+  description: "チームみらいの運営資金の流れを透明性を持って公開するプラットフォームです。",
   openGraph: {
-    title: "みらい まる見え政治資金 - チームみらいの政治資金をオープンに",
-    description: "チームみらいの政治資金の流れを透明性を持って公開するプラットフォームです。",
+    title: "みらい まる見え運営資金 - チームみらいの運営資金をオープンに",
+    description: "チームみらいの運営資金の流れを透明性を持って公開するプラットフォームです。",
     images: [
       {
         url: "/social/og_image.png",
         width: 1200,
         height: 630,
-        alt: "みらい まる見え政治資金",
+        alt: "みらい まる見え運営資金",
       },
     ],
     type: "website",
@@ -60,8 +60,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "みらい まる見え政治資金 - チームみらいの政治資金をオープンに",
-    description: "チームみらいの政治資金の流れを透明性を持って公開するプラットフォームです。",
+    title: "みらい まる見え運営資金 - チームみらいの運営資金をオープンに",
+    description: "チームみらいの運営資金の流れを透明性を持って公開するプラットフォームです。",
     images: ["/social/og_image.png"],
   },
 };

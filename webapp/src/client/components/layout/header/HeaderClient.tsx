@@ -82,7 +82,7 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
               <div className="h-[45px] relative w-[126px] xl:hidden">
                 <Image
                   src="/logos/service-logo-sp.svg"
-                  alt="みらいまる見え政治資金"
+                  alt="みらいまる見え運営資金"
                   fill
                   className="object-contain object-left"
                   priority
@@ -92,7 +92,7 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
               <div className="hidden xl:block h-7 relative w-[300px]">
                 <Image
                   src="/logos/service-logo-pc.svg"
-                  alt="みらいまる見え政治資金"
+                  alt="みらいまる見え運営資金"
                   fill
                   className="object-contain object-left"
                   priority
