@@ -5,8 +5,10 @@ import { prisma } from "@/server/contexts/public-finance/infrastructure/prisma";
 import { PrismaPoliticalOrganizationRepository } from "@/server/contexts/public-finance/infrastructure/repositories/prisma-political-organization.repository";
 import { PrismaMonthlyAggregationRepository } from "@/server/contexts/public-finance/infrastructure/repositories/prisma-monthly-aggregation.repository";
 import { PrismaBalanceSheetRepository } from "@/server/contexts/public-finance/infrastructure/repositories/prisma-balance-sheet.repository";
+import { PrismaPortfolioRepository } from "@/server/contexts/public-finance/infrastructure/repositories/prisma-portfolio.repository";
 import { GetMonthlyAggregationUsecase } from "@/server/contexts/public-finance/application/usecases/get-monthly-aggregation-usecase";
 import { GetBalanceSheetUsecase } from "@/server/contexts/public-finance/application/usecases/get-balance-sheet-usecase";
+import { GetPortfolioUsecase } from "@/server/contexts/public-finance/application/usecases/get-portfolio-usecase";
 import { PrismaTransactionRepository } from "@/server/contexts/public-finance/infrastructure/repositories/prisma-transaction.repository";
 import { PrismaBalanceSnapshotRepository } from "@/server/contexts/public-finance/infrastructure/repositories/prisma-balance-snapshot.repository";
 import { GetMockTransactionPageDataUsecase } from "@/server/contexts/public-finance/application/usecases/get-mock-transaction-page-data-usecase";
@@ -35,6 +37,7 @@ export const loadTopPageData = unstable_cache(
     const balanceSnapshotRepository = new PrismaBalanceSnapshotRepository(prisma);
     const monthlyAggregationRepository = new PrismaMonthlyAggregationRepository(prisma);
     const balanceSheetRepository = new PrismaBalanceSheetRepository(prisma);
+    const portfolioRepository = new PrismaPortfolioRepository(prisma);
 
     // Usecaseを初期化
     const transactionUsecase = new GetTransactionsBySlugUsecase(
@@ -59,11 +62,16 @@ export const loadTopPageData = unstable_cache(
       politicalOrganizationRepository,
     );
 
+    const portfolioUsecase = new GetPortfolioUsecase(
+      portfolioRepository,
+      politicalOrganizationRepository,
+    );
+
     // データ取得を2段階に分けて実行することで、データベースコネクションプールへの同時接続数を削減
     // 全てを同時実行するとコネクション上限に達する可能性があるため、段階的に実行する
 
-    // 第1段階: transaction、monthly、balanceSheetを並列実行
-    const [transactionData, monthlyData, balanceSheetData] = await Promise.all([
+    // 第1段階: transaction、monthly、balanceSheet、portfolioを並列実行
+    const [transactionData, monthlyData, balanceSheetData, portfolioData] = await Promise.all([
       transactionUsecase.execute(params),
       monthlyAggregationUsecase.execute({
         slugs: params.slugs,
@@ -73,6 +81,7 @@ export const loadTopPageData = unstable_cache(
         slugs: params.slugs,
         financialYear: params.financialYear,
       }),
+      portfolioUsecase.execute(params.slugs),
     ]);
 
     // 第2段階: sankeyの2種類を並列実行
@@ -95,6 +104,7 @@ export const loadTopPageData = unstable_cache(
       political: sankeyPoliticalCategoryData.sankeyData,
       friendly: sankeyFriendlyCategoryData.sankeyData,
       balanceSheetData: balanceSheetData.balanceSheetData,
+      portfolioData: portfolioData.portfolioData,
     };
   },
   ["top-page-data"],

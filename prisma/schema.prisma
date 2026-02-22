@@ -69,9 +69,25 @@ model PoliticalOrganization {
   balanceSnapshots BalanceSnapshot[]
   reportProfiles   OrganizationReportProfile[]
   transactions     Transaction[]
+  portfolioAssets  PortfolioAsset[]
 
   @@index([tenantId])
   @@map("political_organizations")
+}
+
+model PortfolioAsset {
+  id                      BigInt                @id @default(autoincrement())
+  politicalOrganizationId BigInt                @map("political_organization_id")
+  snapshotDate            DateTime              @map("snapshot_date") @db.Date
+  category                String                @db.VarChar(50)
+  label                   String                @db.VarChar(255)
+  amount                  BigInt
+  createdAt               DateTime              @default(now()) @map("created_at")
+  updatedAt               DateTime              @updatedAt @map("updated_at")
+  politicalOrganization   PoliticalOrganization @relation(fields: [politicalOrganizationId], references: [id], onDelete: Cascade)
+
+  @@index([politicalOrganizationId, snapshotDate(sort: Desc)])
+  @@map("portfolio_assets")
 }
 
 model Transaction {

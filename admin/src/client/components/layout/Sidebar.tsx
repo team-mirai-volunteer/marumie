@@ -48,6 +48,7 @@ export default function Sidebar({
         { href: "/transactions", label: "取引一覧" },
         { href: "/upload-csv", label: "CSVアップロード" },
         { href: "/balance-snapshots", label: "残高登録" },
+        { href: "/import-portfolio", label: "ポートフォリオ登録" },
       ],
     },
     {

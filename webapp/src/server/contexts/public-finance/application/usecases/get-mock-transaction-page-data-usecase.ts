@@ -1,13 +1,14 @@
 import "server-only";
 
 import type { MonthlyAggregation } from "@/server/contexts/public-finance/domain/models/monthly-aggregation";
+import type { SankeyData } from "@/types/sankey";
+import type { BalanceSheetData } from "@/types/balance-sheet";
+import type { PortfolioData } from "@/server/contexts/public-finance/domain/models/portfolio";
 
 interface MockUsecaseParams {
   slugs: string[];
   financialYear: number;
 }
-import type { SankeyData } from "@/types/sankey";
-import type { BalanceSheetData } from "@/types/balance-sheet";
 
 // モックデータ定義
 const MOCK_MONTHLY_DATA: MonthlyAggregation[] = [
@@ -56,6 +57,18 @@ const MOCK_BALANCE_SHEET_DATA: BalanceSheetData = {
   },
 };
 
+const MOCK_PORTFOLIO_DATA: PortfolioData = {
+  assets: [
+    { category: "cash", label: "現金・預金", amount: 1000000, snapshotDate: "2025-01-01" },
+    { category: "stocks", label: "株式・有価証券", amount: 5000000, snapshotDate: "2025-01-01" },
+    { category: "precious_metals", label: "貴金属", amount: 2000000, snapshotDate: "2025-01-01" },
+    { category: "real_estate", label: "不動産", amount: 50000000, snapshotDate: "2025-01-01" },
+    { category: "other", label: "その他", amount: 500000, snapshotDate: "2025-01-01" },
+  ],
+  totalAmount: 58500000,
+  snapshotDate: "2025-01-01",
+};
+
 const MOCK_TRANSACTION_DATA = {
   transactions: [],
   total: 0,
@@ -96,6 +109,7 @@ export class GetMockTransactionPageDataUsecase {
       political: MOCK_SANKEY_DATA,
       friendly: MOCK_SANKEY_DATA,
       balanceSheetData: MOCK_BALANCE_SHEET_DATA,
+      portfolioData: MOCK_PORTFOLIO_DATA,
     };
   }
 }

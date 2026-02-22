@@ -8,6 +8,7 @@ import ExplanationSection from "@/client/components/common/ExplanationSection";
 import TransparencySection from "@/client/components/common/TransparencySection";
 import MainColumn from "@/client/components/layout/MainColumn";
 import BalanceSheetSection from "@/client/components/top-page/BalanceSheetSection";
+import PortfolioSection from "@/client/components/top-page/PortfolioSection";
 import CashFlowSection from "@/client/components/top-page/CashFlowSection";
 import MonthlyTrendsSection from "@/client/components/top-page/MonthlyTrendsSection";
 import ProgressSection from "@/client/components/top-page/ProgressSection";
@@ -82,6 +83,11 @@ export default async function OrgPage({ params }: OrgPageProps) {
       <TransparencySection title="党首もこれを見て、お金をやりくりしています👀" />
       <BalanceSheetSection
         data={data?.balanceSheetData}
+        updatedAt={updatedAt}
+        organizationName={currentOrganization?.displayName}
+      />
+      <PortfolioSection
+        data={data?.portfolioData}
         updatedAt={updatedAt}
         organizationName={currentOrganization?.displayName}
       />
