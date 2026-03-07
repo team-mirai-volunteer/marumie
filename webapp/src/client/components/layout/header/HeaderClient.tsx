@@ -126,6 +126,26 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
                   );
                 })}
             </nav>
+            {/* OSA website link */}
+            <a
+              href="https://website-v1-japandi.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden lg:flex items-center gap-1 text-xs font-bold text-gray-400 hover:text-teal-600 transition-colors whitespace-nowrap flex-shrink-0"
+              aria-label="OSA - Office for Symbiotic Architecture"
+            >
+              <span>OSA</span>
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                <path
+                  d="M1.5 8.5L8.5 1.5M8.5 1.5H3.5M8.5 1.5V6.5"
+                  stroke="currentColor"
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </a>
+
             <div className="flex items-center w-full max-w-[217px] min-w-0 h-12 flex-shrink">
               <OrganizationSelector
                 organizations={organizations}

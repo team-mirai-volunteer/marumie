@@ -52,6 +52,10 @@ export default function Sidebar({
       ],
     },
     {
+      title: "OSA",
+      items: [{ href: "/osa", label: "OSA Dashboard" }],
+    },
+    {
       title: "報告書",
       items: [
         { href: "/counterparts", label: "取引先マスタ" },

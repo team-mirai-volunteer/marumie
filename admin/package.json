@@ -43,6 +43,7 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
     "xmlbuilder2": "^4.0.3",
+    "recharts": "^2.15.3",
     "zod": "^4.3.4"
   },
   "devDependencies": {
