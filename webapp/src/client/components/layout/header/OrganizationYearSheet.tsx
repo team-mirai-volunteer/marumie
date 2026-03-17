@@ -70,21 +70,24 @@ export default function OrganizationYearSheet({
       {/* Trigger Button */}
       <button
         type="button"
-        className="flex items-center justify-between w-full min-w-0 px-2 py-2 lg:px-4 lg:py-2.5 border border-gray-600 rounded-md text-gray-800 text-sm lg:text-sm font-bold hover:opacity-90 transition-opacity cursor-pointer"
+        className="flex items-center gap-4 w-full min-w-0 pb-1.5 pl-6 pr-4 pt-2 border-[0.5px] border-black rounded-lg font-bold hover:opacity-90 transition-opacity cursor-pointer"
         style={{
-          background:
-            "linear-gradient(90deg, rgba(226, 246, 243, 1) 0%, rgba(238, 246, 226, 1) 100%)",
+          backgroundImage:
+            "linear-gradient(165deg, rgb(226, 246, 243) 24%, rgb(238, 246, 226) 76%)",
         }}
         onClick={() => setIsOpen(true)}
       >
-        <span className="text-left truncate flex-1 min-w-0">
-          {currentOrganization?.displayName || "政治団体を選択"}
+        <span className="flex flex-col gap-1.5 items-start flex-1 min-w-0 leading-none">
+          <span className="text-[14px] leading-none text-black truncate w-full text-left">
+            {currentOrganization?.displayName || "政治団体を選択"}
+          </span>
+          <span className="text-[9px] leading-none text-[#238778]">{currentYear}年</span>
         </span>
         <Image
           src="/icons/icon-chevron-down.svg"
           alt=""
-          width={20}
-          height={20}
+          width={24}
+          height={24}
           className={isOpen ? "rotate-180" : ""}
         />
       </button>
@@ -101,10 +104,10 @@ export default function OrganizationYearSheet({
           />
 
           {/* Dropdown Content */}
-          <div className="absolute right-0 top-full mt-1 z-50 w-[304px] bg-white rounded-lg border border-black/50 shadow-lg py-3 max-h-[70vh] overflow-y-auto">
+          <div className="absolute right-0 top-full mt-1 z-50 w-68 bg-white rounded-lg border border-black/50 shadow-lg py-3 max-h-[70vh] overflow-y-auto">
             {/* Organization Selection */}
             <div className="px-4 flex flex-col gap-1">
-              <p className="text-[11px] text-gray-500">表示する団体名</p>
+              <p className="text-[11px] text-[#5a5a5a]">表示する団体名</p>
               <div className="flex flex-col">
                 {organizations.organizations.map((org) => (
                   <button
@@ -113,8 +116,26 @@ export default function OrganizationYearSheet({
                     onClick={() => handleOrganizationSelect(org.slug)}
                     className="flex items-center gap-2 h-9 pl-6 text-left"
                   >
-                    <span className="w-3 text-center text-[15px] text-[#238778]">
-                      {currentSlug === org.slug ? "✓" : ""}
+                    <span className="w-3 flex items-center justify-center">
+                      {currentSlug === org.slug && (
+                        <svg
+                          width="13"
+                          height="11"
+                          viewBox="0 0 13 11"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          aria-hidden="true"
+                        >
+                          <title>選択中</title>
+                          <path
+                            d="M1 5.5L5 9.5L12 1.5"
+                            stroke="#238778"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
                     </span>
                     <span className="flex flex-col gap-0.5">
                       <span className="text-xs text-gray-900">{org.displayName}</span>
@@ -131,16 +152,16 @@ export default function OrganizationYearSheet({
             <hr className="my-2 border-gray-200" />
 
             {/* Year Selection */}
-            <div className="px-4 py-1 flex flex-wrap items-center gap-x-3 gap-y-2">
-              <p className="text-[11px] text-gray-500">対象年</p>
+            <div className="px-4 py-1 flex flex-col gap-2">
+              <p className="text-[11px] text-[#5a5a5a]">対象年</p>
               <div className="flex gap-3">
                 {AVAILABLE_YEARS.map((year) => (
                   <button
                     key={year}
                     type="button"
                     onClick={() => handleYearSelect(year)}
-                    className={`px-3 py-1.5 rounded-full text-[11px] transition-colors ${
-                      currentYear === year ? "font-bold text-[#238778]" : "bg-gray-200 text-black"
+                    className={`px-3 py-1.5 rounded-full text-[11px] leading-none transition-colors ${
+                      currentYear === year ? "font-bold text-[#238778]" : "bg-[#ececec] text-black"
                     }`}
                     style={
                       currentYear === year
