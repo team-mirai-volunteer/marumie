@@ -13,7 +13,7 @@ test.describe("取引一覧ページ", () => {
 			);
 		});
 
-		const response = await page.goto("/o/sample-party/transactions");
+		const response = await page.goto("/o/sample-party/2026/transactions");
 
 		expect(response, "page.goto() が失敗しました").not.toBeNull();
 		expect(response!.status()).toBe(200);
