@@ -5,13 +5,14 @@ import { useRouter } from "next/navigation";
 
 interface FloatingBackButtonProps {
   slug: string;
+  year: number;
 }
 
-export default function FloatingBackButton({ slug }: FloatingBackButtonProps) {
+export default function FloatingBackButton({ slug, year }: FloatingBackButtonProps) {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push(`/o/${slug}`);
+    router.push(`/o/${slug}/${year}`);
   };
 
   return (
