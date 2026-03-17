@@ -55,7 +55,6 @@ export default function OrganizationYearSheet({
 
     const newPath = `/o/${slug}/${year}${restOfPath}`;
     router.push(newPath);
-    setIsOpen(false);
   };
 
   const handleOrganizationSelect = (slug: string) => {
@@ -90,91 +89,86 @@ export default function OrganizationYearSheet({
         />
       </button>
 
-      {/* Sheet Overlay */}
+      {/* Dropdown */}
       {isOpen && (
         <>
           {/* Backdrop */}
           <button
             type="button"
-            className="fixed inset-0 bg-black/50 z-40 cursor-default"
+            className="fixed inset-0 z-40 cursor-default"
             onClick={() => setIsOpen(false)}
-            aria-label="シートを閉じる"
+            aria-label="閉じる"
           />
 
-          {/* Sheet Content */}
-          <div className="fixed inset-x-0 bottom-0 z-50 bg-white rounded-t-2xl max-h-[80vh] overflow-y-auto">
-            {/* Header */}
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-gray-800">表示する政治団体と年度</h2>
+          {/* Dropdown Content */}
+          <div className="absolute right-0 top-full mt-1 z-50 w-[304px] bg-white rounded-lg border border-black/50 shadow-lg py-3 max-h-[70vh] overflow-y-auto">
+            {/* Organization Selection */}
+            <div className="px-4 flex flex-col gap-1">
+              <p className="text-[11px] text-gray-500">表示する団体名</p>
+              <div className="flex flex-col">
+                {organizations.organizations.map((org) => (
+                  <button
+                    key={org.slug}
+                    type="button"
+                    onClick={() => handleOrganizationSelect(org.slug)}
+                    className="flex items-center gap-2 h-9 pl-6 text-left"
+                  >
+                    <span className="w-3 text-center text-[15px] text-[#238778]">
+                      {currentSlug === org.slug ? "✓" : ""}
+                    </span>
+                    <span className="flex flex-col gap-0.5">
+                      <span className="text-xs text-gray-900">{org.displayName}</span>
+                      {org.orgName && (
+                        <span className="text-[8px] text-[#6a6a6a]">{org.orgName}</span>
+                      )}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Divider */}
+            <hr className="my-2 border-gray-200" />
+
+            {/* Year Selection */}
+            <div className="px-4 py-1 flex flex-wrap items-center gap-x-3 gap-y-2">
+              <p className="text-[11px] text-gray-500">対象年</p>
+              <div className="flex gap-3">
+                {AVAILABLE_YEARS.map((year) => (
+                  <button
+                    key={year}
+                    type="button"
+                    onClick={() => handleYearSelect(year)}
+                    className={`px-3 py-1.5 rounded-full text-[11px] transition-colors ${
+                      currentYear === year ? "font-bold text-[#238778]" : "bg-gray-200 text-black"
+                    }`}
+                    style={
+                      currentYear === year
+                        ? {
+                            background:
+                              "linear-gradient(157deg, rgb(226, 246, 243) 24%, rgb(238, 246, 226) 76%)",
+                          }
+                        : undefined
+                    }
+                  >
+                    {year}年
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Divider */}
+            <hr className="my-2 border-gray-200" />
+
+            {/* Close */}
+            <div className="px-4 flex justify-end">
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                aria-label="閉じる"
+                className="text-xs font-bold text-[#238778]"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
+                閉じる
               </button>
-            </div>
-
-            <div className="p-4 space-y-6">
-              {/* Year Selection */}
-              <div>
-                <h3 className="text-sm font-bold text-gray-600 mb-3">年度</h3>
-                <div className="flex gap-2">
-                  {AVAILABLE_YEARS.map((year) => (
-                    <button
-                      key={year}
-                      type="button"
-                      onClick={() => handleYearSelect(year)}
-                      className={`px-4 py-2 rounded-lg font-bold transition-colors ${
-                        currentYear === year
-                          ? "bg-teal-600 text-white"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      }`}
-                    >
-                      {year}年度
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Organization Selection */}
-              <div>
-                <h3 className="text-sm font-bold text-gray-600 mb-3">政治団体</h3>
-                <div className="space-y-2">
-                  {organizations.organizations.map((org) => (
-                    <button
-                      key={org.slug}
-                      type="button"
-                      onClick={() => handleOrganizationSelect(org.slug)}
-                      className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
-                        currentSlug === org.slug
-                          ? "bg-teal-50 border-2 border-teal-600"
-                          : "bg-gray-50 border-2 border-transparent hover:bg-gray-100"
-                      }`}
-                    >
-                      <div className="font-bold text-gray-800">{org.displayName}</div>
-                      {org.orgName && (
-                        <div className="text-xs text-gray-500 mt-0.5">{org.orgName}</div>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
           </div>
         </>
