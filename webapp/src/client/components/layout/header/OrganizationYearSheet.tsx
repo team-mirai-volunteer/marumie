@@ -104,7 +104,7 @@ export default function OrganizationYearSheet({
           />
 
           {/* Dropdown Content */}
-          <div className="absolute right-0 top-full mt-1 z-50 w-[304px] bg-white rounded-lg border border-black/50 shadow-lg py-3 max-h-[70vh] overflow-y-auto">
+          <div className="absolute right-0 top-full mt-1 z-50 w-68 bg-white rounded-lg border border-black/50 shadow-lg py-3 max-h-[70vh] overflow-y-auto">
             {/* Organization Selection */}
             <div className="px-4 flex flex-col gap-1">
               <p className="text-[11px] text-[#5a5a5a]">表示する団体名</p>
