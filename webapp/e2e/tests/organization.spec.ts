@@ -78,8 +78,8 @@ test.describe("政治団体ページ", () => {
 			const selectorButton = page.getByRole("button", { name: /サンプル党/ });
 			await selectorButton.click();
 
-			// シートが開いて選択肢が表示される
-			await expect(page.getByText("表示する政治団体と年度")).toBeVisible();
+			// ドロップダウンが開いて選択肢が表示される
+			await expect(page.getByText("表示する団体名")).toBeVisible();
 		});
 
 		test("別の政治団体を選択するとページが切り替わる", async ({ page }) => {
@@ -111,8 +111,8 @@ test.describe("政治団体ページ", () => {
 			const selectorButton = page.getByRole("button", { name: /サンプル党/ });
 			await selectorButton.click();
 
-			// 2025年度ボタンをクリック
-			await page.getByRole("button", { name: "2025年度" }).click();
+			// 2025年ボタンをクリック
+			await page.getByRole("button", { name: "2025年" }).click();
 
 			// URLが2025に変わることを確認
 			await expect(page).toHaveURL("/o/sample-party/2025");
