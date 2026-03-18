@@ -114,7 +114,7 @@ export default function OrganizationYearSheet({
                     key={org.slug}
                     type="button"
                     onClick={() => handleOrganizationSelect(org.slug)}
-                    className="flex items-center gap-2 h-9 pl-6 text-left cursor-pointer"
+                    className="flex items-center gap-2 h-9 pl-6 text-left cursor-pointer rounded-md hover:bg-gray-100 transition-colors"
                   >
                     <span className="w-3 flex items-center justify-center">
                       {currentSlug === org.slug && (
@@ -160,7 +160,7 @@ export default function OrganizationYearSheet({
                     key={year}
                     type="button"
                     onClick={() => handleYearSelect(year)}
-                    className={`px-3 py-1.5 rounded-full text-[11px] leading-none transition-colors cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-full text-[11px] leading-none transition-all cursor-pointer hover:opacity-70 ${
                       currentYear === year ? "font-bold text-[#238778]" : "bg-[#ececec] text-black"
                     }`}
                     style={
