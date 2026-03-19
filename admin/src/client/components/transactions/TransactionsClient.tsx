@@ -23,6 +23,7 @@ export function TransactionsClient({ organizations }: TransactionsClientProps) {
   const [error, setError] = useState<string | null>(null);
   const [selectedOrgId, setSelectedOrgId] = useState<string>(organizations[0]?.id ?? "");
   const isInitialLoad = useRef(true);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   const perPage = 50;
@@ -64,7 +65,7 @@ export function TransactionsClient({ organizations }: TransactionsClientProps) {
     };
 
     fetchTransactions(selectedOrgId);
-  }, [currentPage, selectedOrgId]);
+  }, [currentPage, selectedOrgId, refreshKey]);
 
   const handleOrgFilterChange = (orgId: string) => {
     setSelectedOrgId(orgId);
@@ -159,11 +160,18 @@ export function TransactionsClient({ organizations }: TransactionsClientProps) {
                   <th className="px-2 py-3 text-left text-sm font-semibold text-white">
                     摘要 <span className="text-xs font-normal">※サービスには表示されません</span>
                   </th>
+                  <th className="px-2 py-3 text-center text-sm font-semibold text-white w-16">
+                    操作
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {data.transactions.map((transaction) => (
-                  <TransactionRow key={transaction.id} transaction={transaction} />
+                  <TransactionRow
+                    key={transaction.id}
+                    transaction={transaction}
+                    onDeleted={() => setRefreshKey((k) => k + 1)}
+                  />
                 ))}
               </tbody>
             </table>
