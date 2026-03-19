@@ -20,7 +20,9 @@ export {
   Dialog,
   DialogContent,
   DialogHeader,
+  DialogFooter,
   DialogTitle,
+  DialogDescription,
 } from "@/client/components/ui/dialog";
 export {
   Table,

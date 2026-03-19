@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { TransactionRow } from "./TransactionRow";
 import { StaticPagination } from "@/client/components/ui/StaticPagination";
@@ -27,8 +27,8 @@ export function TransactionsClient({ organizations }: TransactionsClientProps) {
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   const perPage = 50;
 
-  useEffect(() => {
-    const fetchTransactions = async (orgId: string) => {
+  const fetchTransactions = useCallback(
+    async (orgId: string) => {
       try {
         // 初回ロードはloading、以降はfetching
         if (isInitialLoad.current) {
@@ -53,6 +53,14 @@ export function TransactionsClient({ organizations }: TransactionsClientProps) {
         }
 
         const result: GetTransactionsResult = await response.json();
+
+        // 最終ページの最後の1件を削除した場合、前のページに補正
+        if (result.transactions.length === 0 && result.total > 0 && currentPage > 1) {
+          const correctedPage = Math.min(currentPage, result.totalPages) || 1;
+          router.replace(`/transactions?page=${correctedPage}`);
+          return;
+        }
+
         setData(result);
         setError(null);
       } catch (err) {
@@ -61,10 +69,13 @@ export function TransactionsClient({ organizations }: TransactionsClientProps) {
         setLoading(false);
         setFetching(false);
       }
-    };
+    },
+    [currentPage, router],
+  );
 
+  useEffect(() => {
     fetchTransactions(selectedOrgId);
-  }, [currentPage, selectedOrgId]);
+  }, [fetchTransactions, selectedOrgId]);
 
   const handleOrgFilterChange = (orgId: string) => {
     setSelectedOrgId(orgId);
@@ -159,11 +170,18 @@ export function TransactionsClient({ organizations }: TransactionsClientProps) {
                   <th className="px-2 py-3 text-left text-sm font-semibold text-white">
                     摘要 <span className="text-xs font-normal">※サービスには表示されません</span>
                   </th>
+                  <th className="px-2 py-3 text-center text-sm font-semibold text-white w-16">
+                    操作
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {data.transactions.map((transaction) => (
-                  <TransactionRow key={transaction.id} transaction={transaction} />
+                  <TransactionRow
+                    key={transaction.id}
+                    transaction={transaction}
+                    onDeleted={() => fetchTransactions(selectedOrgId)}
+                  />
                 ))}
               </tbody>
             </table>
