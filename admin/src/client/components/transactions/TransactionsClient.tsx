@@ -70,7 +70,7 @@ export function TransactionsClient({ organizations }: TransactionsClientProps) {
         setFetching(false);
       }
     },
-    [currentPage],
+    [currentPage, router],
   );
 
   useEffect(() => {
