@@ -100,8 +100,8 @@ describe("PreviewTransaction.generateHash", () => {
     },
     {
       description: "different friendly_category",
-      input1: { friendly_category: "支出" },
-      input2: { friendly_category: "収入" },
+      input1: { friendly_category: "ポスター印刷費" },
+      input2: { friendly_category: "ビラ印刷費" },
     },
     {
       description: "different label",
