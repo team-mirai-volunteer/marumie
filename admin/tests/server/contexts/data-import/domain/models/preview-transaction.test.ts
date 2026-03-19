@@ -98,6 +98,26 @@ describe("PreviewTransaction.generateHash", () => {
       input1: { debit_account: "政治活動費" },
       input2: { debit_account: "組織活動費" },
     },
+    {
+      description: "different friendly_category",
+      input1: { friendly_category: "支出" },
+      input2: { friendly_category: "収入" },
+    },
+    {
+      description: "different label",
+      input1: { label: "ラベルA" },
+      input2: { label: "ラベルB" },
+    },
+    {
+      description: "different transaction_type",
+      input1: { transaction_type: "expense" },
+      input2: { transaction_type: "income" },
+    },
+    {
+      description: "different category_key",
+      input1: { category_key: "political-activity" },
+      input2: { category_key: "organization-activity" },
+    },
   ];
 
   it.each(differentDataCases)("should generate different hash for $description", ({ input1, input2 }) => {
@@ -114,8 +134,6 @@ describe("PreviewTransaction.generateHash", () => {
     const base = createMockPreviewTransaction();
     const withDifferentFields = createMockPreviewTransaction({
       political_organization_id: "different-org",
-      label: "different label",
-      friendly_category: "different category",
       status: "update",
       errors: ["some error"],
       hash: "different-hash",
@@ -132,11 +150,13 @@ describe("PreviewTransaction.generateHash", () => {
       debit_sub_account: undefined,
       credit_sub_account: undefined,
       description: undefined,
+      label: undefined,
     });
     const withEmptyString = createMockPreviewTransaction({
       debit_sub_account: "",
       credit_sub_account: "",
       description: "",
+      label: "",
     });
 
     const hash1 = PreviewTransaction.generateHash(withUndefined);
