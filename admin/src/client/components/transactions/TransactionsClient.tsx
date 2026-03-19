@@ -53,6 +53,14 @@ export function TransactionsClient({ organizations }: TransactionsClientProps) {
         }
 
         const result: GetTransactionsResult = await response.json();
+
+        // 最終ページの最後の1件を削除した場合、前のページに補正
+        if (result.transactions.length === 0 && result.total > 0 && currentPage > 1) {
+          const correctedPage = Math.min(currentPage, result.totalPages) || 1;
+          router.replace(`/transactions?page=${correctedPage}`);
+          return;
+        }
+
         setData(result);
         setError(null);
       } catch (err) {
