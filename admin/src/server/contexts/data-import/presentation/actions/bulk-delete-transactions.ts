@@ -50,9 +50,7 @@ export async function searchTransactionsForBulkDeleteAction(
   }
 }
 
-export async function bulkDeleteTransactionsAction(
-  ids: string[],
-): Promise<{
+export async function bulkDeleteTransactionsAction(ids: string[]): Promise<{
   success: boolean;
   deletedCount?: number;
   error?: string;

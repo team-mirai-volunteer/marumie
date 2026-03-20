@@ -163,13 +163,8 @@ export function BulkDeleteTransactionsClient({
           {searchResult.foundTransactions && searchResult.foundTransactions.length > 0 && (
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>
-                  削除対象 ({searchResult.foundTransactions.length}件)
-                </CardTitle>
-                <Button
-                  variant="destructive"
-                  onClick={() => setShowConfirmDialog(true)}
-                >
+                <CardTitle>削除対象 ({searchResult.foundTransactions.length}件)</CardTitle>
+                <Button variant="destructive" onClick={() => setShowConfirmDialog(true)}>
                   削除
                 </Button>
               </CardHeader>
@@ -220,7 +215,8 @@ export function BulkDeleteTransactionsClient({
           <DialogHeader>
             <DialogTitle>取引の一括削除</DialogTitle>
             <DialogDescription>
-              {searchResult?.foundTransactions?.length}件の取引を削除します。この操作は取り消せません。
+              {searchResult?.foundTransactions?.length}
+              件の取引を削除します。この操作は取り消せません。
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
