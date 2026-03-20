@@ -46,6 +46,7 @@ export default function Sidebar({
       title: "データ取り込み",
       items: [
         { href: "/transactions", label: "取引一覧" },
+        { href: "/bulk-delete-transactions", label: "取引一括削除" },
         { href: "/upload-csv", label: "CSVアップロード" },
         { href: "/balance-snapshots", label: "残高登録" },
       ],
