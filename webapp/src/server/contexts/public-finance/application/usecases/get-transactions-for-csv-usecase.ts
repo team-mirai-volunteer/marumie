@@ -10,7 +10,7 @@ export interface GetTransactionsForCsvParams {
   financialYear: number;
 }
 
-export interface GetTransactionsForCsvResult {
+interface GetTransactionsForCsvResult {
   transactions: Array<Transaction & { political_organization_name: string }>;
   total: number;
 }

@@ -7,7 +7,7 @@ import { prisma } from "@/server/contexts/shared/infrastructure/prisma";
 import { UpdateGrantExpenditureFlagUsecase } from "@/server/contexts/report/application/usecases/update-grant-expenditure-flag-usecase";
 import { PrismaReportTransactionRepository } from "@/server/contexts/report/infrastructure/repositories/prisma-report-transaction.repository";
 
-export interface UpdateGrantExpenditureFlagActionResult {
+interface UpdateGrantExpenditureFlagActionResult {
   success: boolean;
   errors?: string[];
 }

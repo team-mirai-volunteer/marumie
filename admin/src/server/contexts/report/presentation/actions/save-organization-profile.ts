@@ -6,7 +6,7 @@ import { PrismaOrganizationReportProfileRepository } from "@/server/contexts/rep
 import { SaveOrganizationProfileUsecase } from "@/server/contexts/report/application/usecases/save-organization-profile-usecase";
 import type { OrganizationReportProfileDetails } from "@/server/contexts/report/domain/models/organization-report-profile";
 
-export interface SaveOrganizationProfileData {
+interface SaveOrganizationProfileData {
   id?: string;
   politicalOrganizationId: string;
   financialYear: number;

@@ -55,7 +55,7 @@ export const DONOR_REQUIRED_CATEGORIES = [
   ...ALL_DONOR_TYPE_CATEGORIES,
 ] as const;
 
-export type DonorRequiredCategory = (typeof DONOR_REQUIRED_CATEGORIES)[number];
+type DonorRequiredCategory = (typeof DONOR_REQUIRED_CATEGORIES)[number];
 
 /**
  * カテゴリごとに許可されるdonor_typeのマッピング

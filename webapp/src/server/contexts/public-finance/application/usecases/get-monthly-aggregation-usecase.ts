@@ -7,12 +7,12 @@ import {
 import type { IMonthlyAggregationRepository } from "@/server/contexts/public-finance/domain/repositories/monthly-aggregation-repository.interface";
 import type { IPoliticalOrganizationRepository } from "@/server/contexts/public-finance/domain/repositories/political-organization-repository.interface";
 
-export interface GetMonthlyAggregationParams {
+interface GetMonthlyAggregationParams {
   slugs: string[];
   financialYear: number;
 }
 
-export interface GetMonthlyAggregationResult {
+interface GetMonthlyAggregationResult {
   monthlyData: MonthlyAggregation[];
 }
 

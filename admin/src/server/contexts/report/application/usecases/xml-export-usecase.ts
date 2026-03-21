@@ -18,12 +18,12 @@ import type { IOrganizationReportProfileRepository } from "@/server/contexts/rep
 // Re-export for consumers
 export { KNOWN_FORM_IDS };
 
-export interface XmlExportInput {
+interface XmlExportInput {
   politicalOrganizationId: string;
   financialYear: number;
 }
 
-export interface XmlExportResult {
+interface XmlExportResult {
   xml: string;
   shiftJisBuffer: Buffer;
   filename: string;

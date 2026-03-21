@@ -13,14 +13,14 @@ import type {
   IDonorRepository,
 } from "@/server/contexts/report/domain/repositories/donor-repository.interface";
 
-export interface GetDonorsInput {
+interface GetDonorsInput {
   searchQuery?: string;
   donorType?: DonorType;
   limit?: number;
   offset?: number;
 }
 
-export interface GetDonorsResult {
+interface GetDonorsResult {
   donors: DonorWithUsage[];
   total: number;
 }
@@ -45,7 +45,7 @@ export class GetDonorsUsecase {
   }
 }
 
-export interface CreateDonorResult {
+interface CreateDonorResult {
   success: boolean;
   donor?: Donor;
   errors?: string[];
@@ -86,7 +86,7 @@ export class CreateDonorUsecase {
   }
 }
 
-export interface UpdateDonorResult {
+interface UpdateDonorResult {
   success: boolean;
   donor?: Donor;
   errors?: string[];
@@ -150,7 +150,7 @@ export class UpdateDonorUsecase {
   }
 }
 
-export interface DeleteDonorResult {
+interface DeleteDonorResult {
   success: boolean;
   errors?: string[];
 }
