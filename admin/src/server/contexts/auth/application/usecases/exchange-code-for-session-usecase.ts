@@ -7,7 +7,7 @@ import type {
 } from "@/server/contexts/shared/domain/repositories/user-repository.interface";
 import { AuthError } from "@/server/contexts/auth/domain/errors/auth-error";
 
-export interface ExchangeCodeResult {
+interface ExchangeCodeResult {
   user: User;
   isNewUser: boolean;
 }

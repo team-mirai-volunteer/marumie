@@ -68,11 +68,9 @@ export const COUNTERPART_REQUIRED_EXPENSE_CATEGORIES = [
   ...POLITICAL_ACTIVITY_EXPENSE_CATEGORIES,
 ] as const;
 
-export type CounterpartRequiredIncomeCategory =
-  (typeof COUNTERPART_REQUIRED_INCOME_CATEGORIES)[number];
+type CounterpartRequiredIncomeCategory = (typeof COUNTERPART_REQUIRED_INCOME_CATEGORIES)[number];
 
-export type CounterpartRequiredExpenseCategory =
-  (typeof COUNTERPART_REQUIRED_EXPENSE_CATEGORIES)[number];
+type CounterpartRequiredExpenseCategory = (typeof COUNTERPART_REQUIRED_EXPENSE_CATEGORIES)[number];
 
 /**
  * Counterpart明細記載が必要な金額閾値（円）

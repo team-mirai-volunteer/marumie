@@ -15,13 +15,13 @@ import type {
 
 const CACHE_REVALIDATE_SECONDS = 60;
 
-export interface LoadCounterpartsInput {
+interface LoadCounterpartsInput {
   searchQuery?: string;
   page?: number;
   perPage?: number;
 }
 
-export interface LoadCounterpartsResult {
+interface LoadCounterpartsResult {
   counterparts: CounterpartWithUsage[];
   total: number;
   page: number;
@@ -62,7 +62,7 @@ export async function loadCounterpartsData(
   return cachedLoader(searchQuery, page, perPage);
 }
 
-export interface LoadCounterpartDetailPageResult {
+interface LoadCounterpartDetailPageResult {
   counterpart: Counterpart | null;
   usageCount: number;
   allCounterparts: Counterpart[];

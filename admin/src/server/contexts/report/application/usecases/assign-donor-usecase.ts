@@ -5,12 +5,12 @@ import type { ITransactionDonorRepository } from "@/server/contexts/report/domai
 import type { ITransactionWithDonorRepository } from "@/server/contexts/report/domain/repositories/transaction-with-donor-repository.interface";
 import { isDonorTypeAllowedForCategory } from "@/server/contexts/report/domain/models/donor-assignment-rules";
 
-export interface BulkAssignDonorInput {
+interface BulkAssignDonorInput {
   transactionIds: string[];
   donorId: string;
 }
 
-export interface BulkAssignDonorResult {
+interface BulkAssignDonorResult {
   success: boolean;
   assignedCount?: number;
   errors?: string[];

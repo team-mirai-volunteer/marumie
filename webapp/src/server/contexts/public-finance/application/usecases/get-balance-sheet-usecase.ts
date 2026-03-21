@@ -5,12 +5,12 @@ import type { IBalanceSheetRepository } from "@/server/contexts/public-finance/d
 import type { IPoliticalOrganizationRepository } from "@/server/contexts/public-finance/domain/repositories/political-organization-repository.interface";
 import type { BalanceSheetData } from "@/types/balance-sheet";
 
-export interface GetBalanceSheetParams {
+interface GetBalanceSheetParams {
   slugs: string[];
   financialYear: number;
 }
 
-export interface GetBalanceSheetResult {
+interface GetBalanceSheetResult {
   balanceSheetData: BalanceSheetData;
 }
 

@@ -11,13 +11,13 @@ import {
 } from "@/server/contexts/public-finance/domain/models/category-aggregation";
 import { SankeyDataBuilder } from "@/server/contexts/public-finance/domain/services/sankey-data-builder";
 
-export interface GetSankeyAggregationParams {
+interface GetSankeyAggregationParams {
   slugs: string[];
   financialYear: number;
   categoryType?: "political-category" | "friendly-category";
 }
 
-export interface GetSankeyAggregationResult {
+interface GetSankeyAggregationResult {
   sankeyData: SankeyData;
 }
 

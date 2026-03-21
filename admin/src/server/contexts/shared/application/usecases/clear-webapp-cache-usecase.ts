@@ -2,7 +2,7 @@ import "server-only";
 
 import type { ICacheInvalidator } from "@/server/contexts/shared/domain/services/cache-invalidator.interface";
 
-export interface ClearWebappCacheResult {
+interface ClearWebappCacheResult {
   success: boolean;
   message: string;
 }

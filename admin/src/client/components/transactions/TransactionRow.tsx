@@ -126,6 +126,7 @@ export function TransactionRow({ transaction, onDeleted }: TransactionRowProps) 
 
   return (
     <tr className="border-b border-border">
+      <td className="px-2 py-3 text-sm text-white font-mono">{transaction.transaction_no}</td>
       <td className="px-2 py-3 text-sm text-white">{formatDate(transaction.transaction_date)}</td>
       <td className="px-2 py-3 text-sm text-white">
         {transaction.political_organization_name || "-"}
