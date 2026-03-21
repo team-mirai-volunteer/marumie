@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import type { PoliticalOrganization } from "@/shared/models/political-organization";
 import { PoliticalOrganizationSelect } from "@/client/components/political-organizations/PoliticalOrganizationSelect";
 import {
@@ -38,11 +39,6 @@ export function BulkDeleteTransactionsClient({
   const [isSearching, setIsSearching] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [deleteResult, setDeleteResult] = useState<{
-    success: boolean;
-    deletedCount?: number;
-    error?: string;
-  } | null>(null);
 
   const handleSearch = async () => {
     if (!selectedOrgId || !transactionNosInput.trim()) return;
@@ -56,7 +52,6 @@ export function BulkDeleteTransactionsClient({
 
     setIsSearching(true);
     setSearchResult(null);
-    setDeleteResult(null);
 
     const params = new URLSearchParams({
       orgId: selectedOrgId,
@@ -74,13 +69,15 @@ export function BulkDeleteTransactionsClient({
     setIsDeleting(true);
     const ids = searchResult.foundTransactions.map((t) => t.id);
     const result = await bulkDeleteTransactionsAction(ids);
-    setDeleteResult(result);
     setShowConfirmDialog(false);
     setIsDeleting(false);
 
     if (result.success) {
+      toast.success(`${result.deletedCount}件の取引を削除しました。`);
       setSearchResult(null);
       setTransactionNosInput("");
+    } else {
+      toast.error(`削除に失敗しました: ${result.error}`);
     }
   };
 
@@ -121,20 +118,6 @@ export function BulkDeleteTransactionsClient({
           </Button>
         </CardContent>
       </Card>
-
-      {deleteResult && (
-        <Card>
-          <CardContent className="pt-6">
-            {deleteResult.success ? (
-              <p className="text-green-600 font-medium">
-                {deleteResult.deletedCount}件の取引を削除しました。
-              </p>
-            ) : (
-              <p className="text-red-600 font-medium">エラー: {deleteResult.error}</p>
-            )}
-          </CardContent>
-        </Card>
-      )}
 
       {searchResult && !searchResult.success && (
         <Card>
