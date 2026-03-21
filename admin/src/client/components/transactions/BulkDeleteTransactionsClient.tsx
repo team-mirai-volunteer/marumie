@@ -96,7 +96,6 @@ export function BulkDeleteTransactionsClient({
             onValueChange={(value) => {
               setSelectedOrgId(value);
               setSearchResult(null);
-              setDeleteResult(null);
             }}
             required
           />
