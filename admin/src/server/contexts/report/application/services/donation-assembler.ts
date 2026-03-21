@@ -21,7 +21,7 @@ export interface DonationAssemblerInput {
   financialYear: number;
 }
 
-export interface DonationData {
+interface DonationData {
   personalDonations: PersonalDonationSectionInterface;
 }
 

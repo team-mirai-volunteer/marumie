@@ -10,7 +10,7 @@ import { convertToDisplayTransactions } from "@/server/contexts/public-finance/d
 import type { IPoliticalOrganizationRepository } from "@/server/contexts/public-finance/domain/repositories/political-organization-repository.interface";
 import type { ITransactionListRepository } from "@/server/contexts/public-finance/domain/repositories/transaction-list-repository.interface";
 
-export interface GetAllTransactionsBySlugParams {
+interface GetAllTransactionsBySlugParams {
   slugs: string[];
   transactionType?: DisplayTransactionType;
   dateFrom?: Date;
@@ -21,7 +21,7 @@ export interface GetAllTransactionsBySlugParams {
   categories?: string[];
 }
 
-export interface GetAllTransactionsBySlugResult {
+interface GetAllTransactionsBySlugResult {
   transactions: DisplayTransaction[];
   total: number;
   politicalOrganizations: PoliticalOrganization[];

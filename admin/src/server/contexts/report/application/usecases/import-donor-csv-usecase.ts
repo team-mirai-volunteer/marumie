@@ -23,7 +23,7 @@ export interface ImportDonorCsvInput {
   politicalOrganizationId: string;
 }
 
-export interface ImportDonorCsvOutput {
+interface ImportDonorCsvOutput {
   importedCount: number;
   createdDonorCount: number;
 }

@@ -4,12 +4,12 @@ import type { ITransactionWithCounterpartRepository } from "@/server/contexts/re
 import type { ICounterpartRepository } from "@/server/contexts/report/domain/repositories/counterpart-repository.interface";
 import type { ITransactionCounterpartRepository } from "@/server/contexts/report/domain/repositories/transaction-counterpart-repository.interface";
 
-export interface BulkAssignCounterpartInput {
+interface BulkAssignCounterpartInput {
   transactionIds: string[];
   counterpartId: string;
 }
 
-export interface BulkAssignCounterpartResult {
+interface BulkAssignCounterpartResult {
   success: boolean;
   successCount: number;
   failedIds: string[];

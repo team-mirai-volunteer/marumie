@@ -15,7 +15,7 @@ export interface SuggestionContext {
   repository: ICounterpartRepository;
 }
 
-export interface SuggestionStrategy {
+interface SuggestionStrategy {
   suggest(
     transaction: TransactionWithCounterpart,
     context: SuggestionContext,

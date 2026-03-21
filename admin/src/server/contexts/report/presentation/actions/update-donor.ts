@@ -6,7 +6,7 @@ import { PrismaDonorRepository } from "@/server/contexts/report/infrastructure/r
 import { UpdateDonorUsecase } from "@/server/contexts/report/application/usecases/manage-donor-usecase";
 import type { UpdateDonorInput } from "@/server/contexts/report/domain/models/donor";
 
-export interface UpdateDonorActionResult {
+interface UpdateDonorActionResult {
   success: boolean;
   errors?: string[];
 }

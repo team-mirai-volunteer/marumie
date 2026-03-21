@@ -7,7 +7,7 @@ import { PrismaReportTransactionRepository } from "@/server/contexts/report/infr
 import { PrismaCounterpartRepository } from "@/server/contexts/report/infrastructure/repositories/prisma-counterpart.repository";
 import { PrismaTransactionCounterpartRepository } from "@/server/contexts/report/infrastructure/repositories/prisma-transaction-counterpart.repository";
 
-export interface BulkAssignCounterpartActionResult {
+interface BulkAssignCounterpartActionResult {
   success: boolean;
   successCount: number;
   failedIds: string[];

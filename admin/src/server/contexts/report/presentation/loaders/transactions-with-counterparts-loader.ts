@@ -11,9 +11,9 @@ import {
 
 const CACHE_REVALIDATE_SECONDS = 60;
 
-export type LoadTransactionsWithCounterpartsInput = GetTransactionsWithCounterpartsInput;
+type LoadTransactionsWithCounterpartsInput = GetTransactionsWithCounterpartsInput;
 
-export type LoadTransactionsWithCounterpartsResult = GetTransactionsWithCounterpartsResult;
+type LoadTransactionsWithCounterpartsResult = GetTransactionsWithCounterpartsResult;
 
 export async function loadTransactionsWithCounterpartsData(
   input: LoadTransactionsWithCounterpartsInput,

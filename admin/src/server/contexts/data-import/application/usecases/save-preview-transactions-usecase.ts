@@ -9,7 +9,7 @@ export interface SavePreviewTransactionsInput {
   politicalOrganizationId: string;
 }
 
-export interface SavePreviewTransactionsResult {
+interface SavePreviewTransactionsResult {
   processedCount: number;
   savedCount: number;
   skippedCount: number;
