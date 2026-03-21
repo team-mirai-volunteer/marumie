@@ -24,11 +24,8 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/client/components/ui";
-import {
-  searchTransactionsForBulkDeleteAction,
-  bulkDeleteTransactionsAction,
-} from "@/server/contexts/data-import/presentation/actions/bulk-delete-transactions";
-import type { BulkDeleteSearchResult } from "@/server/contexts/data-import/presentation/actions/bulk-delete-transactions";
+import { bulkDeleteTransactionsAction } from "@/server/contexts/data-import/presentation/actions/bulk-delete-transactions";
+import type { BulkDeleteSearchResult } from "@/server/contexts/data-import/presentation/types";
 
 export function BulkDeleteTransactionsClient({
   organizations,
@@ -61,7 +58,12 @@ export function BulkDeleteTransactionsClient({
     setSearchResult(null);
     setDeleteResult(null);
 
-    const result = await searchTransactionsForBulkDeleteAction(selectedOrgId, nos);
+    const params = new URLSearchParams({
+      orgId: selectedOrgId,
+      nos: nos.join(","),
+    });
+    const response = await fetch(`/api/transactions/search-by-nos?${params}`);
+    const result: BulkDeleteSearchResult = await response.json();
     setSearchResult(result);
     setIsSearching(false);
   };
