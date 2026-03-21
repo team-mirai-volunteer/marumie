@@ -9,3 +9,6 @@ export type { PreviewMfCsvResult } from "@/server/contexts/data-import/applicati
 
 // トランザクション取得関連
 export type { GetTransactionsResult } from "@/server/contexts/data-import/application/usecases/get-transactions-usecase";
+
+// 取引番号検索関連
+export type { BulkDeleteSearchResult } from "@/server/contexts/data-import/presentation/loaders/load-transactions-by-nos";
