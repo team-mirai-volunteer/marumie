@@ -37,7 +37,6 @@ describe("GetBalanceSheetUsecase", () => {
 
     const result = await usecase.execute({
       slugs: ["test-org"],
-      financialYear: 2025,
     });
 
     expect(result.balanceSheetData.left.currentAssets).toBe(1000000);
@@ -61,7 +60,6 @@ describe("GetBalanceSheetUsecase", () => {
 
     const result = await usecase.execute({
       slugs: ["test-org"],
-      financialYear: 2025,
     });
 
     expect(result.balanceSheetData.left.currentAssets).toBe(100000);
@@ -85,7 +83,6 @@ describe("GetBalanceSheetUsecase", () => {
 
     const result = await usecase.execute({
       slugs: ["test-org"],
-      financialYear: 2025,
     });
 
     expect(result.balanceSheetData.right.netAssets).toBe(0);
@@ -108,7 +105,6 @@ describe("GetBalanceSheetUsecase", () => {
 
     const result = await usecase.execute({
       slugs: ["org-1", "org-2"],
-      financialYear: 2025,
     });
 
     expect(result.balanceSheetData.left.currentAssets).toBe(2000000);
@@ -121,7 +117,6 @@ describe("GetBalanceSheetUsecase", () => {
     await expect(
       usecase.execute({
         slugs: ["non-existent-org"],
-        financialYear: 2025,
       }),
     ).rejects.toThrow('Political organizations with slugs "non-existent-org" not found');
   });
@@ -132,7 +127,6 @@ describe("GetBalanceSheetUsecase", () => {
     await expect(
       usecase.execute({
         slugs: ["org-1", "org-2"],
-        financialYear: 2025,
       }),
     ).rejects.toThrow('Political organizations with slugs "org-1, org-2" not found');
   });

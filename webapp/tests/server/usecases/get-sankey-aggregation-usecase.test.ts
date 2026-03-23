@@ -239,7 +239,7 @@ describe("GetSankeyAggregationUsecase", () => {
     });
 
     expect(result.sankeyData).toBeDefined();
-    expect(mockBalanceSheetRepository.getCurrentLiabilities).toHaveBeenCalledWith(["1"], 2025);
+    expect(mockBalanceSheetRepository.getCurrentLiabilities).toHaveBeenCalledWith(["1"]);
 
     const unpaidExpenseNode = result.sankeyData.nodes.find((node) => node.label === "未払費用");
     expect(unpaidExpenseNode).toBeDefined();
