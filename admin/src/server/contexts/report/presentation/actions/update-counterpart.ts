@@ -6,7 +6,7 @@ import { PrismaCounterpartRepository } from "@/server/contexts/report/infrastruc
 import { UpdateCounterpartUsecase } from "@/server/contexts/report/application/usecases/manage-counterpart-usecase";
 import type { UpdateCounterpartInput } from "@/server/contexts/report/domain/models/counterpart";
 
-export interface UpdateCounterpartActionResult {
+interface UpdateCounterpartActionResult {
   success: boolean;
   errors?: string[];
 }

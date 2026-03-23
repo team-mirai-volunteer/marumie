@@ -3,12 +3,12 @@ import "server-only";
 import type { ITransactionWithCounterpartRepository } from "@/server/contexts/report/domain/repositories/report-transaction-repository.interface";
 import { validateGrantExpenditureFlagUpdate } from "@/server/contexts/report/domain/models/grant-expenditure-rules";
 
-export interface UpdateGrantExpenditureFlagInput {
+interface UpdateGrantExpenditureFlagInput {
   transactionId: string;
   isGrantExpenditure: boolean;
 }
 
-export interface UpdateGrantExpenditureFlagResult {
+interface UpdateGrantExpenditureFlagResult {
   success: boolean;
   errors?: string[];
 }

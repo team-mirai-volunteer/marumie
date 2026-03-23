@@ -12,14 +12,14 @@ import type {
 
 const CACHE_REVALIDATE_SECONDS = 60;
 
-export interface LoadDonorsInput {
+interface LoadDonorsInput {
   searchQuery?: string;
   donorType?: DonorType;
   page?: number;
   perPage?: number;
 }
 
-export interface LoadDonorsResult {
+interface LoadDonorsResult {
   donors: DonorWithUsage[];
   total: number;
   page: number;

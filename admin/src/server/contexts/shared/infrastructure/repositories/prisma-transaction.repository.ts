@@ -158,6 +158,12 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     return Promise.all(updatePromises);
   }
 
+  async delete(id: string): Promise<void> {
+    await this.prisma.transaction.delete({
+      where: { id: BigInt(id) },
+    });
+  }
+
   async deleteAll(filters?: TransactionFilters): Promise<number> {
     const where = this.buildWhereClause(filters);
 

@@ -4,9 +4,11 @@ import "client-only";
 import type { TransactionWithOrganization } from "@/server/contexts/shared/domain/transaction";
 import { PL_CATEGORIES } from "@/shared/accounting/account-category";
 import type { TransactionType } from "@/shared/models/transaction";
+import { DeleteTransactionButton } from "@/client/components/transactions/DeleteTransactionButton";
 
 interface TransactionRowProps {
   transaction: TransactionWithOrganization;
+  onDeleted?: () => void;
 }
 
 const DEFAULT_CATEGORY_COLOR = "#64748B"; // slate-500 as default fallback color
@@ -117,13 +119,14 @@ function getTypeBadgeClass(type: string): string {
   }
 }
 
-export function TransactionRow({ transaction }: TransactionRowProps) {
+export function TransactionRow({ transaction, onDeleted }: TransactionRowProps) {
   const formatDate = (date: Date | string) => {
     return new Date(date).toLocaleDateString("ja-JP");
   };
 
   return (
     <tr className="border-b border-border">
+      <td className="px-2 py-3 text-sm text-white font-mono">{transaction.transaction_no}</td>
       <td className="px-2 py-3 text-sm text-white">{formatDate(transaction.transaction_date)}</td>
       <td className="px-2 py-3 text-sm text-white">
         {transaction.political_organization_name || "-"}
@@ -175,6 +178,9 @@ export function TransactionRow({ transaction }: TransactionRowProps) {
         {transaction.label && (
           <div className="text-blue-400 text-xs mt-1">ラベル: {transaction.label}</div>
         )}
+      </td>
+      <td className="px-2 py-3 text-sm text-center">
+        <DeleteTransactionButton transaction={transaction} onDeleted={onDeleted} />
       </td>
     </tr>
   );

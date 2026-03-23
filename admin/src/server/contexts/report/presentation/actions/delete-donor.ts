@@ -7,7 +7,7 @@ import { prisma } from "@/server/contexts/shared/infrastructure/prisma";
 import { PrismaDonorRepository } from "@/server/contexts/report/infrastructure/repositories/prisma-donor.repository";
 import { DeleteDonorUsecase } from "@/server/contexts/report/application/usecases/manage-donor-usecase";
 
-export interface DeleteDonorActionResult {
+interface DeleteDonorActionResult {
   success: boolean;
   errors?: string[];
 }

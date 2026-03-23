@@ -8,7 +8,7 @@ import type {
   AddressSearchResult,
 } from "@/server/contexts/report/presentation/types/address-search";
 
-export type AddressInputPhase =
+type AddressInputPhase =
   | "initial" // 初期状態（ボタンのみ）
   | "searching" // 検索中
   | "results" // 検索結果表示

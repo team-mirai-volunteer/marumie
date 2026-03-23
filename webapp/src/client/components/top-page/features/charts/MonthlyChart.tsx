@@ -111,10 +111,11 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
         enabled: false,
       },
       events: {
-        beforeMount: (chartContext: { el: HTMLElement }) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        beforeMount: (chart: any) => {
           // チャートコンテナのタッチイベントを親要素に委譲
           if (typeof window !== "undefined" && "ontouchstart" in window) {
-            const chartEl = chartContext.el;
+            const chartEl = chart.el as HTMLElement;
             chartEl.style.touchAction = "pan-x pan-y";
           }
         },

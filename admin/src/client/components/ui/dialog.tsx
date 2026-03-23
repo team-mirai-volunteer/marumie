@@ -115,4 +115,4 @@ function DialogDescription({
   );
 }
 
-export { Dialog, DialogContent, DialogHeader, DialogTitle };
+export { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription };

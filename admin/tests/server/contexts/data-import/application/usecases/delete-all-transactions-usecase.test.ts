@@ -9,6 +9,7 @@ describe("DeleteAllTransactionsUsecase", () => {
     mockRepository = {
       findWithPagination: jest.fn(),
       updateMany: jest.fn(),
+      delete: jest.fn(),
       deleteAll: jest.fn(),
       createMany: jest.fn(),
       findByTransactionNos: jest.fn(),
