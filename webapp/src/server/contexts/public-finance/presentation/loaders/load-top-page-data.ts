@@ -71,7 +71,6 @@ export const loadTopPageData = unstable_cache(
       }),
       balanceSheetUsecase.execute({
         slugs: params.slugs,
-        financialYear: params.financialYear,
       }),
     ]);
 

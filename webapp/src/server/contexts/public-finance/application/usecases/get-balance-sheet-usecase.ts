@@ -7,7 +7,6 @@ import type { BalanceSheetData } from "@/types/balance-sheet";
 
 interface GetBalanceSheetParams {
   slugs: string[];
-  financialYear: number;
 }
 
 interface GetBalanceSheetResult {
@@ -41,9 +40,9 @@ export class GetBalanceSheetUsecase {
       const [currentAssets, borrowingIncome, borrowingExpense, currentLiabilities] =
         await Promise.all([
           this.balanceSheetRepository.getCurrentAssets(orgIds),
-          this.balanceSheetRepository.getBorrowingIncome(orgIds, params.financialYear),
-          this.balanceSheetRepository.getBorrowingExpense(orgIds, params.financialYear),
-          this.balanceSheetRepository.getCurrentLiabilities(orgIds, params.financialYear),
+          this.balanceSheetRepository.getBorrowingIncome(orgIds),
+          this.balanceSheetRepository.getBorrowingExpense(orgIds),
+          this.balanceSheetRepository.getCurrentLiabilities(orgIds),
         ]);
 
       const balanceSheetData = BalanceSheet.fromInput({
