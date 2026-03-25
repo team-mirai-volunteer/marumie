@@ -91,10 +91,12 @@ export class PrismaBalanceSheetRepository implements IBalanceSheetRepository {
     return Number(result._sum.debitAmount) || 0;
   }
 
-  async getCurrentLiabilities(organizationIds: string[]): Promise<number> {
+  async getCurrentLiabilities(organizationIds: string[], financialYear: number): Promise<number> {
     if (LIABILITY_ACCOUNTS.length === 0) {
       return 0;
     }
+
+    const orgIds = organizationIds.map((id) => BigInt(id));
 
     const debitResult = await this.prisma.transaction.aggregate({
       _sum: {
@@ -102,11 +104,12 @@ export class PrismaBalanceSheetRepository implements IBalanceSheetRepository {
       },
       where: {
         politicalOrganizationId: {
-          in: organizationIds.map((id) => BigInt(id)),
+          in: orgIds,
         },
         debitAccount: {
           in: LIABILITY_ACCOUNTS,
         },
+        financialYear,
       },
     });
 
@@ -116,11 +119,12 @@ export class PrismaBalanceSheetRepository implements IBalanceSheetRepository {
       },
       where: {
         politicalOrganizationId: {
-          in: organizationIds.map((id) => BigInt(id)),
+          in: orgIds,
         },
         creditAccount: {
           in: LIABILITY_ACCOUNTS,
         },
+        financialYear,
       },
     });
 

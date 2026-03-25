@@ -57,7 +57,10 @@ export class GetSankeyAggregationUsecase {
           organizationIdsAsString,
           params.financialYear,
         ),
-        this.balanceSheetRepository.getCurrentLiabilities(organizationIdsAsString),
+        this.balanceSheetRepository.getCurrentLiabilities(
+          organizationIdsAsString,
+          params.financialYear,
+        ),
       ]);
 
       // 3. ドメインモデルで変換処理
