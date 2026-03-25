@@ -132,6 +132,7 @@ describe("GetBalanceSheetUsecase", () => {
     await expect(
       usecase.execute({
         slugs: ["org-1", "org-2"],
+        financialYear: 2025,
       }),
     ).rejects.toThrow('Political organizations with slugs "org-1, org-2" not found');
   });
