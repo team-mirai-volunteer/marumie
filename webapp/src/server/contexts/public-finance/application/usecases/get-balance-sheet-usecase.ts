@@ -7,6 +7,7 @@ import type { BalanceSheetData } from "@/types/balance-sheet";
 
 interface GetBalanceSheetParams {
   slugs: string[];
+  financialYear: number;
 }
 
 interface GetBalanceSheetResult {
@@ -42,7 +43,7 @@ export class GetBalanceSheetUsecase {
           this.balanceSheetRepository.getCurrentAssets(orgIds),
           this.balanceSheetRepository.getBorrowingIncome(orgIds),
           this.balanceSheetRepository.getBorrowingExpense(orgIds),
-          this.balanceSheetRepository.getCurrentLiabilities(orgIds),
+          this.balanceSheetRepository.getCurrentLiabilities(orgIds, params.financialYear),
         ]);
 
       const balanceSheetData = BalanceSheet.fromInput({
