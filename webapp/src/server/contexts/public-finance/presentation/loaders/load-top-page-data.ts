@@ -98,5 +98,5 @@ export const loadTopPageData = unstable_cache(
     };
   },
   ["top-page-data"],
-  { revalidate: CACHE_REVALIDATE_SECONDS },
+  { revalidate: CACHE_REVALIDATE_SECONDS, tags: ["top-page-data"] },
 );
