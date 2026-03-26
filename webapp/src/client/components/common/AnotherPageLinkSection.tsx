@@ -4,9 +4,10 @@ import Link from "next/link";
 
 interface AnotherPageLinkSectionProps {
   currentSlug: string;
+  year: number;
 }
 
-export default function AnotherPageLinkSection({ currentSlug }: AnotherPageLinkSectionProps) {
+export default function AnotherPageLinkSection({ currentSlug, year }: AnotherPageLinkSectionProps) {
   const getTargetSlug = () => {
     return currentSlug === "digimin" ? "team-mirai" : "digimin";
   };
@@ -17,7 +18,7 @@ export default function AnotherPageLinkSection({ currentSlug }: AnotherPageLinkS
   return (
     <div className="w-full md:flex md:justify-end">
       <Link
-        href={`/o/${getTargetSlug()}`}
+        href={`/o/${getTargetSlug()}/${year}`}
         className="bg-white border border-black rounded-2xl md:rounded-3xl px-6 py-6 md:px-12 md:py-9 flex items-center gap-6 md:gap-40 hover:bg-gray-50 transition-colors w-full md:w-auto"
       >
         <div className="text-[17px] md:text-[27px] font-bold text-gray-800 leading-[1.56] tracking-[0.01em] flex-1 md:flex-none">

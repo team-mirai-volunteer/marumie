@@ -6,6 +6,7 @@ import { downloadTransactionsCsv } from "@/server/contexts/public-finance/presen
 
 interface CsvDownloadLinkProps {
   slug: string;
+  year: number;
   className?: string;
   children?: React.ReactNode;
   loadingText?: string;
@@ -13,6 +14,7 @@ interface CsvDownloadLinkProps {
 
 export default function CsvDownloadLink({
   slug,
+  year,
   className = "",
   children = "出入金履歴をCSVでダウンロード",
   loadingText = "ダウンロード中...",
@@ -24,7 +26,7 @@ export default function CsvDownloadLink({
 
     setIsDownloading(true);
     try {
-      const result = await downloadTransactionsCsv(slug);
+      const result = await downloadTransactionsCsv(slug, year);
 
       if (result.success && result.data) {
         // BOMを追加してUTF-8で保存
