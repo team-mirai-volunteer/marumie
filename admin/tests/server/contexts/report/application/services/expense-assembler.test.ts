@@ -12,7 +12,7 @@ import type { UtilityExpenseTransaction } from "@/server/contexts/report/domain/
  * 1. リポジトリから13種類の経費トランザクションを並列取得
  * 2. 取得したトランザクションを各ドメインモデルに委譲してセクションを構築
  *
- * 注: 閾値ロジック（10万円/5万円）や金額計算はドメインモデルの責務であり、
+ * 注: 閾値ロジック（5万円）や金額計算はドメインモデルの責務であり、
  * expense-transaction.test.ts でテスト済み
  */
 describe("ExpenseAssembler", () => {

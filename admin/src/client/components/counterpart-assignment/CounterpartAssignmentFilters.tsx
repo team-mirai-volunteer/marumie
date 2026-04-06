@@ -135,7 +135,7 @@ export function CounterpartAssignmentFilters({
                     </ul>
                   </div>
                   <div className="space-y-1">
-                    <p className="font-medium">【経常経費】10万円以上</p>
+                    <p className="font-medium">【経常経費】5万円以上</p>
                     <ul className="list-disc list-inside text-xs">
                       <li>光熱水費</li>
                       <li>備品・消耗品費</li>

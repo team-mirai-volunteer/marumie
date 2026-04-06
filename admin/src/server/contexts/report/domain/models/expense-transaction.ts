@@ -10,7 +10,6 @@ import {
   sanitizeText,
   buildBikou,
   isAboveThreshold,
-  TEN_MAN_THRESHOLD,
   FIVE_MAN_THRESHOLD,
 } from "@/server/contexts/report/domain/models/transaction-utils";
 import {
@@ -125,7 +124,7 @@ export interface ExpenseRow {
  */
 export interface UtilityExpenseSection {
   totalAmount: number;
-  underThresholdAmount: number; // その他の支出（10万円未満）
+  underThresholdAmount: number; // その他の支出（5万円未満）
   rows: ExpenseRow[];
 }
 
@@ -134,7 +133,7 @@ export interface UtilityExpenseSection {
  */
 export interface SuppliesExpenseSection {
   totalAmount: number;
-  underThresholdAmount: number; // その他の支出（10万円未満）
+  underThresholdAmount: number; // その他の支出（5万円未満）
   rows: ExpenseRow[];
 }
 
@@ -143,7 +142,7 @@ export interface SuppliesExpenseSection {
  */
 export interface OfficeExpenseSection {
   totalAmount: number;
-  underThresholdAmount: number; // その他の支出（10万円未満）
+  underThresholdAmount: number; // その他の支出（5万円未満）
   rows: ExpenseRow[];
 }
 
@@ -295,10 +294,10 @@ const ExpenseTransactionBase = {
   },
 
   /**
-   * 閾値（10万円）以上かどうかを判定
+   * 閾値（5万円）以上かどうかを判定
    */
   isAboveThreshold: (tx: BaseExpenseTransaction): boolean => {
-    return isAboveThreshold(ExpenseTransactionBase.resolveAmount(tx), TEN_MAN_THRESHOLD);
+    return isAboveThreshold(ExpenseTransactionBase.resolveAmount(tx), FIVE_MAN_THRESHOLD);
   },
 
   /**
@@ -493,8 +492,8 @@ export const UtilityExpenseSection = {
    * トランザクションリストからセクションを構築する
    *
    * Business rules:
-   * - Transactions >= 100,000 yen are listed individually
-   * - Transactions < 100,000 yen are aggregated into underThresholdAmount
+   * - Transactions >= 50,000 yen are listed individually
+   * - Transactions < 50,000 yen are aggregated into underThresholdAmount
    */
   fromTransactions: (transactions: UtilityExpenseTransaction[]): UtilityExpenseSection => {
     return aggregateExpenseSection(transactions);
@@ -523,8 +522,8 @@ export const SuppliesExpenseSection = {
    * トランザクションリストからセクションを構築する
    *
    * Business rules:
-   * - Transactions >= 100,000 yen are listed individually
-   * - Transactions < 100,000 yen are aggregated into underThresholdAmount
+   * - Transactions >= 50,000 yen are listed individually
+   * - Transactions < 50,000 yen are aggregated into underThresholdAmount
    */
   fromTransactions: (transactions: SuppliesExpenseTransaction[]): SuppliesExpenseSection => {
     return aggregateExpenseSection(transactions);
@@ -553,8 +552,8 @@ export const OfficeExpenseSection = {
    * トランザクションリストからセクションを構築する
    *
    * Business rules:
-   * - Transactions >= 100,000 yen are listed individually
-   * - Transactions < 100,000 yen are aggregated into underThresholdAmount
+   * - Transactions >= 50,000 yen are listed individually
+   * - Transactions < 50,000 yen are aggregated into underThresholdAmount
    */
   fromTransactions: (transactions: OfficeExpenseTransaction[]): OfficeExpenseSection => {
     return aggregateExpenseSection(transactions);
