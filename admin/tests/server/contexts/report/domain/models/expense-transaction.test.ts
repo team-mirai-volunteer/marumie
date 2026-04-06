@@ -54,7 +54,7 @@ describe("UtilityExpenseSection.fromTransactions", () => {
     });
   });
 
-  it("separates transactions by 100,000 yen threshold", () => {
+  it("separates transactions by 50,000 yen threshold", () => {
     const transactions: UtilityExpenseTransaction[] = [
       createUtilityTransaction({
         transactionNo: "1",
@@ -70,64 +70,65 @@ describe("UtilityExpenseSection.fromTransactions", () => {
       }),
       createUtilityTransaction({
         transactionNo: "4",
-        debitAmount: 99999,
+        debitAmount: 49999,
       }),
     ];
 
     const result = UtilityExpenseSection.fromTransactions(transactions);
 
     // Total includes all transactions
-    expect(result.totalAmount).toBe(399999);
-    // Only < 100,000 in underThreshold
-    expect(result.underThresholdAmount).toBe(149999); // 50000 + 99999
-    // Only >= 100,000 in rows
-    expect(result.rows).toHaveLength(2);
+    expect(result.totalAmount).toBe(349999);
+    // Only < 50,000 in underThreshold
+    expect(result.underThresholdAmount).toBe(49999);
+    // Only >= 50,000 in rows
+    expect(result.rows).toHaveLength(3);
     expect(result.rows[0].kingaku).toBe(150000);
-    expect(result.rows[1].kingaku).toBe(100000);
+    expect(result.rows[1].kingaku).toBe(50000);
+    expect(result.rows[2].kingaku).toBe(100000);
   });
 
   it("rounds decimal amounts consistently in all fields", () => {
     const transactions: UtilityExpenseTransaction[] = [
       createUtilityTransaction({
         transactionNo: "1",
-        debitAmount: 100000.5, // Rounds to 100001
+        debitAmount: 50000.5, // Rounds to 50001
       }),
       createUtilityTransaction({
         transactionNo: "2",
-        debitAmount: 100000.4, // Rounds to 100000
+        debitAmount: 50000.4, // Rounds to 50000
       }),
       createUtilityTransaction({
         transactionNo: "3",
-        debitAmount: 100000.3, // Rounds to 100000
+        debitAmount: 50000.3, // Rounds to 50000
       }),
     ];
 
     const result = UtilityExpenseSection.fromTransactions(transactions);
 
     // All amounts should be rounded
-    expect(result.totalAmount).toBe(300001); // 100001 + 100000 + 100000
+    expect(result.totalAmount).toBe(150001); // 50001 + 50000 + 50000
     expect(result.underThresholdAmount).toBe(0);
     expect(result.rows).toHaveLength(3);
 
     // Sum of kingaku should equal totalAmount
     const kingakuSum = result.rows.reduce((sum, row) => sum + row.kingaku, 0);
     expect(kingakuSum).toBe(result.totalAmount);
-    expect(kingakuSum).toBe(300001);
+    expect(kingakuSum).toBe(150001);
 
-    expect(result.rows[0].kingaku).toBe(100001);
-    expect(result.rows[1].kingaku).toBe(100000);
-    expect(result.rows[2].kingaku).toBe(100000);
+    expect(result.rows[0].kingaku).toBe(50001);
+    expect(result.rows[1].kingaku).toBe(50000);
+    expect(result.rows[2].kingaku).toBe(50000);
   });
 
   it("rounds decimal amounts with under-threshold transactions", () => {
     const transactions: UtilityExpenseTransaction[] = [
       createUtilityTransaction({
         transactionNo: "1",
-        debitAmount: 100000.5, // Rounds to 100001 (above threshold)
+        debitAmount: 50000.5, // Rounds to 50001 (above threshold)
       }),
       createUtilityTransaction({
         transactionNo: "2",
-        debitAmount: 50000.6, // Rounds to 50001 (under threshold)
+        debitAmount: 49999.6, // Rounds to 50000 (above threshold)
       }),
       createUtilityTransaction({
         transactionNo: "3",
@@ -137,9 +138,9 @@ describe("UtilityExpenseSection.fromTransactions", () => {
 
     const result = UtilityExpenseSection.fromTransactions(transactions);
 
-    expect(result.totalAmount).toBe(180002); // 100001 + 50001 + 30000
-    expect(result.underThresholdAmount).toBe(80001); // 50001 + 30000
-    expect(result.rows).toHaveLength(1);
+    expect(result.totalAmount).toBe(130001); // 50001 + 50000 + 30000
+    expect(result.underThresholdAmount).toBe(30000);
+    expect(result.rows).toHaveLength(2);
 
     // Sum of kingaku + underThresholdAmount should equal totalAmount
     const kingakuSum = result.rows.reduce((sum, row) => sum + row.kingaku, 0);
@@ -170,14 +171,14 @@ describe("SuppliesExpenseSection.fromTransactions", () => {
       }),
       createSuppliesTransaction({
         transactionNo: "2",
-        debitAmount: 75000.25,
+        debitAmount: 30000.25,
       }),
     ];
 
     const result = SuppliesExpenseSection.fromTransactions(transactions);
 
-    expect(result.totalAmount).toBe(225001); // 150001 + 75000
-    expect(result.underThresholdAmount).toBe(75000);
+    expect(result.totalAmount).toBe(180001); // 150001 + 30000
+    expect(result.underThresholdAmount).toBe(30000);
     expect(result.rows).toHaveLength(1);
     expect(result.rows[0].kingaku).toBe(150001);
 
@@ -209,14 +210,14 @@ describe("OfficeExpenseSection.fromTransactions", () => {
       }),
       createOfficeTransaction({
         transactionNo: "2",
-        debitAmount: 80000.51, // Rounds to 80001
+        debitAmount: 30000.51, // Rounds to 30001
       }),
     ];
 
     const result = OfficeExpenseSection.fromTransactions(transactions);
 
-    expect(result.totalAmount).toBe(200001); // 120000 + 80001
-    expect(result.underThresholdAmount).toBe(80001);
+    expect(result.totalAmount).toBe(150001); // 120000 + 30001
+    expect(result.underThresholdAmount).toBe(30001);
     expect(result.rows).toHaveLength(1);
     expect(result.rows[0].kingaku).toBe(120000);
 

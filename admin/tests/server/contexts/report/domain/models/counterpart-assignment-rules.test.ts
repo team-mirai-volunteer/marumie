@@ -59,8 +59,8 @@ describe("counterpart-assignment-rules", () => {
   });
 
   describe("閾値定数", () => {
-    it("経常経費の閾値は10万円（100,000円）である", () => {
-      expect(ROUTINE_EXPENSE_THRESHOLD).toBe(100_000);
+    it("経常経費の閾値は5万円（50,000円）である", () => {
+      expect(ROUTINE_EXPENSE_THRESHOLD).toBe(50_000);
     });
 
     it("政治活動費の閾値は5万円（50,000円）である", () => {
@@ -144,19 +144,20 @@ describe("counterpart-assignment-rules", () => {
   });
 
   describe("isAboveDetailThreshold", () => {
-    describe("経常経費カテゴリ（10万円閾値）", () => {
+    describe("経常経費カテゴリ（5万円閾値）", () => {
       // biome-ignore lint/complexity/useLiteralKeys: 日本語キー
       const routineCategory = PL_CATEGORIES["事務所費"].key;
 
-      it("10万円以上でtrue", () => {
+      it("5万円以上でtrue", () => {
+        expect(isAboveDetailThreshold(routineCategory, 50_000)).toBe(true);
         expect(isAboveDetailThreshold(routineCategory, 100_000)).toBe(true);
         expect(isAboveDetailThreshold(routineCategory, 150_000)).toBe(true);
         expect(isAboveDetailThreshold(routineCategory, 1_000_000)).toBe(true);
       });
 
-      it("10万円未満でfalse", () => {
-        expect(isAboveDetailThreshold(routineCategory, 99_999)).toBe(false);
-        expect(isAboveDetailThreshold(routineCategory, 50_000)).toBe(false);
+      it("5万円未満でfalse", () => {
+        expect(isAboveDetailThreshold(routineCategory, 49_999)).toBe(false);
+        expect(isAboveDetailThreshold(routineCategory, 10_000)).toBe(false);
         expect(isAboveDetailThreshold(routineCategory, 0)).toBe(false);
       });
     });
@@ -191,19 +192,19 @@ describe("counterpart-assignment-rules", () => {
   });
 
   describe("requiresCounterpartDetail", () => {
-    describe("経常経費（10万円閾値）", () => {
-      it("10万円以上でtrue", () => {
+    describe("経常経費（5万円閾値）", () => {
+      it("5万円以上でtrue", () => {
         // biome-ignore lint/complexity/useLiteralKeys: 日本語キー
-        expect(requiresCounterpartDetail("expense", PL_CATEGORIES["事務所費"].key, 100_000)).toBe(true);
+        expect(requiresCounterpartDetail("expense", PL_CATEGORIES["事務所費"].key, 50_000)).toBe(true);
         // biome-ignore lint/complexity/useLiteralKeys: 日本語キー
         expect(requiresCounterpartDetail("expense", PL_CATEGORIES["光熱水費"].key, 150_000)).toBe(true);
       });
 
-      it("10万円未満でfalse", () => {
+      it("5万円未満でfalse", () => {
         // biome-ignore lint/complexity/useLiteralKeys: 日本語キー
-        expect(requiresCounterpartDetail("expense", PL_CATEGORIES["事務所費"].key, 99_999)).toBe(false);
+        expect(requiresCounterpartDetail("expense", PL_CATEGORIES["事務所費"].key, 49_999)).toBe(false);
         // biome-ignore lint/complexity/useLiteralKeys: 日本語キー
-        expect(requiresCounterpartDetail("expense", PL_CATEGORIES["光熱水費"].key, 50_000)).toBe(false);
+        expect(requiresCounterpartDetail("expense", PL_CATEGORIES["光熱水費"].key, 10_000)).toBe(false);
       });
     });
 

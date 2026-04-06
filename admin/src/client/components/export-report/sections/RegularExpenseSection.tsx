@@ -35,7 +35,7 @@ interface ExpenseTableProps {
 
 function ExpenseTable({ rows }: ExpenseTableProps) {
   if (rows.length === 0) {
-    return <p className="text-gray-500 text-sm">10万円以上の明細はありません</p>;
+    return <p className="text-gray-500 text-sm">5万円以上の明細はありません</p>;
   }
 
   return (
