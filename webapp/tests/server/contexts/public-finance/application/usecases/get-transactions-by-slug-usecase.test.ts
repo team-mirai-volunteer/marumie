@@ -267,4 +267,98 @@ describe("GetTransactionsBySlugUsecase", () => {
       expect.any(Object),
     );
   });
+
+  it("should request filtered summary when categories are specified", async () => {
+    const mockOrganizations = [{ id: "1", slug: "test-org" }];
+    const mockPaginatedResult: PaginatedResult<Transaction> = {
+      items: [],
+      total: 0,
+      page: 1,
+      perPage: 50,
+      totalPages: 0,
+    };
+    const mockSummary = {
+      incomeTotal: 120000,
+      expenseTotal: 34000,
+    };
+
+    (mockPoliticalOrganizationRepository.findBySlugs as jest.Mock).mockResolvedValue(
+      mockOrganizations,
+    );
+    (mockTransactionRepository.findWithPagination as jest.Mock).mockResolvedValue(
+      mockPaginatedResult,
+    );
+    (mockTransactionRepository.getLastUpdatedAt as jest.Mock).mockResolvedValue(null);
+    (mockTransactionRepository.getAmountSummary as jest.Mock).mockResolvedValue(mockSummary);
+
+    const result = await usecase.execute({
+      slugs: ["test-org"],
+      financialYear: 2025,
+      categories: ["donation-personal"],
+    });
+
+    expect(mockTransactionRepository.getAmountSummary).toHaveBeenCalledWith(
+      expect.objectContaining({
+        political_organization_ids: ["1"],
+        category_keys: ["donation-personal"],
+        financial_year: 2025,
+      }),
+    );
+    expect(result.filteredSummary).toEqual(mockSummary);
+  });
+
+  it("should not request filtered summary when categories are not specified", async () => {
+    const mockOrganizations = [{ id: "1", slug: "test-org" }];
+    const mockPaginatedResult: PaginatedResult<Transaction> = {
+      items: [],
+      total: 0,
+      page: 1,
+      perPage: 50,
+      totalPages: 0,
+    };
+
+    (mockPoliticalOrganizationRepository.findBySlugs as jest.Mock).mockResolvedValue(
+      mockOrganizations,
+    );
+    (mockTransactionRepository.findWithPagination as jest.Mock).mockResolvedValue(
+      mockPaginatedResult,
+    );
+    (mockTransactionRepository.getLastUpdatedAt as jest.Mock).mockResolvedValue(null);
+
+    const result = await usecase.execute({
+      slugs: ["test-org"],
+      financialYear: 2025,
+    });
+
+    expect(mockTransactionRepository.getAmountSummary).not.toHaveBeenCalled();
+    expect(result.filteredSummary).toBeUndefined();
+  });
+
+  it("should not request filtered summary when categories are empty", async () => {
+    const mockOrganizations = [{ id: "1", slug: "test-org" }];
+    const mockPaginatedResult: PaginatedResult<Transaction> = {
+      items: [],
+      total: 0,
+      page: 1,
+      perPage: 50,
+      totalPages: 0,
+    };
+
+    (mockPoliticalOrganizationRepository.findBySlugs as jest.Mock).mockResolvedValue(
+      mockOrganizations,
+    );
+    (mockTransactionRepository.findWithPagination as jest.Mock).mockResolvedValue(
+      mockPaginatedResult,
+    );
+    (mockTransactionRepository.getLastUpdatedAt as jest.Mock).mockResolvedValue(null);
+
+    const result = await usecase.execute({
+      slugs: ["test-org"],
+      financialYear: 2025,
+      categories: [],
+    });
+
+    expect(mockTransactionRepository.getAmountSummary).not.toHaveBeenCalled();
+    expect(result.filteredSummary).toBeUndefined();
+  });
 });
