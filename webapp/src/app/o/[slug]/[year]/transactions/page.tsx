@@ -136,6 +136,7 @@ export default async function TransactionsPage({ params, searchParams }: Transac
               perPage={data.perPage}
               totalPages={data.totalPages}
               selectedCategories={categories}
+              filteredSummary={data.filteredSummary}
             />
           </MainColumnCard>
 

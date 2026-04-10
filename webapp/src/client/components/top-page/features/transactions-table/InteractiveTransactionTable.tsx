@@ -3,6 +3,7 @@ import "client-only";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import type { DisplayTransaction } from "@/server/contexts/public-finance/domain/models/display-transaction";
+import type { AmountSummary } from "@/server/contexts/public-finance/domain/repositories/transaction-list-repository.interface";
 import TransactionTable from "./TransactionTable";
 import TransactionTableMobileHeader, { type SortOption } from "./TransactionTableMobileHeader";
 import PCPaginator from "./PCPaginator";
@@ -33,7 +34,12 @@ interface InteractiveTransactionTableProps {
   perPage: number;
   totalPages: number;
   selectedCategories?: string[];
+  filteredSummary?: AmountSummary;
 }
+
+const formatAmount = (amount: number): string => {
+  return amount.toLocaleString("ja-JP");
+};
 
 export default function InteractiveTransactionTable({
   slug,
@@ -44,6 +50,7 @@ export default function InteractiveTransactionTable({
   perPage,
   totalPages,
   selectedCategories,
+  filteredSummary,
 }: InteractiveTransactionTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -135,6 +142,22 @@ export default function InteractiveTransactionTable({
           currentSort={getCurrentSortOption()}
         />
       </div>
+
+      {filteredSummary && (
+        <div className="flex items-center gap-4 px-4 py-3 bg-[#F8FAFB] rounded-lg mb-2 text-sm">
+          <span className="text-[#6A7383] font-medium">フィルタ結果:</span>
+          {filteredSummary.incomeTotal > 0 && (
+            <span className="text-[#238778] font-bold">
+              収入合計 +{formatAmount(filteredSummary.incomeTotal)}円
+            </span>
+          )}
+          {filteredSummary.expenseTotal > 0 && (
+            <span className="text-[#C4320A] font-bold">
+              支出合計 -{formatAmount(filteredSummary.expenseTotal)}円
+            </span>
+          )}
+        </div>
+      )}
 
       <TransactionTable
         transactions={transactions}
