@@ -11,7 +11,10 @@ import type {
   SankeyCategoryAggregationResult,
   TransactionCategoryAggregation,
 } from "@/server/contexts/public-finance/domain/repositories/transaction-repository.interface";
-import type { ITransactionListRepository } from "@/server/contexts/public-finance/domain/repositories/transaction-list-repository.interface";
+import type {
+  AmountSummary,
+  ITransactionListRepository,
+} from "@/server/contexts/public-finance/domain/repositories/transaction-list-repository.interface";
 
 export class PrismaTransactionRepository
   implements ITransactionRepository, ITransactionListRepository
@@ -191,6 +194,26 @@ export class PrismaTransactionRepository
 
     const updatedAt = result._max.updatedAt;
     return updatedAt ? new Date(updatedAt) : null;
+  }
+
+  async getAmountSummary(filters: TransactionFilters): Promise<AmountSummary> {
+    const baseWhere = this.buildWhereClause(filters);
+
+    const [incomeResult, expenseResult] = await Promise.all([
+      this.prisma.transaction.aggregate({
+        where: { ...baseWhere, transactionType: "income" },
+        _sum: { creditAmount: true },
+      }),
+      this.prisma.transaction.aggregate({
+        where: { ...baseWhere, transactionType: "expense" },
+        _sum: { debitAmount: true },
+      }),
+    ]);
+
+    return {
+      incomeTotal: Number(incomeResult._sum.creditAmount || 0),
+      expenseTotal: Number(expenseResult._sum.debitAmount || 0),
+    };
   }
 
   async findAllWithPoliticalOrganizationName(

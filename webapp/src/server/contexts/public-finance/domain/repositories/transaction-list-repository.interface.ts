@@ -36,6 +36,14 @@ export interface SortOptions {
  * Interface Segregation Principle に基づき、
  * ITransactionRepository から取引一覧取得機能を分離したインターフェース。
  */
+/**
+ * フィルタ後の金額集計結果
+ */
+export interface AmountSummary {
+  incomeTotal: number;
+  expenseTotal: number;
+}
+
 export interface ITransactionListRepository {
   /**
    * フィルター条件とページネーションオプションに基づいて取引を取得する
@@ -61,4 +69,11 @@ export interface ITransactionListRepository {
    * @returns 最終更新日時（存在しない場合はnull）
    */
   getLastUpdatedAt(): Promise<Date | null>;
+
+  /**
+   * フィルター条件に合致する取引の収入合計・支出合計を取得する
+   * @param filters フィルター条件
+   * @returns 収入合計・支出合計
+   */
+  getAmountSummary(filters: TransactionFilters): Promise<AmountSummary>;
 }
