@@ -9,6 +9,7 @@ import type {
 import { convertToDisplayTransactions } from "@/server/contexts/public-finance/domain/models/display-transaction";
 import type { IPoliticalOrganizationRepository } from "@/server/contexts/public-finance/domain/repositories/political-organization-repository.interface";
 import type {
+  AmountSummary,
   ITransactionListRepository,
   PaginationOptions,
 } from "@/server/contexts/public-finance/domain/repositories/transaction-list-repository.interface";
@@ -34,6 +35,7 @@ interface GetTransactionsBySlugResult {
   totalPages: number;
   politicalOrganizations: PoliticalOrganization[];
   lastUpdatedAt: string | null;
+  filteredSummary?: AmountSummary;
 }
 
 export class GetTransactionsBySlugUsecase {
@@ -83,9 +85,14 @@ export class GetTransactionsBySlugUsecase {
         order: params.order,
       };
 
-      const [transactionResult, lastUpdatedAt] = await Promise.all([
+      const hasFilters = filters.category_keys && filters.category_keys.length > 0;
+
+      const [transactionResult, lastUpdatedAt, filteredSummary] = await Promise.all([
         this.transactionRepository.findWithPagination(filters, pagination),
         this.transactionRepository.getLastUpdatedAt(),
+        hasFilters
+          ? this.transactionRepository.getAmountSummary(filters)
+          : Promise.resolve(undefined),
       ]);
 
       const transactions = convertToDisplayTransactions(transactionResult.items);
@@ -100,6 +107,7 @@ export class GetTransactionsBySlugUsecase {
         totalPages,
         politicalOrganizations,
         lastUpdatedAt: lastUpdatedAt?.toISOString() ?? null,
+        filteredSummary: filteredSummary || undefined,
       };
     } catch (error) {
       throw new Error(

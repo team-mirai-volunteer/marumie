@@ -27,6 +27,8 @@ const createMockTransaction = (overrides: Partial<Transaction> = {}): Transactio
 const mockTransactionRepository = {
   findWithPagination: jest.fn(),
   getLastUpdatedAt: jest.fn(),
+  findAll: jest.fn(),
+  getAmountSummary: jest.fn(),
 } as unknown as ITransactionListRepository;
 
 const mockPoliticalOrganizationRepository = {
