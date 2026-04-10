@@ -1,5 +1,8 @@
 import type { Transaction } from "@/shared/models/transaction";
 import type { TransactionFilters } from "@/types/transaction-filters";
+import type { AmountSummary } from "@/types/amount-summary";
+
+export type { AmountSummary };
 
 /**
  * ページネーション結果
@@ -36,14 +39,6 @@ export interface SortOptions {
  * Interface Segregation Principle に基づき、
  * ITransactionRepository から取引一覧取得機能を分離したインターフェース。
  */
-/**
- * フィルタ後の金額集計結果
- */
-export interface AmountSummary {
-  incomeTotal: number;
-  expenseTotal: number;
-}
-
 export interface ITransactionListRepository {
   /**
    * フィルター条件とページネーションオプションに基づいて取引を取得する

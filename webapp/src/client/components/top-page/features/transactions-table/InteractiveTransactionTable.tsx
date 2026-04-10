@@ -3,7 +3,7 @@ import "client-only";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import type { DisplayTransaction } from "@/server/contexts/public-finance/domain/models/display-transaction";
-import type { AmountSummary } from "@/server/contexts/public-finance/domain/repositories/transaction-list-repository.interface";
+import type { AmountSummary } from "@/types/amount-summary";
 import TransactionTable from "./TransactionTable";
 import TransactionTableMobileHeader, { type SortOption } from "./TransactionTableMobileHeader";
 import PCPaginator from "./PCPaginator";
