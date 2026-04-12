@@ -10,9 +10,21 @@ export class TransactionValidator {
     transactions: PreviewTransaction[],
     existingTransactions: Transaction[] = [],
   ): PreviewTransaction[] {
-    return transactions.map((transaction) =>
-      this.validateSingleTransaction(transaction, existingTransactions),
-    );
+    const duplicateNos = findDuplicateTransactionNos(transactions);
+
+    return transactions.map((transaction) => {
+      if (duplicateNos.has(transaction.transaction_no)) {
+        return {
+          ...transaction,
+          status: "invalid" as const,
+          errors: [
+            ...transaction.errors,
+            `CSV内で取引No "${transaction.transaction_no}" が重複しています`,
+          ],
+        };
+      }
+      return this.validateSingleTransaction(transaction, existingTransactions);
+    });
   }
 
   private validateSingleTransaction(
@@ -109,4 +121,18 @@ export class TransactionValidator {
 
     return null;
   }
+}
+
+function findDuplicateTransactionNos(
+  transactions: PreviewTransaction[],
+): Set<string> {
+  const seen = new Set<string>();
+  const duplicates = new Set<string>();
+  for (const t of transactions) {
+    if (seen.has(t.transaction_no)) {
+      duplicates.add(t.transaction_no);
+    }
+    seen.add(t.transaction_no);
+  }
+  return duplicates;
 }
