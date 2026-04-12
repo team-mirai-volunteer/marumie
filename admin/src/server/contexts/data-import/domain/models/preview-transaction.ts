@@ -8,7 +8,7 @@ import type {
 export interface PreviewTransaction {
   political_organization_id: string;
   transaction_no: string;
-  transaction_date: Date;
+  transaction_date: Date | string;
   transaction_type: TransactionType | null;
   debit_account: string;
   debit_sub_account: string | undefined;
@@ -60,10 +60,11 @@ export const PreviewTransaction = {
    * 取引日から会計年度を算出する
    * 1月始まりの年度として計算
    */
-  extractFinancialYear: (date: Date): number => {
+  extractFinancialYear: (date: Date | string): number => {
     const startOfFinancialYear = 1;
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
+    const d = ensureDate(date);
+    const year = d.getFullYear();
+    const month = d.getMonth() + 1;
 
     return month >= startOfFinancialYear ? year : year - 1;
   },
@@ -79,11 +80,13 @@ export const PreviewTransaction = {
       throw new Error(`Invalid transaction type: ${tx.transaction_type}`);
     }
 
+    const transactionDate = ensureDate(tx.transaction_date);
+
     return {
       political_organization_id: politicalOrganizationId,
       transaction_no: tx.transaction_no,
-      transaction_date: tx.transaction_date,
-      financial_year: PreviewTransaction.extractFinancialYear(tx.transaction_date),
+      transaction_date: transactionDate,
+      financial_year: PreviewTransaction.extractFinancialYear(transactionDate),
       transaction_type: tx.transaction_type,
       debit_account: tx.debit_account,
       debit_sub_account: tx.debit_sub_account || "",
@@ -114,10 +117,12 @@ export const PreviewTransaction = {
       throw new Error(`Invalid transaction type: ${tx.transaction_type}`);
     }
 
+    const transactionDate = ensureDate(tx.transaction_date);
+
     return {
       transaction_no: tx.transaction_no,
-      transaction_date: tx.transaction_date,
-      financial_year: PreviewTransaction.extractFinancialYear(tx.transaction_date),
+      transaction_date: transactionDate,
+      financial_year: PreviewTransaction.extractFinancialYear(transactionDate),
       transaction_type: tx.transaction_type,
       debit_account: tx.debit_account,
       debit_sub_account: tx.debit_sub_account || "",
@@ -142,20 +147,27 @@ export const PreviewTransaction = {
 } as const;
 
 /**
+ * Date | string を確実に Date オブジェクトに変換する。
+ * サーバーアクション間のラウンドトリップで Date が文字列化されるケースに対応。
+ */
+function ensureDate(date: Date | string): Date {
+  if (date instanceof Date) {
+    if (Number.isNaN(date.getTime())) {
+      throw new Error(`Invalid Date object: ${date}`);
+    }
+    return date;
+  }
+
+  const parsed = new Date(date);
+  if (Number.isNaN(parsed.getTime())) {
+    throw new Error(`Invalid date string: ${date}`);
+  }
+  return parsed;
+}
+
+/**
  * 日付を正規化してハッシュの一貫性を保つ
  */
 function normalizeDate(date: Date | string): string {
-  if (typeof date === "string") {
-    const parsedDate = new Date(date);
-    if (Number.isNaN(parsedDate.getTime())) {
-      throw new Error(`Invalid date string: ${date}`);
-    }
-    return parsedDate.toISOString().split("T")[0];
-  }
-
-  if (Number.isNaN(date.getTime())) {
-    throw new Error(`Invalid Date object: ${date}`);
-  }
-
-  return date.toISOString().split("T")[0];
+  return ensureDate(date).toISOString().split("T")[0];
 }
