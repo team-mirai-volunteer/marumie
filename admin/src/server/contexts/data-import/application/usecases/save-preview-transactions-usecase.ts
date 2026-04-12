@@ -53,6 +53,17 @@ export class SavePreviewTransactionsUsecase {
       const insertTransactions = saveableTransactions.filter((t) => t.status === "insert");
       const updateTransactions = saveableTransactions.filter((t) => t.status === "update");
 
+      // CSV内で同じ transaction_no が重複していないかチェック
+      const duplicateTransactionNos = findDuplicateTransactionNos(insertTransactions);
+      if (duplicateTransactionNos.length > 0) {
+        const displayNos = duplicateTransactionNos.slice(0, 5).join(", ");
+        const suffix = duplicateTransactionNos.length > 5 ? ` 他${duplicateTransactionNos.length - 5}件` : "";
+        result.errors.push(
+          `CSV内に同じ取引No（transaction_no）が重複しています: ${displayNos}${suffix}。重複行を削除してから再度インポートしてください。`,
+        );
+        return result;
+      }
+
       let savedCount = 0;
 
       // bulk insert
@@ -90,4 +101,16 @@ export class SavePreviewTransactionsUsecase {
 
     return result;
   }
+}
+
+function findDuplicateTransactionNos(transactions: PreviewTransaction[]): string[] {
+  const seen = new Set<string>();
+  const duplicates = new Set<string>();
+  for (const t of transactions) {
+    if (seen.has(t.transaction_no)) {
+      duplicates.add(t.transaction_no);
+    }
+    seen.add(t.transaction_no);
+  }
+  return [...duplicates];
 }
