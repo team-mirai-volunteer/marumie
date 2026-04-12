@@ -57,7 +57,8 @@ export class SavePreviewTransactionsUsecase {
       const duplicateTransactionNos = findDuplicateTransactionNos(insertTransactions);
       if (duplicateTransactionNos.length > 0) {
         const displayNos = duplicateTransactionNos.slice(0, 5).join(", ");
-        const suffix = duplicateTransactionNos.length > 5 ? ` 他${duplicateTransactionNos.length - 5}件` : "";
+        const suffix =
+          duplicateTransactionNos.length > 5 ? ` 他${duplicateTransactionNos.length - 5}件` : "";
         result.errors.push(
           `CSV内に同じ取引No（transaction_no）が重複しています: ${displayNos}${suffix}。重複行を削除してから再度インポートしてください。`,
         );
