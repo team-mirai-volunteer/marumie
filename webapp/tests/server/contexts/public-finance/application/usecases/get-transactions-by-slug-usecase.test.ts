@@ -274,6 +274,34 @@ describe("GetTransactionsBySlugUsecase", () => {
     expect(result.totalAmount).toBeNull();
   });
 
+  it("should not call getTotalAmount when categories is an empty array", async () => {
+    const mockOrganizations = [{ id: "1", slug: "test-org" }];
+    const mockPaginatedResult: PaginatedResult<Transaction> = {
+      items: [],
+      total: 0,
+      page: 1,
+      perPage: 50,
+      totalPages: 0,
+    };
+
+    (mockPoliticalOrganizationRepository.findBySlugs as jest.Mock).mockResolvedValue(
+      mockOrganizations,
+    );
+    (mockTransactionRepository.findWithPagination as jest.Mock).mockResolvedValue(
+      mockPaginatedResult,
+    );
+    (mockTransactionRepository.getLastUpdatedAt as jest.Mock).mockResolvedValue(null);
+
+    const result = await usecase.execute({
+      slugs: ["test-org"],
+      financialYear: 2025,
+      categories: [],
+    });
+
+    expect(mockTransactionRepository.getTotalAmount).not.toHaveBeenCalled();
+    expect(result.totalAmount).toBeNull();
+  });
+
   it("should handle multiple organizations", async () => {
     const mockOrganizations = [
       { id: "1", slug: "org-1" },
