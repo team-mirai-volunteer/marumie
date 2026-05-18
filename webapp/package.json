@@ -25,7 +25,7 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18",
     "ts-jest": "^29.4.6",
-    "typescript": "^5"
+    "typescript": "^6.0.0"
   },
   "scripts": {
     "postinstall": "pnpm exec playwright install chromium",
