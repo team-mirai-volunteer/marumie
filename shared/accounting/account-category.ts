@@ -14,8 +14,7 @@ export const PL_CATEGORIES: Record<string, CategoryMapping> = {
   // 収入項目
   "個人の負担する党費又は会費": {
     key: "membership-fees",
-    category: "機関紙誌+その他事業収入",
-    subcategory: "党費・会費",
+    category: "党費・会費",
     color: "#FED7AA",
     shortLabel: "党費・会費",
     type: "income"
