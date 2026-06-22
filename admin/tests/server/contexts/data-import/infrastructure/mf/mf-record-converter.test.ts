@@ -201,6 +201,50 @@ describe("MfRecordConverter", () => {
       expect(result.transaction_type).toBe("non_cash_journal");
     });
 
+    it("should set transaction_type to income when debit_account is 現金 and credit_account is PL category", () => {
+      const record = createMockRecord({
+        debit_account: "現金",
+        credit_account: "個人からの寄附",
+      });
+
+      const result = converter.convertRow(record, "test-org-id");
+
+      expect(result.transaction_type).toBe("income");
+    });
+
+    it("should set transaction_type to expense when credit_account is 現金 and debit_account is PL category", () => {
+      const record = createMockRecord({
+        debit_account: "事務所費",
+        credit_account: "現金",
+      });
+
+      const result = converter.convertRow(record, "test-org-id");
+
+      expect(result.transaction_type).toBe("expense");
+    });
+
+    it("should set transaction_type to non_cash_journal when PL and 仮払金 are mixed", () => {
+      const record = createMockRecord({
+        debit_account: "事務所費",
+        credit_account: "仮払金",
+      });
+
+      const result = converter.convertRow(record, "test-org-id");
+
+      expect(result.transaction_type).toBe("non_cash_journal");
+    });
+
+    it("should set transaction_type to non_cash_journal when PL and 立替金 are mixed", () => {
+      const record = createMockRecord({
+        debit_account: "事務所費",
+        credit_account: "立替金",
+      });
+
+      const result = converter.convertRow(record, "test-org-id");
+
+      expect(result.transaction_type).toBe("non_cash_journal");
+    });
+
 
     it("should preserve friendly_category field as-is", () => {
       const record = createMockRecord({
