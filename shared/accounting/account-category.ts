@@ -237,9 +237,6 @@ export const BS_CATEGORIES: Record<string, { type: "asset" | "liability" | "net_
   "未払金/未払費用": {
     type: "liability"
   },
-  "仮払金": {
-    type: "asset"
-  },
   "仮受金": {
     type: "liability"
   },
