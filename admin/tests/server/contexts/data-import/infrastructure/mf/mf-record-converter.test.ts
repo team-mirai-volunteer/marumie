@@ -223,6 +223,17 @@ describe("MfRecordConverter", () => {
       expect(result.transaction_type).toBe("expense");
     });
 
+    it("should set transaction_type to expense when 仮払金 is debit and PL expense account is credit (仮払精算)", () => {
+      const record = createMockRecord({
+        debit_account: "仮払金",
+        credit_account: "事務所費",
+      });
+
+      const result = converter.convertRow(record, "test-org-id");
+
+      expect(result.transaction_type).toBe("expense");
+    });
+
     it("should set transaction_type to null when both accounts are non-cash BS categories", () => {
       const record = createMockRecord({
         debit_account: "仮払金",
