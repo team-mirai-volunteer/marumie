@@ -143,9 +143,12 @@ export class MfRecordConverter {
     if (isDebitPL && isCreditBS && this.isCashEquivalent(creditAccount)) {
       return "expense";
     }
-    // 非現金仕訳: PL科目とBS科目の組み合わせ（現金を含まない）
-    if ((isDebitPL && isCreditBS) || (isDebitBS && isCreditPL)) {
-      return "non_cash_journal";
+    // 発生主義: PL科目が登場した仕訳タイミングで収支を認識（現金を含まない場合）
+    if (isDebitPL && isCreditBS) {
+      return "expense";
+    }
+    if (isDebitBS && isCreditPL) {
+      return "income";
     }
 
     return null;

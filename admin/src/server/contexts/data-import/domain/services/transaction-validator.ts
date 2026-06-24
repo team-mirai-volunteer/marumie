@@ -97,11 +97,8 @@ export class TransactionValidator {
       transaction.debit_account === OFFSET_EXPENSE_ACCOUNT ||
       transaction.credit_account === OFFSET_INCOME_ACCOUNT;
 
-    const isNonCashTransaction = transaction.transaction_type === "non_cash_journal";
-
     if (
       !isOffsetTransaction &&
-      !isNonCashTransaction &&
       (!transaction.friendly_category || transaction.friendly_category.trim() === "")
     ) {
       return "独自のカテゴリが設定されていません";
