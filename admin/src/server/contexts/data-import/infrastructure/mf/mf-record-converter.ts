@@ -148,7 +148,7 @@ export class MfRecordConverter {
       return "expense";
     }
     if (isDebitBS && isCreditPL) {
-      return "income";
+      return PL_CATEGORIES[creditAccount]?.type === "expense" ? "expense" : "income";
     }
 
     return null;
