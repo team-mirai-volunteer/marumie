@@ -40,7 +40,7 @@ WHERE transaction_type = 'non_cash_journal'
     '政治資金パーティー開催事業費','その他の事業費','調査研究費',
     '寄附・交付金','その他の経費'
   )
-  AND credit_account IN ('未払金/未払費用','仮払金','仮受金');
+  AND credit_account IN ('未払金/未払費用','仮払金','仮受金','立替金');
 
 -- ③ income に更新: 非CASH BS（借方） / PL収益科目（貸方）
 UPDATE transactions
