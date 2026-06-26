@@ -105,8 +105,8 @@ export class MfRecordConverter {
   }
 
   private determineCategoryKey(debitAccount: string, creditAccount: string): string {
-    const isDebitPL = debitAccount in PL_CATEGORIES;
-    const isCreditPL = creditAccount in PL_CATEGORIES;
+    const isDebitPL = Object.hasOwn(PL_CATEGORIES, debitAccount);
+    const isCreditPL = Object.hasOwn(PL_CATEGORIES, creditAccount);
 
     if (isDebitPL) {
       const mapping = PL_CATEGORIES[debitAccount];
@@ -130,10 +130,10 @@ export class MfRecordConverter {
       return "offset_income";
     }
 
-    const isDebitBS = debitAccount in BS_CATEGORIES;
-    const isCreditBS = creditAccount in BS_CATEGORIES;
-    const isDebitPL = debitAccount in PL_CATEGORIES;
-    const isCreditPL = creditAccount in PL_CATEGORIES;
+    const isDebitBS = Object.hasOwn(BS_CATEGORIES, debitAccount);
+    const isCreditBS = Object.hasOwn(BS_CATEGORIES, creditAccount);
+    const isDebitPL = Object.hasOwn(PL_CATEGORIES, debitAccount);
+    const isCreditPL = Object.hasOwn(PL_CATEGORIES, creditAccount);
 
     // 現金収入: 現金類(借方) + PL科目(貸方)
     if (isDebitBS && isCreditPL && this.isCashEquivalent(debitAccount)) {
