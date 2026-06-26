@@ -19,7 +19,7 @@ export function SectionWrapper({
   formId,
   totalAmount,
   underThresholdAmount,
-  thresholdLabel = "10万円未満の合計",
+  thresholdLabel = "5万円未満の合計",
   isEmpty = false,
   children,
 }: SectionWrapperProps) {

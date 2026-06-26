@@ -752,10 +752,10 @@ export class PrismaReportTransactionRepository implements IReportTransactionRepo
     }
 
     if (requiresCounterpartOnly) {
-      // 経常経費は10万円以上、政治活動費は5万円以上、収入は閾値なし（すべて記載）
+      // 経常経費は5万円以上、政治活動費は5万円以上、収入は閾値なし（すべて記載）
       conditions.push({
         OR: [
-          // 経常経費: 10万円以上
+          // 経常経費: 5万円以上
           {
             categoryKey: { in: [...ROUTINE_EXPENSE_CATEGORIES] },
             debitAmount: { gte: ROUTINE_EXPENSE_THRESHOLD },

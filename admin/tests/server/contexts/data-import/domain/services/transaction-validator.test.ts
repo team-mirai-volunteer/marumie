@@ -53,6 +53,37 @@ describe("TransactionValidator", () => {
       expect(result[1].errors).toHaveLength(0);
     });
 
+    it("should not mark newly enabled BS accounts as invalid", () => {
+      const transactions = [
+        createMockTransaction({
+          debit_account: "事務所費",
+          credit_account: "仮払金",
+          transaction_type: "non_cash_journal",
+        }),
+        createMockTransaction({
+          debit_account: "事務所費",
+          credit_account: "立替金",
+          transaction_type: "non_cash_journal",
+        }),
+        createMockTransaction({
+          debit_account: "事務所費",
+          credit_account: "現金",
+        }),
+        createMockTransaction({
+          debit_account: "現金",
+          credit_account: "個人からの寄附",
+          transaction_type: "income",
+        }),
+      ];
+
+      const result = validator.validatePreviewTransactions(transactions);
+
+      for (const transaction of result) {
+        expect(transaction.status).toBe("insert");
+        expect(transaction.errors).toHaveLength(0);
+      }
+    });
+
     it("should mark transactions as skip when duplicate", () => {
       const transactions = [
         createMockTransaction({
