@@ -227,12 +227,15 @@ export class PrismaTransactionRepository
     for (const item of accountData) {
       // BS科目（仮払金・立替金など）は収入・支出ノードとして表示しない。
       // 未払費用などBS科目の特別表示は別途 adjustWithBalance で行う。
-      if (item.account in BS_CATEGORIES) {
+      if (Object.hasOwn(BS_CATEGORIES, item.account)) {
         continue;
       }
-      const mapping = PL_CATEGORIES[item.account] || {
-        category: item.account,
-      };
+      const mapping: { category: string; subcategory?: string } = Object.hasOwn(
+        PL_CATEGORIES,
+        item.account,
+      )
+        ? PL_CATEGORIES[item.account]
+        : { category: item.account };
       const key = mapping.subcategory
         ? `${mapping.category}|${mapping.subcategory}`
         : mapping.category;
@@ -263,12 +266,15 @@ export class PrismaTransactionRepository
     for (const item of accountData) {
       // BS科目（仮払金・立替金など）は収入・支出ノードとして表示しない。
       // 未払費用などBS科目の特別表示は別途 adjustWithBalance で行う。
-      if (item.account in BS_CATEGORIES) {
+      if (Object.hasOwn(BS_CATEGORIES, item.account)) {
         continue;
       }
-      const mapping = PL_CATEGORIES[item.account] || {
-        category: item.account,
-      };
+      const mapping: { category: string; subcategory?: string } = Object.hasOwn(
+        PL_CATEGORIES,
+        item.account,
+      )
+        ? PL_CATEGORIES[item.account]
+        : { category: item.account };
       // friendlyカテゴリーの場合は、subcategoryをtagに置き換える
       const subcategory = item.tag || undefined;
       const key = subcategory ? `${mapping.category}|${subcategory}` : mapping.category;
