@@ -11,29 +11,42 @@ export class WebappCacheInvalidator implements ICacheInvalidator {
 
   async invalidateWebappCache(): Promise<void> {
     if (!this.refreshToken) {
-      return;
+      throw new Error(
+        "DATA_REFRESH_TOKEN が設定されていないため、ウェブアプリのキャッシュをクリアできません",
+      );
     }
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000); // 5秒タイムアウト
 
+    let response: Response;
     try {
-      const response = await fetch(`${this.webappUrl}/api/refresh`, {
+      response = await fetch(`${this.webappUrl}/api/refresh`, {
         method: "POST",
         headers: {
           "x-refresh-token": this.refreshToken,
         },
         signal: controller.signal,
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
     } catch (error) {
-      console.warn("Failed to refresh webapp cache:", error);
-      // キャッシュ更新の失敗は usecase を失敗させない
+      if (error instanceof Error && error.name === "AbortError") {
+        throw new Error(`ウェブアプリ (${this.webappUrl}) への接続がタイムアウトしました（5秒）`);
+      }
+      throw new Error(
+        `ウェブアプリ (${this.webappUrl}) への接続に失敗しました: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
     } finally {
       clearTimeout(timeoutId);
+    }
+
+    if (!response.ok) {
+      const body = await response.text().catch(() => "");
+      const detail = body ? ` ${body}` : "";
+      throw new Error(
+        `ウェブアプリのキャッシュクリアに失敗しました (HTTP ${response.status}).${detail}`,
+      );
     }
   }
 }
