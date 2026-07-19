@@ -1,6 +1,7 @@
 "use client";
 import "client-only";
 import BaseCard from "@/client/components/ui/BaseCard";
+import AccessibleFormattedAmount from "@/client/components/top-page/features/financial-summary/AccessibleFormattedAmount";
 import type { FormattedAmount } from "@/client/lib/financial-calculator";
 
 interface FinancialSummaryCardProps {
@@ -24,7 +25,10 @@ export default function FinancialSummaryCard({
         <div className={`font-bold text-sm sm:text-base`} style={{ color: titleColor }}>
           {title}
         </div>
-        <div className="flex items-baseline gap-1 translate-y-0.5">
+        <AccessibleFormattedAmount
+          amount={amount}
+          visualClassName="flex items-baseline gap-1 translate-y-0.5"
+        >
           <span
             className="font-bold text-[28px] sm:text-[36px] leading-5"
             style={{ color: amountColor }}
@@ -50,7 +54,7 @@ export default function FinancialSummaryCard({
           >
             {amount.unit}
           </span>
-        </div>
+        </AccessibleFormattedAmount>
       </div>
     </BaseCard>
   );

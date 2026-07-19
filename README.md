@@ -68,7 +68,7 @@ marumie/
 
 ## 技術スタック
 
-- **Frontend**: Next.js 15, React 19, TypeScript
+- **Frontend**: Next.js 16, React 19, TypeScript
 - **Backend**: Prisma ORM, Supabase
 - **Styling**: Tailwind CSS v4
 - **Charts**: Recharts, ApexCharts, Nivo
