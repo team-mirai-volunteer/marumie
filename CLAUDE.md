@@ -6,7 +6,7 @@
 
 - webapp（公開用フロントエンド）は既に稼働中
 - admin（管理画面）では政治資金報告書XML生成機能を開発中
-- 技術スタック: Next.js 15 (App Router) / Prisma / Supabase (PostgreSQL) / Vercel / pnpm
+- 技術スタック: Next.js 16 (App Router) / Prisma / Supabase (PostgreSQL) / Vercel / pnpm
 - 詳細は [README.md](README.md) を参照
 
 ## コード構成
