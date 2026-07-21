@@ -47,7 +47,7 @@ jobs:
             ${{ runner.os }}-prisma-
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Run lint for admin
         run: pnpm --filter admin run lint
@@ -120,7 +120,7 @@ jobs:
             ${{ runner.os }}-nextjs-webapp-
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Run lint for webapp
         run: pnpm --filter webapp run lint
@@ -154,7 +154,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Check unused code
         run: pnpm knip
@@ -237,7 +237,7 @@ jobs:
             ${{ runner.os }}-playwright-
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Install Playwright browsers
         run: pnpm --filter admin exec playwright install chromium --with-deps
