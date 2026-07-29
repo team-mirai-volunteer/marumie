@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "license": "AGPL-3.0",
   "private": true,
-  "packageManager": "pnpm@10.28.0",
+  "packageManager": "pnpm@10.30.3",
   "workspaces": [
     "packages/*",
     "admin",
@@ -59,6 +59,8 @@
     "supabase:status": "pnpm exec supabase status",
     "supabase:reset": "pnpm exec supabase db reset",
     "supabase:types": "pnpm exec supabase gen types typescript --local > supabase/types.gen.ts",
+    "// Verification": "======================================",
+    "verify": "pnpm test && pnpm typecheck && pnpm lint && pnpm knip && pnpm depcruise",
     "// Utilities": "=========================================",
     "clean": "pnpm supabase:stop && rm -rf node_modules */node_modules",
     "fresh": "pnpm clean && pnpm install && pnpm dev:setup",
@@ -83,7 +85,8 @@
     "typescript": "^5"
   },
   "simple-git-hooks": {
-    "pre-commit": "npx lint-staged"
+    "pre-commit": "npx lint-staged",
+    "pre-push": "pnpm verify"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": "npm run format"

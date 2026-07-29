@@ -43,7 +43,7 @@ export function sanitizeText(value: string | null | undefined, maxLength?: numbe
 }
 
 /**
- * 10万円の閾値（政治資金報告書における明細記載基準：経常経費用）
+ * 10万円の閾値（政治資金報告書における明細記載基準：その他の収入用）
  */
 export const TEN_MAN_THRESHOLD = 100_000;
 

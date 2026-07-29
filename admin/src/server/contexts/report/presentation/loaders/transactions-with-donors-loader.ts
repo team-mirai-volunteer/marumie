@@ -11,9 +11,9 @@ import {
 
 const CACHE_REVALIDATE_SECONDS = 60;
 
-export type LoadTransactionsWithDonorsInput = GetTransactionsWithDonorsInput;
+type LoadTransactionsWithDonorsInput = GetTransactionsWithDonorsInput;
 
-export type LoadTransactionsWithDonorsResult = GetTransactionsWithDonorsResult;
+type LoadTransactionsWithDonorsResult = GetTransactionsWithDonorsResult;
 
 export async function loadTransactionsWithDonorsData(
   input: LoadTransactionsWithDonorsInput,

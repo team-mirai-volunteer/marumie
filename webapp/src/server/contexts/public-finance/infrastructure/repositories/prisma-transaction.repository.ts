@@ -3,7 +3,7 @@ import type { Prisma, PrismaClient, Transaction as PrismaTransaction } from "@pr
 import type { Transaction, TransactionType } from "@/shared/models/transaction";
 import type { TransactionFilters } from "@/types/transaction-filters";
 import type { DisplayTransactionType } from "@/server/contexts/public-finance/domain/models/display-transaction";
-import { PL_CATEGORIES } from "@/shared/accounting/account-category";
+import { PL_CATEGORIES, BS_CATEGORIES } from "@/shared/accounting/account-category";
 import type {
   ITransactionRepository,
   PaginatedResult,
@@ -248,9 +248,17 @@ export class PrismaTransactionRepository
     >();
 
     for (const item of accountData) {
-      const mapping = PL_CATEGORIES[item.account] || {
-        category: item.account,
-      };
+      // BS科目（仮払金・立替金など）は収入・支出ノードとして表示しない。
+      // 未払費用などBS科目の特別表示は別途 adjustWithBalance で行う。
+      if (Object.hasOwn(BS_CATEGORIES, item.account)) {
+        continue;
+      }
+      const mapping: { category: string; subcategory?: string } = Object.hasOwn(
+        PL_CATEGORIES,
+        item.account,
+      )
+        ? PL_CATEGORIES[item.account]
+        : { category: item.account };
       const key = mapping.subcategory
         ? `${mapping.category}|${mapping.subcategory}`
         : mapping.category;
@@ -279,9 +287,17 @@ export class PrismaTransactionRepository
     >();
 
     for (const item of accountData) {
-      const mapping = PL_CATEGORIES[item.account] || {
-        category: item.account,
-      };
+      // BS科目（仮払金・立替金など）は収入・支出ノードとして表示しない。
+      // 未払費用などBS科目の特別表示は別途 adjustWithBalance で行う。
+      if (Object.hasOwn(BS_CATEGORIES, item.account)) {
+        continue;
+      }
+      const mapping: { category: string; subcategory?: string } = Object.hasOwn(
+        PL_CATEGORIES,
+        item.account,
+      )
+        ? PL_CATEGORIES[item.account]
+        : { category: item.account };
       // friendlyカテゴリーの場合は、subcategoryをtagに置き換える
       const subcategory = item.tag || undefined;
       const key = subcategory ? `${mapping.category}|${subcategory}` : mapping.category;

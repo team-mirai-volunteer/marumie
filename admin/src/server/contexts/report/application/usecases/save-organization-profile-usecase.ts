@@ -7,7 +7,7 @@ import type {
 } from "@/server/contexts/report/domain/models/organization-report-profile";
 import type { IOrganizationReportProfileRepository } from "@/server/contexts/report/domain/repositories/organization-report-profile-repository.interface";
 
-export interface SaveOrganizationProfileInput {
+interface SaveOrganizationProfileInput {
   id?: string;
   politicalOrganizationId: string;
   financialYear: number;

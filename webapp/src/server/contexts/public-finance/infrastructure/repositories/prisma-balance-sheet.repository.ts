@@ -57,7 +57,7 @@ export class PrismaBalanceSheetRepository implements IBalanceSheetRepository {
     return Number(result[0]?.total_balance || 0);
   }
 
-  async getBorrowingIncome(organizationIds: string[], financialYear: number): Promise<number> {
+  async getBorrowingIncome(organizationIds: string[]): Promise<number> {
     const result = await this.prisma.transaction.aggregate({
       _sum: {
         creditAmount: true,
@@ -66,7 +66,6 @@ export class PrismaBalanceSheetRepository implements IBalanceSheetRepository {
         politicalOrganizationId: {
           in: organizationIds.map((id) => BigInt(id)),
         },
-        financialYear,
         creditAccount: ACCOUNT_NAMES.LOAN,
         transactionType: "income",
       },
@@ -75,7 +74,7 @@ export class PrismaBalanceSheetRepository implements IBalanceSheetRepository {
     return Number(result._sum.creditAmount) || 0;
   }
 
-  async getBorrowingExpense(organizationIds: string[], financialYear: number): Promise<number> {
+  async getBorrowingExpense(organizationIds: string[]): Promise<number> {
     const result = await this.prisma.transaction.aggregate({
       _sum: {
         debitAmount: true,
@@ -84,7 +83,6 @@ export class PrismaBalanceSheetRepository implements IBalanceSheetRepository {
         politicalOrganizationId: {
           in: organizationIds.map((id) => BigInt(id)),
         },
-        financialYear,
         debitAccount: ACCOUNT_NAMES.LOAN,
         transactionType: "expense",
       },
@@ -98,18 +96,20 @@ export class PrismaBalanceSheetRepository implements IBalanceSheetRepository {
       return 0;
     }
 
+    const orgIds = organizationIds.map((id) => BigInt(id));
+
     const debitResult = await this.prisma.transaction.aggregate({
       _sum: {
         debitAmount: true,
       },
       where: {
         politicalOrganizationId: {
-          in: organizationIds.map((id) => BigInt(id)),
+          in: orgIds,
         },
-        financialYear,
         debitAccount: {
           in: LIABILITY_ACCOUNTS,
         },
+        financialYear,
       },
     });
 
@@ -119,12 +119,12 @@ export class PrismaBalanceSheetRepository implements IBalanceSheetRepository {
       },
       where: {
         politicalOrganizationId: {
-          in: organizationIds.map((id) => BigInt(id)),
+          in: orgIds,
         },
-        financialYear,
         creditAccount: {
           in: LIABILITY_ACCOUNTS,
         },
+        financialYear,
       },
     });
 

@@ -22,7 +22,7 @@ export const COUNTERPART_REQUIRED_INCOME_CATEGORIES = [
 ] as const;
 
 /**
- * 経常経費カテゴリ（SYUUSHI07_14）- 閾値10万円
+ * 経常経費カテゴリ（SYUUSHI07_14）- 閾値5万円
  */
 export const ROUTINE_EXPENSE_CATEGORIES = [
   // biome-ignore lint/complexity/useLiteralKeys: 日本語キー
@@ -68,11 +68,9 @@ export const COUNTERPART_REQUIRED_EXPENSE_CATEGORIES = [
   ...POLITICAL_ACTIVITY_EXPENSE_CATEGORIES,
 ] as const;
 
-export type CounterpartRequiredIncomeCategory =
-  (typeof COUNTERPART_REQUIRED_INCOME_CATEGORIES)[number];
+type CounterpartRequiredIncomeCategory = (typeof COUNTERPART_REQUIRED_INCOME_CATEGORIES)[number];
 
-export type CounterpartRequiredExpenseCategory =
-  (typeof COUNTERPART_REQUIRED_EXPENSE_CATEGORIES)[number];
+type CounterpartRequiredExpenseCategory = (typeof COUNTERPART_REQUIRED_EXPENSE_CATEGORIES)[number];
 
 /**
  * Counterpart明細記載が必要な金額閾値（円）
@@ -81,11 +79,11 @@ export type CounterpartRequiredExpenseCategory =
  * 支払先の氏名・住所を明細に記載する必要があります。
  *
  * 参考: docs/report_format.md
- * - 経常経費（SYUUSHI07_14）: 10万円以上
+ * - 経常経費（SYUUSHI07_14）: 5万円以上
  * - 政治活動費（SYUUSHI07_15）: 5万円以上
  * - 収入（借入金・交付金）: 閾値なし（すべて記載）
  */
-export const ROUTINE_EXPENSE_THRESHOLD = 100_000;
+export const ROUTINE_EXPENSE_THRESHOLD = 50_000;
 export const POLITICAL_ACTIVITY_EXPENSE_THRESHOLD = 50_000;
 
 /**
@@ -150,8 +148,8 @@ function getThresholdForCategory(categoryKey: string): number {
  *
  * @example
  * ```typescript
- * isAboveDetailThreshold('expense_office_expenses', 150_000) // true（経常経費、10万円以上）
- * isAboveDetailThreshold('expense_office_expenses', 50_000)  // false（経常経費、10万円未満）
+ * isAboveDetailThreshold('expense_office_expenses', 150_000) // true（経常経費、5万円以上）
+ * isAboveDetailThreshold('expense_office_expenses', 50_000)  // true（経常経費、5万円以上）
  * isAboveDetailThreshold('expense_organization_activities', 50_000) // true（政治活動費、5万円以上）
  * ```
  */
@@ -175,7 +173,7 @@ export function isAboveDetailThreshold(categoryKey: string, amount: number): boo
  * @example
  * ```typescript
  * requiresCounterpartDetail('expense', 'expense_office_expenses', 150_000) // true
- * requiresCounterpartDetail('expense', 'expense_office_expenses', 50_000)  // false（閾値未満）
+ * requiresCounterpartDetail('expense', 'expense_office_expenses', 50_000)  // true（閾値以上）
  * requiresCounterpartDetail('income', 'income_donation_individual', 150_000) // false（寄附は対象外）
  * ```
  */

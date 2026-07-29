@@ -3,7 +3,6 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "postinstall": "pnpm exec playwright install chromium",
     "dev": "next dev --turbopack --port 3001",
     "build": "next build",
     "start": "next start",
@@ -12,6 +11,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "pretest:e2e": "pnpm exec playwright install chromium",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui --ui-host=0.0.0.0",
     "test:e2e:headed": "playwright test --headed"

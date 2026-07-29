@@ -26,7 +26,7 @@ export interface GetTransactionsBySlugParams {
   categories?: string[];
 }
 
-export interface GetTransactionsBySlugResult {
+interface GetTransactionsBySlugResult {
   transactions: DisplayTransaction[];
   total: number;
   totalAmount: number | null;

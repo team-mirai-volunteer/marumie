@@ -7,7 +7,7 @@ import {
   createDefaultSuggester,
 } from "@/server/contexts/report/application/services/counterpart-suggester";
 
-export interface SuggestCounterpartInput {
+interface SuggestCounterpartInput {
   transactionId: string;
   politicalOrganizationId: string;
   limit?: number;

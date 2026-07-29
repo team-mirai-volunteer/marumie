@@ -60,6 +60,7 @@ export default async function ReportProfilePage({ params, searchParams }: Report
       </div>
 
       <ReportProfileForm
+        key={financialYear}
         politicalOrganizationId={orgId}
         financialYear={financialYear}
         initialData={profile}

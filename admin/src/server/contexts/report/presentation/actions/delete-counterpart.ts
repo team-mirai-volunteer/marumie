@@ -7,7 +7,7 @@ import { prisma } from "@/server/contexts/shared/infrastructure/prisma";
 import { PrismaCounterpartRepository } from "@/server/contexts/report/infrastructure/repositories/prisma-counterpart.repository";
 import { DeleteCounterpartUsecase } from "@/server/contexts/report/application/usecases/manage-counterpart-usecase";
 
-export interface DeleteCounterpartActionResult {
+interface DeleteCounterpartActionResult {
   success: boolean;
   errors?: string[];
 }

@@ -105,8 +105,8 @@ export class MfRecordConverter {
   }
 
   private determineCategoryKey(debitAccount: string, creditAccount: string): string {
-    const isDebitPL = debitAccount in PL_CATEGORIES;
-    const isCreditPL = creditAccount in PL_CATEGORIES;
+    const isDebitPL = Object.hasOwn(PL_CATEGORIES, debitAccount);
+    const isCreditPL = Object.hasOwn(PL_CATEGORIES, creditAccount);
 
     if (isDebitPL) {
       const mapping = PL_CATEGORIES[debitAccount];
@@ -130,10 +130,10 @@ export class MfRecordConverter {
       return "offset_income";
     }
 
-    const isDebitBS = debitAccount in BS_CATEGORIES;
-    const isCreditBS = creditAccount in BS_CATEGORIES;
-    const isDebitPL = debitAccount in PL_CATEGORIES;
-    const isCreditPL = creditAccount in PL_CATEGORIES;
+    const isDebitBS = Object.hasOwn(BS_CATEGORIES, debitAccount);
+    const isCreditBS = Object.hasOwn(BS_CATEGORIES, creditAccount);
+    const isDebitPL = Object.hasOwn(PL_CATEGORIES, debitAccount);
+    const isCreditPL = Object.hasOwn(PL_CATEGORIES, creditAccount);
 
     // 現金収入: 現金類(借方) + PL科目(貸方)
     if (isDebitBS && isCreditPL && this.isCashEquivalent(debitAccount)) {
@@ -143,9 +143,12 @@ export class MfRecordConverter {
     if (isDebitPL && isCreditBS && this.isCashEquivalent(creditAccount)) {
       return "expense";
     }
-    // 非現金仕訳: PL科目とBS科目の組み合わせ（現金を含まない）
-    if ((isDebitPL && isCreditBS) || (isDebitBS && isCreditPL)) {
-      return "non_cash_journal";
+    // 発生主義: PL科目が登場した仕訳タイミングで収支を認識（現金を含まない場合）
+    if (isDebitPL && isCreditBS) {
+      return "expense";
+    }
+    if (isDebitBS && isCreditPL) {
+      return PL_CATEGORIES[creditAccount]?.type === "expense" ? "expense" : "income";
     }
 
     return null;

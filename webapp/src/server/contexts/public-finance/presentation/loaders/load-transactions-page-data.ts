@@ -25,6 +25,6 @@ export const loadTransactionsPageData = (params: GetTransactionsBySlugParams) =>
       return await usecase.execute(params);
     },
     cacheKey,
-    { revalidate: CACHE_REVALIDATE_SECONDS },
+    { revalidate: CACHE_REVALIDATE_SECONDS, tags: ["transactions-page-data"] },
   )();
 };

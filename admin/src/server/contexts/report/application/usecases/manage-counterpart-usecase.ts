@@ -12,13 +12,13 @@ import type {
   ICounterpartRepository,
 } from "@/server/contexts/report/domain/repositories/counterpart-repository.interface";
 
-export interface GetCounterpartsInput {
+interface GetCounterpartsInput {
   searchQuery?: string;
   limit?: number;
   offset?: number;
 }
 
-export interface GetCounterpartsResult {
+interface GetCounterpartsResult {
   counterparts: CounterpartWithUsage[];
   total: number;
 }
@@ -50,7 +50,7 @@ export class GetCounterpartByIdUsecase {
   }
 }
 
-export interface CreateCounterpartResult {
+interface CreateCounterpartResult {
   success: boolean;
   counterpart?: Counterpart;
   errors?: string[];
@@ -89,7 +89,7 @@ export class CreateCounterpartUsecase {
   }
 }
 
-export interface UpdateCounterpartResult {
+interface UpdateCounterpartResult {
   success: boolean;
   counterpart?: Counterpart;
   errors?: string[];
@@ -139,7 +139,7 @@ export class UpdateCounterpartUsecase {
   }
 }
 
-export interface DeleteCounterpartResult {
+interface DeleteCounterpartResult {
   success: boolean;
   errors?: string[];
 }
@@ -181,13 +181,13 @@ export class GetCounterpartUsageUsecase {
   }
 }
 
-export interface GetCounterpartDetailResult {
+interface GetCounterpartDetailResult {
   counterpart: Counterpart | null;
   usageCount: number;
   allCounterparts: Counterpart[];
 }
 
-export interface GetAllCounterpartsInput {
+interface GetAllCounterpartsInput {
   limit?: number;
 }
 

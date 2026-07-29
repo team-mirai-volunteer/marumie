@@ -7,7 +7,7 @@ import type {
   PaginationOptions,
 } from "@/server/contexts/shared/domain/repositories/transaction-repository.interface";
 
-export interface GetTransactionsParams {
+interface GetTransactionsParams {
   page?: number;
   perPage?: number;
   politicalOrganizationIds?: string[];

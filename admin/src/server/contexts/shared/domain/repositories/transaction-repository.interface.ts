@@ -30,6 +30,7 @@ export interface ITransactionRepository {
       update: UpdateTransactionInput;
     }>,
   ): Promise<Transaction[]>;
+  delete(id: string): Promise<void>;
   deleteAll(filters?: TransactionFilters): Promise<number>;
   createMany(inputs: CreateTransactionInput[]): Promise<Transaction[]>;
   findByTransactionNos(

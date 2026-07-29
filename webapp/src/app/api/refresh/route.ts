@@ -1,5 +1,5 @@
 import "server-only";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -20,9 +20,7 @@ export async function POST(request: NextRequest) {
     revalidateTag("transactions-page-data", "max");
     revalidateTag("transactions-for-csv", "max");
     revalidateTag("top-page-data", "max");
-
-    revalidatePath("/transactions");
-    revalidatePath("/");
+    revalidateTag("organizations", "max");
 
     return NextResponse.json({
       success: true,

@@ -5,12 +5,12 @@ import type { IBalanceSheetRepository } from "@/server/contexts/public-finance/d
 import type { IPoliticalOrganizationRepository } from "@/server/contexts/public-finance/domain/repositories/political-organization-repository.interface";
 import type { BalanceSheetData } from "@/types/balance-sheet";
 
-export interface GetBalanceSheetParams {
+interface GetBalanceSheetParams {
   slugs: string[];
   financialYear: number;
 }
 
-export interface GetBalanceSheetResult {
+interface GetBalanceSheetResult {
   balanceSheetData: BalanceSheetData;
 }
 
@@ -41,8 +41,8 @@ export class GetBalanceSheetUsecase {
       const [currentAssets, borrowingIncome, borrowingExpense, currentLiabilities] =
         await Promise.all([
           this.balanceSheetRepository.getCurrentAssets(orgIds),
-          this.balanceSheetRepository.getBorrowingIncome(orgIds, params.financialYear),
-          this.balanceSheetRepository.getBorrowingExpense(orgIds, params.financialYear),
+          this.balanceSheetRepository.getBorrowingIncome(orgIds),
+          this.balanceSheetRepository.getBorrowingExpense(orgIds),
           this.balanceSheetRepository.getCurrentLiabilities(orgIds, params.financialYear),
         ]);
 

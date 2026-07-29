@@ -28,6 +28,7 @@ const SORT_CONFIGS: Record<SortOption, SortConfig> = {
 
 interface InteractiveTransactionTableProps {
   slug: string;
+  year: number;
   transactions: DisplayTransaction[];
   total: number;
   totalAmount?: number | null;
@@ -39,6 +40,7 @@ interface InteractiveTransactionTableProps {
 
 export default function InteractiveTransactionTable({
   slug,
+  year,
   transactions,
   total,
   totalAmount,
@@ -195,6 +197,7 @@ export default function InteractiveTransactionTable({
           <div className="flex-1 flex justify-end">
             <CsvDownloadLink
               slug={slug}
+              year={year}
               className="px-4 py-3 text-sm font-bold text-[#238778] bg-white hover:bg-gray-50 transition-colors cursor-pointer"
             />
           </div>
@@ -223,6 +226,7 @@ export default function InteractiveTransactionTable({
         <div className="mt-3 text-right">
           <CsvDownloadLink
             slug={slug}
+            year={year}
             className="text-sm font-bold text-[#238778] hover:bg-gray-50 transition-all cursor-pointer"
           />
         </div>

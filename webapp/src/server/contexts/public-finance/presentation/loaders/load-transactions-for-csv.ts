@@ -31,12 +31,12 @@ const loadTransactionsForCsv = (params: GetTransactionsForCsvParams) => {
   )();
 };
 
-export async function downloadTransactionsCsv(slug: string) {
+export async function downloadTransactionsCsv(slug: string, year: number) {
   try {
     // すべてのトランザクションを取得
     const data = await loadTransactionsForCsv({
       slugs: [slug],
-      financialYear: 2025,
+      financialYear: year,
     });
 
     // CSVヘッダー

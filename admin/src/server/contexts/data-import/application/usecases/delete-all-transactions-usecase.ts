@@ -1,7 +1,7 @@
 import type { ITransactionRepository } from "@/server/contexts/shared/domain/repositories/transaction-repository.interface";
 import type { TransactionFilters } from "@/server/contexts/shared/domain/transaction";
 
-export interface DeleteAllTransactionsResult {
+interface DeleteAllTransactionsResult {
   deletedCount: number;
 }
 

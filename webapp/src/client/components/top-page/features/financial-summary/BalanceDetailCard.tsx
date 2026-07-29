@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import AccessibleFormattedAmount from "@/client/components/top-page/features/financial-summary/AccessibleFormattedAmount";
 import type { FormattedAmount } from "@/client/lib/financial-calculator";
 
 interface BalanceDetailCardProps {
@@ -24,22 +25,22 @@ function formatAmountDisplay(amount: FormattedAmount, isLarge: boolean = false):
 
   if (amount.tertiary) {
     return (
-      <span className="flex items-baseline gap-1">
+      <AccessibleFormattedAmount amount={amount} visualClassName="flex items-baseline gap-1">
         <span className={mainClass}>{amount.main}</span>
         <span className={unitClass}>{amount.secondary}</span>
         <span className={mainClass}>{amount.tertiary}</span>
         <span className={unitClass}>{amount.unit}</span>
-      </span>
+      </AccessibleFormattedAmount>
     );
   }
   return (
-    <span className="flex items-baseline gap-1">
+    <AccessibleFormattedAmount amount={amount} visualClassName="flex items-baseline gap-1">
       <span className={mainClass}>{amount.main}</span>
       <span className={unitClass}>
         {amount.secondary}
         {amount.unit}
       </span>
-    </span>
+    </AccessibleFormattedAmount>
   );
 }
 

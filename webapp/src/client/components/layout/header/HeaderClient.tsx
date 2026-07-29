@@ -3,33 +3,35 @@ import "client-only";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import OrganizationSelector from "./OrganizationSelector";
+import OrganizationYearSheet from "@/client/components/layout/header/OrganizationYearSheet";
 import type { OrganizationsResponse } from "@/types/organization";
 
-const getNavigationItems = (currentSlug: string) => [
-  { href: `/o/${currentSlug}/`, label: "トップ", desktopLabel: null },
+const DEFAULT_YEAR = 2026;
+
+const getNavigationItems = (currentSlug: string, currentYear: number) => [
+  { href: `/o/${currentSlug}/${currentYear}/`, label: "トップ", desktopLabel: null },
   {
-    href: `/o/${currentSlug}/#cash-flow`,
+    href: `/o/${currentSlug}/${currentYear}/#cash-flow`,
     label: "チームみらいの収支の流れ",
     desktopLabel: "収支の流れ",
   },
   {
-    href: `/o/${currentSlug}/#monthly-trends`,
+    href: `/o/${currentSlug}/${currentYear}/#monthly-trends`,
     label: "１年間の収支推移",
     desktopLabel: "1年間の推移",
   },
   {
-    href: `/o/${currentSlug}/#balance-sheet`,
+    href: `/o/${currentSlug}/${currentYear}/#balance-sheet`,
     label: "貸借対照表",
     desktopLabel: "貸借対照表",
   },
   {
-    href: `/o/${currentSlug}/#transactions`,
+    href: `/o/${currentSlug}/${currentYear}/#transactions`,
     label: "すべての出入金",
     desktopLabel: "すべての出入金",
   },
   {
-    href: `/o/${currentSlug}/#explanation`,
+    href: `/o/${currentSlug}/${currentYear}/#explanation`,
     label: "データについて",
     desktopLabel: "データについて",
   },
@@ -47,11 +49,18 @@ interface HeaderClientProps {
 export default function HeaderClient({ organizations }: HeaderClientProps) {
   const pathname = usePathname();
 
-  // 現在のslugを取得（/o/[slug]/... の形式の場合、なければdefaultを使用）
-  const slugFromPath = pathname.startsWith("/o/") ? pathname.split("/")[2] : null;
+  // 現在のslugとyearを取得（/o/[slug]/[year]/... の形式の場合）
+  const pathSegments = pathname.split("/");
+  const slugFromPath = pathSegments[1] === "o" ? pathSegments[2] : null;
+  const yearFromPath =
+    pathSegments[1] === "o" && pathSegments[3] ? parseInt(pathSegments[3], 10) : null;
+
   const currentSlug = slugFromPath ?? organizations.default;
-  const logoHref = currentSlug ? `/o/${currentSlug}/` : "/";
-  const navigationItems = currentSlug ? getNavigationItems(currentSlug) : [];
+  const currentYear =
+    yearFromPath && [2025, 2026].includes(yearFromPath) ? yearFromPath : DEFAULT_YEAR;
+
+  const logoHref = currentSlug ? `/o/${currentSlug}/${currentYear}/` : "/";
+  const navigationItems = currentSlug ? getNavigationItems(currentSlug, currentYear) : [];
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 px-2.5 py-3 xl:px-6 xl:py-4">
@@ -127,9 +136,10 @@ export default function HeaderClient({ organizations }: HeaderClientProps) {
                 })}
             </nav>
             <div className="flex items-center w-full max-w-[217px] min-w-0 h-12 flex-shrink">
-              <OrganizationSelector
+              <OrganizationYearSheet
                 organizations={organizations}
                 initialSlug={currentSlug ?? undefined}
+                initialYear={currentYear}
               />
             </div>
           </div>

@@ -7,7 +7,7 @@ import { PrismaTransactionDonorRepository } from "@/server/contexts/report/infra
 import { PrismaTransactionWithDonorRepository } from "@/server/contexts/report/infrastructure/repositories/prisma-transaction-with-donor.repository";
 import { BulkAssignDonorUsecase } from "@/server/contexts/report/application/usecases/assign-donor-usecase";
 
-export interface BulkAssignDonorActionResult {
+interface BulkAssignDonorActionResult {
   success: boolean;
   assignedCount?: number;
   errors?: string[];
