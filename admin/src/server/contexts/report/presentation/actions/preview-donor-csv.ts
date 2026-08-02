@@ -13,6 +13,7 @@ import {
 } from "@/server/contexts/report/domain/errors/donor-csv-error";
 import { PreviewDonorCsvUsecase } from "@/server/contexts/report/application/usecases/preview-donor-csv-usecase";
 import type { PreviewDonorCsvResult } from "@/server/contexts/report/presentation/types/preview-donor-csv-types";
+import { requireAuth } from "@/server/contexts/auth/presentation/loaders/require-auth";
 
 export interface PreviewDonorCsvRequest {
   file: File;
@@ -22,6 +23,8 @@ export interface PreviewDonorCsvRequest {
 export async function previewDonorCsv(
   data: PreviewDonorCsvRequest,
 ): Promise<PreviewDonorCsvResult> {
+  await requireAuth();
+
   try {
     const { file, politicalOrganizationId } = data;
 

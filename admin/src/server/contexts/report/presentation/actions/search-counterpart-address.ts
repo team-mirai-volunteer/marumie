@@ -3,11 +3,14 @@
 import { SearchCounterpartAddressUsecase } from "@/server/contexts/report/application/usecases/search-counterpart-address-usecase";
 import { VercelAIGateway } from "@/server/contexts/report/infrastructure/llm/vercel-ai-gateway";
 import type { AddressSearchResult } from "@/server/contexts/report/presentation/types/address-search";
+import { requireAuth } from "@/server/contexts/auth/presentation/loaders/require-auth";
 
 export async function searchCounterpartAddressAction(
   companyName: string,
   hint?: string,
 ): Promise<AddressSearchResult> {
+  await requireAuth();
+
   try {
     const gateway = new VercelAIGateway();
     const usecase = new SearchCounterpartAddressUsecase(gateway);

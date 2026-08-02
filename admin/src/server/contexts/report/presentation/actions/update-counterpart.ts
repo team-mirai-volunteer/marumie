@@ -5,6 +5,7 @@ import { prisma } from "@/server/contexts/shared/infrastructure/prisma";
 import { PrismaCounterpartRepository } from "@/server/contexts/report/infrastructure/repositories/prisma-counterpart.repository";
 import { UpdateCounterpartUsecase } from "@/server/contexts/report/application/usecases/manage-counterpart-usecase";
 import type { UpdateCounterpartInput } from "@/server/contexts/report/domain/models/counterpart";
+import { requireAuth } from "@/server/contexts/auth/presentation/loaders/require-auth";
 
 interface UpdateCounterpartActionResult {
   success: boolean;
@@ -15,6 +16,8 @@ export async function updateCounterpartAction(
   id: string,
   input: UpdateCounterpartInput,
 ): Promise<UpdateCounterpartActionResult> {
+  await requireAuth();
+
   try {
     const repository = new PrismaCounterpartRepository(prisma);
     const usecase = new UpdateCounterpartUsecase(repository);
