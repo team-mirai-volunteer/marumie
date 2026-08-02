@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/server/contexts/shared/infrastructure/prisma";
 import { PrismaDonorRepository } from "@/server/contexts/report/infrastructure/repositories/prisma-donor.repository";
 import { DeleteDonorUsecase } from "@/server/contexts/report/application/usecases/manage-donor-usecase";
+import { requireAuth } from "@/server/contexts/auth/presentation/loaders/require-auth";
 
 interface DeleteDonorActionResult {
   success: boolean;
@@ -13,6 +14,8 @@ interface DeleteDonorActionResult {
 }
 
 export async function deleteDonorAction(id: string): Promise<DeleteDonorActionResult> {
+  await requireAuth();
+
   try {
     const repository = new PrismaDonorRepository(prisma);
     const usecase = new DeleteDonorUsecase(repository, false);

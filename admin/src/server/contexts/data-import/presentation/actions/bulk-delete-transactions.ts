@@ -4,12 +4,15 @@ import "server-only";
 import { updateTag } from "next/cache";
 import { prisma } from "@/server/contexts/shared/infrastructure/prisma";
 import { WebappCacheInvalidator } from "@/server/contexts/shared/infrastructure/services/webapp-cache-invalidator";
+import { requireAuth } from "@/server/contexts/auth/presentation/loaders/require-auth";
 
 export async function bulkDeleteTransactionsAction(ids: string[]): Promise<{
   success: boolean;
   deletedCount?: number;
   error?: string;
 }> {
+  await requireAuth();
+
   try {
     const deletedCount = await prisma.transaction.deleteMany({
       where: {

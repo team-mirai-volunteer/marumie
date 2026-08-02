@@ -1,8 +1,12 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { loadTransactionsByNos } from "@/server/contexts/data-import/presentation/loaders/load-transactions-by-nos";
+import { requireAuthResponse } from "@/server/contexts/auth/presentation/loaders/require-auth-response";
 
 export async function GET(request: NextRequest) {
+  const unauthorized = await requireAuthResponse();
+  if (unauthorized) return unauthorized;
+
   const { searchParams } = new URL(request.url);
   const orgId = searchParams.get("orgId");
   const nos = searchParams.get("nos");

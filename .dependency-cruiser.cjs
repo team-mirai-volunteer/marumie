@@ -109,10 +109,19 @@ module.exports = {
     },
     {
       name: "no-shared-to-contexts",
-      comment: "sharedコンテキストから他のコンテキストへの依存は禁止",
+      comment:
+        "sharedコンテキストから他のコンテキストへの依存は禁止。" +
+        "ただし認証ガード（auth の requireAuth）のみ暫定的に許可している。" +
+        "shared/presentation/actions の 6 件は本来 shared に置くべきものではなく" +
+        "（他コンテキストから呼ばれておらず、admin 画面専用の入口である）、" +
+        "適切なコンテキストへ移設した時点でこの例外は削除すること。" +
+        "それまでは shared → auth の循環依存が残っている状態。",
       severity: "error",
       from: { path: "contexts/shared" },
-      to: { path: "contexts/(data-import|report|auth)" },
+      to: {
+        path: "contexts/(data-import|report|auth)",
+        pathNot: "contexts/auth/presentation/loaders/require-auth",
+      },
     },
 
     // ===========================================
