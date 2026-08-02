@@ -5,6 +5,7 @@ import { prisma } from "@/server/contexts/shared/infrastructure/prisma";
 import { PrismaTransactionRepository } from "@/server/contexts/shared/infrastructure/repositories/prisma-transaction.repository";
 import { PreviewMfCsvUsecase } from "@/server/contexts/data-import/application/usecases/preview-mf-csv-usecase";
 import type { PreviewMfCsvResult } from "@/server/contexts/data-import/application/usecases/preview-mf-csv-usecase";
+import { requireAuth } from "@/server/contexts/auth/presentation/loaders/require-auth";
 const transactionRepository = new PrismaTransactionRepository(prisma);
 const previewUsecase = new PreviewMfCsvUsecase(transactionRepository);
 
@@ -15,6 +16,8 @@ export interface PreviewCsvRequest {
 
 export async function previewCsv(data: PreviewCsvRequest): Promise<PreviewMfCsvResult> {
   "use server";
+  await requireAuth();
+
   try {
     const { file, politicalOrganizationId } = data;
 

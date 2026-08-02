@@ -3,8 +3,12 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/server/contexts/shared/infrastructure/prisma";
 import { PrismaTransactionRepository } from "@/server/contexts/shared/infrastructure/repositories/prisma-transaction.repository";
 import { GetTransactionsUsecase } from "@/server/contexts/data-import/application/usecases/get-transactions-usecase";
+import { requireAuthResponse } from "@/server/contexts/auth/presentation/loaders/require-auth-response";
 
 export async function GET(request: NextRequest) {
+  const unauthorized = await requireAuthResponse();
+  if (unauthorized) return unauthorized;
+
   try {
     const { searchParams } = new URL(request.url);
 

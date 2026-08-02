@@ -4,6 +4,7 @@ import "server-only";
  * 認証エラーコードの型定義（網羅性チェック用）
  */
 export type AuthErrorCode =
+  | "UNAUTHORIZED"
   | "AUTH_FAILED"
   | "SESSION_EXPIRED"
   | "INVALID_TOKEN"
@@ -33,6 +34,7 @@ export class AuthError extends Error {
  * ユーザー向けメッセージ変換マップ（Presentation 層で使用）
  */
 export const AUTH_ERROR_MESSAGES: Record<AuthErrorCode, string> = {
+  UNAUTHORIZED: "認証が必要です。ログインしてください",
   AUTH_FAILED: "メールアドレスまたはパスワードが正しくありません",
   SESSION_EXPIRED: "セッションの有効期限が切れました。再度ログインしてください",
   INVALID_TOKEN: "認証情報が無効です。再度ログインしてください",

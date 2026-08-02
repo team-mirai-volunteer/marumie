@@ -5,6 +5,7 @@ import { prisma } from "@/server/contexts/shared/infrastructure/prisma";
 import { PrismaDonorRepository } from "@/server/contexts/report/infrastructure/repositories/prisma-donor.repository";
 import { CreateDonorUsecase } from "@/server/contexts/report/application/usecases/manage-donor-usecase";
 import type { CreateDonorInput } from "@/server/contexts/report/domain/models/donor";
+import { requireAuth } from "@/server/contexts/auth/presentation/loaders/require-auth";
 
 interface CreateDonorActionResult {
   success: boolean;
@@ -13,6 +14,8 @@ interface CreateDonorActionResult {
 }
 
 export async function createDonorAction(input: CreateDonorInput): Promise<CreateDonorActionResult> {
+  await requireAuth();
+
   try {
     const repository = new PrismaDonorRepository(prisma);
     const usecase = new CreateDonorUsecase(repository);
