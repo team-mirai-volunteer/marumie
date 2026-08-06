@@ -170,17 +170,19 @@ export default function BalanceSheetChart({ data }: BalanceSheetChartProps) {
 
   return (
     <div className="flex justify-center mt-10">
-      <div
-        className="w-full max-w-[500px] flex gap-[1px] h-[380px]"
-        role="img"
-        aria-label="貸借対照表チャート"
-      >
+      <figure className="w-full max-w-[500px] flex gap-[1px] h-[380px]">
+        <figcaption className="sr-only">貸借対照表</figcaption>
+
         {/* 左側（資産） */}
-        <div className="flex-1 flex flex-col">{leftItems.map((item) => renderItem(item))}</div>
+        <section className="flex-1 flex flex-col" aria-label="資産">
+          {leftItems.map((item) => renderItem(item))}
+        </section>
 
         {/* 右側（負債・資本） */}
-        <div className="flex-1 flex flex-col">{rightItems.map((item) => renderItem(item))}</div>
-      </div>
+        <section className="flex-1 flex flex-col" aria-label="負債・純資産">
+          {rightItems.map((item) => renderItem(item))}
+        </section>
+      </figure>
     </div>
   );
 }
