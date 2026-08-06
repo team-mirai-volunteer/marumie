@@ -61,16 +61,13 @@ export default function InteractiveTransactionTable({
 
   const handleSort = (field: "date" | "amount") => {
     const params = new URLSearchParams(searchParams.toString());
-    const currentSort = params.get("sort");
-    const currentOrder = params.get("order");
+    const currentSort = params.get("sort") ?? "date";
+    const currentOrder = params.get("order") ?? "desc";
 
     // Toggle order if sorting the same field, otherwise default to desc
-    if (currentSort === field) {
-      params.set("order", currentOrder === "desc" ? "asc" : "desc");
-    } else {
-      params.set("sort", field);
-      params.set("order", "desc");
-    }
+    const nextOrder = currentSort === field && currentOrder === "desc" ? "asc" : "desc";
+    params.set("sort", field);
+    params.set("order", nextOrder);
 
     // Reset to page 1 when sorting changes
     params.set("page", "1");

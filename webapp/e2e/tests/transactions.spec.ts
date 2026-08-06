@@ -34,4 +34,55 @@ test.describe("取引一覧ページ", () => {
 			`以下のエラーが発生しました:\n${errors.join("\n")}`,
 		).toHaveLength(0);
 	});
+
+	test("デスクトップの列見出しが現在のソート状態を公開すること", async ({ page }) => {
+		await page.goto("/o/sample-party/2026/transactions");
+
+		const table = page.getByRole("table", { name: "政治資金取引一覧表" });
+		const dateSortButton = table.getByRole("button", { name: "日付順でソート" });
+		const amountSortButton = table.getByRole("button", { name: "金額順でソート" });
+		const dateHeader = dateSortButton.locator("xpath=ancestor::th");
+		const amountHeader = amountSortButton.locator("xpath=ancestor::th");
+
+		await expect(table.locator("th[aria-sort]")).toHaveCount(1);
+		await expect(dateHeader).toHaveAttribute("aria-sort", "descending");
+		expect(await amountHeader.getAttribute("aria-sort")).toBeNull();
+		expect(await dateSortButton.getAttribute("aria-describedby")).toBeNull();
+		expect(await amountSortButton.getAttribute("aria-describedby")).toBeNull();
+		await expect(dateSortButton.locator("img")).toHaveAttribute("alt", "");
+		await expect(amountSortButton.locator("img")).toHaveAttribute("alt", "");
+
+		await dateSortButton.click();
+		await expect(page).toHaveURL(/sort=date.*order=asc/);
+		await expect(dateHeader).toHaveAttribute("aria-sort", "ascending");
+
+		await amountSortButton.click();
+		await expect(page).toHaveURL(/sort=amount.*order=desc/);
+		await expect(table.locator("th[aria-sort]")).toHaveCount(1);
+		expect(await dateHeader.getAttribute("aria-sort")).toBeNull();
+		await expect(amountHeader).toHaveAttribute("aria-sort", "descending");
+
+		await amountSortButton.click();
+		await expect(page).toHaveURL(/sort=amount.*order=asc/);
+		await expect(amountHeader).toHaveAttribute("aria-sort", "ascending");
+	});
+
+	test("モバイルの並び順ボタンが選択状態を公開すること", async ({ page }) => {
+		await page.setViewportSize({ width: 390, height: 844 });
+		await page.goto("/o/sample-party/2026/transactions");
+
+		const sortGroup = page.getByRole("group", { name: "並び順" });
+		const newestButton = sortGroup.getByRole("button", { name: "新しい順" });
+		const oldestButton = sortGroup.getByRole("button", { name: "古い順" });
+
+		await expect(sortGroup.locator('button[aria-pressed="true"]')).toHaveCount(1);
+		await expect(newestButton).toHaveAttribute("aria-pressed", "true");
+		await expect(oldestButton).toHaveAttribute("aria-pressed", "false");
+
+		await oldestButton.click();
+		await expect(page).toHaveURL(/sort=date.*order=asc/);
+		await expect(sortGroup.locator('button[aria-pressed="true"]')).toHaveCount(1);
+		await expect(newestButton).toHaveAttribute("aria-pressed", "false");
+		await expect(oldestButton).toHaveAttribute("aria-pressed", "true");
+	});
 });

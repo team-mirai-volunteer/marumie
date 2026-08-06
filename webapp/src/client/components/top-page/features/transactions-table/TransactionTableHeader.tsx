@@ -20,29 +20,39 @@ export default function TransactionTableHeader({
   selectedCategories,
 }: TransactionTableHeaderProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const activeSort = currentSort ?? "date";
+  const activeOrder = currentOrder ?? "desc";
+  const dateSortDirection =
+    activeSort === "date" ? (activeOrder === "asc" ? "ascending" : "descending") : undefined;
+  const amountSortDirection =
+    activeSort === "amount" ? (activeOrder === "asc" ? "ascending" : "descending") : undefined;
+
   return (
     <thead className="hidden md:table-header-group bg-white">
       <tr className="h-12 border-b border-[#D5DBE1]">
         {/* 日付 - 140px width to match row */}
-        <th className="text-left px-4 h-12 font-normal w-[140px]" scope="col">
+        <th
+          className="text-left px-4 h-12 font-normal w-[140px]"
+          scope="col"
+          aria-sort={allowControl ? dateSortDirection : undefined}
+        >
           {allowControl && onSort ? (
             <button
               type="button"
               onClick={() => onSort("date")}
               className="flex items-center gap-1 h-5 hover:opacity-70 transition-opacity cursor-pointer"
               aria-label="日付順でソート"
-              aria-describedby="sort-date-description"
             >
               <span className="text-gray-800 text-sm font-bold leading-[1.5]">日付</span>
               <div className="w-5 h-5 flex items-center justify-center">
                 <Image
                   src="/icons/icon-chevron-down.svg"
-                  alt="Sort by date"
+                  alt=""
                   width={20}
                   height={20}
                   className={`w-5 h-5 transition-transform ${
-                    currentSort === "date" ? (currentOrder === "asc" ? "rotate-180" : "") : ""
-                  } ${currentSort === "date" ? "opacity-100" : "opacity-50"}`}
+                    activeSort === "date" ? (activeOrder === "asc" ? "rotate-180" : "") : ""
+                  } ${activeSort === "date" ? "opacity-100" : "opacity-50"}`}
                 />
               </div>
             </button>
@@ -99,25 +109,28 @@ export default function TransactionTableHeader({
         </th>
 
         {/* 金額 - 180px width to match row (combined plus/minus + amount) */}
-        <th className="text-right pr-6 h-12 font-normal w-[180px]" scope="col">
+        <th
+          className="text-right pr-6 h-12 font-normal w-[180px]"
+          scope="col"
+          aria-sort={allowControl ? amountSortDirection : undefined}
+        >
           {allowControl && onSort ? (
             <button
               type="button"
               onClick={() => onSort("amount")}
               className="flex items-center gap-1 h-5 hover:opacity-70 transition-opacity ml-auto cursor-pointer"
               aria-label="金額順でソート"
-              aria-describedby="sort-amount-description"
             >
               <span className="text-gray-800 text-sm font-bold leading-[1.5]">金額</span>
               <div className="w-5 h-5 flex items-center justify-center">
                 <Image
                   src="/icons/icon-chevron-down.svg"
-                  alt="Sort by amount"
+                  alt=""
                   width={20}
                   height={20}
                   className={`w-5 h-5 transition-transform ${
-                    currentSort === "amount" ? (currentOrder === "asc" ? "rotate-180" : "") : ""
-                  } ${currentSort === "amount" ? "opacity-100" : "opacity-50"}`}
+                    activeSort === "amount" ? (activeOrder === "asc" ? "rotate-180" : "") : ""
+                  } ${activeSort === "amount" ? "opacity-100" : "opacity-50"}`}
                 />
               </div>
             </button>
