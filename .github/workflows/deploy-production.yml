@@ -16,6 +16,15 @@ jobs:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
 
     steps:
+      # workflow_dispatch は任意の ref を選択できるため、
+      # 検証済みの main 以外からの本番デプロイを拒否する
+      - name: Verify ref is main
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            echo "本番デプロイは main からのみ実行できます (指定: $GITHUB_REF)"
+            exit 1
+          fi
+
       - name: Checkout code
         uses: actions/checkout@v6
 
