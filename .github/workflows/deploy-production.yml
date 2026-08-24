@@ -1,0 +1,37 @@
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      # webapp のビルドに prisma migrate deploy が含まれるため、
+      # 先に webapp をデプロイして本番DBのスキーマを更新する
+      - name: Deploy webapp
+        run: vercel deploy --prod --yes --cwd webapp --token "$VERCEL_TOKEN"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_WEBAPP }}
+
+      - name: Deploy admin
+        run: vercel deploy --prod --yes --cwd admin --token "$VERCEL_TOKEN"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_ADMIN }}
