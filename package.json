@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "license": "AGPL-3.0",
   "private": true,
-  "packageManager": "pnpm@10.30.3",
+  "packageManager": "pnpm@10.34.5",
   "workspaces": [
     "packages/*",
     "admin",
@@ -72,7 +72,7 @@
     "dotenv": "^17.0.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.11",
+    "@biomejs/biome": "2.5.7",
     "concurrently": "^9.2.1",
     "dependency-cruiser": "^17.3.6",
     "dotenv-cli": "^11.0.0",

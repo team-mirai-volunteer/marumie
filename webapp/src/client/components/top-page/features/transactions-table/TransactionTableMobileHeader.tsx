@@ -37,7 +37,8 @@ export default function TransactionTableMobileHeader({
   return (
     <div className="w-full bg-white relative border-b-0">
       {/* Tab Items */}
-      <div className="flex gap-6 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <fieldset className="flex min-w-0 gap-6 overflow-x-auto border-0 p-0 m-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <legend className="sr-only">並び順</legend>
         {TAB_ITEMS.map((tab) => {
           const isActive = currentSort === tab.id;
 
@@ -47,6 +48,7 @@ export default function TransactionTableMobileHeader({
               type="button"
               onClick={() => handleClick(tab.id)}
               className="flex flex-col items-center justify-center relative whitespace-nowrap py-2 px-0 cursor-pointer touch-manipulation"
+              aria-pressed={isActive}
             >
               {/* Tab Label */}
               <span
@@ -64,7 +66,7 @@ export default function TransactionTableMobileHeader({
             </button>
           );
         })}
-      </div>
+      </fieldset>
 
       {/* Bottom border line */}
       <div className="w-full h-[1px] bg-[#E5E7EB]" />
