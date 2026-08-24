@@ -33,14 +33,22 @@ jobs:
 
       # webapp のビルドに prisma migrate deploy が含まれるため、
       # 先に webapp をデプロイして本番DBのスキーマを更新する
+      # --build-env MANUAL_DEPLOY=1 が ignoreCommand の条件を満たし、
+      # Git 連携によるビルドはスキップしたまま CLI からのデプロイのみ通す
       - name: Deploy webapp
-        run: vercel deploy --prod --yes --cwd webapp --token "$VERCEL_TOKEN"
+        run: |
+          vercel deploy --prod --yes --cwd webapp \
+            --build-env MANUAL_DEPLOY=1 \
+            --token "$VERCEL_TOKEN"
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_WEBAPP }}
 
       - name: Deploy admin
-        run: vercel deploy --prod --yes --cwd admin --token "$VERCEL_TOKEN"
+        run: |
+          vercel deploy --prod --yes --cwd admin \
+            --build-env MANUAL_DEPLOY=1 \
+            --token "$VERCEL_TOKEN"
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_ADMIN }}

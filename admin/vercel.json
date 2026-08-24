@@ -1,5 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "npm i -g pnpm@10.30.3 && cd .. && pnpm install --frozen-lockfile",
-  "ignoreCommand": "[ \"$VERCEL_ENV\" = \"production\" ] && exit 0 || exit 1"
+  "ignoreCommand": "[ \"$VERCEL_ENV\" = \"production\" ] && [ \"$MANUAL_DEPLOY\" != \"1\" ] && exit 0 || exit 1"
 }
