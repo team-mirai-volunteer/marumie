@@ -502,6 +502,7 @@ describe("ReportData", () => {
 
       // 支出総額 = 経常経費(1038000) + 政治活動費(100000)
       expect(summary.sisyutuSgk).toBe(1138000);
+      expect(summary.sisyutuSgk).toBe(expenseSummary.totalAmount);
       expect(expenseSummary.regularExpenses.subtotal.amount).toBe(1038000);
       expect(expenseSummary.politicalActivityExpenses.subtotal.amount).toBe(100000);
       // 翌年繰越額 = 収入総額 - 支出総額
