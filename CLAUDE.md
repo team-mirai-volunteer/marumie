@@ -87,3 +87,8 @@ webapp / admin のバックエンド実装に関する詳細なルールは [doc
 ## admin UI コンポーネント
 
 admin で UI コンポーネントを使用する際は [docs/admin-ui-guidelines.md](docs/admin-ui-guidelines.md) を参照すること。
+
+## ループエンジニアリング（AIによる自律実装）
+
+`loop:ready` ラベルの付いたIssueをAIエージェントが自律実装し、CI green で自動マージする運用を行っている。
+運用ルールは [docs/loop-engineering.md](docs/loop-engineering.md)、1イテレーションの手順は [.claude/commands/loop-once.md](.claude/commands/loop-once.md) を参照すること。
