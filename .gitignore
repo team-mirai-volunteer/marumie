@@ -73,3 +73,6 @@ logs
 
 # docs
 docs/report_format.xlsx
+
+# loop engineering
+.loop/
