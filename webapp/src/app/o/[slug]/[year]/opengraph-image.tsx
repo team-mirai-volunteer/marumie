@@ -1,6 +1,6 @@
 import "server-only";
 import { ImageResponse } from "next/og";
-import { loadOrganizations } from "@/server/contexts/public-finance/presentation/loaders/load-organizations";
+import { loadOrganizationBySlug } from "@/server/contexts/public-finance/presentation/loaders/load-organization-by-slug";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -46,8 +46,7 @@ export default async function OpengraphImage({ params }: OgImageProps) {
 
   let orgName = FALLBACK_ORG_NAME;
   try {
-    const { organizations } = await loadOrganizations();
-    const organization = organizations.find((org) => org.slug === slug);
+    const organization = await loadOrganizationBySlug(slug);
     if (organization?.displayName) {
       orgName = organization.displayName;
     }
